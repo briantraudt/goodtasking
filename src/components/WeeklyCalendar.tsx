@@ -240,8 +240,8 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
           <ChevronLeft className="h-4 w-4" />
         </Button>
         
-        {/* Three visible day cards */}
-        <div className="grid grid-cols-3 gap-4 flex-1">
+        {/* Responsive day cards: 2 on tablet, 3 on desktop */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 flex-1">
           {visibleDays.map(({ day, name }) => {
             const dayString = format(day, 'yyyy-MM-dd');
             const dayProjects = projects.filter(p => p.scheduledDay === dayString);
