@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { format, addDays, startOfWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Focus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import DraggableProjectCard from './DraggableProjectCard';
 import { Button } from '@/components/ui/button';
@@ -40,9 +40,10 @@ interface DayColumnProps {
   onDeleteProject: (id: string) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
+  onFocusToday?: () => void;
 }
 
-function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: DayColumnProps) {
+function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask, onFocusToday }: DayColumnProps) {
   const dayString = format(day, 'yyyy-MM-dd');
   const { isOver, setNodeRef } = useDroppable({
     id: dayString,
@@ -59,7 +60,7 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
         isToday && "bg-primary/5 border-primary/20"
       )}
     >
-      <div className="text-center mb-3">
+      <div className="text-center mb-3 relative">
         <div className={cn(
           "text-sm font-medium",
           isToday ? "text-primary" : "text-foreground"
@@ -72,6 +73,18 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
         )}>
           {format(day, 'MMM d')}
         </div>
+        
+        {/* Focus button - only show on today */}
+        {isToday && onFocusToday && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onFocusToday}
+            className="absolute -top-1 -right-1 h-6 w-6 p-0 opacity-60 hover:opacity-100"
+          >
+            <Focus className="h-3 w-3" />
+          </Button>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -100,6 +113,7 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
 export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: WeeklyCalendarProps) {
   const isMobile = useIsMobile();
   const [startIndex, setStartIndex] = useState(0);
+  const [focusMode, setFocusMode] = useState(false);
   const today = new Date();
   
   // Create 7 consecutive days starting from today
@@ -109,6 +123,10 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
   // Today is always index 0 since we start from today
   const todayIndex = 0;
   
+  const handleFocusToday = () => {
+    setFocusMode(!focusMode);
+  };
+  
   // Mobile: show all days in a single column starting with today
   if (isMobile) {
     // Get 7 consecutive days starting from today
@@ -117,12 +135,17 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
       name: dayNames[index],
       index
     }));
+    
+    // In focus mode, show only today
+    const daysToShow = focusMode ? [{ day: days[0], name: dayNames[0], index: 0 }] : allDaysFromToday;
 
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-semibold text-foreground mb-4">Weekly Schedule</h3>
+        <h3 className="text-xl font-semibold text-foreground mb-4">
+          {focusMode ? "Today's Focus" : "Weekly Schedule"}
+        </h3>
         <div className="space-y-4">
-          {allDaysFromToday.map(({ day, name }) => {
+          {daysToShow.map(({ day, name }) => {
             const dayString = format(day, 'yyyy-MM-dd');
             const dayProjects = projects.filter(p => p.scheduledDay === dayString);
             
@@ -136,10 +159,37 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
                   onDeleteProject={onDeleteProject}
                   onCreateTask={onCreateTask}
                   onUpdateTask={onUpdateTask}
+                  onFocusToday={handleFocusToday}
                 />
               </div>
             );
           })}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: show carousel-style navigation with 3 visible days
+  // In focus mode, show only today
+  if (focusMode) {
+    const todayProjects = projects.filter(p => p.scheduledDay === format(days[0], 'yyyy-MM-dd'));
+    
+    return (
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold text-foreground mb-4">Today's Focus</h3>
+        <div className="flex justify-center">
+          <div className="w-1/3">
+            <DayColumn
+              day={days[0]}
+              dayName={dayNames[0]}
+              projects={todayProjects}
+              onUpdateProject={onUpdateProject}
+              onDeleteProject={onDeleteProject}
+              onCreateTask={onCreateTask}
+              onUpdateTask={onUpdateTask}
+              onFocusToday={handleFocusToday}
+            />
+          </div>
         </div>
       </div>
     );
@@ -203,6 +253,7 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
                 onDeleteProject={onDeleteProject}
                 onCreateTask={onCreateTask}
                 onUpdateTask={onUpdateTask}
+                onFocusToday={name === dayNames[0] ? handleFocusToday : undefined}
               />
             );
           })}
