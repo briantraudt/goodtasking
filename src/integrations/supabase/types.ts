@@ -47,6 +47,7 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          scheduled_day: string | null
           updated_at: string
           user_id: string
         }
@@ -55,6 +56,7 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
+          scheduled_day?: string | null
           updated_at?: string
           user_id: string
         }
@@ -63,6 +65,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+          scheduled_day?: string | null
           updated_at?: string
           user_id?: string
         }

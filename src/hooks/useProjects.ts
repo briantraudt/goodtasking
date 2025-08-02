@@ -47,9 +47,10 @@ export const useProjects = () => {
 
       if (tasksError) throw tasksError;
 
-      // Combine projects with their tasks
+      // Combine projects with their tasks and convert scheduled_day to scheduledDay
       const projectsWithTasks = projectsData.map(project => ({
         ...project,
+        scheduledDay: project.scheduled_day,
         tasks: tasksData.filter(task => task.project_id === project.id)
       }));
 
@@ -86,9 +87,16 @@ export const useProjects = () => {
     if (!user) return;
 
     try {
+      // Convert scheduledDay to scheduled_day for database
+      const dbUpdates: any = { ...updates };
+      if ('scheduledDay' in updates) {
+        dbUpdates.scheduled_day = updates.scheduledDay;
+        delete dbUpdates.scheduledDay;
+      }
+
       const { error } = await supabase
         .from('vibe_projects')
-        .update(updates)
+        .update(dbUpdates)
         .eq('id', id);
 
       if (error) throw error;
