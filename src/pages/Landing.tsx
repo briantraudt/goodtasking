@@ -36,7 +36,7 @@ const Landing = () => {
     
     // Simulate brief loading before redirect
     setTimeout(() => {
-      window.location.href = '/auth';
+      window.location.href = '/signup';
     }, 800);
   };
   return (
@@ -52,7 +52,7 @@ const Landing = () => {
             <Link to="/dashboard">
               <Button variant="ghost">Dashboard</Button>
             </Link>
-            <Link to="/auth">
+            <Link to="/signup">
               <Button>Get Started Free</Button>
             </Link>
           </div>
@@ -375,7 +375,7 @@ const Landing = () => {
                     <span>Weekly calendar view</span>
                   </li>
                 </ul>
-                <Link to="/auth" className="w-full">
+                <Link to="/signup" className="w-full">
                   <Button variant="outline" className="w-full">Get Started</Button>
                 </Link>
               </CardContent>
@@ -408,7 +408,7 @@ const Landing = () => {
                     <span>Priority recommendations</span>
                   </li>
                 </ul>
-                <Link to="/auth" className="w-full">
+                <Link to="/signup" className="w-full">
                   <Button className="w-full">Start Free Trial</Button>
                 </Link>
               </CardContent>
@@ -426,7 +426,7 @@ const Landing = () => {
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Join thousands of productive people who've found their flow with Good Tasking.
           </p>
-          <Link to="/auth">
+          <Link to="/signup">
             <Button size="lg" className="px-12 py-6 text-lg">
               Start Free – No Credit Card Required
               <ArrowRight className="ml-2 h-5 w-5" />
