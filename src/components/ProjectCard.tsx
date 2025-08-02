@@ -25,9 +25,11 @@ interface ProjectCardProps {
   project: Project;
   onUpdateProject: (id: string, updates: Partial<Project>) => void;
   onDeleteProject: (id: string) => void;
+  onCreateTask: (projectId: string, title: string) => void;
+  onUpdateTask: (id: string, updates: Partial<Task>) => void;
 }
 
-export default function ProjectCard({ project, onUpdateProject, onDeleteProject }: ProjectCardProps) {
+export default function ProjectCard({ project, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: ProjectCardProps) {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
@@ -38,26 +40,17 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject 
 
   const addTask = () => {
     if (newTaskTitle.trim()) {
-      const newTask: Task = {
-        id: Date.now().toString(),
-        title: newTaskTitle.trim(),
-        completed: false
-      };
-      onUpdateProject(project.id, {
-        tasks: [...project.tasks, newTask]
-      });
+      onCreateTask(project.id, newTaskTitle.trim());
       setNewTaskTitle('');
       setIsAddingTask(false);
     }
   };
 
   const toggleTask = (taskId: string) => {
-    const updatedTasks = project.tasks.map(task =>
-      task.id === taskId ? { ...task, completed: !task.completed } : task
-    );
-    onUpdateProject(project.id, {
-      tasks: updatedTasks
-    });
+    const task = project.tasks.find(t => t.id === taskId);
+    if (task) {
+      onUpdateTask(taskId, { completed: !task.completed });
+    }
   };
 
   const handleEditName = () => {

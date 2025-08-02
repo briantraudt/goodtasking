@@ -10,7 +10,9 @@ const Index = () => {
     loading, 
     createProject, 
     updateProject,
-    deleteProject
+    deleteProject,
+    createTask,
+    updateTask
   } = useProjects();
 
   const totalTasks = projects.reduce((sum, project) => sum + project.tasks.length, 0);
@@ -61,6 +63,8 @@ const Index = () => {
                   project={project}
                   onUpdateProject={updateProject}
                   onDeleteProject={deleteProject}
+                  onCreateTask={createTask}
+                  onUpdateTask={updateTask}
                 />
               ))}
             </div>
