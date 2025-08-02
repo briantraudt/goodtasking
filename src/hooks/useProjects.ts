@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
 
 export interface Task {
   id: string;
@@ -26,7 +25,6 @@ export const useProjects = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
-  const { toast } = useToast();
 
   const fetchProjects = async () => {
     if (!user) return;
@@ -56,11 +54,7 @@ export const useProjects = () => {
 
       setProjects(projectsWithTasks);
     } catch (error: any) {
-      toast({
-        title: "Error loading projects",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Error loading projects:', error);
     } finally {
       setLoading(false);
     }
@@ -81,18 +75,9 @@ export const useProjects = () => {
       const newProject = { ...data, tasks: [] };
       setProjects([newProject, ...projects]);
 
-      toast({
-        title: "Project created",
-        description: `${name} has been created successfully.`,
-      });
-
       return newProject;
     } catch (error: any) {
-      toast({
-        title: "Error creating project",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Error creating project:', error);
     }
   };
 
@@ -110,17 +95,8 @@ export const useProjects = () => {
       setProjects(projects.map(project => 
         project.id === id ? { ...project, ...updates } : project
       ));
-
-      toast({
-        title: "Project updated",
-        description: "Project has been updated successfully.",
-      });
     } catch (error: any) {
-      toast({
-        title: "Error updating project",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Error updating project:', error);
     }
   };
 
@@ -136,17 +112,8 @@ export const useProjects = () => {
       if (error) throw error;
 
       setProjects(projects.filter(project => project.id !== id));
-
-      toast({
-        title: "Project deleted",
-        description: "Project has been deleted successfully.",
-      });
     } catch (error: any) {
-      toast({
-        title: "Error deleting project",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Error deleting project:', error);
     }
   };
 
@@ -154,15 +121,18 @@ export const useProjects = () => {
     if (!user) return;
 
     try {
+      const taskData: any = { 
+        title, 
+        project_id: projectId, 
+        user_id: user.id 
+      };
+      
+      if (description) taskData.description = description;
+      if (dueDate) taskData.due_date = dueDate.toISOString();
+
       const { data, error } = await supabase
         .from('vibe_tasks')
-        .insert([{ 
-          title, 
-          description, 
-          due_date: dueDate?.toISOString(),
-          project_id: projectId, 
-          user_id: user.id 
-        }])
+        .insert([taskData])
         .select()
         .single();
 
@@ -174,18 +144,9 @@ export const useProjects = () => {
           : project
       ));
 
-      toast({
-        title: "Task created",
-        description: `${title} has been added to the project.`,
-      });
-
       return data;
     } catch (error: any) {
-      toast({
-        title: "Error creating task",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Error creating task:', error);
     }
   };
 
@@ -207,11 +168,7 @@ export const useProjects = () => {
         )
       })));
     } catch (error: any) {
-      toast({
-        title: "Error updating task",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Error updating task:', error);
     }
   };
 
@@ -230,17 +187,8 @@ export const useProjects = () => {
         ...project,
         tasks: project.tasks.filter(task => task.id !== id)
       })));
-
-      toast({
-        title: "Task deleted",
-        description: "Task has been deleted successfully.",
-      });
     } catch (error: any) {
-      toast({
-        title: "Error deleting task",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error('Error deleting task:', error);
     }
   };
 
