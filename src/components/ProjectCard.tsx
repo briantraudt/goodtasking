@@ -87,7 +87,12 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
                 />
               </div>
             ) : (
-              <h3 className="text-xl font-semibold text-foreground">{project.name}</h3>
+              <h3 
+                className="text-xl font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                onClick={() => setIsEditingName(true)}
+              >
+                {project.name}
+              </h3>
             )}
             {project.description && <p className="text-sm text-muted-foreground">{project.description}</p>}
           </div>
@@ -98,10 +103,6 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsEditingName(true)}>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Name
-              </DropdownMenuItem>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
