@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { format, addDays, startOfWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import DraggableProjectCard from './DraggableProjectCard';
 import { Button } from '@/components/ui/button';
@@ -99,7 +99,7 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
 
 export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: WeeklyCalendarProps) {
   const isMobile = useIsMobile();
-  const [showAllDays, setShowAllDays] = useState(false);
+  const [startIndex, setStartIndex] = useState(0);
   const today = new Date();
   const startOfThisWeek = startOfWeek(today, { weekStartsOn: 0 }); // Start on Sunday
   
@@ -145,87 +145,77 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
     );
   }
 
-  // Desktop: show the 3-day focused layout with expandable view
-  // Get the first 3 days starting from today
-  const primaryDays = [];
+  // Desktop: show carousel-style navigation with 3 visible days
+  // Get 3 consecutive days starting from startIndex
+  const visibleDays = [];
   for (let i = 0; i < 3; i++) {
-    const dayIndex = (todayIndex + i) % 7;
-    primaryDays.push({ day: days[dayIndex], name: dayNames[dayIndex], index: dayIndex });
+    const dayIndex = (todayIndex + startIndex + i) % 7;
+    visibleDays.push({ day: days[dayIndex], name: dayNames[dayIndex], index: dayIndex });
   }
   
-  // Get remaining days
-  const remainingDays = [];
-  for (let i = 3; i < 7; i++) {
-    const dayIndex = (todayIndex + i) % 7;
-    remainingDays.push({ day: days[dayIndex], name: dayNames[dayIndex], index: dayIndex });
-  }
+  const canGoBack = startIndex > 0;
+  const canGoForward = startIndex < 4; // We can show up to 4 more positions (0,1,2,3,4 = 5 total positions for 7 days showing 3 at a time)
+  
+  const goBack = () => {
+    if (canGoBack) {
+      setStartIndex(startIndex - 1);
+    }
+  };
+  
+  const goForward = () => {
+    if (canGoForward) {
+      setStartIndex(startIndex + 1);
+    }
+  };
 
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold text-foreground mb-4">Weekly Schedule</h3>
       
-      {/* Primary 3 days */}
-      <div className="grid grid-cols-3 gap-4 mb-4">
-        {primaryDays.map(({ day, name }) => {
-          const dayString = format(day, 'yyyy-MM-dd');
-          const dayProjects = projects.filter(p => p.scheduledDay === dayString);
-          
-          return (
-            <DayColumn
-              key={dayString}
-              day={day}
-              dayName={name}
-              projects={dayProjects}
-              onUpdateProject={onUpdateProject}
-              onDeleteProject={onDeleteProject}
-              onCreateTask={onCreateTask}
-              onUpdateTask={onUpdateTask}
-            />
-          );
-        })}
-      </div>
-      
-      {/* Toggle button and remaining days */}
-      <div className="mt-4">
+      {/* Carousel layout with navigation arrows */}
+      <div className="flex items-center gap-4">
+        {/* Back arrow */}
         <Button
           variant="outline"
-          onClick={() => setShowAllDays(!showAllDays)}
-          className="mb-4 w-full"
+          size="icon"
+          onClick={goBack}
+          disabled={!canGoBack}
+          className="shrink-0"
         >
-          {showAllDays ? (
-            <>
-              <ChevronDown className="h-4 w-4 mr-2" />
-              Show Less
-            </>
-          ) : (
-            <>
-              <ChevronRight className="h-4 w-4 mr-2" />
-              Show More Days
-            </>
-          )}
+          <ChevronLeft className="h-4 w-4" />
         </Button>
         
-        {showAllDays && (
-          <div className="grid grid-cols-4 gap-3">
-            {remainingDays.map(({ day, name }) => {
-              const dayString = format(day, 'yyyy-MM-dd');
-              const dayProjects = projects.filter(p => p.scheduledDay === dayString);
-              
-              return (
-                <DayColumn
-                  key={dayString}
-                  day={day}
-                  dayName={name}
-                  projects={dayProjects}
-                  onUpdateProject={onUpdateProject}
-                  onDeleteProject={onDeleteProject}
-                  onCreateTask={onCreateTask}
-                  onUpdateTask={onUpdateTask}
-                />
-              );
-            })}
-          </div>
-        )}
+        {/* Three visible day cards */}
+        <div className="grid grid-cols-3 gap-4 flex-1">
+          {visibleDays.map(({ day, name }) => {
+            const dayString = format(day, 'yyyy-MM-dd');
+            const dayProjects = projects.filter(p => p.scheduledDay === dayString);
+            
+            return (
+              <DayColumn
+                key={dayString}
+                day={day}
+                dayName={name}
+                projects={dayProjects}
+                onUpdateProject={onUpdateProject}
+                onDeleteProject={onDeleteProject}
+                onCreateTask={onCreateTask}
+                onUpdateTask={onUpdateTask}
+              />
+            );
+          })}
+        </div>
+        
+        {/* Forward arrow */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={goForward}
+          disabled={!canGoForward}
+          className="shrink-0"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
