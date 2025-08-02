@@ -15,8 +15,8 @@ const Landing = () => {
             <span className="font-bold text-xl">Good Tasking</span>
           </div>
           <div className="flex items-center space-x-4">
-            <Link to="/auth">
-              <Button variant="ghost">Sign In</Button>
+            <Link to="/dashboard">
+              <Button variant="ghost">Dashboard</Button>
             </Link>
             <Link to="/auth">
               <Button>Get Started Free</Button>
