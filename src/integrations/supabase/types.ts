@@ -80,6 +80,56 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          ai_assistant_enabled: boolean | null
+          ai_summary_time: string | null
+          ai_tone_preference: string | null
+          auto_schedule_unscheduled: boolean | null
+          created_at: string
+          default_project_id: string | null
+          default_task_day: string | null
+          id: string
+          updated_at: string
+          user_id: string
+          weekly_review_enabled: boolean | null
+        }
+        Insert: {
+          ai_assistant_enabled?: boolean | null
+          ai_summary_time?: string | null
+          ai_tone_preference?: string | null
+          auto_schedule_unscheduled?: boolean | null
+          created_at?: string
+          default_project_id?: string | null
+          default_task_day?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+          weekly_review_enabled?: boolean | null
+        }
+        Update: {
+          ai_assistant_enabled?: boolean | null
+          ai_summary_time?: string | null
+          ai_tone_preference?: string | null
+          auto_schedule_unscheduled?: boolean | null
+          created_at?: string
+          default_project_id?: string | null
+          default_task_day?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+          weekly_review_enabled?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_preferences_default_project_id_fkey"
+            columns: ["default_project_id"]
+            isOneToOne: false
+            referencedRelation: "vibe_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vibe_projects: {
         Row: {
           created_at: string
