@@ -3,9 +3,9 @@ import { format, addDays, startOfWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import ProjectCard from './ProjectCard';
 import DraggableProjectCard from './DraggableProjectCard';
 import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Task {
   id: string;
@@ -98,6 +98,7 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
 }
 
 export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: WeeklyCalendarProps) {
+  const isMobile = useIsMobile();
   const [showAllDays, setShowAllDays] = useState(false);
   const today = new Date();
   const startOfThisWeek = startOfWeek(today, { weekStartsOn: 0 }); // Start on Sunday
@@ -108,6 +109,43 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
   // Find today's index
   const todayIndex = days.findIndex(day => format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd'));
   
+  // Mobile: show all days in a single column starting with today
+  if (isMobile) {
+    // Get all days starting from today
+    const allDaysFromToday = [];
+    for (let i = 0; i < 7; i++) {
+      const dayIndex = (todayIndex + i) % 7;
+      allDaysFromToday.push({ day: days[dayIndex], name: dayNames[dayIndex], index: dayIndex });
+    }
+
+    return (
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold text-foreground mb-4">Weekly Schedule</h3>
+        <div className="space-y-4">
+          {allDaysFromToday.map(({ day, name }) => {
+            const dayString = format(day, 'yyyy-MM-dd');
+            const dayProjects = projects.filter(p => p.scheduledDay === dayString);
+            
+            return (
+              <div key={dayString} className="w-full">
+                <DayColumn
+                  day={day}
+                  dayName={name}
+                  projects={dayProjects}
+                  onUpdateProject={onUpdateProject}
+                  onDeleteProject={onDeleteProject}
+                  onCreateTask={onCreateTask}
+                  onUpdateTask={onUpdateTask}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: show the 3-day focused layout with expandable view
   // Get the first 3 days starting from today
   const primaryDays = [];
   for (let i = 0; i < 3; i++) {
