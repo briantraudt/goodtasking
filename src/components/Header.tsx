@@ -1,4 +1,6 @@
-import { Code2 } from 'lucide-react';
+import { Code2, LogOut, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Header() {
   return (

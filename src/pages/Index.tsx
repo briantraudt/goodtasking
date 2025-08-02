@@ -1,65 +1,29 @@
-import { useState } from 'react';
 import { Code2 } from 'lucide-react';
 import Header from '@/components/Header';
 import ProjectCard from '@/components/ProjectCard';
 import CreateProjectDialog from '@/components/CreateProjectDialog';
-
-interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-}
-
-interface Project {
-  id: string;
-  name: string;
-  description: string;
-  tasks: Task[];
-}
+import { useProjects } from '@/hooks/useProjects';
 
 const Index = () => {
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: '1',
-      name: 'Personal Portfolio',
-      description: 'Build a stunning portfolio website with React and TypeScript',
-      tasks: [
-        { id: '1', title: 'Design homepage layout', completed: true },
-        { id: '2', title: 'Create project showcase section', completed: true },
-        { id: '3', title: 'Add contact form', completed: false },
-        { id: '4', title: 'Implement dark mode', completed: false },
-      ]
-    },
-    {
-      id: '2',
-      name: 'Task Management App',
-      description: 'A simple and elegant task management tool for developers',
-      tasks: [
-        { id: '5', title: 'Set up project structure', completed: true },
-        { id: '6', title: 'Create task components', completed: false },
-        { id: '7', title: 'Add database integration', completed: false },
-      ]
-    }
-  ]);
-
-  const createProject = (projectData: Omit<Project, 'id'>) => {
-    const newProject: Project = {
-      ...projectData,
-      id: Date.now().toString()
-    };
-    setProjects([...projects, newProject]);
-  };
-
-  const updateProject = (updatedProject: Project) => {
-    setProjects(projects.map(project => 
-      project.id === updatedProject.id ? updatedProject : project
-    ));
-  };
+  const { 
+    projects, 
+    loading, 
+    createProject, 
+    updateProject 
+  } = useProjects();
 
   const totalTasks = projects.reduce((sum, project) => sum + project.tasks.length, 0);
   const completedTasks = projects.reduce((sum, project) => 
     sum + project.tasks.filter(task => task.completed).length, 0
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -74,7 +38,7 @@ const Index = () => {
                 {projects.length} projects • {completedTasks}/{totalTasks} tasks completed
               </p>
             </div>
-            <CreateProjectDialog onCreateProject={createProject} />
+            <CreateProjectDialog onCreateProject={(data) => createProject(data.name, data.description)} />
           </div>
 
           {projects.length === 0 ? (
@@ -86,7 +50,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-6">
                 Create your first Vibe Coding project to get started!
               </p>
-              <CreateProjectDialog onCreateProject={createProject} />
+            <CreateProjectDialog onCreateProject={(data) => createProject(data.name, data.description)} />
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
