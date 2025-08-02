@@ -101,22 +101,22 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
   const isMobile = useIsMobile();
   const [startIndex, setStartIndex] = useState(0);
   const today = new Date();
-  const startOfThisWeek = startOfWeek(today, { weekStartsOn: 0 }); // Start on Sunday
   
-  const days = Array.from({ length: 7 }, (_, i) => addDays(startOfThisWeek, i));
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  // Create 7 consecutive days starting from today
+  const days = Array.from({ length: 7 }, (_, i) => addDays(today, i));
+  const dayNames = days.map(day => format(day, 'EEE')); // Get actual day names for each date
 
-  // Find today's index
-  const todayIndex = days.findIndex(day => format(day, 'yyyy-MM-dd') === format(today, 'yyyy-MM-dd'));
+  // Today is always index 0 since we start from today
+  const todayIndex = 0;
   
   // Mobile: show all days in a single column starting with today
   if (isMobile) {
-    // Get all days starting from today
-    const allDaysFromToday = [];
-    for (let i = 0; i < 7; i++) {
-      const dayIndex = (todayIndex + i) % 7;
-      allDaysFromToday.push({ day: days[dayIndex], name: dayNames[dayIndex], index: dayIndex });
-    }
+    // Get 7 consecutive days starting from today
+    const allDaysFromToday = days.map((day, index) => ({
+      day,
+      name: dayNames[index],
+      index
+    }));
 
     return (
       <div className="mb-8">
@@ -149,8 +149,10 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
   // Get 3 consecutive days starting from startIndex
   const visibleDays = [];
   for (let i = 0; i < 3; i++) {
-    const dayIndex = (todayIndex + startIndex + i) % 7;
-    visibleDays.push({ day: days[dayIndex], name: dayNames[dayIndex], index: dayIndex });
+    const dayIndex = startIndex + i;
+    if (dayIndex < 7) {
+      visibleDays.push({ day: days[dayIndex], name: dayNames[dayIndex], index: dayIndex });
+    }
   }
   
   const canGoBack = startIndex > 0;
