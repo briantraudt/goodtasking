@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, MoreVertical } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Plus, MoreVertical, Edit, Trash2 } from 'lucide-react';
 
 interface Task {
   id: string;
@@ -22,11 +24,14 @@ interface Project {
 interface ProjectCardProps {
   project: Project;
   onUpdateProject: (id: string, updates: Partial<Project>) => void;
+  onDeleteProject: (id: string) => void;
 }
 
-export default function ProjectCard({ project, onUpdateProject }: ProjectCardProps) {
+export default function ProjectCard({ project, onUpdateProject, onDeleteProject }: ProjectCardProps) {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [isAddingTask, setIsAddingTask] = useState(false);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState(project.name);
 
   const completedTasks = project.tasks.filter(task => task.completed).length;
   const progressPercentage = project.tasks.length > 0 ? (completedTasks / project.tasks.length) * 100 : 0;
@@ -55,17 +60,79 @@ export default function ProjectCard({ project, onUpdateProject }: ProjectCardPro
     });
   };
 
+  const handleEditName = () => {
+    if (editedName.trim() && editedName.trim() !== project.name) {
+      onUpdateProject(project.id, { name: editedName.trim() });
+    }
+    setIsEditingName(false);
+  };
+
+  const handleDeleteProject = () => {
+    onDeleteProject(project.id);
+  };
+
   return (
     <Card className="p-6 bg-gradient-card shadow-card hover:shadow-elevated transition-all duration-200 border-0">
       <div className="space-y-4">
         <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <h3 className="text-xl font-semibold text-foreground">{project.name}</h3>
+          <div className="space-y-1 flex-1">
+            {isEditingName ? (
+              <div className="flex items-center space-x-2">
+                <Input
+                  value={editedName}
+                  onChange={(e) => setEditedName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleEditName();
+                    if (e.key === 'Escape') {
+                      setEditedName(project.name);
+                      setIsEditingName(false);
+                    }
+                  }}
+                  onBlur={handleEditName}
+                  className="text-xl font-semibold"
+                  autoFocus
+                />
+              </div>
+            ) : (
+              <h3 className="text-xl font-semibold text-foreground">{project.name}</h3>
+            )}
             {project.description && <p className="text-sm text-muted-foreground">{project.description}</p>}
           </div>
-          <Button variant="ghost" size="sm" className="opacity-60 hover:opacity-100">
-            <MoreVertical className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="opacity-60 hover:opacity-100">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setIsEditingName(true)}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Name
+              </DropdownMenuItem>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Project
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete "{project.name}"? This will permanently delete the project and all its tasks. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteProject} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="space-y-2">
