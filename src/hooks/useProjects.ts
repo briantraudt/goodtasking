@@ -8,8 +8,10 @@ export interface Task {
   description?: string;
   completed: boolean;
   due_date?: string;
+  scheduled_date?: string;
   created_at: string;
   updated_at: string;
+  project_id: string;
 }
 
 export interface Project {
@@ -137,7 +139,10 @@ export const useProjects = () => {
       };
       
       if (description) taskData.description = description;
-      if (dueDate) taskData.due_date = dueDate.toISOString();
+      if (dueDate) {
+        taskData.due_date = dueDate.toISOString();
+        taskData.scheduled_date = dueDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      }
 
       const { data, error } = await supabase
         .from('vibe_tasks')
