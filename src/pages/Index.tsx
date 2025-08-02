@@ -76,34 +76,21 @@ const Index = () => {
             />
 
             {/* Hide unscheduled projects when in focus mode */}
-            {!isFocusMode && (
+            {!isFocusMode && unscheduledProjects.length > 0 && (
               <div>
                 <h3 className="text-2xl font-semibold text-foreground mb-6">Unscheduled Projects</h3>
-                {unscheduledProjects.length === 0 ? (
-                  <div className="text-center py-16">
-                    <div className="w-20 h-20 bg-gradient-accent rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Code2 className="h-10 w-10 text-accent-foreground" />
-                    </div>
-                    <h3 className="text-2xl font-semibold text-foreground mb-3">No unscheduled projects</h3>
-                    <p className="text-muted-foreground mb-8 text-lg">
-                      All projects are scheduled or create your first project to get started!
-                    </p>
-                    <CreateProjectDialog onCreateProject={(data) => createProject(data.name, data.description)} />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                    {unscheduledProjects.map((project) => (
-                      <DraggableProjectCard
-                        key={project.id}
-                        project={project}
-                        onUpdateProject={updateProject}
-                        onDeleteProject={deleteProject}
-                        onCreateTask={createTask}
-                        onUpdateTask={updateTask}
-                      />
-                    ))}
-                  </div>
-                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                  {unscheduledProjects.map((project) => (
+                    <DraggableProjectCard
+                      key={project.id}
+                      project={project}
+                      onUpdateProject={updateProject}
+                      onDeleteProject={deleteProject}
+                      onCreateTask={createTask}
+                      onUpdateTask={updateTask}
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </div>
