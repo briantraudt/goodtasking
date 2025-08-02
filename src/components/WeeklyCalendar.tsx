@@ -30,6 +30,7 @@ interface WeeklyCalendarProps {
   onDeleteProject: (id: string) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
+  onFocusModeChange: (isFocused: boolean) => void;
 }
 
 interface DayColumnProps {
@@ -110,7 +111,7 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
   );
 }
 
-export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: WeeklyCalendarProps) {
+export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask, onFocusModeChange }: WeeklyCalendarProps) {
   const isMobile = useIsMobile();
   const [startIndex, setStartIndex] = useState(0);
   const [focusMode, setFocusMode] = useState(false);
@@ -124,7 +125,9 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
   const todayIndex = 0;
   
   const handleFocusToday = () => {
-    setFocusMode(!focusMode);
+    const newFocusMode = !focusMode;
+    setFocusMode(newFocusMode);
+    onFocusModeChange(newFocusMode);
   };
   
   // Mobile: show all days in a single column starting with today
