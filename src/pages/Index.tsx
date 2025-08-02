@@ -1,12 +1,106 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from 'react';
+import { Code2 } from 'lucide-react';
+import Header from '@/components/Header';
+import ProjectCard from '@/components/ProjectCard';
+import CreateProjectDialog from '@/components/CreateProjectDialog';
+
+interface Task {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  tasks: Task[];
+}
 
 const Index = () => {
+  const [projects, setProjects] = useState<Project[]>([
+    {
+      id: '1',
+      name: 'Personal Portfolio',
+      description: 'Build a stunning portfolio website with React and TypeScript',
+      tasks: [
+        { id: '1', title: 'Design homepage layout', completed: true },
+        { id: '2', title: 'Create project showcase section', completed: true },
+        { id: '3', title: 'Add contact form', completed: false },
+        { id: '4', title: 'Implement dark mode', completed: false },
+      ]
+    },
+    {
+      id: '2',
+      name: 'Task Management App',
+      description: 'A simple and elegant task management tool for developers',
+      tasks: [
+        { id: '5', title: 'Set up project structure', completed: true },
+        { id: '6', title: 'Create task components', completed: false },
+        { id: '7', title: 'Add database integration', completed: false },
+      ]
+    }
+  ]);
+
+  const createProject = (projectData: Omit<Project, 'id'>) => {
+    const newProject: Project = {
+      ...projectData,
+      id: Date.now().toString()
+    };
+    setProjects([...projects, newProject]);
+  };
+
+  const updateProject = (updatedProject: Project) => {
+    setProjects(projects.map(project => 
+      project.id === updatedProject.id ? updatedProject : project
+    ));
+  };
+
+  const totalTasks = projects.reduce((sum, project) => sum + project.tasks.length, 0);
+  const completedTasks = projects.reduce((sum, project) => 
+    sum + project.tasks.filter(task => task.completed).length, 0
+  );
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-foreground">Your Projects</h2>
+              <p className="text-muted-foreground mt-1">
+                {projects.length} projects • {completedTasks}/{totalTasks} tasks completed
+              </p>
+            </div>
+            <CreateProjectDialog onCreateProject={createProject} />
+          </div>
+
+          {projects.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gradient-accent rounded-full flex items-center justify-center mx-auto mb-4">
+                <Code2 className="h-8 w-8 text-accent-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-2">No projects yet</h3>
+              <p className="text-muted-foreground mb-6">
+                Create your first Vibe Coding project to get started!
+              </p>
+              <CreateProjectDialog onCreateProject={createProject} />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onUpdateProject={updateProject}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 };
