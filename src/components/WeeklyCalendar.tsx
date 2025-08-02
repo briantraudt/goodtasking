@@ -1,6 +1,14 @@
 import { format, addDays, startOfWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
+import ProjectCard from './ProjectCard';
+
+interface Task {
+  id: string;
+  title: string;
+  completed: boolean;
+  due_date?: string;
+}
 
 interface Project {
   id: string;
@@ -8,21 +16,29 @@ interface Project {
   description?: string;
   created_at: string;
   updated_at: string;
-  tasks: any[];
+  tasks: Task[];
   scheduledDay?: string;
 }
 
 interface WeeklyCalendarProps {
   projects: Project[];
+  onUpdateProject: (id: string, updates: Partial<Project>) => void;
+  onDeleteProject: (id: string) => void;
+  onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
+  onUpdateTask: (id: string, updates: Partial<Task>) => void;
 }
 
 interface DayColumnProps {
   day: Date;
   dayName: string;
   projects: Project[];
+  onUpdateProject: (id: string, updates: Partial<Project>) => void;
+  onDeleteProject: (id: string) => void;
+  onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
+  onUpdateTask: (id: string, updates: Partial<Task>) => void;
 }
 
-function DayColumn({ day, dayName, projects }: DayColumnProps) {
+function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: DayColumnProps) {
   const dayString = format(day, 'yyyy-MM-dd');
   const { isOver, setNodeRef } = useDroppable({
     id: dayString,
@@ -34,12 +50,12 @@ function DayColumn({ day, dayName, projects }: DayColumnProps) {
     <div
       ref={setNodeRef}
       className={cn(
-        "flex-1 min-h-[120px] p-3 border border-border rounded-lg transition-colors",
+        "flex-1 min-h-[200px] p-2 border border-border rounded-lg transition-colors",
         isOver && "bg-accent/50 border-primary",
         isToday && "bg-primary/5 border-primary/20"
       )}
     >
-      <div className="text-center mb-3">
+      <div className="text-center mb-2">
         <div className={cn(
           "text-sm font-medium",
           isToday ? "text-primary" : "text-foreground"
@@ -56,11 +72,14 @@ function DayColumn({ day, dayName, projects }: DayColumnProps) {
       
       <div className="space-y-2">
         {projects.map((project) => (
-          <div
-            key={project.id}
-            className="text-xs p-2 bg-card border border-border rounded text-card-foreground"
-          >
-            {project.name}
+          <div key={project.id} className="transform scale-90 origin-top">
+            <ProjectCard
+              project={project}
+              onUpdateProject={onUpdateProject}
+              onDeleteProject={onDeleteProject}
+              onCreateTask={onCreateTask}
+              onUpdateTask={onUpdateTask}
+            />
           </div>
         ))}
       </div>
@@ -74,7 +93,7 @@ function DayColumn({ day, dayName, projects }: DayColumnProps) {
   );
 }
 
-export default function WeeklyCalendar({ projects }: WeeklyCalendarProps) {
+export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: WeeklyCalendarProps) {
   const today = new Date();
   const startOfThisWeek = startOfWeek(today, { weekStartsOn: 0 }); // Start on Sunday
   
@@ -95,6 +114,10 @@ export default function WeeklyCalendar({ projects }: WeeklyCalendarProps) {
               day={day}
               dayName={dayNames[index]}
               projects={dayProjects}
+              onUpdateProject={onUpdateProject}
+              onDeleteProject={onDeleteProject}
+              onCreateTask={onCreateTask}
+              onUpdateTask={onUpdateTask}
             />
           );
         })}

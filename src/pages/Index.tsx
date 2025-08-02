@@ -63,7 +63,13 @@ const Index = () => {
               <CreateProjectDialog onCreateProject={(data) => createProject(data.name, data.description)} />
             </div>
 
-            <WeeklyCalendar projects={projects} />
+            <WeeklyCalendar 
+              projects={projects} 
+              onUpdateProject={updateProject}
+              onDeleteProject={deleteProject}
+              onCreateTask={createTask}
+              onUpdateTask={updateTask}
+            />
 
             <div>
               <h3 className="text-xl font-semibold text-foreground mb-4">Unscheduled Projects</h3>
