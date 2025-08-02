@@ -16,25 +16,31 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          ai_assistant_enabled: boolean | null
           avatar_url: string | null
           created_at: string
           display_name: string | null
+          has_completed_onboarding: boolean | null
           id: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          ai_assistant_enabled?: boolean | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          has_completed_onboarding?: boolean | null
           id?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          ai_assistant_enabled?: boolean | null
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          has_completed_onboarding?: boolean | null
           id?: string
           updated_at?: string
           user_id?: string
