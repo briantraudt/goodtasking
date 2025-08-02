@@ -4,6 +4,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ProjectCard from './ProjectCard';
+import DraggableProjectCard from './DraggableProjectCard';
 import { Button } from '@/components/ui/button';
 
 interface Task {
@@ -76,7 +77,7 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
       <div className="space-y-2">
         {projects.map((project) => (
           <div key={project.id} className="transform scale-95 origin-top">
-            <ProjectCard
+            <DraggableProjectCard
               project={project}
               onUpdateProject={onUpdateProject}
               onDeleteProject={onDeleteProject}
