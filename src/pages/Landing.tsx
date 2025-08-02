@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Calendar, Brain, Target, Zap, ArrowRight, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import appMockup from "@/assets/app-mockup.png";
 
 const Landing = () => {
   return (
@@ -26,30 +27,62 @@ const Landing = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center space-y-6">
-            <Badge variant="secondary" className="mb-4">
-              <Zap className="h-3 w-3 mr-1" />
-              AI-Powered Task Management
-            </Badge>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-              Finally, a to-do app that{" "}
-              <span className="text-primary">thinks like you do</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Organize your week by project. Get daily AI-powered suggestions to stay focused.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8">
-              <Link to="/auth">
-                <Button size="lg" className="px-8">
-                  Get Started Free
-                  <ArrowRight className="ml-2 h-4 w-4" />
+      <section className="relative py-20 px-4 overflow-hidden">
+        {/* Background Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5"></div>
+        <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-gradient-to-bl from-primary/10 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-gradient-to-tr from-accent/10 to-transparent rounded-full blur-3xl"></div>
+        
+        <div className="container mx-auto max-w-6xl relative">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Content */}
+            <div className="space-y-6">
+              <Badge variant="secondary" className="mb-4">
+                <Zap className="h-3 w-3 mr-1" />
+                AI-Powered Task Management
+              </Badge>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+                Finally, a to-do app that{" "}
+                <span className="text-primary">thinks like you do</span>
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                Stay focused all week by organizing tasks by project — and let AI tell you what to do next.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                <Link to="/auth">
+                  <Button size="lg" className="px-8">
+                    Get Started Free
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Button variant="outline" size="lg" className="px-8">
+                  See How It Works
                 </Button>
-              </Link>
-              <Button variant="outline" size="lg" className="px-8">
-                See How It Works
-              </Button>
+              </div>
+            </div>
+
+            {/* Right Column - App Mockup */}
+            <div className="relative">
+              <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-border/20 transform rotate-1 hover:rotate-0 transition-transform duration-300">
+                <div className="bg-muted/30 px-4 py-3 border-b border-border/20 flex items-center space-x-2">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <div className="flex-1 text-center text-sm text-muted-foreground">
+                    goodtasking.com
+                  </div>
+                </div>
+                <img 
+                  src={appMockup} 
+                  alt="Good Tasking UI showing tasks organized by project and day"
+                  className="w-full h-auto"
+                />
+              </div>
+              {/* Floating elements for visual appeal */}
+              <div className="absolute -top-4 -right-4 w-8 h-8 bg-primary/20 rounded-full animate-pulse"></div>
+              <div className="absolute -bottom-6 -left-6 w-12 h-12 bg-accent/20 rounded-full animate-pulse delay-1000"></div>
             </div>
           </div>
         </div>
