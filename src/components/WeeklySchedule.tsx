@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { format, addDays, startOfWeek, isSameDay } from 'date-fns';
+import { format, addDays, startOfDay, isSameDay } from 'date-fns';
 import { ChevronLeft, ChevronRight, Check, Edit3, Trash2, Plus, Target, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,7 +46,8 @@ const WeeklySchedule = ({
 }: WeeklyScheduleProps) => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   
-  const weekStart = startOfWeek(currentWeek, { weekStartsOn: 0 }); // Sunday
+  // Start from today instead of Sunday
+  const weekStart = startOfDay(currentWeek);
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   const getTasksForDay = (date: Date) => {
@@ -108,19 +109,10 @@ const WeeklySchedule = ({
 
   return (
     <div className="space-y-6">
-      {/* Weekly AI Review */}
-      <WeeklyAIReview />
-      
-      {/* AI Daily Summary */}
-      <DailyAISummary />
-      
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
-            Hi {userName} 👋 Here's your week.
-          </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground">
             {hasAnyTasks ? (
               `${getCompletedTasks()}/${getTotalTasks()} tasks completed this week`
             ) : (
