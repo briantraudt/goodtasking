@@ -1,11 +1,44 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Calendar, Brain, Target, Zap, ArrowRight, Star } from "lucide-react";
+import { CheckCircle, Calendar, Brain, Target, Zap, ArrowRight, Star, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import appMockup from "@/assets/app-mockup.png";
 
 const Landing = () => {
+  const [isGetStartedLoading, setIsGetStartedLoading] = useState(false);
+  const [showPulse, setShowPulse] = useState(true);
+
+  useEffect(() => {
+    // Hide pulse animation after 3 seconds
+    const timer = setTimeout(() => {
+      setShowPulse(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  const scrollToHowItWorks = () => {
+    const howItWorksSection = document.getElementById('how-it-works');
+    if (howItWorksSection) {
+      howItWorksSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  const handleGetStarted = () => {
+    setIsGetStartedLoading(true);
+    // Optional: Add analytics tracking
+    // analytics.track('Clicked Get Started Free');
+    
+    // Simulate brief loading before redirect
+    setTimeout(() => {
+      window.location.href = '/auth';
+    }, 800);
+  };
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -49,13 +82,32 @@ const Landing = () => {
                 Stay focused all week by organizing tasks by project — and let AI tell you what to do next.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                <Link to="/auth">
-                  <Button size="lg" className="px-8">
-                    Get Started Free
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-                <Button variant="outline" size="lg" className="px-8">
+                <Button 
+                  size="lg" 
+                  className={`px-8 transition-all duration-300 hover:scale-105 active:scale-95 ${showPulse ? 'animate-pulse' : ''}`}
+                  onClick={handleGetStarted}
+                  disabled={isGetStartedLoading}
+                  aria-label="Get started with Good Tasking for free"
+                >
+                  {isGetStartedLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating your workspace...
+                    </>
+                  ) : (
+                    <>
+                      Get Started Free
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="px-8 transition-all duration-300 hover:scale-105 hover:bg-accent hover:text-accent-foreground active:scale-95"
+                  onClick={scrollToHowItWorks}
+                  aria-label="Learn how Good Tasking works"
+                >
                   See How It Works
                 </Button>
               </div>
@@ -89,7 +141,7 @@ const Landing = () => {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 px-4 bg-muted/30">
+      <section id="how-it-works" className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
