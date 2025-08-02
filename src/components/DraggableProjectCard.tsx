@@ -53,10 +53,22 @@ export default function DraggableProjectCard({
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
-      {...attributes}
-      className="cursor-grab active:cursor-grabbing"
+      className="relative"
     >
+      {/* Drag handle - only the header area */}
+      <div
+        {...listeners}
+        {...attributes}
+        className="absolute top-2 right-2 w-6 h-6 cursor-grab active:cursor-grabbing opacity-50 hover:opacity-100 transition-opacity z-10"
+      >
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="w-1 h-1 bg-muted-foreground rounded-full"></div>
+          <div className="w-1 h-1 bg-muted-foreground rounded-full ml-1"></div>
+          <div className="w-1 h-1 bg-muted-foreground rounded-full ml-1"></div>
+        </div>
+      </div>
+      
+      {/* Project card with normal functionality */}
       <ProjectCard
         project={project}
         onUpdateProject={onUpdateProject}
