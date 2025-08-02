@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import AddTaskDialog from './AddTaskDialog';
 import CreateProjectDialog from './CreateProjectDialog';
 import DailyAISummary from './DailyAISummary';
+import WeeklyAIReview from './WeeklyAIReview';
 
 interface Task {
   id: string;
@@ -104,6 +105,9 @@ const WeeklySchedule = ({
 
   return (
     <div className="space-y-6">
+      {/* Weekly AI Review */}
+      <WeeklyAIReview />
+      
       {/* AI Daily Summary */}
       <DailyAISummary />
       

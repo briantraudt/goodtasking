@@ -2,3 +2,6 @@ project_id = "ychheamigqjpxtnzqina"
 
 [functions.generate-daily-summary]
 verify_jwt = false
+
+[functions.generate-weekly-review]
+verify_jwt = false
