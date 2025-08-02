@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_summaries: {
+        Row: {
+          completion_rate: number | null
+          created_at: string
+          id: string
+          summary: string
+          summary_date: string
+          task_count: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completion_rate?: number | null
+          created_at?: string
+          id?: string
+          summary: string
+          summary_date: string
+          task_count?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completion_rate?: number | null
+          created_at?: string
+          id?: string
+          summary?: string
+          summary_date?: string
+          task_count?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           ai_assistant_enabled: boolean | null

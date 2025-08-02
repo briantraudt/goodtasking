@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import AddTaskDialog from './AddTaskDialog';
 import CreateProjectDialog from './CreateProjectDialog';
+import DailyAISummary from './DailyAISummary';
 
 interface Task {
   id: string;
@@ -103,6 +104,9 @@ const WeeklySchedule = ({
 
   return (
     <div className="space-y-6">
+      {/* AI Daily Summary */}
+      <DailyAISummary />
+      
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
