@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { format, addDays, startOfWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
-import { ChevronLeft, ChevronRight, Focus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Focus, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import DraggableProjectCard from './DraggableProjectCard';
+import CreateProjectDialog from './CreateProjectDialog';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -31,6 +32,8 @@ interface WeeklyCalendarProps {
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onFocusModeChange: (isFocused: boolean) => void;
+  isMobile: boolean;
+  onCreateProject: (data: { name: string; description: string }) => void;
 }
 
 interface DayColumnProps {
@@ -111,8 +114,7 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
   );
 }
 
-export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask, onFocusModeChange }: WeeklyCalendarProps) {
-  const isMobile = useIsMobile();
+export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask, onFocusModeChange, isMobile, onCreateProject }: WeeklyCalendarProps) {
   const [startIndex, setStartIndex] = useState(0);
   const [focusMode, setFocusMode] = useState(false);
   const today = new Date();
@@ -144,9 +146,16 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
 
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-semibold text-foreground mb-4">
-          {focusMode ? "Today's Focus" : "Weekly Schedule"}
-        </h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-foreground">
+            {focusMode ? "Today's Focus" : "Weekly Schedule"}
+          </h3>
+          <CreateProjectDialog onCreateProject={onCreateProject}>
+            <Button size="icon" className="bg-gradient-primary hover:bg-gradient-primary/90 shadow-card">
+              <Plus className="h-4 w-4" />
+            </Button>
+          </CreateProjectDialog>
+        </div>
         <div className="space-y-4">
           {daysToShow.map(({ day, name }) => {
             const dayString = format(day, 'yyyy-MM-dd');
@@ -179,7 +188,9 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
     
     return (
       <div className="mb-8">
-        <h3 className="text-xl font-semibold text-foreground mb-4">Today's Focus</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-foreground">Today's Focus</h3>
+        </div>
         <div className="flex justify-center">
           <div className="w-1/3">
             <DayColumn

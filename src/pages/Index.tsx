@@ -7,6 +7,7 @@ import DraggableProjectCard from '@/components/DraggableProjectCard';
 import WeeklyCalendar from '@/components/WeeklyCalendar';
 import CreateProjectDialog from '@/components/CreateProjectDialog';
 import { useProjects } from '@/hooks/useProjects';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Index = () => {
   const { 
@@ -20,6 +21,7 @@ const Index = () => {
   } = useProjects();
   
   const [isFocusMode, setIsFocusMode] = useState(false);
+  const isMobile = useIsMobile();
 
   const totalTasks = projects.reduce((sum, project) => sum + project.tasks.length, 0);
   const completedTasks = projects.reduce((sum, project) => 
@@ -56,15 +58,18 @@ const Index = () => {
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-3xl font-bold text-foreground">Your Projects</h2>
-                <p className="text-muted-foreground mt-1">
-                  {projects.length} projects • {completedTasks}/{totalTasks} tasks completed
-                </p>
+            {/* Hide "Your Projects" header on mobile */}
+            {!isMobile && (
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold text-foreground">Your Projects</h2>
+                  <p className="text-muted-foreground mt-1">
+                    {projects.length} projects • {completedTasks}/{totalTasks} tasks completed
+                  </p>
+                </div>
+                <CreateProjectDialog onCreateProject={(data) => createProject(data.name, data.description)} />
               </div>
-              <CreateProjectDialog onCreateProject={(data) => createProject(data.name, data.description)} />
-            </div>
+            )}
 
             <WeeklyCalendar 
               projects={projects} 
@@ -73,6 +78,8 @@ const Index = () => {
               onCreateTask={createTask}
               onUpdateTask={updateTask}
               onFocusModeChange={setIsFocusMode}
+              isMobile={isMobile}
+              onCreateProject={(data) => createProject(data.name, data.description)}
             />
 
             {/* Hide unscheduled projects when in focus mode */}

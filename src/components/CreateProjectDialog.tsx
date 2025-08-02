@@ -15,9 +15,10 @@ interface Project {
 
 interface CreateProjectDialogProps {
   onCreateProject: (project: Omit<Project, 'id'>) => void;
+  children?: React.ReactNode;
 }
 
-export default function CreateProjectDialog({ onCreateProject }: CreateProjectDialogProps) {
+export default function CreateProjectDialog({ onCreateProject, children }: CreateProjectDialogProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -39,10 +40,12 @@ export default function CreateProjectDialog({ onCreateProject }: CreateProjectDi
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-primary hover:bg-gradient-primary/90 shadow-card">
-          <Plus className="h-4 w-4 mr-2" />
-          New Project
-        </Button>
+        {children || (
+          <Button className="bg-gradient-primary hover:bg-gradient-primary/90 shadow-card">
+            <Plus className="h-4 w-4 mr-2" />
+            New Project
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-gradient-card border-0 shadow-elevated">
         <DialogHeader>
