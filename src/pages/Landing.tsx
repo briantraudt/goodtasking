@@ -260,41 +260,86 @@ const Landing = () => {
       <section className="py-20 px-4 bg-muted/30">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Users Say</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">What Early Users Are Saying</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Real feedback from people using Good Tasking to stay focused and get more done.
+            </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <Card className="p-6">
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-background/80 backdrop-blur">
               <CardContent className="space-y-4">
-                <div className="flex space-x-1">
+                <div className="flex space-x-1 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                    <Star key={i} className="h-4 w-4 fill-primary text-primary" />
                   ))}
                 </div>
-                <p className="text-lg italic">
-                  "This is the first to-do app that actually helps me focus."
+                <p className="text-lg italic leading-relaxed">
+                  "This app keeps my head clear. I finally feel like I'm in control of my week."
                 </p>
-                <div className="text-sm text-muted-foreground">
-                  — Sarah Chen, Product Manager
+                <div className="flex items-center space-x-3 pt-4">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-semibold">
+                    SL
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Sarah L.</div>
+                    <div className="text-xs text-muted-foreground">Copywriter</div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="p-6">
+            <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-background/80 backdrop-blur">
               <CardContent className="space-y-4">
-                <div className="flex space-x-1">
+                <div className="flex space-x-1 mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                    <Star key={i} className="h-4 w-4 fill-primary text-primary" />
                   ))}
                 </div>
-                <p className="text-lg italic">
-                  "The daily AI summary is like a personal productivity coach."
+                <p className="text-lg italic leading-relaxed">
+                  "It's like having a personal assistant that knows what I should be working on."
                 </p>
-                <div className="text-sm text-muted-foreground">
-                  — Michael Rodriguez, Entrepreneur
+                <div className="flex items-center space-x-3 pt-4">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center text-white font-semibold">
+                    JR
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Jamal R.</div>
+                    <div className="text-xs text-muted-foreground">Developer</div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
+
+            <Card className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-background/80 backdrop-blur">
+              <CardContent className="space-y-4">
+                <div className="flex space-x-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-primary text-primary" />
+                  ))}
+                </div>
+                <p className="text-lg italic leading-relaxed">
+                  "Every other task app made me feel overwhelmed. This one simplifies everything."
+                </p>
+                <div className="flex items-center space-x-3 pt-4">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-semibold">
+                    BT
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">Beth T.</div>
+                    <div className="text-xs text-muted-foreground">Teacher</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Leave a Testimonial CTA */}
+          <div className="text-center">
+            <Button variant="outline" className="hover:scale-105 transition-transform duration-200">
+              <Star className="mr-2 h-4 w-4" />
+              Leave a Testimonial
+            </Button>
           </div>
         </div>
       </section>
