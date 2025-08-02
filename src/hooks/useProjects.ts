@@ -8,6 +8,7 @@ export interface Task {
   title: string;
   description?: string;
   completed: boolean;
+  due_date?: string;
   created_at: string;
   updated_at: string;
 }
@@ -149,7 +150,7 @@ export const useProjects = () => {
     }
   };
 
-  const createTask = async (projectId: string, title: string, description?: string) => {
+  const createTask = async (projectId: string, title: string, description?: string, dueDate?: Date) => {
     if (!user) return;
 
     try {
@@ -158,6 +159,7 @@ export const useProjects = () => {
         .insert([{ 
           title, 
           description, 
+          due_date: dueDate?.toISOString(),
           project_id: projectId, 
           user_id: user.id 
         }])
