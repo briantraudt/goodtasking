@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Focus, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import DraggableProjectCard from './DraggableProjectCard';
 import CreateProjectDialog from './CreateProjectDialog';
+import SmartDailySummary from './SmartDailySummary';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -90,6 +91,11 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
           </Button>
         )}
       </div>
+      
+      {/* Smart Daily Summary - only show for today */}
+      {isToday && (
+        <SmartDailySummary targetDate={dayString} isToday={true} />
+      )}
       
       <div className="space-y-2">
         {projects.map((project) => (
