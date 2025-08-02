@@ -73,7 +73,7 @@ const Auth = () => {
           <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
             <Code2 className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl">Welcome to Vibe Coding</CardTitle>
+          <CardTitle className="text-2xl">Welcome to Good Tasking</CardTitle>
           <CardDescription>
             Sign in to your account or create a new one to get started
           </CardDescription>

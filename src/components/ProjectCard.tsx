@@ -15,13 +15,13 @@ interface Task {
 interface Project {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   tasks: Task[];
 }
 
 interface ProjectCardProps {
   project: Project;
-  onUpdateProject: (project: Project) => void;
+  onUpdateProject: (id: string, updates: Partial<Project>) => void;
 }
 
 export default function ProjectCard({ project, onUpdateProject }: ProjectCardProps) {
@@ -38,8 +38,7 @@ export default function ProjectCard({ project, onUpdateProject }: ProjectCardPro
         title: newTaskTitle.trim(),
         completed: false
       };
-      onUpdateProject({
-        ...project,
+      onUpdateProject(project.id, {
         tasks: [...project.tasks, newTask]
       });
       setNewTaskTitle('');
@@ -51,8 +50,7 @@ export default function ProjectCard({ project, onUpdateProject }: ProjectCardPro
     const updatedTasks = project.tasks.map(task =>
       task.id === taskId ? { ...task, completed: !task.completed } : task
     );
-    onUpdateProject({
-      ...project,
+    onUpdateProject(project.id, {
       tasks: updatedTasks
     });
   };
@@ -63,7 +61,7 @@ export default function ProjectCard({ project, onUpdateProject }: ProjectCardPro
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <h3 className="text-xl font-semibold text-foreground">{project.name}</h3>
-            <p className="text-sm text-muted-foreground">{project.description}</p>
+            {project.description && <p className="text-sm text-muted-foreground">{project.description}</p>}
           </div>
           <Button variant="ghost" size="sm" className="opacity-60 hover:opacity-100">
             <MoreVertical className="h-4 w-4" />

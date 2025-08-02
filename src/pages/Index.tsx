@@ -48,7 +48,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">No projects yet</h3>
               <p className="text-muted-foreground mb-6">
-                Create your first Vibe Coding project to get started!
+                Create your first project to get started!
               </p>
             <CreateProjectDialog onCreateProject={(data) => createProject(data.name, data.description)} />
             </div>

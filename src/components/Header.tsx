@@ -12,13 +12,13 @@ export default function Header() {
               <Code2 className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Vibe Coding</h1>
-              <p className="text-xs text-muted-foreground">Project Manager</p>
+              <h1 className="text-xl font-bold text-foreground">Good Tasking</h1>
+              <p className="text-xs text-muted-foreground">Task Manager</p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-muted-foreground">
-              Keep your coding projects organized
+              Keep your tasks organized and productive
             </span>
           </div>
         </div>
