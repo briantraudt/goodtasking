@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.generate-weekly-review]
 verify_jwt = false
+
+[functions.plan-my-week]
+verify_jwt = false

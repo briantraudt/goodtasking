@@ -10,7 +10,8 @@ const Index = () => {
     loading, 
     createProject, 
     createTask,
-    updateTask
+    updateTask,
+    refetch
   } = useProjects();
 
   // Get user's first name from email for personalization
@@ -39,6 +40,7 @@ const Index = () => {
           onUpdateTask={updateTask}
           onCreateTask={createTask}
           onCreateProject={(data) => createProject(data.name, data.description)}
+          onRefreshTasks={refetch}
           userName={getUserName()}
         />
       </main>

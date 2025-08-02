@@ -10,6 +10,7 @@ import AddTaskDialog from './AddTaskDialog';
 import CreateProjectDialog from './CreateProjectDialog';
 import DailyAISummary from './DailyAISummary';
 import WeeklyAIReview from './WeeklyAIReview';
+import PlanMyWeekDialog from './PlanMyWeekDialog';
 
 interface Task {
   id: string;
@@ -31,6 +32,7 @@ interface WeeklyScheduleProps {
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
   onCreateProject: (data: { name: string; description: string }) => void;
+  onRefreshTasks?: () => void;
   userName?: string;
 }
 
@@ -39,6 +41,7 @@ const WeeklySchedule = ({
   onUpdateTask, 
   onCreateTask, 
   onCreateProject,
+  onRefreshTasks,
   userName = "there"
 }: WeeklyScheduleProps) => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
@@ -131,6 +134,10 @@ const WeeklySchedule = ({
           <AddTaskDialog 
             projects={projects} 
             onCreateTask={handleCreateTaskForProject}
+          />
+          <PlanMyWeekDialog 
+            projects={projects}
+            onTasksCreated={onRefreshTasks}
           />
         </div>
       </div>
