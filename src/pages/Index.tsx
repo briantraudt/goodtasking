@@ -2,6 +2,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProjects } from '@/hooks/useProjects';
 import Header from '@/components/Header';
 import WeeklySchedule from '@/components/WeeklySchedule';
+import EnableAIAssistant from '@/components/EnableAIAssistant';
 
 const Index = () => {
   const { user } = useAuth();
@@ -32,6 +33,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <EnableAIAssistant />
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
