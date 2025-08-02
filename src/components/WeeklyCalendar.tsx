@@ -50,9 +50,10 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
     <div
       ref={setNodeRef}
       className={cn(
-        "flex-1 min-h-[200px] p-2 border border-border rounded-lg transition-colors",
+        "min-h-[200px] p-2 border border-border rounded-lg transition-colors",
         isOver && "bg-accent/50 border-primary",
-        isToday && "bg-primary/5 border-primary/20"
+        isToday && "bg-primary/5 border-primary/20",
+        isToday ? "col-span-3" : "flex-1"
       )}
     >
       <div className="text-center mb-2">
@@ -72,14 +73,22 @@ function DayColumn({ day, dayName, projects, onUpdateProject, onDeleteProject, o
       
       <div className="space-y-2">
         {projects.map((project) => (
-          <div key={project.id} className="transform scale-90 origin-top">
-            <ProjectCard
-              project={project}
-              onUpdateProject={onUpdateProject}
-              onDeleteProject={onDeleteProject}
-              onCreateTask={onCreateTask}
-              onUpdateTask={onUpdateTask}
-            />
+          <div key={project.id}>
+            {isToday ? (
+              <div className="transform scale-95 origin-top">
+                <ProjectCard
+                  project={project}
+                  onUpdateProject={onUpdateProject}
+                  onDeleteProject={onDeleteProject}
+                  onCreateTask={onCreateTask}
+                  onUpdateTask={onUpdateTask}
+                />
+              </div>
+            ) : (
+              <div className="text-xs p-2 bg-card border border-border rounded text-card-foreground">
+                {project.name}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -103,7 +112,7 @@ export default function WeeklyCalendar({ projects, onUpdateProject, onDeleteProj
   return (
     <div className="mb-8">
       <h3 className="text-xl font-semibold text-foreground mb-4">Weekly Schedule</h3>
-      <div className="grid grid-cols-7 gap-3">
+      <div className="grid grid-cols-9 gap-3">
         {days.map((day, index) => {
           const dayString = format(day, 'yyyy-MM-dd');
           const dayProjects = projects.filter(p => p.scheduledDay === dayString);
