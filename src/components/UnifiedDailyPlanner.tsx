@@ -6,11 +6,12 @@ import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { useAIScheduler } from '@/hooks/useAIScheduler';
 import { useAIPlanner } from '@/hooks/useAIPlanner';
 import TaskSidebar from '@/components/TaskSidebar';
+import DraggableTimelineTask from '@/components/DraggableTimelineTask';
 import { Calendar, Clock, Sparkles, Loader2, Undo2 } from 'lucide-react';
 import { format, parseISO, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { DndContext, DragEndEvent, DragOverEvent, useDroppable } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragOverEvent, useDroppable, useDraggable } from '@dnd-kit/core';
 
 interface Task {
   id: string;
@@ -256,73 +257,172 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
     
     if (!over || !active.data.current) return;
 
-    const task = active.data.current as Task;
-    const dropSlot = over.id as string;
+    const activeData = active.data.current;
     
-    // Parse the drop slot (format: "hour-period")
-    const [hourStr, period] = dropSlot.split('-');
-    const hour = parseInt(hourStr);
-    const minutes = period === 'second' ? 30 : 0;
-    
-    // Check for overlap before proceeding
-    if (hasTimeSlotOverlap(hour, period as 'first' | 'second')) {
-      toast({
-        title: "Time Slot Conflict",
-        description: "This time slot is already occupied. Please choose another time.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    const startTime = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    const duration = task.estimated_duration || 30;
-    const endHour = Math.floor((hour * 60 + minutes + duration) / 60);
-    const endMinutes = (hour * 60 + minutes + duration) % 60;
-    const endTime = `${endHour.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
-
-    // Store undo action
-    setUndoAction({
-      taskId: task.id,
-      taskTitle: task.title,
-      previousState: {
-        scheduled_date: task.scheduled_date
+    // Handle dragging from sidebar to calendar
+    if (activeData.type !== 'timeline-task') {
+      const task = activeData as Task;
+      const dropSlot = over.id as string;
+      
+      // Check if dropping to sidebar (unschedule)
+      if (dropSlot === 'task-sidebar') {
+        return; // Task is already unscheduled
       }
-    });
+      
+      // Parse the drop slot (format: "hour-period")
+      const [hourStr, period] = dropSlot.split('-');
+      const hour = parseInt(hourStr);
+      const minutes = period === 'second' ? 30 : 0;
+      
+      // Check for overlap before proceeding
+      if (hasTimeSlotOverlap(hour, period as 'first' | 'second')) {
+        toast({
+          title: "Time Slot Conflict",
+          description: "This time slot is already occupied. Please choose another time.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      const startTime = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      const duration = task.estimated_duration || 30;
+      const endHour = Math.floor((hour * 60 + minutes + duration) / 60);
+      const endMinutes = (hour * 60 + minutes + duration) % 60;
+      const endTime = `${endHour.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
 
-    // Update task in database
-    const success = await updateTaskSchedule(task.id, selectedDate, startTime, endTime);
-    
-    if (success) {
-      // Update local state
-      onUpdateTask(task.id, { scheduled_date: selectedDate });
-      
-      // Add to time blocks
-      const newBlock: TimeBlock = {
-        id: `task-${task.id}`,
-        title: task.title,
-        start: startTime,
-        end: endTime,
-        type: 'task',
-        color: getPriorityColor(task.priority),
-        priority: task.priority
-      };
-      
-      setTimeBlocks(prev => [...prev, newBlock].sort((a, b) => a.start.localeCompare(b.start)));
-      
-      toast({
-        title: "Task Scheduled! ✅",
-        description: `${task.title} scheduled for ${startTime}`,
+      // Store undo action
+      setUndoAction({
+        taskId: task.id,
+        taskTitle: task.title,
+        previousState: {
+          scheduled_date: task.scheduled_date
+        }
       });
 
-      // Clear undo after 5 seconds
-      setTimeout(() => setUndoAction(null), 5000);
-    } else {
-      setUndoAction(null);
-      toast({
-        title: "Scheduling Failed",
-        description: "Unable to schedule task. Please try again.",
-        variant: "destructive",
-      });
+      // Update task in database
+      const success = await updateTaskSchedule(task.id, selectedDate, startTime, endTime);
+      
+      if (success) {
+        // Update local state
+        onUpdateTask(task.id, { scheduled_date: selectedDate });
+        
+        // Add to time blocks
+        const newBlock: TimeBlock = {
+          id: `task-${task.id}`,
+          title: task.title,
+          start: startTime,
+          end: endTime,
+          type: 'task',
+          color: getPriorityColor(task.priority),
+          priority: task.priority
+        };
+        
+        setTimeBlocks(prev => [...prev, newBlock].sort((a, b) => a.start.localeCompare(b.start)));
+        
+        toast({
+          title: "Task Scheduled! ✅",
+          description: `${task.title} scheduled for ${startTime}`,
+        });
+
+        // Clear undo after 5 seconds
+        setTimeout(() => setUndoAction(null), 5000);
+      } else {
+        setUndoAction(null);
+        toast({
+          title: "Scheduling Failed",
+          description: "Unable to schedule task. Please try again.",
+          variant: "destructive",
+        });
+      }
+    }
+    // Handle dragging from timeline back to sidebar
+    else if (activeData.type === 'timeline-task') {
+      const { task, block } = activeData;
+      const dropSlot = over.id as string;
+      
+      // Check if dropping to sidebar (unschedule)
+      if (dropSlot === 'task-sidebar') {
+        // Store undo action
+        setUndoAction({
+          taskId: task.id,
+          taskTitle: task.title,
+          previousState: {
+            scheduled_date: task.scheduled_date
+          }
+        });
+
+        // Unschedule task
+        const success = await updateTaskSchedule(task.id, '', '', '');
+        
+        if (success) {
+          // Update local state
+          onUpdateTask(task.id, { scheduled_date: null });
+          
+          // Remove from time blocks
+          setTimeBlocks(prev => prev.filter(b => b.id !== block.id));
+          
+          toast({
+            title: "Task Unscheduled",
+            description: `${task.title} moved back to task list`,
+          });
+
+          // Clear undo after 5 seconds
+          setTimeout(() => setUndoAction(null), 5000);
+        }
+      }
+      // Handle moving between time slots
+      else {
+        const [hourStr, period] = dropSlot.split('-');
+        const hour = parseInt(hourStr);
+        const minutes = period === 'second' ? 30 : 0;
+        
+        // Check for overlap before proceeding
+        if (hasTimeSlotOverlap(hour, period as 'first' | 'second')) {
+          toast({
+            title: "Time Slot Conflict",
+            description: "This time slot is already occupied. Please choose another time.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        const startTime = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        const duration = task.estimated_duration || 30;
+        const endHour = Math.floor((hour * 60 + minutes + duration) / 60);
+        const endMinutes = (hour * 60 + minutes + duration) % 60;
+        const endTime = `${endHour.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+
+        // Store undo action
+        setUndoAction({
+          taskId: task.id,
+          taskTitle: task.title,
+          previousState: {
+            scheduled_date: task.scheduled_date
+          }
+        });
+
+        // Update task in database
+        const success = await updateTaskSchedule(task.id, selectedDate, startTime, endTime);
+        
+        if (success) {
+          // Update time blocks
+          setTimeBlocks(prev => 
+            prev.map(b => 
+              b.id === block.id 
+                ? { ...b, start: startTime, end: endTime }
+                : b
+            ).sort((a, b) => a.start.localeCompare(b.start))
+          );
+          
+          toast({
+            title: "Task Rescheduled",
+            description: `${task.title} moved to ${startTime}`,
+          });
+
+          // Clear undo after 5 seconds
+          setTimeout(() => setUndoAction(null), 5000);
+        }
+      }
     }
   };
 
@@ -446,25 +546,20 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
                       hasOverlap={hasTimeSlotOverlap(hour, 'first')}
                       isCurrentTime={isCurrentTimeSlot(hour, 'first')}
                     >
-                      {timeBlocks
+                       {timeBlocks
                         .filter(block => block.start.startsWith(`${hour.toString().padStart(2, '0')}:0`))
-                        .map(block => (
-                          <div
-                            key={block.id}
-                            className={cn(
-                              "p-2 m-1 rounded text-xs transition-all hover:shadow-sm",
-                              block.color
-                            )}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium">{block.start} - {block.end}</span>
-                              <Badge variant="outline" className="text-xs">
-                                {block.type}
-                              </Badge>
-                            </div>
-                            <p className="font-medium mt-1">{block.title}</p>
-                          </div>
-                        ))
+                        .map(block => {
+                          const relatedTask = block.type === 'task' ? 
+                            scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
+                          
+                          return (
+                            <DraggableTimelineTask
+                              key={block.id}
+                              block={block}
+                              task={relatedTask}
+                            />
+                          );
+                        })
                       }
                     </DroppableTimeSlot>
                     
@@ -477,23 +572,18 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
                     >
                       {timeBlocks
                         .filter(block => block.start.startsWith(`${hour.toString().padStart(2, '0')}:3`))
-                        .map(block => (
-                          <div
-                            key={block.id}
-                            className={cn(
-                              "p-2 m-1 rounded text-xs transition-all hover:shadow-sm",
-                              block.color
-                            )}
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium">{block.start} - {block.end}</span>
-                              <Badge variant="outline" className="text-xs">
-                                {block.type}
-                              </Badge>
-                            </div>
-                            <p className="font-medium mt-1">{block.title}</p>
-                          </div>
-                        ))
+                        .map(block => {
+                          const relatedTask = block.type === 'task' ? 
+                            scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
+                          
+                          return (
+                            <DraggableTimelineTask
+                              key={block.id}
+                              block={block}
+                              task={relatedTask}
+                            />
+                          );
+                        })
                       }
                     </DroppableTimeSlot>
                   </div>

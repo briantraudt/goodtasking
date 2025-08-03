@@ -7,6 +7,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import { Plus, Filter } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
+import { useDroppable } from '@dnd-kit/core';
+import { cn } from '@/lib/utils';
 
 interface Task {
   id: string;
@@ -35,6 +37,11 @@ const TaskSidebar = ({ projects, selectedDate, className }: TaskSidebarProps) =>
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
+
+  // Set up droppable for the sidebar
+  const { isOver, setNodeRef } = useDroppable({
+    id: 'task-sidebar',
+  });
 
   // Get all unscheduled tasks
   const unscheduledTasks = useMemo(() => {
@@ -101,7 +108,13 @@ const TaskSidebar = ({ projects, selectedDate, className }: TaskSidebarProps) =>
   };
 
   return (
-    <Card className={className}>
+    <Card 
+      ref={setNodeRef}
+      className={cn(
+        className,
+        isOver && "ring-2 ring-blue-500 ring-offset-2 bg-blue-50/50"
+      )}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
@@ -201,6 +214,8 @@ const TaskSidebar = ({ projects, selectedDate, className }: TaskSidebarProps) =>
         {/* Quick Tips */}
         <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
           💡 Drag tasks to the calendar to schedule them
+          <br />
+          🔄 Drag scheduled tasks back here to unschedule them
         </div>
       </CardContent>
     </Card>
