@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      daily_reminders: {
+        Row: {
+          created_at: string
+          email_sent_at: string
+          id: string
+          reminder_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_sent_at?: string
+          id?: string
+          reminder_date: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_sent_at?: string
+          id?: string
+          reminder_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_summaries: {
         Row: {
           completion_rate: number | null
@@ -90,6 +114,8 @@ export type Database = {
           default_project_id: string | null
           default_task_day: string | null
           id: string
+          last_login_date: string | null
+          reminders_enabled: boolean | null
           updated_at: string
           user_id: string
           weekly_review_enabled: boolean | null
@@ -103,6 +129,8 @@ export type Database = {
           default_project_id?: string | null
           default_task_day?: string | null
           id?: string
+          last_login_date?: string | null
+          reminders_enabled?: boolean | null
           updated_at?: string
           user_id: string
           weekly_review_enabled?: boolean | null
@@ -116,6 +144,8 @@ export type Database = {
           default_project_id?: string | null
           default_task_day?: string | null
           id?: string
+          last_login_date?: string | null
+          reminders_enabled?: boolean | null
           updated_at?: string
           user_id?: string
           weekly_review_enabled?: boolean | null
