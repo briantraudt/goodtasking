@@ -31,8 +31,18 @@ serve(async (req) => {
   try {
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { auth: { persistSession: false } }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        },
+        global: {
+          headers: {
+            Authorization: req.headers.get('Authorization') || ''
+          }
+        }
+      }
     );
 
     const url = new URL(req.url);
@@ -58,9 +68,6 @@ serve(async (req) => {
     // Get the JWT from the auth header
     const jwt = authHeader.replace('Bearer ', '');
     
-    // Set the JWT for this request
-    supabase.auth.setSession({ access_token: jwt, refresh_token: '' });
-
     // Get the user
     const { data: { user }, error: userError } = await supabase.auth.getUser(jwt);
     if (userError || !user) {
