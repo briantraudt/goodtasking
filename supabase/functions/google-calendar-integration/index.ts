@@ -35,54 +35,17 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Get the authorization header
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      throw new Error('No authorization header');
-    }
-
-    // Get the JWT from the auth header
-    const jwt = authHeader.replace('Bearer ', '');
-    
-    // Set the JWT for this request
-    supabase.auth.setSession({ access_token: jwt, refresh_token: '' });
-
-    // Get the user
-    const { data: { user }, error: userError } = await supabase.auth.getUser(jwt);
-    if (userError || !user) {
-      throw new Error('Invalid user');
-    }
-
     const url = new URL(req.url);
     let action = url.searchParams.get('action');
     
-    // If action is not in URL params, try to get it from request body
-    if (!action && req.method === 'POST') {
-      try {
-        const requestClone = req.clone();
-        const body = await requestClone.json();
-        action = body.action;
-      } catch {
-        // If we can't parse JSON, that's okay, action will remain null
-      }
-    }
-    
-    const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
-
-    if (action === 'client-id') {
-      // Return the public client ID for frontend OAuth
-      return new Response(JSON.stringify({ 
-        clientId: Deno.env.get('GOOGLE_CLIENT_ID') || '' 
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-
-    } else if (action === 'callback') {
+    // Handle callback action without JWT since it comes from Google
+    if (action === 'callback') {
       // Handle OAuth callback from Google
       const code = url.searchParams.get('code');
+      const state = url.searchParams.get('state'); // This contains the user ID
       
-      if (!code) {
-        return new Response('Authorization code not found', { status: 400 });
+      if (!code || !state) {
+        return new Response('Authorization code or state not found', { status: 400 });
       }
 
       // Exchange code for tokens
@@ -111,11 +74,17 @@ serve(async (req) => {
       // Calculate expiration time
       const expiresAt = new Date(Date.now() + (tokenData.expires_in * 1000));
 
-      // Store tokens in database
-      const { error: insertError } = await supabase
+      // Create admin client to store tokens
+      const adminSupabase = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
+
+      // Store tokens in database using the user ID from state
+      const { error: insertError } = await adminSupabase
         .from('google_calendar_tokens')
         .upsert({
-          user_id: user.id,
+          user_id: state, // Use the user ID passed in state
           access_token: tokenData.access_token,
           refresh_token: tokenData.refresh_token,
           expires_at: expiresAt.toISOString(),
@@ -130,10 +99,10 @@ serve(async (req) => {
       }
 
       // Update user preferences
-      await supabase
+      await adminSupabase
         .from('user_preferences')
         .upsert({
-          user_id: user.id,
+          user_id: state,
           google_calendar_enabled: true,
         });
 
@@ -150,6 +119,46 @@ serve(async (req) => {
         </html>
       `, {
         headers: { 'Content-Type': 'text/html' },
+      });
+    }
+
+    // For all other actions, require authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('No authorization header');
+    }
+
+    // Get the JWT from the auth header
+    const jwt = authHeader.replace('Bearer ', '');
+    
+    // Set the JWT for this request
+    supabase.auth.setSession({ access_token: jwt, refresh_token: '' });
+
+    // Get the user
+    const { data: { user }, error: userError } = await supabase.auth.getUser(jwt);
+    if (userError || !user) {
+      throw new Error('Invalid user');
+    }
+    
+    // If action is not in URL params, try to get it from request body
+    if (!action && req.method === 'POST') {
+      try {
+        const requestClone = req.clone();
+        const body = await requestClone.json();
+        action = body.action;
+      } catch {
+        // If we can't parse JSON, that's okay, action will remain null
+      }
+    }
+    
+    const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
+
+    if (action === 'client-id') {
+      // Return the public client ID for frontend OAuth
+      return new Response(JSON.stringify({ 
+        clientId: Deno.env.get('GOOGLE_CLIENT_ID') || '' 
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
 
     } else if (action === 'connect') {
