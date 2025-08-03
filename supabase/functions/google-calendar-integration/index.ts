@@ -54,7 +54,19 @@ serve(async (req) => {
     }
 
     const url = new URL(req.url);
-    const action = url.searchParams.get('action');
+    let action = url.searchParams.get('action');
+    
+    // If action is not in URL params, try to get it from request body
+    if (!action && req.method === 'POST') {
+      try {
+        const requestClone = req.clone();
+        const body = await requestClone.json();
+        action = body.action;
+      } catch {
+        // If we can't parse JSON, that's okay, action will remain null
+      }
+    }
+    
     const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
 
     if (action === 'client-id') {
