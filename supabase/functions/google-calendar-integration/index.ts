@@ -38,91 +38,18 @@ serve(async (req) => {
     const url = new URL(req.url);
     let action = url.searchParams.get('action');
     
-    // Handle callback action without JWT since it comes from Google
-    if (action === 'callback') {
-      // Handle OAuth callback from Google
-      const code = url.searchParams.get('code');
-      const state = url.searchParams.get('state'); // This contains the user ID
-      
-      if (!code || !state) {
-        return new Response('Authorization code or state not found', { status: 400 });
+    // If action is not in URL params, try to get it from request body
+    if (!action && req.method === 'POST') {
+      try {
+        const requestClone = req.clone();
+        const body = await requestClone.json();
+        action = body.action;
+      } catch {
+        // If we can't parse JSON, that's okay, action will remain null
       }
-
-      // Exchange code for tokens
-      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: Deno.env.get('GOOGLE_CLIENT_ID') || '',
-          client_secret: Deno.env.get('GOOGLE_CLIENT_SECRET') || '',
-          code,
-          grant_type: 'authorization_code',
-          redirect_uri: `https://ychheamigqjpxtnzqina.supabase.co/functions/v1/google-calendar-integration?action=callback`,
-        }),
-      });
-
-      const tokenData = await tokenResponse.json();
-      
-      if (!tokenResponse.ok) {
-        return new Response(`<html><body><script>window.close();</script><p>Authentication failed: ${tokenData.error_description}</p></body></html>`, {
-          headers: { 'Content-Type': 'text/html' },
-        });
-      }
-
-      // Calculate expiration time
-      const expiresAt = new Date(Date.now() + (tokenData.expires_in * 1000));
-
-      // Create admin client to store tokens
-      const adminSupabase = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      );
-
-      // Store tokens in database using the user ID from state
-      const { error: insertError } = await adminSupabase
-        .from('google_calendar_tokens')
-        .upsert({
-          user_id: state, // Use the user ID passed in state
-          access_token: tokenData.access_token,
-          refresh_token: tokenData.refresh_token,
-          expires_at: expiresAt.toISOString(),
-          scope: tokenData.scope,
-          token_type: tokenData.token_type,
-        });
-
-      if (insertError) {
-        return new Response(`<html><body><script>window.close();</script><p>Database error: ${insertError.message}</p></body></html>`, {
-          headers: { 'Content-Type': 'text/html' },
-        });
-      }
-
-      // Update user preferences
-      await adminSupabase
-        .from('user_preferences')
-        .upsert({
-          user_id: state,
-          google_calendar_enabled: true,
-        });
-
-      // Return success page that closes popup
-      return new Response(`
-        <html>
-          <body>
-            <script>
-              window.opener?.postMessage('google-calendar-connected', '*');
-              window.close();
-            </script>
-            <p>Calendar connected successfully! You can close this window.</p>
-          </body>
-        </html>
-      `, {
-        headers: { 'Content-Type': 'text/html' },
-      });
     }
 
-    // For all other actions, require authentication
+    // Get the authorization header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       throw new Error('No authorization header');
@@ -138,17 +65,6 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser(jwt);
     if (userError || !user) {
       throw new Error('Invalid user');
-    }
-    
-    // If action is not in URL params, try to get it from request body
-    if (!action && req.method === 'POST') {
-      try {
-        const requestClone = req.clone();
-        const body = await requestClone.json();
-        action = body.action;
-      } catch {
-        // If we can't parse JSON, that's okay, action will remain null
-      }
     }
     
     const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
