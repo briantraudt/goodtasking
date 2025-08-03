@@ -2,7 +2,7 @@ import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, MapPin, ExternalLink, Loader2 } from 'lucide-react';
+import { Calendar, Clock, MapPin, ExternalLink, Loader2, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -11,7 +11,7 @@ interface GoogleCalendarEventsProps {
 }
 
 const GoogleCalendarEvents = ({ className }: GoogleCalendarEventsProps) => {
-  const { isConnected, events, loading, connectCalendar } = useGoogleCalendar();
+  const { isConnected, events, loading, connectCalendar, disconnectCalendar } = useGoogleCalendar();
 
   const formatEventTime = (start: string, end: string, isAllDay: boolean) => {
     if (isAllDay) {
@@ -73,21 +73,32 @@ const GoogleCalendarEvents = ({ className }: GoogleCalendarEventsProps) => {
             <Calendar className="h-5 w-5 text-blue-600" />
             📅 Upcoming Events
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-          >
-            <a
-              href="https://calendar.google.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1"
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
             >
-              <ExternalLink className="h-3 w-3" />
-              <span className="text-xs">Open Calendar</span>
-            </a>
-          </Button>
+              <a
+                href="https://calendar.google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1"
+              >
+                <ExternalLink className="h-3 w-3" />
+                <span className="text-xs">Open Calendar</span>
+              </a>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={disconnectCalendar}
+              className="flex items-center gap-1 text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <X className="h-3 w-3" />
+              <span className="text-xs">Disconnect</span>
+            </Button>
+          </div>
         </div>
       </CardHeader>
       
