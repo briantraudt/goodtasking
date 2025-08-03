@@ -59,7 +59,7 @@ serve(async (req) => {
           client_secret: Deno.env.get('GOOGLE_CLIENT_SECRET') || '',
           code,
           grant_type: 'authorization_code',
-          redirect_uri: `${url.origin}/functions/v1/google-calendar-integration?action=callback`,
+          redirect_uri: `https://ychheamigqjpxtnzqina.supabase.co/functions/v1/google-calendar-integration?action=callback`,
         }),
       });
 
