@@ -104,7 +104,7 @@ export const useGoogleCalendar = () => {
       }
 
       // Generate Google OAuth URL
-      const redirectUri = `${window.location.origin}/functions/v1/google-calendar-integration?action=callback`;
+      const redirectUri = `https://ychheamigqjpxtnzqina.supabase.co/functions/v1/google-calendar-integration?action=callback`;
       const scope = 'https://www.googleapis.com/auth/calendar.readonly';
       
       const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
