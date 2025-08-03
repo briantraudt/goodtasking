@@ -110,7 +110,7 @@ const TodayView = ({
   const completionRate = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* AI Daily Summary */}
       <DailyAISummary />
       
@@ -119,23 +119,23 @@ const TodayView = ({
       
       {/* Hero Card - Today's Focus */}
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Sun className="h-6 w-6 text-primary" />
+        <CardHeader className="pb-3 sm:pb-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg">
+                <Sun className="h-4 w-4 sm:h-6 sm:w-6 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold">
+                <CardTitle className="text-lg sm:text-2xl font-bold leading-tight">
                   Good {new Date().getHours() < 12 ? 'morning' : 'afternoon'}, {userName}! ☀️
                 </CardTitle>
-                <p className="text-muted-foreground">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
                   {format(today, 'EEEE, MMMM d, yyyy')}
                 </p>
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
               <CreateProjectDialog onCreateProject={onCreateProject} />
               <AddTaskDialog 
                 projects={projects} 
@@ -150,16 +150,16 @@ const TodayView = ({
           
           {/* Progress Indicator */}
           {totalToday > 0 && (
-            <div className="flex items-center gap-4 mt-4 p-3 bg-background/50 rounded-lg">
+            <div className="flex items-center gap-3 sm:gap-4 mt-3 sm:mt-4 p-2.5 sm:p-3 bg-background/50 rounded-lg">
               <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-medium">
+                <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                <span className="text-xs sm:text-sm font-medium">
                   You've completed {completedToday} of {totalToday} tasks today ({completionRate}%) 💪
                 </span>
               </div>
-              <div className="flex-1 bg-muted rounded-full h-2">
+              <div className="flex-1 bg-muted rounded-full h-1.5 sm:h-2 min-w-0">
                 <div 
-                  className="bg-green-500 h-2 rounded-full transition-all duration-500"
+                  className="bg-green-500 h-1.5 sm:h-2 rounded-full transition-all duration-500"
                   style={{ width: `${completionRate}%` }}
                 />
               </div>
@@ -171,8 +171,8 @@ const TodayView = ({
       {/* Quick Add Task */}
       {projects.length > 0 && (
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Quick Add</CardTitle>
+          <CardHeader className="pb-2 sm:pb-3">
+            <CardTitle className="text-base sm:text-lg">Quick Add</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleQuickTaskSubmit} className="flex gap-2">
@@ -180,11 +180,11 @@ const TodayView = ({
                 placeholder="What would you like to work on today?"
                 value={quickTask}
                 onChange={(e) => setQuickTask(e.target.value)}
-                className="flex-1"
+                className="flex-1 text-sm sm:text-base"
               />
-              <Button type="submit" disabled={!quickTask.trim()}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add
+              <Button type="submit" disabled={!quickTask.trim()} size="sm" className="px-3 sm:px-4">
+                <Plus className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
+                <span className="hidden sm:inline">Add</span>
               </Button>
             </form>
           </CardContent>
@@ -193,37 +193,37 @@ const TodayView = ({
 
       {/* Today's Tasks */}
       <Card>
-        <CardHeader className="pb-4">
+        <CardHeader className="pb-3 sm:pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Target className="h-5 w-5 text-primary" />
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <Target className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               Today's Focus
             </CardTitle>
             {totalToday > 0 && (
-              <Badge variant="outline">
+              <Badge variant="outline" className="text-xs">
                 {totalToday} task{totalToday !== 1 ? 's' : ''}
               </Badge>
             )}
           </div>
         </CardHeader>
         
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-2 sm:space-y-3">
           {todayTasks.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <Target className="h-8 w-8 text-muted-foreground" />
+            <div className="text-center py-6 sm:py-8">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                <Target className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">No tasks today</h3>
-              <p className="text-muted-foreground mb-4">
+              <h3 className="text-base sm:text-lg font-semibold mb-2">No tasks today</h3>
+              <p className="text-sm text-muted-foreground mb-3 sm:mb-4 px-4">
                 Not sure where to start? Try planning your day with AI.
               </p>
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-2">
                 <PlanMyWeekDialog 
                   projects={projects}
                   onTasksCreated={onRefreshTasks}
                   triggerButton={
-                    <Button variant="outline">
-                      <Target className="h-4 w-4 mr-2" />
+                    <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                      <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                       Plan My Day
                     </Button>
                   }
@@ -233,8 +233,8 @@ const TodayView = ({
                     projects={projects} 
                     onCreateTask={(projectId, title) => onCreateTask(projectId, title, undefined, today)}
                     triggerButton={
-                      <Button>
-                        <Plus className="h-4 w-4 mr-2" />
+                      <Button size="sm" className="w-full sm:w-auto">
+                        <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                         Add Task
                       </Button>
                     }
@@ -247,35 +247,35 @@ const TodayView = ({
               <div
                 key={task.id}
                 className={cn(
-                  "group p-4 rounded-lg border bg-card transition-all duration-300 hover:shadow-md",
+                  "group p-3 sm:p-4 rounded-lg border bg-card transition-all duration-300 hover:shadow-md",
                   task.completed && "opacity-60 bg-muted/30"
                 )}
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2 sm:gap-3">
                   <Checkbox
                     checked={task.completed}
                     onCheckedChange={(checked) => 
                       handleTaskToggle(task.id, checked as boolean)
                     }
-                    className="mt-1"
+                    className="mt-0.5"
                   />
                   <div className="flex-1 min-w-0">
                     <p className={cn(
-                      "font-medium text-foreground transition-all duration-300",
+                      "text-sm sm:text-base font-medium text-foreground transition-all duration-300",
                       task.completed && "line-through text-muted-foreground"
                     )}>
                       {task.title}
                     </p>
                     <Badge 
                       variant="outline" 
-                      className={cn("text-xs mt-2", task.projectColor)}
+                      className={cn("text-xs mt-1.5 sm:mt-2", task.projectColor)}
                     >
                       {task.projectName}
                     </Badge>
                   </div>
                   {task.completed && (
                     <div className="text-green-600 animate-fade-in">
-                      <CheckCircle2 className="h-5 w-5" />
+                      <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
                   )}
                 </div>

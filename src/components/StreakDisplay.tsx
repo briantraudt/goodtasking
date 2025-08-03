@@ -68,23 +68,23 @@ const StreakDisplay = ({ className, compact = false }: StreakDisplayProps) => {
 
   return (
     <Card className={cn("bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20", className)}>
-      <CardContent className="p-4">
-        <div className="space-y-3">
+      <CardContent className="p-3 sm:p-4">
+        <div className="space-y-2 sm:space-y-3">
           {/* Current Streak */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">{getStreakEmoji(streakData.currentStreak)}</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-xl sm:text-2xl">{getStreakEmoji(streakData.currentStreak)}</span>
                 <div>
                   <div className="flex items-baseline gap-1">
-                    <span className={cn("text-2xl font-bold", getStreakColor(streakData.currentStreak))}>
+                    <span className={cn("text-xl sm:text-2xl font-bold", getStreakColor(streakData.currentStreak))}>
                       {streakData.currentStreak}
                     </span>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       day{streakData.currentStreak !== 1 ? 's' : ''} streak
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {getStreakMessage(streakData.currentStreak)}
                   </p>
                 </div>
@@ -93,9 +93,9 @@ const StreakDisplay = ({ className, compact = false }: StreakDisplayProps) => {
             
             {/* Longest Streak Badge */}
             {streakData.longestStreak > 0 && (
-              <Badge variant="outline" className="bg-background/50">
-                <Trophy className="h-3 w-3 mr-1" />
-                Longest: {streakData.longestStreak} day{streakData.longestStreak !== 1 ? 's' : ''}
+              <Badge variant="outline" className="bg-background/50 text-xs">
+                <Trophy className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
+                <span className="hidden sm:inline">Longest: </span>{streakData.longestStreak}
               </Badge>
             )}
           </div>
