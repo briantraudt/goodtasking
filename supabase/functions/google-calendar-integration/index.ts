@@ -156,14 +156,24 @@ serve(async (req) => {
       });
 
     } else if (action === 'events') {
+      console.log('Fetching events for user:', user.id);
+      
       // Fetch calendar events
       const { data: tokenData, error: tokenError } = await supabase
         .from('google_calendar_tokens')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (tokenError || !tokenData) {
+      console.log('Token query result:', { tokenData, tokenError });
+
+      if (tokenError) {
+        console.error('Token query error:', tokenError);
+        throw new Error(`Database error: ${tokenError.message}`);
+      }
+
+      if (!tokenData) {
+        console.log('No tokens found for user:', user.id);
         throw new Error('No calendar connection found');
       }
 
