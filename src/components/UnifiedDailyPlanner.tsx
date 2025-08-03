@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,7 +6,7 @@ import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { useAIScheduler } from '@/hooks/useAIScheduler';
 import { useAIPlanner } from '@/hooks/useAIPlanner';
 import TaskSidebar from '@/components/TaskSidebar';
-import { Calendar, Clock, Sparkles, Loader2 } from 'lucide-react';
+import { Calendar, Clock, Sparkles, Loader2, Undo2 } from 'lucide-react';
 import { format, parseISO, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
@@ -48,23 +48,48 @@ interface DroppableTimeSlotProps {
   hour: number;
   period: 'first' | 'second';
   children: React.ReactNode;
+  hasOverlap: boolean;
+  isCurrentTime: boolean;
 }
 
-const DroppableTimeSlot = ({ hour, period, children }: DroppableTimeSlotProps) => {
+interface UndoAction {
+  taskId: string;
+  taskTitle: string;
+  previousState: {
+    scheduled_date: string | null;
+  };
+}
+
+const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }: DroppableTimeSlotProps) => {
   const slotId = `${hour}-${period}`;
   const { isOver, setNodeRef } = useDroppable({
     id: slotId,
+    disabled: hasOverlap, // Disable drop if there's overlap
   });
 
   return (
     <div
       ref={setNodeRef}
       className={cn(
-        "min-h-[30px] border-b border-muted transition-colors",
-        isOver && "bg-blue-50 border-blue-200"
+        "min-h-[30px] border-b border-muted transition-colors relative",
+        isOver && !hasOverlap && "bg-blue-50 border-blue-200",
+        isOver && hasOverlap && "bg-red-50 border-red-200",
+        hasOverlap && "bg-red-50/30",
+        isCurrentTime && "bg-yellow-50"
       )}
     >
+      {/* Current time indicator */}
+      {isCurrentTime && (
+        <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-red-500 z-10">
+          <div className="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full"></div>
+        </div>
+      )}
       {children}
+      {hasOverlap && isOver && (
+        <div className="absolute inset-0 flex items-center justify-center bg-red-100/80 text-red-600 text-xs font-medium">
+          ⚠️ Overlap
+        </div>
+      )}
     </div>
   );
 };
@@ -76,6 +101,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
   const { toast } = useToast();
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // Get today's scheduled tasks
   const scheduledTasks = projects.flatMap(project => 
@@ -85,6 +112,14 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
     )
   );
 
+  // Update current time every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
   const formatTime = (timeStr: string) => {
     if (timeStr.includes('T')) {
       return format(parseISO(timeStr), 'HH:mm');
@@ -92,7 +127,34 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
     return timeStr;
   };
 
-  const generateTimeBlocks = () => {
+  const isCurrentTimeSlot = useCallback((hour: number, period: 'first' | 'second') => {
+    if (!isToday(new Date(selectedDate))) return false;
+    
+    const now = currentTime;
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
+    
+    if (currentHour !== hour) return false;
+    
+    return period === 'first' ? currentMinutes < 30 : currentMinutes >= 30;
+  }, [selectedDate, currentTime]);
+
+  const hasTimeSlotOverlap = useCallback((hour: number, period: 'first' | 'second') => {
+    const targetTime = `${hour.toString().padStart(2, '0')}:${period === 'first' ? '00' : '30'}`;
+    const nextSlotTime = `${hour.toString().padStart(2, '0')}:${period === 'first' ? '30' : '60'}`;
+    
+    return timeBlocks.some(block => {
+      const blockStart = block.start;
+      const blockEnd = block.end;
+      
+      // Check if there's any overlap with the 30-minute slot
+      return (blockStart <= targetTime && blockEnd > targetTime) ||
+             (blockStart < nextSlotTime && blockEnd >= nextSlotTime) ||
+             (blockStart >= targetTime && blockEnd <= nextSlotTime);
+    });
+  }, [timeBlocks]);
+
+  const generateTimeBlocks = useCallback(() => {
     const blocks: TimeBlock[] = [];
 
     // Add calendar events
@@ -123,7 +185,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
     // Sort by time
     blocks.sort((a, b) => a.start.localeCompare(b.start));
     setTimeBlocks(blocks);
-  };
+  }, [events, scheduledTasks]);
 
   const getPriorityColor = (priority?: string) => {
     switch (priority) {
@@ -202,11 +264,30 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
     const hour = parseInt(hourStr);
     const minutes = period === 'second' ? 30 : 0;
     
+    // Check for overlap before proceeding
+    if (hasTimeSlotOverlap(hour, period as 'first' | 'second')) {
+      toast({
+        title: "Time Slot Conflict",
+        description: "This time slot is already occupied. Please choose another time.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     const startTime = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     const duration = task.estimated_duration || 30;
     const endHour = Math.floor((hour * 60 + minutes + duration) / 60);
     const endMinutes = (hour * 60 + minutes + duration) % 60;
     const endTime = `${endHour.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+
+    // Store undo action
+    setUndoAction({
+      taskId: task.id,
+      taskTitle: task.title,
+      previousState: {
+        scheduled_date: task.scheduled_date
+      }
+    });
 
     // Update task in database
     const success = await updateTaskSchedule(task.id, selectedDate, startTime, endTime);
@@ -232,7 +313,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
         title: "Task Scheduled! ✅",
         description: `${task.title} scheduled for ${startTime}`,
       });
+
+      // Clear undo after 5 seconds
+      setTimeout(() => setUndoAction(null), 5000);
     } else {
+      setUndoAction(null);
       toast({
         title: "Scheduling Failed",
         description: "Unable to schedule task. Please try again.",
@@ -241,12 +326,39 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
     }
   };
 
+  const handleUndo = async () => {
+    if (!undoAction) return;
+
+    const success = await updateTaskSchedule(
+      undoAction.taskId, 
+      undoAction.previousState.scheduled_date || '', 
+      '', 
+      ''
+    );
+
+    if (success) {
+      onUpdateTask(undoAction.taskId, { 
+        scheduled_date: undoAction.previousState.scheduled_date 
+      });
+      
+      // Remove from time blocks
+      setTimeBlocks(prev => prev.filter(block => block.id !== `task-${undoAction.taskId}`));
+      
+      toast({
+        title: "Undo Successful",
+        description: `${undoAction.taskTitle} moved back to unscheduled tasks.`,
+      });
+      
+      setUndoAction(null);
+    }
+  };
+
   // Generate time slots (9 AM to 6 PM)
   const timeSlots = Array.from({ length: 9 }, (_, i) => i + 9);
 
   useEffect(() => {
     generateTimeBlocks();
-  }, [events, scheduledTasks, selectedDate]);
+  }, [generateTimeBlocks]);
 
   if (calendarLoading) {
     return (
@@ -261,7 +373,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
 
   return (
     <DndContext onDragEnd={handleDragEnd}>
-      <div className={cn("flex gap-4 h-full", className)}>
+      <div className={cn("flex gap-4 h-full relative", className)}>
         {/* Left side - Calendar Timeline (70%) */}
         <Card className="flex-[7]">
           <CardHeader>
@@ -270,6 +382,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
                 <Calendar className="h-5 w-5 text-blue-600" />
                 Daily Timeline
                 <Badge variant="secondary">{format(new Date(selectedDate), 'MMM d')}</Badge>
+                {isToday(new Date(selectedDate)) && (
+                  <Badge variant="outline" className="text-xs">
+                    {format(currentTime, 'HH:mm')}
+                  </Badge>
+                )}
               </CardTitle>
               <div className="flex gap-2">
                 <Button
@@ -323,7 +440,12 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
                   {/* Time Slots */}
                   <div className="grid grid-rows-2">
                     {/* First half hour */}
-                    <DroppableTimeSlot hour={hour} period="first">
+                    <DroppableTimeSlot 
+                      hour={hour} 
+                      period="first"
+                      hasOverlap={hasTimeSlotOverlap(hour, 'first')}
+                      isCurrentTime={isCurrentTimeSlot(hour, 'first')}
+                    >
                       {timeBlocks
                         .filter(block => block.start.startsWith(`${hour.toString().padStart(2, '0')}:0`))
                         .map(block => (
@@ -347,7 +469,12 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
                     </DroppableTimeSlot>
                     
                     {/* Second half hour */}
-                    <DroppableTimeSlot hour={hour} period="second">
+                    <DroppableTimeSlot 
+                      hour={hour} 
+                      period="second"
+                      hasOverlap={hasTimeSlotOverlap(hour, 'second')}
+                      isCurrentTime={isCurrentTimeSlot(hour, 'second')}
+                    >
                       {timeBlocks
                         .filter(block => block.start.startsWith(`${hour.toString().padStart(2, '0')}:3`))
                         .map(block => (
@@ -400,6 +527,20 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
           selectedDate={selectedDate}
           className="flex-[3]"
         />
+
+        {/* Undo Button - Bottom Right */}
+        {undoAction && (
+          <div className="fixed bottom-6 right-6 z-50">
+            <Button
+              onClick={handleUndo}
+              className="flex items-center gap-2 shadow-lg"
+              variant="secondary"
+            >
+              <Undo2 className="h-4 w-4" />
+              Undo: {undoAction.taskTitle}
+            </Button>
+          </div>
+        )}
       </div>
     </DndContext>
   );
