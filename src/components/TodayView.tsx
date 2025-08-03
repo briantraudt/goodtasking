@@ -10,6 +10,8 @@ import { cn } from '@/lib/utils';
 import AddTaskDialog from './AddTaskDialog';
 import CreateProjectDialog from './CreateProjectDialog';
 import DailyAISummary from './DailyAISummary';
+import StreakDisplay from './StreakDisplay';
+import { useStreakActions } from '@/hooks/useStreakActions';
 import PlanMyWeekDialog from './PlanMyWeekDialog';
 
 interface Task {
@@ -44,6 +46,7 @@ const TodayView = ({
   onRefreshTasks,
   userName = "there"
 }: TodayViewProps) => {
+  const { recordCheckIn } = useStreakActions();
   const [quickTask, setQuickTask] = useState('');
   
   const today = new Date();
@@ -80,13 +83,20 @@ const TodayView = ({
     return colors[index];
   };
 
-  const handleTaskToggle = (taskId: string, completed: boolean) => {
+  const handleTaskToggle = async (taskId: string, completed: boolean) => {
+    // Record check-in for task completion
+    if (completed) {
+      await recordCheckIn();
+    }
     onUpdateTask(taskId, { completed });
   };
 
-  const handleQuickTaskSubmit = (e: React.FormEvent) => {
+  const handleQuickTaskSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickTask.trim() || projects.length === 0) return;
+    
+    // Record check-in for task creation
+    await recordCheckIn();
     
     // Use the first project as default, or could be made configurable
     onCreateTask(projects[0].id, quickTask.trim(), undefined, today);
@@ -103,6 +113,9 @@ const TodayView = ({
     <div className="space-y-6">
       {/* AI Daily Summary */}
       <DailyAISummary />
+      
+      {/* Streak Display */}
+      <StreakDisplay />
       
       {/* Hero Card - Today's Focus */}
       <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 shadow-lg">

@@ -110,12 +110,17 @@ export type Database = {
           ai_summary_time: string | null
           ai_tone_preference: string | null
           auto_schedule_unscheduled: boolean | null
+          check_in_dates: string[] | null
           created_at: string
+          current_streak: number | null
           default_project_id: string | null
           default_task_day: string | null
           id: string
           last_login_date: string | null
+          last_milestone_celebrated: number | null
+          longest_streak: number | null
           reminders_enabled: boolean | null
+          streak_tracking_enabled: boolean | null
           updated_at: string
           user_id: string
           weekly_review_enabled: boolean | null
@@ -125,12 +130,17 @@ export type Database = {
           ai_summary_time?: string | null
           ai_tone_preference?: string | null
           auto_schedule_unscheduled?: boolean | null
+          check_in_dates?: string[] | null
           created_at?: string
+          current_streak?: number | null
           default_project_id?: string | null
           default_task_day?: string | null
           id?: string
           last_login_date?: string | null
+          last_milestone_celebrated?: number | null
+          longest_streak?: number | null
           reminders_enabled?: boolean | null
+          streak_tracking_enabled?: boolean | null
           updated_at?: string
           user_id: string
           weekly_review_enabled?: boolean | null
@@ -140,12 +150,17 @@ export type Database = {
           ai_summary_time?: string | null
           ai_tone_preference?: string | null
           auto_schedule_unscheduled?: boolean | null
+          check_in_dates?: string[] | null
           created_at?: string
+          current_streak?: number | null
           default_project_id?: string | null
           default_task_day?: string | null
           id?: string
           last_login_date?: string | null
+          last_milestone_celebrated?: number | null
+          longest_streak?: number | null
           reminders_enabled?: boolean | null
+          streak_tracking_enabled?: boolean | null
           updated_at?: string
           user_id?: string
           weekly_review_enabled?: boolean | null
@@ -275,7 +290,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_current_streak: {
+        Args: { check_dates: string[] }
+        Returns: number
+      }
+      record_check_in: {
+        Args: { user_uuid: string }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

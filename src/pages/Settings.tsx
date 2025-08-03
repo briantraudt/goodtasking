@@ -18,6 +18,7 @@ interface UserPreferences {
   ai_assistant_enabled: boolean;
   weekly_review_enabled: boolean;
   reminders_enabled: boolean;
+  streak_tracking_enabled: boolean;
   ai_tone_preference: 'coaching' | 'friendly' | 'direct' | 'motivational';
   ai_summary_time: 'morning' | 'evening';
   default_task_day: 'today' | 'tomorrow' | 'none';
@@ -39,6 +40,7 @@ const Settings = () => {
     ai_assistant_enabled: true,
     weekly_review_enabled: true,
     reminders_enabled: true,
+    streak_tracking_enabled: true,
     ai_tone_preference: 'coaching',
     ai_summary_time: 'morning',
     default_task_day: 'today',
@@ -74,6 +76,7 @@ const Settings = () => {
           ai_assistant_enabled: prefsData.ai_assistant_enabled,
           weekly_review_enabled: prefsData.weekly_review_enabled,
           reminders_enabled: prefsData.reminders_enabled ?? true,
+          streak_tracking_enabled: prefsData.streak_tracking_enabled ?? true,
           ai_tone_preference: prefsData.ai_tone_preference as 'coaching' | 'friendly' | 'direct' | 'motivational',
           ai_summary_time: prefsData.ai_summary_time as 'morning' | 'evening',
           default_task_day: prefsData.default_task_day as 'today' | 'tomorrow' | 'none',
@@ -351,6 +354,20 @@ const Settings = () => {
                 <Switch
                   checked={preferences.reminders_enabled}
                   onCheckedChange={(checked) => savePreferences({ reminders_enabled: checked })}
+                  disabled={saving}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Enable streak tracking</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Track your daily check-ins and celebrate consistency milestones
+                  </p>
+                </div>
+                <Switch
+                  checked={preferences.streak_tracking_enabled}
+                  onCheckedChange={(checked) => savePreferences({ streak_tracking_enabled: checked })}
                   disabled={saving}
                 />
               </div>
