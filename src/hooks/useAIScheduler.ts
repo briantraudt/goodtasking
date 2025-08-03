@@ -151,9 +151,40 @@ export const useAIScheduler = () => {
     return endMinutes - startMinutes;
   };
 
+  const updateTaskSchedule = async (
+    taskId: string, 
+    scheduledDate: string,
+    startTime?: string,
+    endTime?: string
+  ): Promise<boolean> => {
+    if (!session) return false;
+
+    try {
+      const { error } = await supabase
+        .from('vibe_tasks')
+        .update({
+          scheduled_date: scheduledDate,
+          // Note: We don't have start_time/end_time columns yet, 
+          // but this is where they would be updated
+        })
+        .eq('id', taskId)
+        .eq('user_id', session.user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error updating task schedule:', error);
+      return false;
+    }
+  };
+
   return {
     scheduleTasksWithAI,
     suggestTaskForTimeGap,
+    updateTaskSchedule,
     loading
   };
 };
