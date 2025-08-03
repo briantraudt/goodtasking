@@ -20,7 +20,7 @@ interface CalendarData {
 }
 
 export const useGoogleCalendar = () => {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
   const [calendarData, setCalendarData] = useState<CalendarData>({
     isConnected: false,
@@ -59,27 +59,42 @@ export const useGoogleCalendar = () => {
   };
 
   const fetchEvents = async (date?: string) => {
-    if (!user) return;
+    if (!user || !session) return;
 
     try {
       setCalendarData(prev => ({ ...prev, loading: true }));
 
       const targetDate = date || new Date().toISOString().split('T')[0];
       
+      console.log('Fetching events with auth token:', session.access_token ? 'present' : 'missing');
+      
       const { data, error } = await supabase.functions.invoke('google-calendar-integration', {
         body: { action: 'events', date: targetDate },
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
       });
+
+      console.log('Fetch events response:', { data, error });
 
       if (error) {
         throw error;
       }
 
-      if (data.events) {
+      if (data && Array.isArray(data)) {
+        setCalendarData(prev => ({
+          ...prev,
+          events: data,
+          loading: false,
+        }));
+      } else if (data?.events) {
         setCalendarData(prev => ({
           ...prev,
           events: data.events,
           loading: false,
         }));
+      } else {
+        setCalendarData(prev => ({ ...prev, loading: false }));
       }
     } catch (error) {
       console.error('Error fetching calendar events:', error);
@@ -153,11 +168,14 @@ export const useGoogleCalendar = () => {
   };
 
   const disconnectCalendar = async () => {
-    if (!user) return;
+    if (!user || !session) return;
 
     try {
       const { error } = await supabase.functions.invoke('google-calendar-integration', {
         body: { action: 'disconnect' },
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
       });
 
       if (error) {
