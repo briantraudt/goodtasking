@@ -54,42 +54,42 @@ serve(async (req) => {
     console.log('Tasks:', tasks);
 
     // Create the AI prompt
-    const prompt = `Here is the user's Google Calendar schedule and their task list for ${targetDate}. Based on available time gaps and task priorities, generate a suggested time slot for each task. 
+    const prompt = `You are a productivity assistant for a task management app. Your goal is to intelligently schedule user tasks into open time blocks based on their connected Google Calendar, task priority, and duration.
 
-RULES:
-- Avoid overlaps with existing calendar events
-- Consider task durations and priorities
-- Start with high-priority tasks first
-- Schedule tasks between 9 AM and 6 PM unless specified otherwise
-- Leave 15-minute buffers between events when possible
-- If a task is too long for available gaps, suggest splitting it
+INPUT DATA:
+Calendar Events: ${JSON.stringify(events, null, 2)}
+Tasks to Schedule: ${JSON.stringify(tasks, null, 2)}
+Target Date: ${targetDate}
+Day Start: 09:00
+Day End: 18:00
+Buffer Minutes: 15
 
-Calendar Events:
-${JSON.stringify(events, null, 2)}
+SCHEDULING INSTRUCTIONS:
+1. Identify gaps between calendar events (respecting 15-minute buffers on both ends)
+2. Schedule tasks starting with high priority, then medium, then low
+3. Avoid overlapping calendar events
+4. Suggest time blocks in 15-minute increments
+5. If a task doesn't fit, suggest splitting it or mark as unscheduled with explanation
+6. Consider realistic task durations and energy levels throughout the day
 
-Tasks to Schedule:
-${JSON.stringify(tasks, null, 2)}
-
-Format your response as a JSON object with this structure:
+OUTPUT FORMAT (respond ONLY with valid JSON):
 {
   "scheduledTasks": [
     {
-      "taskId": "string",
-      "proposedStartTime": "HH:MM",
-      "proposedEndTime": "HH:MM", 
-      "rationale": "brief explanation of why this time slot was chosen"
+      "id": "string",
+      "start": "HH:MM", 
+      "end": "HH:MM",
+      "reason": "brief explanation of why this time slot was chosen"
     }
   ],
-  "conflicts": [
+  "unscheduledTasks": [
     {
-      "taskId": "string",
-      "issue": "description of scheduling conflict or suggestion"
+      "id": "string", 
+      "reason": "explanation of why this task couldn't be scheduled"
     }
   ],
   "summary": "Brief overview of the scheduling approach used"
-}
-
-Respond ONLY with valid JSON, no additional text.`;
+}`;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
