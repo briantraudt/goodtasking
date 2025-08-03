@@ -54,10 +54,16 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Store tokens in database using the user ID from state
+    // First, delete any existing tokens for this user
+    await adminSupabase
+      .from('google_calendar_tokens')
+      .delete()
+      .eq('user_id', state);
+
+    // Then insert the new tokens
     const { error: insertError } = await adminSupabase
       .from('google_calendar_tokens')
-      .upsert({
+      .insert({
         user_id: state, // Use the user ID passed in state
         access_token: tokenData.access_token,
         refresh_token: tokenData.refresh_token,
