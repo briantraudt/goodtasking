@@ -78,6 +78,8 @@ serve(async (req) => {
       .upsert({
         user_id: state,
         google_calendar_enabled: true,
+      }, {
+        onConflict: 'user_id'
       });
 
     // Return success page that closes popup
