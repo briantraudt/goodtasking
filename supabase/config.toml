@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.ai-task-scheduler]
 verify_jwt = true
+
+[functions.plan-my-day]
+verify_jwt = true

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { useAIScheduler } from '@/hooks/useAIScheduler';
+import { useAIPlanner } from '@/hooks/useAIPlanner';
 import { Calendar, Clock, Sparkles, Plus, Loader2 } from 'lucide-react';
 import { format, parseISO, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -42,6 +43,7 @@ interface TimeBlock {
 const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDailyPlannerProps) => {
   const { events, isConnected, loading: calendarLoading } = useGoogleCalendar();
   const { scheduleTasksWithAI, loading: aiLoading } = useAIScheduler();
+  const { planMyDay, loading: planningLoading } = useAIPlanner();
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
@@ -127,6 +129,29 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
     }
   };
 
+  const handlePlanMyDay = async () => {
+    const result = await planMyDay(selectedDate, events);
+    
+    if (result && result.dayPlan.length > 0) {
+      // Update time blocks with AI day plan
+      const updatedBlocks = [...timeBlocks.filter(block => block.type === 'event')];
+      
+      result.dayPlan.forEach(planItem => {
+        updatedBlocks.push({
+          id: `planned-${planItem.taskId}`,
+          title: planItem.title,
+          start: planItem.startTime,
+          end: planItem.endTime,
+          type: 'task',
+          color: 'bg-purple-100 border-purple-300 text-purple-800',
+          priority: 'planned'
+        });
+      });
+      
+      setTimeBlocks(updatedBlocks.sort((a, b) => a.start.localeCompare(b.start)));
+    }
+  };
+
   useEffect(() => {
     generateTimeBlocks();
   }, [events, todaysTasks, selectedDate]);
@@ -152,6 +177,20 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, className }: UnifiedDaily
             <Badge variant="secondary">{format(new Date(selectedDate), 'MMM d')}</Badge>
           </CardTitle>
           <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePlanMyDay}
+              disabled={planningLoading || todaysTasks.length === 0 || !isConnected}
+              className="flex items-center gap-1"
+            >
+              {planningLoading ? (
+                <Loader2 className="h-3 w-3 animate-spin" />
+              ) : (
+                <Calendar className="h-3 w-3" />
+              )}
+              Plan My Day
+            </Button>
             <Button
               variant="outline"
               size="sm"

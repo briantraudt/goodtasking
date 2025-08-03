@@ -249,7 +249,10 @@ export type Database = {
           completed: boolean
           created_at: string
           description: string | null
+          due_date: string | null
+          estimated_duration: number | null
           id: string
+          priority: string | null
           project_id: string
           scheduled_date: string | null
           title: string
@@ -260,7 +263,10 @@ export type Database = {
           completed?: boolean
           created_at?: string
           description?: string | null
+          due_date?: string | null
+          estimated_duration?: number | null
           id?: string
+          priority?: string | null
           project_id: string
           scheduled_date?: string | null
           title: string
@@ -271,7 +277,10 @@ export type Database = {
           completed?: boolean
           created_at?: string
           description?: string | null
+          due_date?: string | null
+          estimated_duration?: number | null
           id?: string
+          priority?: string | null
           project_id?: string
           scheduled_date?: string | null
           title?: string
