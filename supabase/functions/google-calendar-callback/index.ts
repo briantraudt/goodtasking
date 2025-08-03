@@ -18,7 +18,10 @@ serve(async (req) => {
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state'); // This contains the user ID
     
+    console.log('Callback received - code:', !!code, 'state:', state);
+    
     if (!code || !state) {
+      console.error('Missing code or state:', { code: !!code, state });
       return new Response('Authorization code or state not found', { status: 400 });
     }
 
@@ -38,8 +41,10 @@ serve(async (req) => {
     });
 
     const tokenData = await tokenResponse.json();
+    console.log('Token exchange response:', tokenResponse.status, tokenData);
     
     if (!tokenResponse.ok) {
+      console.error('Token exchange failed:', tokenData);
       return new Response(`<html><body><script>window.close();</script><p>Authentication failed: ${tokenData.error_description}</p></body></html>`, {
         headers: { 'Content-Type': 'text/html' },
       });
@@ -54,11 +59,17 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
+    console.log('Storing tokens for user:', state);
+
     // First, delete any existing tokens for this user
-    await adminSupabase
+    const { error: deleteError } = await adminSupabase
       .from('google_calendar_tokens')
       .delete()
       .eq('user_id', state);
+
+    if (deleteError) {
+      console.log('Delete error (may be expected if no tokens exist):', deleteError);
+    }
 
     // Then insert the new tokens
     const { error: insertError } = await adminSupabase
@@ -72,14 +83,17 @@ serve(async (req) => {
         token_type: tokenData.token_type,
       });
 
+    console.log('Token insert result:', insertError);
+
     if (insertError) {
+      console.error('Database insert error:', insertError);
       return new Response(`<html><body><script>window.close();</script><p>Database error: ${insertError.message}</p></body></html>`, {
         headers: { 'Content-Type': 'text/html' },
       });
     }
 
     // Update user preferences
-    await adminSupabase
+    const { error: prefsError } = await adminSupabase
       .from('user_preferences')
       .upsert({
         user_id: state,
@@ -87,6 +101,14 @@ serve(async (req) => {
       }, {
         onConflict: 'user_id'
       });
+
+    console.log('Preferences update result:', prefsError);
+
+    if (prefsError) {
+      console.error('Preferences update error:', prefsError);
+    }
+
+    console.log('Calendar connection completed successfully for user:', state);
 
     // Return success page that closes popup
     return new Response(`
