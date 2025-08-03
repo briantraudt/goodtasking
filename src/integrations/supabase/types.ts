@@ -71,6 +71,42 @@ export type Database = {
         }
         Relationships: []
       }
+      google_calendar_tokens: {
+        Row: {
+          access_token: string
+          created_at: string
+          expires_at: string
+          id: string
+          refresh_token: string | null
+          scope: string
+          token_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          refresh_token?: string | null
+          scope?: string
+          token_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          refresh_token?: string | null
+          scope?: string
+          token_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           ai_assistant_enabled: boolean | null
@@ -115,6 +151,7 @@ export type Database = {
           current_streak: number | null
           default_project_id: string | null
           default_task_day: string | null
+          google_calendar_enabled: boolean | null
           id: string
           last_login_date: string | null
           last_milestone_celebrated: number | null
@@ -135,6 +172,7 @@ export type Database = {
           current_streak?: number | null
           default_project_id?: string | null
           default_task_day?: string | null
+          google_calendar_enabled?: boolean | null
           id?: string
           last_login_date?: string | null
           last_milestone_celebrated?: number | null
@@ -155,6 +193,7 @@ export type Database = {
           current_streak?: number | null
           default_project_id?: string | null
           default_task_day?: string | null
+          google_calendar_enabled?: boolean | null
           id?: string
           last_login_date?: string | null
           last_milestone_celebrated?: number | null

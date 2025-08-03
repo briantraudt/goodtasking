@@ -11,6 +11,7 @@ import AddTaskDialog from './AddTaskDialog';
 import CreateProjectDialog from './CreateProjectDialog';
 import DailyAISummary from './DailyAISummary';
 import StreakDisplay from './StreakDisplay';
+import GoogleCalendarEvents from './GoogleCalendarEvents';
 import { useStreakActions } from '@/hooks/useStreakActions';
 import PlanMyWeekDialog from './PlanMyWeekDialog';
 
@@ -319,6 +320,9 @@ const TodayView = ({
           </CardContent>
         </Card>
       )}
+
+      {/* Google Calendar Events */}
+      <GoogleCalendarEvents />
     </div>
   );
 };

@@ -19,6 +19,7 @@ interface UserPreferences {
   weekly_review_enabled: boolean;
   reminders_enabled: boolean;
   streak_tracking_enabled: boolean;
+  google_calendar_enabled: boolean;
   ai_tone_preference: 'coaching' | 'friendly' | 'direct' | 'motivational';
   ai_summary_time: 'morning' | 'evening';
   default_task_day: 'today' | 'tomorrow' | 'none';
@@ -41,6 +42,7 @@ const Settings = () => {
     weekly_review_enabled: true,
     reminders_enabled: true,
     streak_tracking_enabled: true,
+    google_calendar_enabled: false,
     ai_tone_preference: 'coaching',
     ai_summary_time: 'morning',
     default_task_day: 'today',
@@ -77,6 +79,7 @@ const Settings = () => {
           weekly_review_enabled: prefsData.weekly_review_enabled,
           reminders_enabled: prefsData.reminders_enabled ?? true,
           streak_tracking_enabled: prefsData.streak_tracking_enabled ?? true,
+          google_calendar_enabled: prefsData.google_calendar_enabled ?? false,
           ai_tone_preference: prefsData.ai_tone_preference as 'coaching' | 'friendly' | 'direct' | 'motivational',
           ai_summary_time: prefsData.ai_summary_time as 'morning' | 'evening',
           default_task_day: prefsData.default_task_day as 'today' | 'tomorrow' | 'none',
@@ -368,6 +371,20 @@ const Settings = () => {
                 <Switch
                   checked={preferences.streak_tracking_enabled}
                   onCheckedChange={(checked) => savePreferences({ streak_tracking_enabled: checked })}
+                  disabled={saving}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Google Calendar integration</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Show your calendar events alongside tasks (read-only access)
+                  </p>
+                </div>
+                <Switch
+                  checked={preferences.google_calendar_enabled}
+                  onCheckedChange={(checked) => savePreferences({ google_calendar_enabled: checked })}
                   disabled={saving}
                 />
               </div>
