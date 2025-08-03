@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.enable-ai-assistant]
 verify_jwt = false
+
+[functions.daily-reminder]
+verify_jwt = false

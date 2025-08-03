@@ -209,8 +209,25 @@ export const useProjects = () => {
   useEffect(() => {
     if (user) {
       fetchProjects();
+      // Update last login date when user logs in
+      updateLastLogin();
     }
   }, [user]);
+
+  const updateLastLogin = async () => {
+    if (!user) return;
+    
+    try {
+      await supabase
+        .from('user_preferences')
+        .upsert({ 
+          user_id: user.id,
+          last_login_date: new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+        });
+    } catch (error) {
+      console.error('Error updating last login:', error);
+    }
+  };
 
   return {
     projects,

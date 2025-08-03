@@ -17,6 +17,7 @@ import Header from '@/components/Header';
 interface UserPreferences {
   ai_assistant_enabled: boolean;
   weekly_review_enabled: boolean;
+  reminders_enabled: boolean;
   ai_tone_preference: 'coaching' | 'friendly' | 'direct' | 'motivational';
   ai_summary_time: 'morning' | 'evening';
   default_task_day: 'today' | 'tomorrow' | 'none';
@@ -37,6 +38,7 @@ const Settings = () => {
   const [preferences, setPreferences] = useState<UserPreferences>({
     ai_assistant_enabled: true,
     weekly_review_enabled: true,
+    reminders_enabled: true,
     ai_tone_preference: 'coaching',
     ai_summary_time: 'morning',
     default_task_day: 'today',
@@ -71,6 +73,7 @@ const Settings = () => {
         setPreferences({
           ai_assistant_enabled: prefsData.ai_assistant_enabled,
           weekly_review_enabled: prefsData.weekly_review_enabled,
+          reminders_enabled: prefsData.reminders_enabled ?? true,
           ai_tone_preference: prefsData.ai_tone_preference as 'coaching' | 'friendly' | 'direct' | 'motivational',
           ai_summary_time: prefsData.ai_summary_time as 'morning' | 'evening',
           default_task_day: prefsData.default_task_day as 'today' | 'tomorrow' | 'none',
@@ -334,6 +337,20 @@ const Settings = () => {
                 <Switch
                   checked={preferences.weekly_review_enabled}
                   onCheckedChange={(checked) => savePreferences({ weekly_review_enabled: checked })}
+                  disabled={saving}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Send daily morning reminders</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Get a gentle nudge each morning to check your AI summary and plan your day
+                  </p>
+                </div>
+                <Switch
+                  checked={preferences.reminders_enabled}
+                  onCheckedChange={(checked) => savePreferences({ reminders_enabled: checked })}
                   disabled={saving}
                 />
               </div>
