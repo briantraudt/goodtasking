@@ -92,31 +92,64 @@ export const useGoogleCalendar = () => {
     }
   };
 
-  const connectCalendar = () => {
-    // Generate Google OAuth URL
-    const clientId = 'YOUR_GOOGLE_CLIENT_ID'; // This should be set in environment
-    const redirectUri = `${window.location.origin}/auth/google/callback`;
-    const scope = 'https://www.googleapis.com/auth/calendar.readonly';
-    
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-      `client_id=${clientId}&` +
-      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-      `scope=${encodeURIComponent(scope)}&` +
-      `response_type=code&` +
-      `access_type=offline&` +
-      `prompt=consent`;
+  const connectCalendar = async () => {
+    try {
+      // Get the Google Client ID from our edge function
+      const { data: clientData, error: clientError } = await supabase.functions.invoke('google-calendar-integration', {
+        body: { action: 'client-id' },
+      });
 
-    // Open OAuth popup
-    const popup = window.open(authUrl, 'google-calendar-auth', 'width=500,height=600');
-    
-    // Listen for popup completion
-    const checkClosed = setInterval(() => {
-      if (popup?.closed) {
-        clearInterval(checkClosed);
-        // Refresh connection status
-        checkConnection();
+      if (clientError || !clientData?.clientId) {
+        throw new Error('Failed to get Google Client ID');
       }
-    }, 1000);
+
+      // Generate Google OAuth URL
+      const redirectUri = `${window.location.origin}/functions/v1/google-calendar-integration?action=callback`;
+      const scope = 'https://www.googleapis.com/auth/calendar.readonly';
+      
+      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `client_id=${clientData.clientId}&` +
+        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+        `scope=${encodeURIComponent(scope)}&` +
+        `response_type=code&` +
+        `access_type=offline&` +
+        `prompt=consent&` +
+        `state=${user?.id}`; // Include user ID for security
+
+      // Open OAuth popup
+      const popup = window.open(authUrl, 'google-calendar-auth', 'width=500,height=600');
+      
+      // Listen for popup completion message
+      const messageHandler = (event: MessageEvent) => {
+        if (event.data === 'google-calendar-connected') {
+          window.removeEventListener('message', messageHandler);
+          checkConnection();
+          toast({
+            title: "Calendar Connected",
+            description: "Google Calendar has been connected successfully!",
+          });
+        }
+      };
+
+      window.addEventListener('message', messageHandler);
+
+      // Fallback: check if popup is closed manually
+      const checkClosed = setInterval(() => {
+        if (popup?.closed) {
+          clearInterval(checkClosed);
+          window.removeEventListener('message', messageHandler);
+          // Give a moment for the message to arrive before checking connection
+          setTimeout(() => checkConnection(), 500);
+        }
+      }, 1000);
+    } catch (error) {
+      console.error('Error connecting calendar:', error);
+      toast({
+        title: "Connection Error",
+        description: "Failed to connect Google Calendar. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const disconnectCalendar = async () => {

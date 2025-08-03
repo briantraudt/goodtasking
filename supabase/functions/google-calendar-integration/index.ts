@@ -57,7 +57,90 @@ serve(async (req) => {
     const action = url.searchParams.get('action');
     const date = url.searchParams.get('date') || new Date().toISOString().split('T')[0];
 
-    if (action === 'connect') {
+    if (action === 'client-id') {
+      // Return the public client ID for frontend OAuth
+      return new Response(JSON.stringify({ 
+        clientId: Deno.env.get('GOOGLE_CLIENT_ID') || '' 
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+
+    } else if (action === 'callback') {
+      // Handle OAuth callback from Google
+      const code = url.searchParams.get('code');
+      
+      if (!code) {
+        return new Response('Authorization code not found', { status: 400 });
+      }
+
+      // Exchange code for tokens
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: Deno.env.get('GOOGLE_CLIENT_ID') || '',
+          client_secret: Deno.env.get('GOOGLE_CLIENT_SECRET') || '',
+          code,
+          grant_type: 'authorization_code',
+          redirect_uri: `${url.origin}/functions/v1/google-calendar-integration?action=callback`,
+        }),
+      });
+
+      const tokenData = await tokenResponse.json();
+      
+      if (!tokenResponse.ok) {
+        return new Response(`<html><body><script>window.close();</script><p>Authentication failed: ${tokenData.error_description}</p></body></html>`, {
+          headers: { 'Content-Type': 'text/html' },
+        });
+      }
+
+      // Calculate expiration time
+      const expiresAt = new Date(Date.now() + (tokenData.expires_in * 1000));
+
+      // Store tokens in database
+      const { error: insertError } = await supabase
+        .from('google_calendar_tokens')
+        .upsert({
+          user_id: user.id,
+          access_token: tokenData.access_token,
+          refresh_token: tokenData.refresh_token,
+          expires_at: expiresAt.toISOString(),
+          scope: tokenData.scope,
+          token_type: tokenData.token_type,
+        });
+
+      if (insertError) {
+        return new Response(`<html><body><script>window.close();</script><p>Database error: ${insertError.message}</p></body></html>`, {
+          headers: { 'Content-Type': 'text/html' },
+        });
+      }
+
+      // Update user preferences
+      await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: user.id,
+          google_calendar_enabled: true,
+        });
+
+      // Return success page that closes popup
+      return new Response(`
+        <html>
+          <body>
+            <script>
+              window.opener?.postMessage('google-calendar-connected', '*');
+              window.close();
+            </script>
+            <p>Calendar connected successfully! You can close this window.</p>
+          </body>
+        </html>
+      `, {
+        headers: { 'Content-Type': 'text/html' },
+      });
+
+    } else if (action === 'connect') {
       // Handle OAuth callback
       const { code } = await req.json();
       
