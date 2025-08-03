@@ -443,8 +443,18 @@ const Landing = () => {
               <Target className="h-6 w-6 text-primary" />
               <span className="font-bold text-xl">Good Tasking</span>
             </div>
-            <div className="text-sm text-muted-foreground">
-              © 2024 Good Tasking. All rights reserved.
+            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6">
+              <div className="flex items-center space-x-4 text-sm">
+                <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                  Privacy Policy
+                </Link>
+                <Link to="/termsofservice" className="text-muted-foreground hover:text-primary transition-colors">
+                  Terms of Service
+                </Link>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                © 2024 Good Tasking. All rights reserved.
+              </div>
             </div>
           </div>
         </div>
