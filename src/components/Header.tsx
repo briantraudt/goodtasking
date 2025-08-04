@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import AITasksDialog from './AITasksDialog';
+
 
 export default function Header() {
   const { user, signOut } = useAuth();
@@ -30,7 +30,6 @@ export default function Header() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            {user && <AITasksDialog />}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

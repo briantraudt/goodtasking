@@ -125,7 +125,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
               : "bg-background/50 border-current"
           )}>
             {block.type === 'event' ? (
-              <img src={googleCalendarIcon} alt="Google Calendar" className="w-3 h-3" />
+              <img src={googleCalendarIcon} alt="Google Calendar" className="w-5 h-5" />
             ) : (
               'Task'
             )}
