@@ -88,56 +88,59 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       {...(isDraggableTask ? attributes : {})}
       aria-label={block.type === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
-        "p-3 rounded text-xs transition-all hover:shadow-soft border h-full w-full ml-0 box-border mb-0 pb-0 leading-tight",
-        block.type === 'event' ? "bg-blue-50 border-blue-200 text-blue-800" : block.color,
+        "transition-all hover:shadow-soft h-full w-full m-0 p-0 border-0 box-border flex flex-col justify-center",
+        block.type === 'event' ? "bg-blue-50 text-blue-800" : block.color,
         isDraggableTask && "cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-elevated z-50",
         isDraggableTask && "hover:scale-[1.02]"
       )}
     >
-      {/* Header with time (only for tasks) and badge */}
-      <div className="flex items-center justify-between mb-2">
-        {/* Show time only for tasks, not events (since timeline shows position) */}
-        {block.type === 'task' && (
-          <span className="text-xs font-medium opacity-75">
-            {block.start.includes('T') ? 
-              format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
-              block.start + ' - ' + block.end
-            }
-          </span>
-        )}
-        
-        <div className="flex items-center gap-2 ml-auto">
-          {isDraggableTask && (
-            <div className="flex items-center gap-1 text-xs opacity-70">
-              <Clock className="h-3 w-3" />
-              {getDisplayDurationInMinutes()}m
-            </div>
+      {/* Content container with minimal padding */}
+      <div className="px-3 py-2 h-full flex flex-col justify-center">
+        {/* Header with time (only for tasks) and badge */}
+        <div className="flex items-center justify-between mb-1">
+          {/* Show time only for tasks, not events (since timeline shows position) */}
+          {block.type === 'task' && (
+            <span className="text-xs font-medium opacity-75">
+              {block.start.includes('T') ? 
+                format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
+                block.start + ' - ' + block.end
+              }
+            </span>
           )}
-          <span className={cn(
-            "px-2 py-1 text-xs rounded-full border",
-            block.type === 'event' 
-              ? "bg-gray-100 text-gray-600 border-gray-300" 
-              : "bg-background/50 border-current"
-          )}>
-            {block.type === 'event' ? 'Google Calendar' : 'Task'}
-          </span>
+          
+          <div className="flex items-center gap-2 ml-auto">
+            {isDraggableTask && (
+              <div className="flex items-center gap-1 text-xs opacity-70">
+                <Clock className="h-3 w-3" />
+                {getDisplayDurationInMinutes()}m
+              </div>
+            )}
+            <span className={cn(
+              "px-2 py-1 text-xs rounded-full border",
+              block.type === 'event' 
+                ? "bg-gray-100 text-gray-600 border-gray-300" 
+                : "bg-background/50 border-current"
+            )}>
+              {block.type === 'event' ? 'Google Calendar' : 'Task'}
+            </span>
+          </div>
         </div>
-      </div>
-      
-      {/* Event/Task Title */}
-      <div className={cn(
-        "font-medium leading-tight",
-        block.type === 'event' ? "text-base text-blue-800" : "text-sm"
-      )}>
-        {block.title}
-      </div>
-      
-      {isDraggableTask && (
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="w-2 h-2 bg-current rounded-full"></div>
+        
+        {/* Event/Task Title */}
+        <div className={cn(
+          "font-medium leading-tight",
+          block.type === 'event' ? "text-base text-blue-800" : "text-sm"
+        )}>
+          {block.title}
         </div>
-      )}
+        
+        {isDraggableTask && (
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="w-2 h-2 bg-current rounded-full"></div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
