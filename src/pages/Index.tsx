@@ -36,7 +36,7 @@ const Index = () => {
       <EnableAIAssistant />
       <Header />
       
-      <main className="flex-1 overflow-hidden max-w-[1200px] mx-auto w-full">
+      <main className="flex-1 overflow-hidden max-w-[1440px] mx-auto w-full">
         <DashboardView
           projects={projects}
           onUpdateTask={updateTask}
