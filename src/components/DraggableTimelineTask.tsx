@@ -1,10 +1,9 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Badge } from '@/components/ui/badge';
-import { Clock } from 'lucide-react';
+import { Clock, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { parseISO, format } from 'date-fns';
-import googleCalendarLogo from '@/assets/google-calendar-logo.png';
 
 interface Task {
   id: string;
@@ -99,30 +98,33 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       onClick={block.type === 'event' ? handleCalendarEventClick : undefined}
       aria-label={block.type === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
-        "transition-all hover:shadow-card w-full m-0 p-0 border-0 box-border flex flex-col justify-center group relative z-10",
-        "h-full min-h-full overflow-hidden border-l-4 bg-white",
-        // Enhanced colors and hover effects
+        "transition-all duration-200 w-full m-0 border-0 box-border flex flex-col justify-center group relative",
+        "h-full min-h-full overflow-hidden",
+        // Modern styling for events and tasks
         block.type === 'event' 
-          ? "border-blue-400 text-blue-800 cursor-pointer hover:bg-blue-50/50 hover:scale-[1.01]" 
-          : block.color || "border-green-400 text-green-800",
-        isDraggableTask && "cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50 shadow-elevated z-40 rotate-1",
-        isDraggableTask && "hover:scale-[1.02] hover:shadow-card"
+          ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg cursor-pointer hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
+          : cn("bg-white border-l-4 rounded-lg px-3 py-1.5", block.color || "border-green-400"),
+        isDraggableTask && "cursor-grab active:cursor-grabbing hover:shadow-md",
+        isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
+        isDraggableTask && "hover:scale-[1.01]"
       )}
     >
-      {/* Content container with proper spacing for overlays */}
-      <div className="h-full flex flex-col justify-center pl-3 pr-16 pb-8">
+      {/* Content container with modern spacing */}
+      <div className="h-full flex flex-col justify-center">
         {/* Event/Task Title - Enhanced Typography */}
         <div className={cn(
           "text-base leading-tight text-left font-bold",
-          block.type === 'event' ? "text-blue-800" : ""
+          block.type === 'event' ? "text-blue-900" : "text-gray-900"
         )}>
           {block.title}
         </div>
       </div>
       
-      {/* Header with badge - positioned absolutely to not affect centering */}
-      <div className="absolute top-2 right-2 flex items-center gap-2">
+      {/* Header with badge - positioned in bottom-right for events */}
+      <div className={cn(
+        "absolute flex items-center gap-2",
+        block.type === 'event' ? "bottom-2 right-2" : "top-2 right-2"
+      )}>
         {isDraggableTask && (
           <div className="flex items-center gap-1 text-xs opacity-70">
             <Clock className="h-3 w-3" />
@@ -130,7 +132,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
           </div>
         )}
         {block.type === 'event' ? (
-          <img src={googleCalendarLogo} alt="Google Calendar" className="w-6 h-6" />
+          <Calendar className="w-4 h-4 text-blue-600" />
         ) : (
           <span className="px-2 py-1 text-xs rounded-full border bg-background/50 border-current">
             Task
