@@ -402,7 +402,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
         
         toast({
           title: "Task Scheduled! ✅",
-          description: `${task.title} scheduled for ${startTime}`,
+          description: `${task.title} scheduled for ${format(new Date().setHours(parseInt(startTime.split(':')[0]), parseInt(startTime.split(':')[1]), 0, 0), 'h:mm a')}`,
         });
 
         // Clear undo after 5 seconds
@@ -497,7 +497,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
           
           toast({
             title: "Task Rescheduled",
-            description: `${task.title} moved to ${startTime}`,
+            description: `${task.title} moved to ${format(new Date().setHours(parseInt(startTime.split(':')[0]), parseInt(startTime.split(':')[1]), 0, 0), 'h:mm a')}`,
           });
 
           // Clear undo after 5 seconds
@@ -548,7 +548,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   };
 
   // Generate time slots (7 AM to 7 PM)
-  const timeSlots = Array.from({ length: 12 }, (_, i) => i + 7);
+  const timeSlots = Array.from({ length: 13 }, (_, i) => i + 7);
 
   useEffect(() => {
     const newBlocks = generateTimeBlocks();
