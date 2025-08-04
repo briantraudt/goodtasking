@@ -89,9 +89,9 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
         </div>
       )}
       
-      {/* Task title left-aligned in large text */}
-      <div className="flex-1 flex items-center mb-3">
-        <h4 className="font-semibold text-base leading-tight text-foreground pr-4">{task.title}</h4>
+      {/* Task title centered in large text */}
+      <div className="flex-1 flex items-center justify-center mb-3">
+        <h4 className="font-semibold text-base leading-tight text-foreground text-center">{task.title}</h4>
       </div>
       
       {/* Due date in lower right corner */}
