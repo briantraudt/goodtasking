@@ -32,11 +32,11 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen bg-background flex flex-col overflow-hidden">
       <EnableAIAssistant />
       <Header />
       
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
+      <main className="flex-1 overflow-hidden">
         <DashboardView
           projects={projects}
           onUpdateTask={updateTask}
