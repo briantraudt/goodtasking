@@ -58,10 +58,26 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
     return endMinutes - startMinutes;
   };
 
+  const getDisplayDurationInMinutes = () => {
+    // For display purposes in the current slot, cap at 30 minutes
+    return Math.min(getDurationInMinutes(), 30);
+  };
+
+  const getSlotHeight = () => {
+    const duration = getDisplayDurationInMinutes();
+    // Each 30-minute slot should get proportional height
+    // If duration is 30 minutes, height should be 100% of slot
+    return Math.min(duration / 30, 1) * 100; // Percentage of slot height
+  };
+
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{
+        ...style,
+        height: `${getSlotHeight()}%`,
+        minHeight: '40px'
+      }}
       {...(isDraggableTask ? listeners : {})}
       {...(isDraggableTask ? attributes : {})}
       className={cn(
@@ -78,7 +94,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
           {isDraggableTask && (
             <div className="flex items-center gap-1 text-xs opacity-70">
               <Clock className="h-3 w-3" />
-              {getDurationInMinutes()}m
+              {getDisplayDurationInMinutes()}m
             </div>
           )}
           <Badge variant="outline" className="text-xs bg-background/50">
