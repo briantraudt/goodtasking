@@ -118,14 +118,14 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       ref={setNodeRef}
       className={cn(
         className,
-        "bg-sidebar-card border-sidebar-border shadow-soft",
+        "rounded-xl border shadow-soft bg-card",
         isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
       )}
     >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-title">Tasks</h3>
+            <h3 className="text-xl font-bold">Tasks</h3>
           </div>
           <SmartAddButton
             projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}

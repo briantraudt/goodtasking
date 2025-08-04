@@ -629,13 +629,22 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     >
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
-        {/* Scrollable Content Section */}
-        <div className="flex-1 flex gap-4 p-4 min-h-0">
+        {/* Scrollable Content Section with improved spacing */}
+        <div className="flex-1 flex gap-8 p-6 min-h-0">
           {/* Left side - Calendar Timeline (50%) */}
-          <Card className="flex-[50] flex flex-col">
+          <Card className="flex-[50] flex flex-col rounded-xl border shadow-soft">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-title">Calendar</h3>
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">Calendar</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {(() => {
+                      const [year, month, day] = selectedDate.split('-').map(Number);
+                      const date = new Date(year, month - 1, day);
+                      return format(date, 'EEEE, MMMM d');
+                    })()}
+                  </p>
+                </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -667,8 +676,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                 </div>
               )}
 
-              {/* Time Grid */}
-              <div className="space-y-0 border rounded-lg overflow-hidden relative">
+              {/* Time Grid with refined styling */}
+              <div className="space-y-0 border border-border rounded-xl overflow-hidden relative bg-card">
                 {/* Timeline container with absolute positioning for events */}
                 <div className="relative">
                   {timeSlots.map(hour => (
@@ -771,40 +780,21 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           </Card>
 
           {/* Middle - Task Sidebar (25%) */}
-          <TaskSidebar 
-            projects={projects}
-            selectedDate={selectedDate}
-            onCreateTask={onCreateTask}
-            onCreateProject={onCreateProject}
-            className="flex-[25]"
-          />
+          <div className="flex-[25]">
+            <TaskSidebar 
+              projects={projects}
+              selectedDate={selectedDate}
+              onCreateTask={onCreateTask}
+              onCreateProject={onCreateProject}
+            />
+          </div>
 
           {/* Right side - AI Task Sequencer (25%) */}
-          <AITaskSequencerInline className="flex-[25]" />
+          <div className="flex-[25] border-l border-border pl-6">
+            <AITaskSequencerInline />
+          </div>
         </div>
 
-        {/* Fixed Footer Stats Section */}
-        <div className="flex-shrink-0 flex gap-4 p-4 border-t bg-background">
-          <div className="flex-[7]">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="text-2xl font-bold text-primary">{events.length}</p>
-                <p className="text-xs text-muted-foreground">Calendar Events</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-success">{scheduledTasks.length}</p>
-                <p className="text-xs text-muted-foreground">Scheduled Tasks</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-accent">{timeBlocks.length}</p>
-                <p className="text-xs text-muted-foreground">Total Blocks</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex-[3]">
-            {/* Empty space to align with task sidebar */}
-          </div>
-        </div>
 
         {/* Undo Button - Bottom Right */}
         {undoAction && (

@@ -16,21 +16,13 @@ const Header = () => {
     return emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1).toLowerCase();
   };
 
-  const today = format(new Date(), 'EEEE, MMMM d, yyyy');
-
   return (
-    <header className="flex items-center justify-between pb-8">
-      {/* Left side - Modern greeting */}
-      <div className="flex flex-col">
-        <h1 className="text-3xl font-bold text-foreground mb-1">
-          👋 Welcome back, {getUserName()}!
+    <header className="flex items-center justify-between">
+      {/* Left side - Simplified greeting */}
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">
+          👋 Welcome, {getUserName()}!
         </h1>
-        <p className="text-muted-foreground text-lg">
-          Let's plan a productive day together.
-        </p>
-        <p className="text-sm text-muted-foreground mt-1">
-          {today}
-        </p>
       </div>
 
       {/* Right side - Action buttons */}

@@ -3,6 +3,7 @@ import { useProjects } from '@/hooks/useProjects';
 import Header from '@/components/Header';
 import DashboardView from '@/components/DashboardView';
 import EnableAIAssistant from '@/components/EnableAIAssistant';
+import StatsFooter from '@/components/StatsFooter';
 
 const Index = () => {
   const { user } = useAuth();
@@ -32,14 +33,19 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-screen grid grid-rows-[auto_1fr_auto] overflow-hidden bg-background">
       <EnableAIAssistant />
       
-      {/* Modern container with max width and proper padding */}
-      <div className="max-w-app mx-auto px-app-x pt-app-y">
-        <Header />
-        
-        <main className="mt-8">
+      {/* Fixed Header */}
+      <header className="border-b bg-card shadow-sm">
+        <div className="max-w-app mx-auto px-6 py-4">
+          <Header />
+        </div>
+      </header>
+      
+      {/* Scrollable Main Content */}
+      <main className="overflow-y-auto">
+        <div className="max-w-app mx-auto px-6 py-6">
           <DashboardView
             projects={projects}
             onUpdateTask={updateTask}
@@ -48,8 +54,15 @@ const Index = () => {
             onRefreshTasks={refetch}
             userName={getUserName()}
           />
-        </main>
-      </div>
+        </div>
+      </main>
+      
+      {/* Fixed Footer */}
+      <footer className="border-t bg-muted/30">
+        <div className="max-w-app mx-auto px-6 py-3">
+          <StatsFooter projects={projects} />
+        </div>
+      </footer>
     </div>
   );
 };

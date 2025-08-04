@@ -89,18 +89,26 @@ export default function AITaskSequencerInline({ className }: AITaskSequencerInli
   };
 
   return (
-    <Card className={className}>
+    <Card className={`${className} rounded-xl border shadow-soft bg-muted/30`}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-title">
-          AI Task Sequencer
-        </CardTitle>
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Sparkles className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <CardTitle className="text-lg font-bold">AI Task Sequencer</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Organize your tasks optimally
+            </p>
+          </div>
+        </div>
       </CardHeader>
       
       <CardContent className="flex-1 overflow-hidden flex flex-col">
         {!showTaskFlow ? (
           <form onSubmit={handleSubmit} className="space-y-4 flex-1 flex flex-col">
             <div className="space-y-2 flex-1">
-              <Label htmlFor="task-input" className="text-base font-medium">
+              <Label htmlFor="task-input" className="text-sm font-medium text-muted-foreground">
                 What do you need to get done today?
               </Label>
               <Textarea
@@ -116,7 +124,7 @@ Examples:
 • Meal prep for the week"
                 value={taskInput}
                 onChange={(e) => setTaskInput(e.target.value)}
-                className="min-h-[300px] resize-none flex-1"
+                className="min-h-[300px] resize-none flex-1 border-border rounded-lg"
                 disabled={isProcessing}
               />
               <p className="text-sm text-muted-foreground">
@@ -134,7 +142,7 @@ Examples:
               </Button>
               <Button 
                 type="submit" 
-                className="bg-gradient-primary hover:bg-gradient-primary/90"
+                className="rounded-lg h-10 font-medium"
                 disabled={isProcessing || !taskInput.trim()}
               >
                 {isProcessing ? (
