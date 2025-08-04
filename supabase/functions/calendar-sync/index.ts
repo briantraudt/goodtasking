@@ -40,18 +40,30 @@ Deno.serve(async (req) => {
       throw new Error('No authorization header')
     }
 
-    // Set the auth token for the client
-    const token = authHeader.replace('Bearer ', '')
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token)
+    // Get user from the auth header and set the auth context
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''))
     
     if (authError || !user) {
       throw new Error('Invalid auth token')
     }
 
+    // Create a new client with the user's auth token for RLS
+    const authenticatedClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: {
+            Authorization: authHeader,
+          },
+        },
+      }
+    )
+
     console.log('Calendar sync for user:', user.id)
 
-    // Get the user's Google Calendar token
-    const { data: tokenData, error: tokenError } = await supabaseClient
+    // Get the user's Google Calendar token using authenticated client
+    const { data: tokenData, error: tokenError } = await authenticatedClient
       .from('google_calendar_tokens')
       .select('access_token, refresh_token, expires_at')
       .eq('user_id', user.id)
@@ -91,7 +103,7 @@ Deno.serve(async (req) => {
       const newExpiresAt = new Date(Date.now() + refreshData.expires_in * 1000)
 
       // Update the token in database
-      await supabaseClient
+      await authenticatedClient
         .from('google_calendar_tokens')
         .update({
           access_token: refreshData.access_token,
@@ -130,7 +142,7 @@ Deno.serve(async (req) => {
     console.log(`Fetched ${events.length} events from Google Calendar`)
 
     // Delete existing events for this user (to handle deleted events)
-    await supabaseClient
+    await authenticatedClient
       .from('calendar_events')
       .delete()
       .eq('user_id', user.id)
@@ -156,7 +168,7 @@ Deno.serve(async (req) => {
         }
       })
 
-      const { error: insertError } = await supabaseClient
+      const { error: insertError } = await authenticatedClient
         .from('calendar_events')
         .insert(eventsToInsert)
 
@@ -167,7 +179,7 @@ Deno.serve(async (req) => {
     }
 
     // Update last sync time
-    await supabaseClient
+    await authenticatedClient
       .from('user_preferences')
       .update({ calendar_last_sync: new Date().toISOString() })
       .eq('user_id', user.id)
