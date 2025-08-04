@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import { Clock, GripVertical } from 'lucide-react';
+import { Clock, GripVertical, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -10,6 +10,7 @@ interface Task {
   priority?: 'high' | 'medium' | 'low';
   estimated_duration?: number;
   due_date?: string | null;
+  scheduled_date?: string | null;
   completed: boolean;
   vibe_projects?: { name: string };
 }
@@ -74,10 +75,18 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       )}
       
       {/* Task Title - Bold, primary focus */}
-      <div className="flex-1 flex items-center">
+      <div className="flex-1 flex items-center justify-between">
         <h4 className="text-sm font-bold text-gray-900 leading-tight truncate">
           {task.title}
         </h4>
+        
+        {/* Scheduled indicator */}
+        {task.scheduled_date && (
+          <div className="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full ml-2">
+            <Calendar className="h-3 w-3" />
+            <span className="hidden sm:inline">Scheduled</span>
+          </div>
+        )}
       </div>
 
       {/* Minimal Drag Handle (appears on hover) */}

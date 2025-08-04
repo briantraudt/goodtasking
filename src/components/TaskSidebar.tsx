@@ -46,14 +46,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     id: 'task-sidebar',
   });
 
-  // Get all unscheduled tasks
-  const unscheduledTasks = useMemo(() => {
+  // Get all incomplete tasks (both scheduled and unscheduled)
+  const allTasks = useMemo(() => {
     return projects.flatMap(project => 
       project.tasks
-        .filter(task => 
-          !task.completed && 
-          !task.scheduled_date
-        )
+        .filter(task => !task.completed) // Only filter out completed tasks
         .map(task => ({
           ...task,
           vibe_projects: { name: project.name }
@@ -63,7 +60,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
 
   // Apply filters
   const filteredTasks = useMemo(() => {
-    return unscheduledTasks.filter(task => {
+    return allTasks.filter(task => {
       // Project filter
       if (projectFilter !== 'all') {
         const projectMatch = projects.find(p => 
@@ -97,20 +94,21 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
 
       return true;
     });
-  }, [unscheduledTasks, projectFilter, priorityFilter, dueDateFilter, projects]);
+  }, [allTasks, projectFilter, priorityFilter, dueDateFilter, projects]);
 
   // Get unique projects that have tasks
   const projectsWithTasks = useMemo(() => {
     return projects.filter(project => 
-      project.tasks.some(task => !task.completed && !task.scheduled_date)
+      project.tasks.some(task => !task.completed)
     );
   }, [projects]);
 
   const handleCreateTask = (projectId: string, title: string, scheduledDate: Date) => {
     onCreateTask?.(projectId, title, undefined, scheduledDate);
   };
-    const getTaskCountByPriority = (priority: string) => {
-    return unscheduledTasks.filter(task => task.priority === priority).length;
+  
+  const getTaskCountByPriority = (priority: string) => {
+    return allTasks.filter(task => task.priority === priority).length;
   };
 
   return (
@@ -160,8 +158,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
           <div className="space-y-0">
             {filteredTasks.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
-                {unscheduledTasks.length === 0 ? (
-                  <p>🎉 All tasks are scheduled!</p>
+                {allTasks.length === 0 ? (
+                  <p>🎉 All tasks are complete!</p>
                 ) : (
                   <p>No tasks match the current filters</p>
                 )}
