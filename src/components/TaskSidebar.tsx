@@ -120,8 +120,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       )}
     >
       {/* Header Section */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold">Tasks</h2>
+      <div className="flex justify-end mb-4">
         <SmartAddButton
           projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
           onCreateTask={handleCreateTask}
