@@ -101,8 +101,7 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
       
       {/* Current time indicator */}
       {isCurrentTime && (
-        <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-destructive z-10">
-          <div className="absolute -left-1 -top-1 w-2 h-2 bg-destructive rounded-full"></div>
+        <div className="current-time-indicator absolute left-0 right-0 top-1/2 z-10">
         </div>
       )}
       
@@ -592,28 +591,28 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
           {/* Left side header */}
           <div className="flex-[7]">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-semibold">Daily Timeline</h2>
-                <Badge variant="secondary">{format(new Date(), 'MMM d')}</Badge>
+              <div className="flex items-center gap-3">
+                <Calendar className="h-6 w-6 text-primary" />
+                <h2 className="text-title">Daily Timeline</h2>
+                <Badge variant="secondary" className="rounded-xl font-medium">{format(new Date(), 'MMM d')}</Badge>
                 {isToday(new Date(selectedDate)) && (
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs rounded-xl">
                     {format(currentTime, 'h:mm a')}
                   </Badge>
                 )}
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handlePlanMyDay}
                   disabled={planningLoading || !isConnected}
-                  className="flex items-center gap-1"
+                  className="btn-gradient-hover flex items-center gap-2 rounded-xl font-semibold px-4 py-2 transition-all duration-200"
                 >
                   {planningLoading ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Calendar className="h-3 w-3" />
+                    <Calendar className="h-4 w-4" />
                   )}
                   Plan My Day
                 </Button>
@@ -622,12 +621,12 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                   size="sm"
                   onClick={handleSmartSchedule}
                   disabled={aiLoading}
-                  className="flex items-center gap-1"
+                  className="btn-gradient-hover flex items-center gap-2 rounded-xl font-semibold px-4 py-2 transition-all duration-200"
                 >
                   {aiLoading ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Sparkles className="h-3 w-3" />
+                    <Sparkles className="h-4 w-4" />
                   )}
                   Smart Schedule
                 </Button>
@@ -636,7 +635,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
           </div>
           {/* Right side header - Tasks to Schedule */}
           <div className="flex-[3]">
-            <h2 className="text-xl font-semibold">Tasks to Schedule</h2>
+            <h2 className="text-title">Tasks to Schedule</h2>
           </div>
         </div>
 

@@ -60,10 +60,18 @@ export default {
 				'priority-high': 'hsl(var(--priority-high))',
 				'priority-medium': 'hsl(var(--priority-medium))',
 				'priority-low': 'hsl(var(--priority-low))',
-				// Calendar Event Colors
+				// Calendar and Timeline Colors
 				'calendar-event': {
 					bg: 'hsl(var(--calendar-event-bg))',
 					border: 'hsl(var(--calendar-event-border))'
+				},
+				'google-calendar': {
+					bg: 'hsl(var(--google-calendar-bg))',
+					border: 'hsl(var(--google-calendar-border))'
+				},
+				'ai-scheduled': {
+					bg: 'hsl(var(--ai-scheduled-bg))',
+					border: 'hsl(var(--ai-scheduled-border))'
 				},
 				// Sidebar Colors
 				'sidebar-card': 'hsl(var(--sidebar-card-bg))',
