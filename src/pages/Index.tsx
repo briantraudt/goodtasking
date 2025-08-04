@@ -43,9 +43,9 @@ const Index = () => {
         </div>
       </header>
       
-      {/* Scrollable Main Content */}
-      <main className="overflow-y-auto">
-        <div className="max-w-app mx-auto px-6 py-6">
+      {/* Fixed Height Main Content with Independent Scrolling */}
+      <main className="overflow-hidden">
+        <div className="max-w-app mx-auto px-6 py-6 h-[calc(100vh-140px)] overflow-hidden">
           <DashboardView
             projects={projects}
             onUpdateTask={updateTask}
@@ -58,7 +58,7 @@ const Index = () => {
       </main>
       
       {/* Fixed Footer */}
-      <footer className="border-t bg-muted/30">
+      <footer className="border-t bg-muted/30 fixed bottom-0 left-0 w-full z-10">
         <div className="max-w-app mx-auto px-6 py-3">
           <StatsFooter projects={projects} />
         </div>

@@ -629,10 +629,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     >
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
-        {/* Scrollable Content Section with improved spacing */}
-        <div className="flex-1 flex gap-8 p-6 min-h-0">
-          {/* Left side - Calendar Timeline (50%) */}
-          <Card className="flex-[50] flex flex-col rounded-xl border shadow-soft">
+        {/* Fixed Layout with Independent Scrolling */}
+        <div className="flex-1 flex gap-8 p-6 min-h-0 overflow-hidden">
+          {/* Left side - Calendar Timeline (50%) - Scrollable */}
+          <div className="flex-[50] overflow-y-auto">
+            <Card className="flex flex-col rounded-xl border shadow-soft h-fit">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -777,20 +778,23 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                 </div>
               </div>
             </CardContent>
-          </Card>
-
-          {/* Middle - Task Sidebar (25%) */}
-          <div className="flex-[25]">
-            <TaskSidebar 
-              projects={projects}
-              selectedDate={selectedDate}
-              onCreateTask={onCreateTask}
-              onCreateProject={onCreateProject}
-            />
+            </Card>
           </div>
 
-          {/* Right side - AI Task Sequencer (25%) */}
-          <div className="flex-[25] border-l border-border pl-6">
+          {/* Middle - Task Sidebar (25%) - Scrollable */}
+          <div className="flex-[25] overflow-y-auto">
+            <div className="pr-2">
+              <TaskSidebar 
+                projects={projects}
+                selectedDate={selectedDate}
+                onCreateTask={onCreateTask}
+                onCreateProject={onCreateProject}
+              />
+            </div>
+          </div>
+
+          {/* Right side - AI Task Sequencer (25%) - Fixed (No Scroll) */}
+          <div className="flex-[25] border-l border-border pl-6 flex-shrink-0">
             <AITaskSequencerInline />
           </div>
         </div>
