@@ -100,14 +100,17 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
         ...style,
         height: `${getSlotHeight()}px`,
         minHeight: '40px',
-        position: 'relative',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
         zIndex: 10
       }}
       {...(isDraggableTask ? listeners : {})}
       {...(isDraggableTask ? attributes : {})}
       className={cn(
         "p-2 m-1 rounded text-xs transition-all hover:shadow-soft relative border box-border",
-        block.color,
+        block.type === 'event' ? "bg-blue-50 border-blue-200 text-blue-800" : block.color,
         isDraggableTask && "cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-elevated z-50",
         isDraggableTask && "hover:scale-[1.02]"
