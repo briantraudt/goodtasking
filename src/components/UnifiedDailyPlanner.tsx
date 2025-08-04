@@ -7,6 +7,7 @@ import { useAIScheduler } from '@/hooks/useAIScheduler';
 import { useAIPlanner } from '@/hooks/useAIPlanner';
 import InfiniteScrollCalendar from './InfiniteScrollCalendar';
 import TaskSidebar from '@/components/TaskSidebar';
+import SmartAddButton from '@/components/SmartAddButton';
 import AIChatBubble from '@/components/AIChatBubble';
 import FooterMetrics from '@/components/FooterMetrics';
 import DraggableTimelineTask from '@/components/DraggableTimelineTask';
@@ -669,10 +670,19 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             <div className="flex flex-col h-full">
               {/* Sticky Tasks Header */}
               <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <CheckSquare className="h-5 w-5 text-primary" />
-                  Tasks
-                </h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <CheckSquare className="h-5 w-5 text-primary" />
+                    Tasks
+                  </h2>
+                  <SmartAddButton
+                    projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
+                    onCreateTask={(projectId: string, title: string, scheduledDate: Date) => {
+                      onCreateTask?.(projectId, title, undefined, scheduledDate);
+                    }}
+                    onCreateProject={onCreateProject}
+                  />
+                </div>
               </div>
               
               {/* Tasks Content with Independent Scroll */}

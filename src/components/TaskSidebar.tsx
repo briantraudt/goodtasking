@@ -119,14 +119,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
       )}
     >
-      {/* Header Section */}
-      <div className="flex justify-end mb-4">
-        <SmartAddButton
-          projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
-          onCreateTask={handleCreateTask}
-          onCreateProject={onCreateProject}
-        />
-      </div>
+      {/* No header section needed - Add button is now in parent component */}
 
       {/* Filter Section */}
       <div className="mb-4">
