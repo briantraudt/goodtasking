@@ -42,7 +42,7 @@ const InfiniteScrollCalendar = ({
   
   // Initialize base date to center around today - FIXED for August 4th navigation
   const [baseDate, setBaseDate] = useState(() => {
-    const today = new Date(); // This should be August 4th, 2024
+    const today = new Date(2024, 7, 4); // August 4th, 2024 (month is 0-indexed)
     return subDays(today, DAYS_BUFFER); // Go back DAYS_BUFFER days from today
   });
 
@@ -127,21 +127,20 @@ const InfiniteScrollCalendar = ({
     }
   }, [virtualizer, virtualItems, visibleDate, onDateChange]);
 
-  // Auto-scroll to current time on mount
+  // Auto-scroll to selected date
   useEffect(() => {
-    if (isToday(new Date(selectedDate))) {
-      const currentHour = new Date().getHours();
-      const currentMinutes = new Date().getMinutes();
-      
-      // Find the index for current time
-      const dayOffset = 3; // baseDate is 3 days before selectedDate
-      const hourIndex = dayOffset * HOURS_PER_DAY * 2 + currentHour * 2 + (currentMinutes >= 30 ? 1 : 0);
+    const selectedDay = new Date(selectedDate);
+    const daysDiff = Math.floor((selectedDay.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysDiff >= 0 && daysDiff < DAYS_BUFFER * 2) {
+      const hourToShow = isToday(selectedDay) ? new Date().getHours() : 9; // 9 AM for non-today dates
+      const indexToScroll = daysDiff * HOURS_PER_DAY * 2 + hourToShow * 2;
       
       setTimeout(() => {
-        virtualizer.scrollToIndex(hourIndex, { align: 'center' });
-      }, 100);
+        virtualizer.scrollToIndex(indexToScroll, { align: 'start' });
+      }, 200);
     }
-  }, [selectedDate, virtualizer]);
+  }, [selectedDate, baseDate, virtualizer]);
 
   // Format hour for display
   const formatHour = (hour: number) => {
@@ -306,7 +305,7 @@ const InfiniteScrollCalendar = ({
                 }}
               >
                 <div className={cn(
-                  "grid grid-cols-[120px_1fr] h-full border-t border-timeline-gray",
+                  "grid grid-cols-[140px_1fr] h-full border-t border-timeline-gray",
                   // Add alternating backgrounds for better visual hierarchy
                   Math.floor(item.hour / 2) % 2 === 0 ? "bg-off-white/30" : "bg-white"
                 )}>
