@@ -127,8 +127,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const { toast } = useToast();
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
   const [selectedDate, setSelectedDate] = useState(() => {
-    // FIXED: Always default to August 4th, 2024 as today
-    return format(new Date(2024, 7, 4), 'yyyy-MM-dd'); // August 4th, 2024
+    return format(new Date(), 'yyyy-MM-dd'); // Use actual today's date
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -649,12 +648,12 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                     →
                   </button>
                 </div>
-                {/* FIXED: Only show Today button when NOT viewing August 4th, 2024 (actual today) */}
-                {selectedDate !== format(new Date(2024, 7, 4), 'yyyy-MM-dd') && (
+                {/* Today button logic - only show when not viewing today */}
+                {!isToday(new Date(selectedDate)) && (
                   <div className="flex justify-center mt-2">
                     <button
                       onClick={() => {
-                        const today = format(new Date(2024, 7, 4), 'yyyy-MM-dd'); // August 4th, 2024
+                        const today = format(new Date(), 'yyyy-MM-dd');
                         setSelectedDate(today);
                       }}
                       className="px-4 py-2 text-sm bg-forest-green text-white rounded-lg hover:bg-forest-green/90 transition-colors font-medium"

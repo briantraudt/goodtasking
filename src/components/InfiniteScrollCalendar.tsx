@@ -41,9 +41,9 @@ const InfiniteScrollCalendar = ({
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isScrolling, setIsScrolling] = useState(false);
   
-  // FIXED: Always center around today (August 4th, 2024)
+  // Center around actual today
   const baseDate = useMemo(() => {
-    const today = new Date(2024, 7, 4); // August 4th, 2024 (month is 0-indexed)
+    const today = new Date();
     return subDays(today, DAYS_BUFFER);
   }, []);
 
@@ -360,16 +360,18 @@ const InfiniteScrollCalendar = ({
                       className="border-r-2 border-border flex items-center justify-center font-bold text-white"
                       style={{ 
                         height: `${HOUR_HEIGHT}px`,
-                        backgroundColor: 'hsl(var(--navy-blue))', // Good Business navy
+                        backgroundColor: '#172A45', // Good Business navy
                         fontSize: '16px',
                         fontWeight: '700',
-                        textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.5)',
                         position: 'sticky',
                         left: 0,
-                        zIndex: 5
+                        zIndex: 5,
+                        paddingLeft: '12px',
+                        lineHeight: '1.75rem'
                       }}
                     >
-                      <span className="text-white">
+                      <span className="text-white font-semibold">
                         {formatHour(item.hour)}
                       </span>
                     </div>
@@ -378,7 +380,7 @@ const InfiniteScrollCalendar = ({
                     <div 
                       className="border-r-2 border-border"
                       style={{ 
-                        backgroundColor: 'hsl(var(--navy-blue))',
+                        backgroundColor: '#172A45',
                         position: 'sticky',
                         left: 0,
                         zIndex: 5
@@ -386,11 +388,13 @@ const InfiniteScrollCalendar = ({
                     />
                   )}
                   
-                  {/* Enhanced Time Slot with proper half-hour grid lines */}
+                  {/* Enhanced Time Slot with proper half-hour grid lines and alternating backgrounds */}
                   <div 
                     className={cn(
                       "relative transition-all duration-200 px-3 py-2",
-                      "border-r border-border bg-white hover:bg-forest-green/5",
+                      "border-r border-border hover:bg-forest-green/5",
+                      // Alternating backgrounds for better hour scanning  
+                      item.hour % 2 === 0 ? "bg-gray-50/50" : "bg-white",
                       // Enhanced border system for half-hour visibility
                       item.period === 'second' 
                         ? 'border-b-2 border-border' 
