@@ -198,12 +198,6 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
           </div>
         </ScrollArea>
 
-        {/* Quick Tips */}
-        <div className="text-xs text-muted-foreground bg-muted/50 p-2 rounded">
-          💡 Drag tasks to the calendar to schedule them
-          <br />
-          🔄 Drag scheduled tasks back here to unschedule them
-        </div>
       </CardContent>
     </Card>
   );
