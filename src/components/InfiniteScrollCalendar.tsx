@@ -349,31 +349,38 @@ const InfiniteScrollCalendar = ({
                   transform: `translateY(${virtualItem.start}px)`,
                 }}
               >
-                <div className="grid grid-cols-[90px_1fr] h-full border-t border-gray-200">
-                  {/* Time Label - Show only on hour start */}
+                <div className={cn(
+                  "grid grid-cols-[90px_1fr] h-full border-t border-gray-200/60",
+                  // Add alternating backgrounds for better visual hierarchy
+                  Math.floor(item.hour / 2) % 2 === 0 ? "bg-gray-50/30" : "bg-white"
+                )}>
+                  {/* Time Label - Show only on hour start with enhanced styling */}
                   {isHourStart && (
-                    <div className="sticky left-0 bg-gray-50 text-sm font-semibold text-center border-r border-gray-200 flex items-center justify-center row-span-2"
+                    <div className="sticky left-0 bg-gradient-to-r from-gray-100 to-gray-50 text-sm font-bold text-center border-r-2 border-gray-300 flex items-center justify-center row-span-2 text-gray-700"
                          style={{ height: `${HOUR_HEIGHT}px` }}>
                       {formatHour(item.hour)}
                     </div>
                   )}
                   {!isHourStart && (
-                    <div className="border-r border-gray-200"></div>
+                    <div className="border-r-2 border-gray-300"></div>
                   )}
                   
-                  {/* Time Slot */}
+                  {/* Time Slot with enhanced visual hierarchy */}
                   <div 
-                    className={`
-                      relative border-r border-gray-200 transition-colors duration-200
-                      ${isCurrentTimeSlot(item.date, item.hour, item.period) ? 'bg-primary/5' : 'hover:bg-gray-50'}
-                      ${item.period === 'second' ? 'border-b border-gray-200' : ''}
-                    `}
+                    className={cn(
+                      "relative border-r border-gray-200/60 transition-all duration-200 px-1",
+                      isCurrentTimeSlot(item.date, item.hour, item.period) 
+                        ? 'bg-primary/10 ring-1 ring-primary/20' 
+                        : 'hover:bg-primary/5',
+                      item.period === 'second' ? 'border-b border-gray-200/60' : '',
+                      "min-h-[38px]" // Increased padding
+                    )}
                   >
                     {isCurrentTimeSlot(item.date, item.hour, item.period) && (
-                      <div className="absolute inset-0 bg-primary/10 animate-pulse" />
+                      <div className="absolute inset-0 bg-primary/5 animate-pulse border border-primary/20 rounded-sm" />
                     )}
                     
-                    {/* Render time blocks for this slot */}
+                    {/* Render time blocks for this slot with enhanced cards */}
                     {renderTimeBlocks(item)}
                   </div>
                 </div>

@@ -111,6 +111,22 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     return allTasks.filter(task => task.priority === priority).length;
   };
 
+  // Function to get project color based on project name/id
+  const getProjectColor = (projectName: string, index: number) => {
+    const colors = [
+      { border: 'border-project-blue', bg: 'bg-project-blue-bg', text: 'text-project-blue', name: 'blue' },
+      { border: 'border-project-green', bg: 'bg-project-green-bg', text: 'text-project-green', name: 'green' },
+      { border: 'border-project-purple', bg: 'bg-project-purple-bg', text: 'text-project-purple', name: 'purple' },
+      { border: 'border-project-orange', bg: 'bg-project-orange-bg', text: 'text-project-orange', name: 'orange' },
+      { border: 'border-project-pink', bg: 'bg-project-pink-bg', text: 'text-project-pink', name: 'pink' },
+      { border: 'border-project-teal', bg: 'bg-project-teal-bg', text: 'text-project-teal', name: 'teal' }
+    ];
+    
+    // Use consistent color assignment based on project name hash
+    const hash = projectName.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+    return colors[hash % colors.length];
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -122,7 +138,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       {/* No header section needed - Add button is now in parent component */}
 
       {/* Filter Section */}
-      <div className="mb-4">
+      <div className="mb-6">
         <TaskFilters
           projects={projectsWithTasks}
           projectFilter={projectFilter}
@@ -139,9 +155,9 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         />
       </div>
 
-      {/* Projects Grid - 3 Columns */}
-      <div className="grid grid-cols-3 gap-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 400px)' }}>
-        {projectsWithTasks.map(project => {
+      {/* Projects Grid - 3 Columns with Bold Design */}
+      <div className="grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+        {projectsWithTasks.map((project, index) => {
           // Get filtered tasks for this project
           const projectTasks = allTasks.filter(task => {
             // Check if task belongs to this project
@@ -177,21 +193,91 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
 
           if (projectTasks.length === 0) return null;
 
+          const projectColor = getProjectColor(project.name, index);
+
           return (
-            <div key={project.id} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-              {/* Project Header */}
-              <div className="mb-3 pb-2 border-b border-gray-300">
-                <h3 className="font-semibold text-gray-900 text-sm">{project.name}</h3>
-                <div className="text-xs text-gray-500 mt-1">
-                  {projectTasks.length} task{projectTasks.length !== 1 ? 's' : ''}
+            <div 
+              key={project.id} 
+              className={cn(
+                "rounded-xl border-2 p-4 shadow-card transition-all duration-200 hover:shadow-elevated",
+                projectColor.border,
+                projectColor.bg
+              )}
+            >
+              {/* Bold Project Header with Gradient */}
+              <div className={cn(
+                "mb-4 rounded-lg p-3 -mx-1",
+                "bg-gradient-to-r from-white/60 to-white/30 backdrop-blur-sm"
+              )}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className={cn(
+                      "w-3 h-3 rounded-full",
+                      projectColor.border.replace('border-', 'bg-')
+                    )} />
+                    <h3 className={cn(
+                      "font-bold text-base",
+                      projectColor.text
+                    )}>
+                      {project.name}
+                    </h3>
+                  </div>
+                  <Badge variant="secondary" className="text-xs font-medium">
+                    {projectTasks.length}
+                  </Badge>
                 </div>
               </div>
 
-              {/* Project Tasks */}
-              <div className="space-y-2">
-                {projectTasks.map(task => (
-                  <DraggableTaskItem key={task.id} task={task} />
-                ))}
+              {/* Project Tasks with Enhanced Cards */}
+              <div className="space-y-3">
+                {projectTasks.map(task => {
+                  // Determine task status for color coding
+                  let statusColor = 'border-l-gray-300'; // Default: unscheduled
+                  let statusBg = 'bg-white';
+                  
+                  if (task.scheduled_date) {
+                    statusColor = `border-l-${projectColor.name}-500`;
+                    statusBg = 'bg-white';
+                  }
+                  
+                  if (task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date))) {
+                    statusColor = 'border-l-red-500';
+                    statusBg = 'bg-red-50';
+                  }
+
+                  return (
+                    <div
+                      key={task.id}
+                      className={cn(
+                        "rounded-lg border-l-4 p-3 shadow-soft transition-all duration-200",
+                        "hover:shadow-card hover:transform hover:scale-[1.02] cursor-pointer",
+                        statusColor,
+                        statusBg
+                      )}
+                    >
+                      <DraggableTaskItem task={task} />
+                      
+                      {/* Task Status Pills */}
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {task.scheduled_date && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                            📅 Scheduled
+                          </span>
+                        )}
+                        {task.priority === 'high' && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                            🔥 High
+                          </span>
+                        )}
+                        {task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date)) && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                            ⚠️ Overdue
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
@@ -199,12 +285,22 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
 
         {/* Show message if no projects have tasks */}
         {projectsWithTasks.length === 0 && (
-          <div className="col-span-full text-center py-8 text-muted-foreground text-sm">
-            {allTasks.length === 0 ? (
-              <p>🎉 All tasks are complete!</p>
-            ) : (
-              <p>No tasks match the current filters</p>
-            )}
+          <div className="col-span-full text-center py-12">
+            <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-8 border-2 border-dashed border-gray-300">
+              {allTasks.length === 0 ? (
+                <div>
+                  <div className="text-4xl mb-4">🎉</div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">All tasks complete!</h3>
+                  <p className="text-gray-600">Great job staying on top of everything.</p>
+                </div>
+              ) : (
+                <div>
+                  <div className="text-4xl mb-4">🔍</div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No matching tasks</h3>
+                  <p className="text-gray-600">Try adjusting your filters to see more tasks.</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

@@ -83,6 +83,31 @@ export default {
 					bg: 'hsl(var(--ai-scheduled-bg))',
 					border: 'hsl(var(--ai-scheduled-border))'
 				},
+				// Project Colors
+				'project-blue': {
+					DEFAULT: 'hsl(var(--project-blue))',
+					bg: 'hsl(var(--project-blue-bg))'
+				},
+				'project-green': {
+					DEFAULT: 'hsl(var(--project-green))',
+					bg: 'hsl(var(--project-green-bg))'
+				},
+				'project-purple': {
+					DEFAULT: 'hsl(var(--project-purple))',
+					bg: 'hsl(var(--project-purple-bg))'
+				},
+				'project-orange': {
+					DEFAULT: 'hsl(var(--project-orange))',
+					bg: 'hsl(var(--project-orange-bg))'
+				},
+				'project-pink': {
+					DEFAULT: 'hsl(var(--project-pink))',
+					bg: 'hsl(var(--project-pink-bg))'
+				},
+				'project-teal': {
+					DEFAULT: 'hsl(var(--project-teal))',
+					bg: 'hsl(var(--project-teal-bg))'
+				},
 				// Sidebar Colors
 				'sidebar-card': 'hsl(var(--sidebar-card-bg))',
 				'sidebar-border': 'hsl(var(--sidebar-border))',

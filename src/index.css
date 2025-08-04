@@ -81,6 +81,20 @@ Enhanced with vibrant gradients and modern design tokens.
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 210 90% 63%;
 
+    /* Project Color Schemes */
+    --project-blue: 210 90% 63%;
+    --project-blue-bg: 210 100% 97%;
+    --project-green: 142 71% 45%;
+    --project-green-bg: 142 71% 96%;
+    --project-purple: 270 67% 60%;
+    --project-purple-bg: 270 67% 97%;
+    --project-orange: 25 95% 53%;
+    --project-orange-bg: 25 95% 96%;
+    --project-pink: 330 81% 60%;
+    --project-pink-bg: 330 81% 96%;
+    --project-teal: 180 84% 40%;
+    --project-teal-bg: 180 84% 96%;
+
     /* Legacy color mappings for compatibility */
     --sidebar-card-bg: 0 0% 100%;
     --success: 142 71% 45%;

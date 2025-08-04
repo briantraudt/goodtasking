@@ -59,24 +59,22 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "task-card flex flex-col cursor-grab active:cursor-grabbing transition-all duration-200",
-        "py-1.5 px-3 rounded-lg border-0 relative group h-10 mb-1",
-        "shadow-none hover:shadow-sm",
-        cardStyling.bg,
-        cardStyling.hover,
-        isDragging && "opacity-50 shadow-md z-40 rotate-1 scale-105"
+        "flex items-center cursor-grab active:cursor-grabbing transition-all duration-200",
+        "px-2 py-1 rounded-md relative group",
+        "hover:bg-white/60",
+        isDragging && "opacity-50 z-40 rotate-1 scale-105"
       )}
     >
-      {/* Task Title - Bold, primary focus */}
-      <div className="flex-1 flex items-center justify-between">
+      {/* Task Title - Clean and focused */}
+      <div className="flex-1">
         <h4 className="text-sm font-semibold text-gray-900 leading-tight truncate">
           {task.title}
         </h4>
       </div>
 
       {/* Minimal Drag Handle (appears on hover) */}
-      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-50 transition-opacity">
-        <GripVertical className="h-3 w-3 text-gray-400" />
+      <div className="opacity-0 group-hover:opacity-60 transition-opacity ml-2">
+        <GripVertical className="h-4 w-4 text-gray-400" />
       </div>
     </div>
   );
