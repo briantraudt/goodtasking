@@ -145,10 +145,18 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   }, []);
 
   const formatTime = (timeStr: string) => {
-    if (timeStr.includes('T')) {
-      return format(parseISO(timeStr), 'h:mm a');
+    try {
+      // Handle different time formats from Google Calendar
+      if (timeStr.includes('T')) {
+        // Parse ISO datetime and convert to local time for display
+        const date = parseISO(timeStr);
+        return format(date, 'HH:mm'); // Use 24-hour format for consistent parsing
+      }
+      return timeStr;
+    } catch (error) {
+      console.error('Error formatting time:', error, timeStr);
+      return timeStr;
     }
-    return timeStr;
   };
 
   const formatHour = (hour: number) => {
@@ -649,13 +657,22 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                     >
                        {timeBlocks
                          .filter(block => {
-                           const blockStartHour = parseInt(block.start.split(':')[0]);
-                           const blockStartMinutes = parseInt(block.start.split(':')[1]);
-                           const blockEndHour = parseInt(block.end.split(':')[0]);
-                           const blockEndMinutes = parseInt(block.end.split(':')[1]);
+                           // Handle both HH:mm format and potential datetime formats
+                           let blockStartHour: number;
+                           let blockStartMinutes: number;
+                           
+                           if (block.start.includes('T')) {
+                             // ISO datetime - extract hour and minutes
+                             const date = parseISO(block.start);
+                             blockStartHour = date.getHours();
+                             blockStartMinutes = date.getMinutes();
+                           } else {
+                             // HH:mm format
+                             blockStartHour = parseInt(block.start.split(':')[0]);
+                             blockStartMinutes = parseInt(block.start.split(':')[1]);
+                           }
                            
                            // Show event only in the slot where it starts to avoid duplicates
-                           // But ensure it visually spans the correct duration via CSS height
                            const eventStartsInThisSlot = blockStartHour === hour && blockStartMinutes >= 0 && blockStartMinutes < 30;
                            
                            return eventStartsInThisSlot;
@@ -684,13 +701,22 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                     >
                        {timeBlocks
                          .filter(block => {
-                           const blockStartHour = parseInt(block.start.split(':')[0]);
-                           const blockStartMinutes = parseInt(block.start.split(':')[1]);
-                           const blockEndHour = parseInt(block.end.split(':')[0]);
-                           const blockEndMinutes = parseInt(block.end.split(':')[1]);
+                           // Handle both HH:mm format and potential datetime formats
+                           let blockStartHour: number;
+                           let blockStartMinutes: number;
+                           
+                           if (block.start.includes('T')) {
+                             // ISO datetime - extract hour and minutes
+                             const date = parseISO(block.start);
+                             blockStartHour = date.getHours();
+                             blockStartMinutes = date.getMinutes();
+                           } else {
+                             // HH:mm format
+                             blockStartHour = parseInt(block.start.split(':')[0]);
+                             blockStartMinutes = parseInt(block.start.split(':')[1]);
+                           }
                            
                            // Show event only in the slot where it starts to avoid duplicates
-                           // But ensure it visually spans the correct duration via CSS height
                            const eventStartsInThisSlot = blockStartHour === hour && blockStartMinutes >= 30 && blockStartMinutes < 60;
                            
                            return eventStartsInThisSlot;

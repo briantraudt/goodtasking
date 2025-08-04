@@ -226,9 +226,10 @@ serve(async (req) => {
           .eq('user_id', user.id);
       }
 
-      // Fetch calendar events
-      const startOfDay = new Date(date + 'T00:00:00Z').toISOString();
-      const endOfDay = new Date(date + 'T23:59:59Z').toISOString();
+      // Fetch calendar events with proper timezone handling
+      // Use local timezone boundaries instead of UTC
+      const startOfDay = `${date}T00:00:00`;
+      const endOfDay = `${date}T23:59:59`;
 
       const calendarResponse = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
@@ -246,16 +247,28 @@ serve(async (req) => {
         throw new Error(`Failed to fetch calendar events: ${calendarData.error?.message}`);
       }
 
-      // Format events for frontend
-      const events = calendarData.items?.map((event: CalendarEvent) => ({
-        id: event.id,
-        title: event.summary || 'Untitled Event',
-        start: event.start?.dateTime || event.start?.date,
-        end: event.end?.dateTime || event.end?.date,
-        location: event.location,
-        description: event.description,
-        isAllDay: !event.start?.dateTime, // If no dateTime, it's an all-day event
-      })) || [];
+      // Format events for frontend - preserve full datetime info for accurate duration calculation
+      const events = calendarData.items?.map((event: CalendarEvent) => {
+        // Keep the original datetime format to preserve timezone and duration info
+        let start = event.start?.dateTime || event.start?.date;
+        let end = event.end?.dateTime || event.end?.date;
+        
+        // For all-day events, convert to dateTime format for consistent processing
+        if (!event.start?.dateTime && event.start?.date) {
+          start = `${event.start.date}T00:00:00`;
+          end = `${event.end?.date}T00:00:00`;
+        }
+        
+        return {
+          id: event.id,
+          title: event.summary || 'Untitled Event',
+          start,
+          end,
+          location: event.location,
+          description: event.description,
+          isAllDay: !event.start?.dateTime, // If no dateTime, it's an all-day event
+        };
+      }) || [];
 
       return new Response(JSON.stringify({ events }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
