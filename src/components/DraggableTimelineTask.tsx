@@ -64,10 +64,20 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
   };
 
   const getSlotHeight = () => {
-    const duration = getDisplayDurationInMinutes();
-    // Each 30-minute slot should get proportional height
-    // If duration is 30 minutes, height should be 100% of slot
-    return Math.min(duration / 30, 1) * 100; // Percentage of slot height
+    const [startHour, startMin] = block.start.split(':').map(Number);
+    const [endHour, endMin] = block.end.split(':').map(Number);
+    
+    const blockStartMinutes = startHour * 60 + startMin;
+    const blockEndMinutes = endHour * 60 + endMin;
+    const duration = blockEndMinutes - blockStartMinutes;
+    
+    // If this is a 1-hour event starting at the beginning of the hour, make it span the entire hour slot height
+    if (duration === 60 && startMin === 0) {
+      return 200; // 2 * 50px slots = 100px, double for visual spanning
+    }
+    
+    // For other durations, proportional to 30-minute slot
+    return Math.min(duration / 30, 2) * 50; // 50px per 30-minute slot
   };
 
   return (
@@ -75,7 +85,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       ref={setNodeRef}
       style={{
         ...style,
-        height: `${getSlotHeight()}%`,
+        height: `${getSlotHeight()}px`,
         minHeight: '40px'
       }}
       {...(isDraggableTask ? listeners : {})}

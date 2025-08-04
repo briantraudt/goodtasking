@@ -651,17 +651,9 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                          .filter(block => {
                            const blockStartHour = parseInt(block.start.split(':')[0]);
                            const blockStartMinutes = parseInt(block.start.split(':')[1]);
-                           const blockEndHour = parseInt(block.end.split(':')[0]);
-                           const blockEndMinutes = parseInt(block.end.split(':')[1]);
                            
-                           // Calculate time ranges in minutes for accurate overlap detection
-                           const slotStart = hour * 60; // Start of first half hour (e.g., 10:00 = 600 minutes)
-                           const slotEnd = hour * 60 + 30; // End of first half hour (e.g., 10:30 = 630 minutes)
-                           const blockStart = blockStartHour * 60 + blockStartMinutes;
-                           const blockEnd = blockEndHour * 60 + blockEndMinutes;
-                           
-                           // Event overlaps with this slot if: block starts before slot ends AND block ends after slot starts
-                           return blockStart < slotEnd && blockEnd > slotStart;
+                           // Only show events that START in the first half hour (hour:00 to hour:29)
+                           return blockStartHour === hour && blockStartMinutes >= 0 && blockStartMinutes < 30;
                          })
                          .map(block => {
                           const relatedTask = block.type === 'task' ? 
@@ -689,17 +681,9 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                          .filter(block => {
                            const blockStartHour = parseInt(block.start.split(':')[0]);
                            const blockStartMinutes = parseInt(block.start.split(':')[1]);
-                           const blockEndHour = parseInt(block.end.split(':')[0]);
-                           const blockEndMinutes = parseInt(block.end.split(':')[1]);
                            
-                           // Calculate time ranges in minutes for accurate overlap detection
-                           const slotStart = hour * 60 + 30; // Start of second half hour (e.g., 10:30 = 630 minutes)
-                           const slotEnd = hour * 60 + 60; // End of second half hour (e.g., 11:00 = 660 minutes)
-                           const blockStart = blockStartHour * 60 + blockStartMinutes;
-                           const blockEnd = blockEndHour * 60 + blockEndMinutes;
-                           
-                           // Event overlaps with this slot if: block starts before slot ends AND block ends after slot starts
-                           return blockStart < slotEnd && blockEnd > slotStart;
+                           // Only show events that START in the second half hour (hour:30 to hour:59)
+                           return blockStartHour === hour && blockStartMinutes >= 30 && blockStartMinutes < 60;
                          })
                          .map(block => {
                           const relatedTask = block.type === 'task' ? 
