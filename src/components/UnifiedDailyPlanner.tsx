@@ -593,6 +593,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
         <div className="flex-1 flex gap-4 p-4 min-h-0">
           {/* Left side - Calendar Timeline (50%) */}
           <Card className="flex-[50] flex flex-col">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <h3 className="text-title">Calendar</h3>
+              </div>
+            </CardHeader>
             <CardContent className="flex-1 overflow-y-auto p-4">
               {!isConnected && (
                 <div className="text-center py-4 text-muted-foreground">
@@ -739,7 +744,6 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             {/* Empty space to align with task sidebar */}
           </div>
         </div>
-      </div>
 
         {/* Undo Button - Bottom Right */}
         {undoAction && (
@@ -766,8 +770,9 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             </div>
           ) : null}
         </DragOverlay>
-      </DndContext>
-    );
-  };
+      </div>
+    </DndContext>
+  );
+};
 
 export default UnifiedDailyPlanner;
