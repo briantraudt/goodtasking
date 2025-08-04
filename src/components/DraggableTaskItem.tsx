@@ -60,20 +60,13 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...attributes}
       className={cn(
         "task-card flex flex-col cursor-grab active:cursor-grabbing transition-all duration-200",
-        "py-1.5 px-3 rounded-lg border-0 relative group h-12 mb-1",
+        "py-1.5 px-3 rounded-lg border-0 relative group h-10 mb-1",
         "shadow-none hover:shadow-sm",
         cardStyling.bg,
         cardStyling.hover,
         isDragging && "opacity-50 shadow-md z-40 rotate-1 scale-105"
       )}
     >
-      {/* Project/Client Name - Small, subtle gray */}
-      {task.vibe_projects?.name && (
-        <div className="text-xs text-gray-500 mb-0.5 font-normal">
-          {task.vibe_projects.name}
-        </div>
-      )}
-      
       {/* Task Title - Bold, primary focus */}
       <div className="flex-1 flex items-center justify-between">
         <h4 className="text-sm font-semibold text-gray-900 leading-tight truncate">

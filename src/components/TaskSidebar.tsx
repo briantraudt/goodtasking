@@ -152,20 +152,73 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         />
       </div>
 
-      {/* Task List */}
-      <div className="space-y-1">
-        {filteredTasks.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground text-sm">
+      {/* Projects Grid - 3 Columns */}
+      <div className="grid grid-cols-1 gap-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 400px)' }}>
+        {projectsWithTasks.map(project => {
+          // Get filtered tasks for this project
+          const projectTasks = allTasks.filter(task => {
+            // Check if task belongs to this project
+            const belongsToProject = projects.find(p => 
+              p.tasks.some(t => t.id === task.id) && p.id === project.id
+            );
+            if (!belongsToProject) return false;
+
+            // Apply other filters
+            if (priorityFilter !== 'all' && task.priority !== priorityFilter) {
+              return false;
+            }
+
+            if (dueDateFilter !== 'all' && task.due_date) {
+              const dueDate = new Date(task.due_date);
+              switch (dueDateFilter) {
+                case 'today':
+                  if (!isToday(dueDate)) return false;
+                  break;
+                case 'overdue':
+                  if (!isPast(dueDate) || isToday(dueDate)) return false;
+                  break;
+                case 'this-week':
+                  if (!isThisWeek(dueDate)) return false;
+                  break;
+              }
+            } else if (dueDateFilter !== 'all' && !task.due_date) {
+              return false;
+            }
+
+            return true;
+          });
+
+          if (projectTasks.length === 0) return null;
+
+          return (
+            <div key={project.id} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              {/* Project Header */}
+              <div className="mb-3 pb-2 border-b border-gray-300">
+                <h3 className="font-semibold text-gray-900 text-sm">{project.name}</h3>
+                <div className="text-xs text-gray-500 mt-1">
+                  {projectTasks.length} task{projectTasks.length !== 1 ? 's' : ''}
+                </div>
+              </div>
+
+              {/* Project Tasks */}
+              <div className="space-y-2">
+                {projectTasks.map(task => (
+                  <DraggableTaskItem key={task.id} task={task} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Show message if no projects have tasks */}
+        {projectsWithTasks.length === 0 && (
+          <div className="col-span-full text-center py-8 text-muted-foreground text-sm">
             {allTasks.length === 0 ? (
               <p>🎉 All tasks are complete!</p>
             ) : (
               <p>No tasks match the current filters</p>
             )}
           </div>
-        ) : (
-          filteredTasks.map(task => (
-            <DraggableTaskItem key={task.id} task={task} />
-          ))
         )}
       </div>
 
