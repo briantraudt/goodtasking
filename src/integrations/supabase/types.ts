@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      calendar_events: {
+        Row: {
+          calendar_id: string | null
+          created_at: string
+          description: string | null
+          end_time: string
+          google_event_id: string
+          id: string
+          is_all_day: boolean
+          location: string | null
+          start_time: string
+          status: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calendar_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_time: string
+          google_event_id: string
+          id?: string
+          is_all_day?: boolean
+          location?: string | null
+          start_time: string
+          status?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calendar_id?: string | null
+          created_at?: string
+          description?: string | null
+          end_time?: string
+          google_event_id?: string
+          id?: string
+          is_all_day?: boolean
+          location?: string | null
+          start_time?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_reminders: {
         Row: {
           created_at: string
@@ -146,6 +194,7 @@ export type Database = {
           ai_summary_time: string | null
           ai_tone_preference: string | null
           auto_schedule_unscheduled: boolean | null
+          calendar_last_sync: string | null
           check_in_dates: string[] | null
           created_at: string
           current_streak: number | null
@@ -167,6 +216,7 @@ export type Database = {
           ai_summary_time?: string | null
           ai_tone_preference?: string | null
           auto_schedule_unscheduled?: boolean | null
+          calendar_last_sync?: string | null
           check_in_dates?: string[] | null
           created_at?: string
           current_streak?: number | null
@@ -188,6 +238,7 @@ export type Database = {
           ai_summary_time?: string | null
           ai_tone_preference?: string | null
           auto_schedule_unscheduled?: boolean | null
+          calendar_last_sync?: string | null
           check_in_dates?: string[] | null
           created_at?: string
           current_streak?: number | null

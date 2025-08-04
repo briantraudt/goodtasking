@@ -34,7 +34,7 @@ export const useGoogleCalendar = () => {
     try {
       const { data, error } = await supabase
         .from('user_preferences')
-        .select('google_calendar_enabled')
+        .select('google_calendar_enabled, calendar_last_sync')
         .eq('user_id', user.id)
         .single();
 
@@ -45,9 +45,18 @@ export const useGoogleCalendar = () => {
           loading: false,
         }));
 
-        // If connected, fetch today's events
+        // If connected, fetch events from local database
         if (data.google_calendar_enabled) {
-          await fetchEvents();
+          await fetchEventsFromDatabase();
+          
+          // Check if we need to sync (if never synced or last sync was more than 1 hour ago)
+          const lastSync = data.calendar_last_sync ? new Date(data.calendar_last_sync) : null;
+          const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+          
+          if (!lastSync || lastSync < oneHourAgo) {
+            console.log('Calendar data is stale, triggering background sync...');
+            syncCalendarData();
+          }
         }
       } else {
         setCalendarData(prev => ({ ...prev, loading: false }));
@@ -58,52 +67,79 @@ export const useGoogleCalendar = () => {
     }
   };
 
-  const fetchEvents = async (date?: string) => {
+  const fetchEventsFromDatabase = async (date?: string) => {
+    if (!user) return;
+
+    try {
+      let query = supabase
+        .from('calendar_events')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('start_time');
+
+      // If specific date is provided, filter for that date
+      if (date) {
+        const startOfDay = `${date}T00:00:00`;
+        const endOfDay = `${date}T23:59:59`;
+        query = query
+          .gte('start_time', startOfDay)
+          .lte('start_time', endOfDay);
+      }
+
+      const { data: eventsData, error } = await query;
+
+      if (error) {
+        console.error('Error fetching events from database:', error);
+        return;
+      }
+
+      // Transform database events to match the interface
+      const transformedEvents: CalendarEvent[] = (eventsData || []).map(event => ({
+        id: event.google_event_id,
+        title: event.title,
+        start: event.start_time,
+        end: event.end_time,
+        location: event.location,
+        description: event.description,
+        isAllDay: event.is_all_day,
+      }));
+
+      setCalendarData(prev => ({
+        ...prev,
+        events: transformedEvents,
+        loading: false,
+      }));
+
+    } catch (error) {
+      console.error('Error fetching events from database:', error);
+      setCalendarData(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  const syncCalendarData = async () => {
     if (!user || !session) return;
 
     try {
-      setCalendarData(prev => ({ ...prev, loading: true }));
-
-      const targetDate = date || new Date().toISOString().split('T')[0];
+      console.log('Starting calendar sync...');
       
-      console.log('Fetching events with auth token:', session.access_token ? 'present' : 'missing');
-      
-      const { data, error } = await supabase.functions.invoke('google-calendar-integration', {
-        body: { action: 'events', date: targetDate },
+      const { data, error } = await supabase.functions.invoke('calendar-sync', {
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
         },
       });
 
-      console.log('Fetch events response:', { data, error });
-
       if (error) {
-        throw error;
+        console.error('Calendar sync error:', error);
+        return;
       }
 
-      if (data && Array.isArray(data)) {
-        setCalendarData(prev => ({
-          ...prev,
-          events: data,
-          loading: false,
-        }));
-      } else if (data?.events) {
-        setCalendarData(prev => ({
-          ...prev,
-          events: data.events,
-          loading: false,
-        }));
-      } else {
-        setCalendarData(prev => ({ ...prev, loading: false }));
-      }
+      console.log('Calendar sync completed:', data);
+      
+      // Refresh events from database after sync
+      await fetchEventsFromDatabase();
+      
     } catch (error) {
-      console.error('Error fetching calendar events:', error);
-      toast({
-        title: "Calendar Error",
-        description: "Failed to fetch calendar events. Please try reconnecting.",
-        variant: "destructive",
-      });
-      setCalendarData(prev => ({ ...prev, loading: false }));
+      console.error('Error syncing calendar:', error);
     }
   };
 
@@ -141,7 +177,7 @@ export const useGoogleCalendar = () => {
           checkConnection();
           toast({
             title: "Calendar Connected",
-            description: "Google Calendar has been connected successfully!",
+            description: "Google Calendar has been connected successfully! Syncing your events...",
           });
         }
       };
@@ -182,6 +218,12 @@ export const useGoogleCalendar = () => {
         throw error;
       }
 
+      // Clear local calendar events
+      await supabase
+        .from('calendar_events')
+        .delete()
+        .eq('user_id', user.id);
+
       setCalendarData({
         isConnected: false,
         events: [],
@@ -212,6 +254,7 @@ export const useGoogleCalendar = () => {
     ...calendarData,
     connectCalendar,
     disconnectCalendar,
-    refreshEvents: fetchEvents,
+    refreshEvents: fetchEventsFromDatabase, // This now queries local DB instantly
+    syncCalendar: syncCalendarData, // Manual sync function if needed
   };
 };
