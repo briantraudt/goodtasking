@@ -86,7 +86,7 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
     <div
       ref={setNodeRef}
       className={cn(
-        "min-h-[30px] border-b border-sidebar-border transition-colors relative group",
+        "h-[50px] border-b border-sidebar-border transition-colors relative group overflow-hidden",
         isOver && !hasOverlap && "bg-primary/10 border-primary/30 ring-1 ring-primary/20",
         isOver && hasOverlap && "bg-destructive/10 border-destructive/30 ring-1 ring-destructive/20",
         hasOverlap && "bg-destructive/5",
