@@ -8,8 +8,8 @@ import { useAIPlanner } from '@/hooks/useAIPlanner';
 import TaskSidebar from '@/components/TaskSidebar';
 import AITaskSequencerInline from '@/components/AITaskSequencerInline';
 import DraggableTimelineTask from '@/components/DraggableTimelineTask';
-import { Calendar, Clock, Sparkles, Loader2, Undo2 } from 'lucide-react';
-import { format, parseISO, isToday } from 'date-fns';
+import { Calendar, Clock, Sparkles, Loader2, Undo2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { format, parseISO, isToday, addDays, subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -562,6 +562,18 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   // Generate time slots (7 AM to 7 PM)
   const timeSlots = Array.from({ length: 13 }, (_, i) => i + 7);
 
+  // Date navigation functions
+  const navigateDate = (direction: 'prev' | 'next') => {
+    const currentDate = new Date(selectedDate);
+    const newDate = direction === 'prev' ? subDays(currentDate, 1) : addDays(currentDate, 1);
+    setSelectedDate(newDate.toISOString().split('T')[0]);
+  };
+
+  const formatSelectedDate = () => {
+    const date = new Date(selectedDate);
+    return format(date, 'MMM d, yyyy');
+  };
+
   useEffect(() => {
     const newBlocks = generateTimeBlocks();
     setTimeBlocks(newBlocks);
@@ -594,8 +606,29 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           {/* Left side - Calendar Timeline (50%) */}
           <Card className="flex-[50] flex flex-col">
             <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between">
                 <h3 className="text-title">Calendar</h3>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigateDate('prev')}
+                    className="h-8 w-8 p-0"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <div className="text-sm font-medium px-3 py-1 bg-muted rounded-md min-w-[120px] text-center">
+                    {formatSelectedDate()}
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigateDate('next')}
+                    className="h-8 w-8 p-0"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="flex-1 overflow-y-auto p-4">
