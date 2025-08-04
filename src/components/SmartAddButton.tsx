@@ -31,31 +31,23 @@ const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddBut
           Add
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48 rounded-xl shadow-elevated bg-white z-50 p-2">
-        <DropdownMenuItem asChild>
-          <div className="rounded-lg overflow-hidden">
-            <AddTaskDialog
-              projects={projects}
-              onCreateTask={onCreateTask}
-              triggerButton={
-                <div className="w-full p-3 cursor-pointer rounded-lg bg-primary hover:bg-primary text-white transition-colors flex items-center gap-3">
-                  <CheckSquare className="h-4 w-4" />
-                  <span className="font-medium">Task</span>
-                </div>
-              }
-            />
-          </div>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <div className="rounded-lg overflow-hidden">
-            <CreateProjectDialog onCreateProject={onCreateProject}>
-              <div className="w-full p-3 cursor-pointer rounded-lg hover:bg-primary hover:text-white transition-colors flex items-center gap-3">
-                <FolderPlus className="h-4 w-4" />
-                <span className="font-medium">Project</span>
-              </div>
-            </CreateProjectDialog>
-          </div>
-        </DropdownMenuItem>
+      <DropdownMenuContent align="end" className="w-48 rounded-xl shadow-elevated bg-white z-50 p-1">
+        <AddTaskDialog
+          projects={projects}
+          onCreateTask={onCreateTask}
+          triggerButton={
+            <DropdownMenuItem className="cursor-pointer rounded-lg hover:bg-primary hover:text-white transition-colors flex items-center gap-3 p-3">
+              <CheckSquare className="h-4 w-4" />
+              <span className="font-medium">Task</span>
+            </DropdownMenuItem>
+          }
+        />
+        <CreateProjectDialog onCreateProject={onCreateProject}>
+          <DropdownMenuItem className="cursor-pointer rounded-lg hover:bg-primary hover:text-white transition-colors flex items-center gap-3 p-3">
+            <FolderPlus className="h-4 w-4" />
+            <span className="font-medium">Project</span>
+          </DropdownMenuItem>
+        </CreateProjectDialog>
       </DropdownMenuContent>
     </DropdownMenu>
   );
