@@ -125,7 +125,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-title">📋 Tasks To Schedule</h3>
+            <h3 className="text-title">Tasks</h3>
             <Badge variant="secondary" className="rounded-xl font-medium">
               {unscheduledTasks.length}
             </Badge>
