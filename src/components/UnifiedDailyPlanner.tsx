@@ -211,27 +211,38 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const generateTimeBlocks = useCallback(() => {
     const blocks: TimeBlock[] = [];
 
+    console.log('🔍 DEBUG: Filtering events for selectedDate:', selectedDate);
+    console.log('🔍 DEBUG: All events:', events.map(e => ({
+      title: e.title,
+      start: e.start,
+      localDate: new Date(e.start).toLocaleDateString('en-CA'),
+      localTime: new Date(e.start).toLocaleTimeString()
+    })));
+
     // Filter events for the selected date and add to blocks
-    events
-      .filter(event => {
-        // Parse event start time (it's in UTC)
-        const eventStart = new Date(event.start);
-        // Get the local date for the event
-        const eventLocalDate = eventStart.toLocaleDateString('en-CA'); // YYYY-MM-DD format
-        // Compare with selected date
-        return eventLocalDate === selectedDate;
-      })
-      .forEach(event => {
-        blocks.push({
-          id: `event-${event.id}`,
-          title: event.title,
-          start: formatTime(event.start),
-          end: formatTime(event.end),
-          type: 'event',
-          color: '',
-          googleEventId: event.id // Pass the Google event ID
-        });
+    const filteredEvents = events.filter(event => {
+      // Parse event start time (it's in UTC)
+      const eventStart = new Date(event.start);
+      // Get the local date for the event
+      const eventLocalDate = eventStart.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+      console.log(`🔍 DEBUG: Event "${event.title}" - UTC: ${event.start}, Local Date: ${eventLocalDate}, Selected: ${selectedDate}, Match: ${eventLocalDate === selectedDate}`);
+      // Compare with selected date
+      return eventLocalDate === selectedDate;
+    });
+
+    console.log('🔍 DEBUG: Filtered events:', filteredEvents.map(e => e.title));
+
+    filteredEvents.forEach(event => {
+      blocks.push({
+        id: `event-${event.id}`,
+        title: event.title,
+        start: formatTime(event.start),
+        end: formatTime(event.end),
+        type: 'event',
+        color: '',
+        googleEventId: event.id // Pass the Google event ID
       });
+    });
 
     // Add scheduled tasks
     scheduledTasks.forEach(task => {
