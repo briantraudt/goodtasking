@@ -256,30 +256,6 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                       )}
                     >
                       <DraggableTaskItem task={task} />
-                      
-                      {/* Task Status Pills with Good Business Colors */}
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {task.scheduled_date && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-project-navy-bg text-project-navy">
-                            📅 Scheduled
-                          </span>
-                        )}
-                        {task.priority === 'high' && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                            🔥 High
-                          </span>
-                        )}
-                        {task.priority === 'medium' && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-project-gold-bg text-project-gold">
-                            ⚡ Medium
-                          </span>
-                        )}
-                        {task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date)) && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-project-gold-bg text-project-gold">
-                            ⚠️ Overdue
-                          </span>
-                        )}
-                      </div>
                     </div>
                   );
                 })}
