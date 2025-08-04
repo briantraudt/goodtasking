@@ -265,7 +265,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   return (
     <DndContext 
       onDragEnd={handleDragEnd}
-      onDragStart={(event) => setActiveId(event.active.id)}
+      onDragStart={(event) => setActiveId(String(event.active.id))}
       collisionDetection={pointerWithin}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
