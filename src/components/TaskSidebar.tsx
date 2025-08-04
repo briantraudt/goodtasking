@@ -126,28 +126,12 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <h3 className="text-title">Tasks</h3>
-            <Badge variant="secondary" className="rounded-xl font-medium">
-              {unscheduledTasks.length}
-            </Badge>
           </div>
           <SmartAddButton
             projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
             onCreateTask={handleCreateTask}
             onCreateProject={onCreateProject}
           />
-        </div>
-        
-        {/* Priority Summary */}
-        <div className="flex gap-1 text-xs">
-          <Badge variant="outline" className="bg-priority-high/10 text-priority-high border-priority-high/30">
-            High: {getTaskCountByPriority('high')}
-          </Badge>
-          <Badge variant="outline" className="bg-priority-medium/10 text-priority-medium border-priority-medium/30">
-            Med: {getTaskCountByPriority('medium')}
-          </Badge>
-          <Badge variant="outline" className="bg-priority-low/10 text-priority-low border-priority-low/30">
-            Low: {getTaskCountByPriority('low')}
-          </Badge>
         </div>
       </CardHeader>
 
