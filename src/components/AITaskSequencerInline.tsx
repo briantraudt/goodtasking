@@ -1,174 +1,376 @@
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Brain, Sparkles } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import React, { useState, useCallback } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import TaskFlowInterface from './TaskFlowInterface';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/components/ui/use-toast';
+import { Brain, Clock, Calendar, Target, RefreshCw, Settings } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
+import DraggableTimelineTask from './DraggableTimelineTask';
 
-interface SequencedTask {
-  id: string;
+interface ScheduledTask {
+  task_id: string;
   title: string;
-  description?: string;
-  estimatedMinutes: number;
+  project_name: string;
+  start_time: string;
+  end_time: string;
+  duration_minutes: number;
+  priority: string;
   reasoning: string;
-  sequenceNumber: number;
-  completed: boolean;
-  startedAt: string | null;
-  completedAt: string | null;
 }
 
-interface TaskSequenceResult {
-  tasks: SequencedTask[];
-  overallStrategy: string;
-  totalEstimatedTime: number;
-  sessionId: string;
-  createdAt: string;
+interface TimeBlock {
+  start: string;
+  end: string;
+  duration_minutes: number;
+}
+
+interface SequencerPreferences {
+  work_start_hour: number;
+  work_end_hour: number;
+  break_duration: number;
+  max_focus_time: number;
+  min_task_duration: number;
 }
 
 interface AITaskSequencerInlineProps {
+  targetDate: string;
+  onTasksScheduled: (tasks: ScheduledTask[]) => void;
   className?: string;
 }
 
-export default function AITaskSequencerInline({ className }: AITaskSequencerInlineProps) {
-  const [taskInput, setTaskInput] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [taskSequence, setTaskSequence] = useState<TaskSequenceResult | null>(null);
-  const [showTaskFlow, setShowTaskFlow] = useState(false);
+const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
+  targetDate,
+  onTasksScheduled,
+  className = ""
+}) => {
+  const { user } = useAuth();
   const { toast } = useToast();
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [scheduledTasks, setScheduledTasks] = useState<ScheduledTask[]>([]);
+  const [availableBlocks, setAvailableBlocks] = useState<TimeBlock[]>([]);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  
+  const [preferences, setPreferences] = useState<SequencerPreferences>({
+    work_start_hour: 9,
+    work_end_hour: 17,
+    break_duration: 60,
+    max_focus_time: 120,
+    min_task_duration: 15
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!taskInput.trim()) {
+  const runAISequencer = useCallback(async () => {
+    if (!user) {
       toast({
-        title: "Input Required",
-        description: "Please describe what you need to get done today.",
-        variant: "destructive",
+        title: "Authentication required",
+        description: "Please log in to use the AI task sequencer",
+        variant: "destructive"
       });
       return;
     }
 
-    setIsProcessing(true);
+    setIsLoading(true);
     
     try {
+      console.log('Running AI Task Sequencer for date:', targetDate);
+      
       const { data, error } = await supabase.functions.invoke('ai-task-sequencer', {
-        body: { taskInput: taskInput.trim() }
+        body: {
+          target_date: targetDate,
+          ...preferences
+        }
       });
 
       if (error) {
+        console.error('AI Task Sequencer error:', error);
         throw error;
       }
 
-      setTaskSequence(data);
-      setShowTaskFlow(true);
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to generate schedule');
+      }
+
+      console.log('AI Sequencer response:', data);
       
+      setScheduledTasks(data.scheduled_tasks || []);
+      setAvailableBlocks(data.available_blocks || []);
+      
+      // Pass scheduled tasks to parent component
+      onTasksScheduled(data.scheduled_tasks || []);
+
       toast({
-        title: "Tasks Sequenced!",
-        description: `AI organized ${data.tasks.length} tasks for optimal productivity.`,
+        title: "AI Schedule Generated",
+        description: `Successfully scheduled ${data.total_scheduled} tasks`,
       });
 
     } catch (error) {
-      console.error('Error processing tasks:', error);
+      console.error('Error running AI Task Sequencer:', error);
       toast({
-        title: "Processing Failed",
-        description: "Unable to process your tasks. Please try again.",
-        variant: "destructive",
+        title: "Scheduling failed",
+        description: error instanceof Error ? error.message : 'Failed to generate schedule',
+        variant: "destructive"
       });
     } finally {
-      setIsProcessing(false);
+      setIsLoading(false);
+    }
+  }, [user, targetDate, preferences, onTasksScheduled, toast]);
+
+  const formatTime = (timeString: string) => {
+    return new Date(timeString).toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high': return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low': return 'bg-green-100 text-green-800 border-green-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  const resetForm = () => {
-    setTaskInput('');
-    setTaskSequence(null);
-    setShowTaskFlow(false);
-  };
-
   return (
-    <Card className={`${className} rounded-xl border shadow-soft border-l-2 border-l-primary/20 bg-gradient-to-br from-primary/5 to-accent/5`}>
-      <CardHeader className="pb-4 sticky top-0 bg-gradient-to-br from-primary/5 to-accent/5 z-50 border-b shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-          </div>
-          <div>
-            <CardTitle className="text-xl font-bold text-foreground">AI Task Sequencer</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Organize your tasks optimally
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="flex-1 overflow-hidden flex flex-col">
-        {!showTaskFlow ? (
-          <form onSubmit={handleSubmit} className="space-y-4 flex-1 flex flex-col">
-            <div className="space-y-2 flex-1">
-              <Label htmlFor="task-input" className="text-sm font-medium text-muted-foreground">
-                What do you need to get done today?
-              </Label>
-              <Textarea
-                id="task-input"
-                placeholder="List everything you need to accomplish today... 
-
-Examples:
-• Grocery shopping
-• Finish quarterly report
-• Call dentist to schedule appointment
-• Review project proposals
-• Workout at gym
-• Meal prep for the week"
-                value={taskInput}
-                onChange={(e) => setTaskInput(e.target.value)}
-                className="min-h-[300px] resize-none flex-1 border-border rounded-lg"
-                disabled={isProcessing}
-              />
-              <p className="text-sm text-muted-foreground">
-                The AI will analyze your tasks and sequence them for optimal productivity and energy flow.
-              </p>
+    <div className={`space-y-4 ${className}`}>
+      {/* AI Sequencer Header */}
+      <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Brain className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-bold">AI Task Sequencer</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Intelligently schedule your unscheduled tasks into available time slots
+                </p>
+              </div>
             </div>
-            <div className="flex justify-end space-x-2 pt-4">
+            
+            <div className="flex items-center gap-2">
+              <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Settings className="h-4 w-4" />
+                    Settings
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Scheduling Preferences</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Work Start Hour</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="23"
+                          value={preferences.work_start_hour}
+                          onChange={(e) => setPreferences(prev => ({
+                            ...prev,
+                            work_start_hour: parseInt(e.target.value) || 9
+                          }))}
+                        />
+                      </div>
+                      <div>
+                        <Label>Work End Hour</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="23"
+                          value={preferences.work_end_hour}
+                          onChange={(e) => setPreferences(prev => ({
+                            ...prev,
+                            work_end_hour: parseInt(e.target.value) || 17
+                          }))}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label>Max Focus Time (minutes): {preferences.max_focus_time}</Label>
+                      <Slider
+                        value={[preferences.max_focus_time]}
+                        onValueChange={([value]) => setPreferences(prev => ({
+                          ...prev,
+                          max_focus_time: value
+                        }))}
+                        min={30}
+                        max={240}
+                        step={15}
+                        className="mt-2"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label>Break Duration (minutes): {preferences.break_duration}</Label>
+                      <Slider
+                        value={[preferences.break_duration]}
+                        onValueChange={([value]) => setPreferences(prev => ({
+                          ...prev,
+                          break_duration: value
+                        }))}
+                        min={15}
+                        max={120}
+                        step={15}
+                        className="mt-2"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label>Min Task Duration (minutes): {preferences.min_task_duration}</Label>
+                      <Slider
+                        value={[preferences.min_task_duration]}
+                        onValueChange={([value]) => setPreferences(prev => ({
+                          ...prev,
+                          min_task_duration: value
+                        }))}
+                        min={5}
+                        max={60}
+                        step={5}
+                        className="mt-2"
+                      />
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              
               <Button 
-                type="button" 
-                variant="outline" 
-                onClick={resetForm}
-                disabled={isProcessing}
+                onClick={runAISequencer} 
+                disabled={isLoading}
+                className="gap-2"
               >
-                Clear
-              </Button>
-              <Button 
-                type="submit" 
-                className="rounded-lg h-10 font-medium"
-                disabled={isProcessing || !taskInput.trim()}
-              >
-                {isProcessing ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Sequencing...
-                  </>
+                {isLoading ? (
+                  <RefreshCw className="h-4 w-4 animate-spin" />
                 ) : (
-                  <>
-                    <Brain className="h-4 w-4 mr-2" />
-                    Sequence My Tasks
-                  </>
+                  <Target className="h-4 w-4" />
                 )}
+                {isLoading ? 'Generating...' : 'Generate Schedule'}
               </Button>
             </div>
-          </form>
-        ) : (
-          <div className="flex-1 min-h-0">
-            <TaskFlowInterface 
-              taskSequence={taskSequence!}
-              onComplete={resetForm}
-              onRestart={resetForm}
-            />
           </div>
+        </CardHeader>
+        
+        {(availableBlocks.length > 0 || scheduledTasks.length > 0) && (
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Available Time Blocks */}
+              {availableBlocks.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    Available Time Blocks
+                  </h4>
+                  <div className="space-y-2">
+                    {availableBlocks.map((block, index) => (
+                      <div key={index} className="p-2 bg-blue-50 rounded border border-blue-200">
+                        <div className="text-sm font-medium">
+                          {formatTime(block.start)} - {formatTime(block.end)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {block.duration_minutes} minutes available
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Scheduled Tasks Preview */}
+              {scheduledTasks.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    AI-Scheduled Tasks ({scheduledTasks.length})
+                  </h4>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {scheduledTasks.map((task, index) => (
+                      <div key={index} className="p-2 bg-green-50 rounded border border-green-200">
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium text-sm truncate flex-1">
+                            {task.title}
+                          </div>
+                          <Badge 
+                            variant="outline" 
+                            className={`text-xs ${getPriorityColor(task.priority)}`}
+                          >
+                            {task.priority}
+                          </Badge>
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {formatTime(task.start_time)} - {formatTime(task.end_time)}
+                          <span className="ml-2">• {task.project_name}</span>
+                        </div>
+                        {task.reasoning && (
+                          <div className="text-xs text-blue-600 mt-1 italic">
+                            {task.reasoning}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
         )}
-      </CardContent>
-    </Card>
+      </Card>
+      
+      {/* Drag & Drop Timeline Tasks */}
+      {scheduledTasks.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Drag & Drop Schedule</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Drag these AI-scheduled tasks to the calendar timeline to finalize your schedule
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-2">
+              {scheduledTasks.map((task) => {
+                const timeBlock = {
+                  id: `ai-${task.task_id}`,
+                  title: task.title,
+                  start: task.start_time,
+                  end: task.end_time,
+                  type: 'task' as const,
+                  color: 'border-green-400',
+                  priority: task.priority,
+                  taskId: task.task_id
+                };
+                
+                const taskData = {
+                  id: task.task_id,
+                  title: task.title,
+                  priority: task.priority as 'high' | 'medium' | 'low',
+                  estimated_duration: task.duration_minutes,
+                  vibe_projects: { name: task.project_name }
+                };
+
+                return (
+                  <DraggableTimelineTask 
+                    key={task.task_id}
+                    block={timeBlock}
+                    task={taskData}
+                  />
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
-}
+};
+
+export default AITaskSequencerInline;

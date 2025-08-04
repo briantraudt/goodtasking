@@ -791,7 +791,14 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
 
           {/* Right side - AI Task Sequencer (25%) - Fixed (No Scroll) */}
           <div className="flex-[25] border-l border-border pl-4 flex-shrink-0" data-ai-section>
-            <AITaskSequencerInline />
+            <AITaskSequencerInline 
+              targetDate={selectedDate}
+              onTasksScheduled={(tasks) => {
+                // Handle AI-scheduled tasks - add them to timeline
+                console.log('AI scheduled tasks:', tasks);
+                // You can integrate these tasks into your timeline here
+              }}
+            />
           </div>
         </div>
 
