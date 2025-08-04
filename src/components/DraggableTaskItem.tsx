@@ -59,7 +59,7 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...attributes}
       className={cn(
         "task-card flex flex-col cursor-grab active:cursor-grabbing transition-all duration-200",
-        "py-2 px-3 rounded-lg border-0 relative group h-14",
+        "py-2 px-3 rounded-lg border-0 relative group h-14 mb-2",
         "shadow-none hover:shadow-sm",
         cardStyling.bg,
         cardStyling.hover,
