@@ -47,22 +47,22 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-gradient-card border-0 shadow-elevated">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl">Create New Project</DialogTitle>
+          <DialogTitle>Create New Project</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="project-name">Project Name</Label>
             <Input
               id="project-name"
-              placeholder="My Awesome Project"
+              placeholder="What's your project called?"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
             />
           </div>
-          <div className="space-y-2">
+          <div>
             <Label htmlFor="project-description">Description</Label>
             <Textarea
               id="project-description"
@@ -72,11 +72,20 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
               rows={3}
             />
           </div>
-          <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <div className="flex gap-2 pt-2">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setOpen(false)}
+              className="flex-1"
+            >
               Cancel
             </Button>
-            <Button type="submit" className="bg-gradient-primary hover:bg-gradient-primary/90">
+            <Button 
+              type="submit" 
+              disabled={!name.trim()}
+              className="flex-1"
+            >
               Create Project
             </Button>
           </div>
