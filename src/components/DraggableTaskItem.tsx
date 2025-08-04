@@ -69,39 +69,38 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "p-3 rounded-lg border-2 cursor-grab transition-all hover:shadow-soft bg-white flex flex-col min-h-[100px]",
+        "p-3 rounded-lg border-2 cursor-grab transition-all hover:shadow-soft bg-white flex flex-col min-h-[100px] relative",
         getProjectBorderColor(task.vibe_projects?.name),
         isDragging && "opacity-50 shadow-elevated z-50"
       )}
     >
+      {/* Duration in upper right corner */}
+      {task.estimated_duration && (
+        <div className="absolute top-3 right-3 flex items-center gap-1 text-xs text-muted-foreground">
+          <Clock className="h-3 w-3" />
+          {task.estimated_duration}m
+        </div>
+      )}
+      
       {/* Project name at top in small text */}
       {task.vibe_projects?.name && (
-        <div className="text-xs text-muted-foreground mb-2">
+        <div className="text-xs text-muted-foreground mb-2 pr-16">
           {task.vibe_projects.name}
         </div>
       )}
       
       {/* Task title left-aligned in large text */}
       <div className="flex-1 flex items-center mb-3">
-        <h4 className="font-semibold text-base leading-tight text-foreground">{task.title}</h4>
+        <h4 className="font-semibold text-base leading-tight text-foreground pr-4">{task.title}</h4>
       </div>
       
-      {/* Duration and date at bottom, left-aligned */}
-      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-        {task.estimated_duration && (
-          <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            {task.estimated_duration}m
-          </div>
-        )}
-        
-        {task.due_date && (
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
-            {format(new Date(task.due_date), 'MMM d')}
-          </div>
-        )}
-      </div>
+      {/* Due date in lower right corner */}
+      {task.due_date && (
+        <div className="absolute bottom-3 right-3 flex items-center gap-1 text-xs text-muted-foreground">
+          <Calendar className="h-3 w-3" />
+          {format(new Date(task.due_date), 'MMM d')}
+        </div>
+      )}
     </div>
   );
 };
