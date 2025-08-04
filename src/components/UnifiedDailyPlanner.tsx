@@ -637,7 +637,10 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             <CardHeader className="pb-3 sticky top-0 bg-white z-50 border-b shadow-sm">
                <div className="flex items-center justify-between">
                  <div>
-                   <h3 className="text-xl font-bold text-foreground">Calendar</h3>
+                   <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                     <Calendar className="h-5 w-5 text-primary" />
+                     Calendar
+                   </h3>
                  </div>
                 <div className="flex items-center gap-2">
                   <Button
