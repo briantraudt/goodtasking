@@ -86,7 +86,7 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
     <div
       ref={setNodeRef}
       className={cn(
-        "h-[50px] border-b border-sidebar-border transition-colors relative group overflow-hidden",
+        "h-[50px] border-b border-sidebar-border transition-colors relative group overflow-visible",
         isOver && !hasOverlap && "bg-primary/10 border-primary/30 ring-1 ring-primary/20",
         isOver && hasOverlap && "bg-destructive/10 border-destructive/30 ring-1 ring-destructive/20",
         hasOverlap && "bg-destructive/5",
@@ -651,9 +651,14 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                          .filter(block => {
                            const blockStartHour = parseInt(block.start.split(':')[0]);
                            const blockStartMinutes = parseInt(block.start.split(':')[1]);
+                           const blockEndHour = parseInt(block.end.split(':')[0]);
+                           const blockEndMinutes = parseInt(block.end.split(':')[1]);
                            
-                           // Only show events that START in the first half hour (hour:00 to hour:29)
-                           return blockStartHour === hour && blockStartMinutes >= 0 && blockStartMinutes < 30;
+                           // Show event only in the slot where it starts to avoid duplicates
+                           // But ensure it visually spans the correct duration via CSS height
+                           const eventStartsInThisSlot = blockStartHour === hour && blockStartMinutes >= 0 && blockStartMinutes < 30;
+                           
+                           return eventStartsInThisSlot;
                          })
                          .map(block => {
                           const relatedTask = block.type === 'task' ? 
@@ -681,9 +686,14 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                          .filter(block => {
                            const blockStartHour = parseInt(block.start.split(':')[0]);
                            const blockStartMinutes = parseInt(block.start.split(':')[1]);
+                           const blockEndHour = parseInt(block.end.split(':')[0]);
+                           const blockEndMinutes = parseInt(block.end.split(':')[1]);
                            
-                           // Only show events that START in the second half hour (hour:30 to hour:59)
-                           return blockStartHour === hour && blockStartMinutes >= 30 && blockStartMinutes < 60;
+                           // Show event only in the slot where it starts to avoid duplicates
+                           // But ensure it visually spans the correct duration via CSS height
+                           const eventStartsInThisSlot = blockStartHour === hour && blockStartMinutes >= 30 && blockStartMinutes < 60;
+                           
+                           return eventStartsInThisSlot;
                          })
                          .map(block => {
                           const relatedTask = block.type === 'task' ? 
