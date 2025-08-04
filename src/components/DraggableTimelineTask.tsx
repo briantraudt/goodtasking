@@ -95,48 +95,46 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
         isDraggableTask && "hover:scale-[1.02]"
       )}
     >
-      {/* Content container with minimal padding */}
-      <div className="px-3 py-2 h-full flex flex-col justify-center">
-        {/* Header with time (only for tasks) and badge */}
-        <div className="flex items-center justify-between mb-1">
-          {/* Show time only for tasks, not events (since timeline shows position) */}
-          {block.type === 'task' && (
-            <span className="text-xs font-medium opacity-75">
-              {block.start.includes('T') ? 
-                format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
-                block.start + ' - ' + block.end
-              }
-            </span>
-          )}
-          
-          <div className="flex items-center gap-2 ml-auto">
-            {isDraggableTask && (
-              <div className="flex items-center gap-1 text-xs opacity-70">
-                <Clock className="h-3 w-3" />
-                {getDisplayDurationInMinutes()}m
-              </div>
-            )}
-            <span className={cn(
-              "px-2 py-1 text-xs rounded-full border",
-              block.type === 'event' 
-                ? "bg-gray-100 text-gray-600 border-gray-300" 
-                : "bg-background/50 border-current"
-            )}>
-              {block.type === 'event' ? 'Google Calendar' : 'Task'}
-            </span>
-          </div>
-        </div>
-        
-        {/* Event/Task Title */}
+      {/* Content container with proper vertical centering */}
+      <div className="px-3 h-full flex flex-col justify-center">
+        {/* Event/Task Title - Main content, centered */}
         <div className={cn(
-          "font-medium leading-tight",
+          "font-medium leading-tight text-center",
           block.type === 'event' ? "text-base text-blue-800" : "text-sm"
         )}>
           {block.title}
         </div>
         
+        {/* Header with badge - positioned absolutely to not affect centering */}
+        <div className="absolute top-2 right-2 flex items-center gap-2">
+          {isDraggableTask && (
+            <div className="flex items-center gap-1 text-xs opacity-70">
+              <Clock className="h-3 w-3" />
+              {getDisplayDurationInMinutes()}m
+            </div>
+          )}
+          <span className={cn(
+            "px-2 py-1 text-xs rounded-full border",
+            block.type === 'event' 
+              ? "bg-gray-100 text-gray-600 border-gray-300" 
+              : "bg-background/50 border-current"
+          )}>
+            {block.type === 'event' ? 'Google Calendar' : 'Task'}
+          </span>
+        </div>
+        
+        {/* Show time only for tasks at bottom */}
+        {block.type === 'task' && (
+          <div className="absolute bottom-2 left-3 text-xs font-medium opacity-75">
+            {block.start.includes('T') ? 
+              format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
+              block.start + ' - ' + block.end
+            }
+          </div>
+        )}
+        
         {isDraggableTask && (
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-1 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="w-2 h-2 bg-current rounded-full"></div>
           </div>
         )}
