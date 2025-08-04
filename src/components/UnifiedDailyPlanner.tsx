@@ -632,9 +632,9 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
         {/* Fixed Layout with Independent Scrolling */}
         <div className="flex-1 flex gap-8 p-6 min-h-0 overflow-hidden">
           {/* Left side - Calendar Timeline (50%) - Scrollable */}
-          <div className="flex-[50] overflow-y-auto">
+          <div className="flex-[50] overflow-y-auto" data-calendar-section>
             <Card className="flex flex-col rounded-xl border shadow-soft h-fit">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-3 sticky top-0 bg-card/95 backdrop-blur-sm z-10 border-b">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xl font-bold text-foreground">Calendar</h3>
@@ -782,7 +782,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           </div>
 
           {/* Middle - Task Sidebar (25%) - Scrollable */}
-          <div className="flex-[25] overflow-y-auto">
+          <div className="flex-[25] overflow-y-auto" data-tasks-section>
             <div className="pr-2">
               <TaskSidebar 
                 projects={projects}
@@ -794,7 +794,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           </div>
 
           {/* Right side - AI Task Sequencer (25%) - Fixed (No Scroll) */}
-          <div className="flex-[25] border-l border-border pl-6 flex-shrink-0">
+          <div className="flex-[25] border-l border-border pl-6 flex-shrink-0" data-ai-section>
             <AITaskSequencerInline />
           </div>
         </div>

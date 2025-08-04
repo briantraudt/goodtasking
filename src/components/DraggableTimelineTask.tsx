@@ -99,22 +99,22 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       onClick={block.type === 'event' ? handleCalendarEventClick : undefined}
       aria-label={block.type === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
-        "transition-all hover:shadow-soft w-full m-0 p-0 border-0 box-border flex flex-col justify-center",
+        "transition-all hover:shadow-card w-full m-0 p-0 border-0 box-border flex flex-col justify-center group",
         "h-full min-h-full overflow-hidden border-l-4 bg-white",
-        // Use border colors only, no background colors
+        // Enhanced colors and hover effects
         block.type === 'event' 
-          ? "border-blue-400 text-blue-800 cursor-pointer hover:bg-blue-50/30" 
+          ? "border-blue-400 text-blue-800 cursor-pointer hover:bg-blue-50/50 hover:scale-[1.01]" 
           : block.color || "border-green-400 text-green-800",
         isDraggableTask && "cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50 shadow-elevated z-50",
-        isDraggableTask && "hover:scale-[1.02]"
+        isDragging && "opacity-50 shadow-elevated z-50 rotate-1",
+        isDraggableTask && "hover:scale-[1.02] hover:shadow-card"
       )}
     >
       {/* Content container with proper spacing for overlays */}
       <div className="h-full flex flex-col justify-center pl-3 pr-16 pb-8">
-        {/* Event/Task Title - Left aligned with proper spacing */}
+        {/* Event/Task Title - Enhanced Typography */}
         <div className={cn(
-          "text-task-title leading-tight text-left font-medium",
+          "text-base leading-tight text-left font-bold",
           block.type === 'event' ? "text-blue-800" : ""
         )}>
           {block.title}

@@ -42,40 +42,58 @@ const StatsFooter = ({ projects }: StatsFooterProps) => {
   // Calculate total time blocks (scheduled tasks + calendar events)
   const totalBlocks = scheduledTasks.length + todayEvents.length;
 
+  const handleCalendarEventsClick = () => {
+    const calendarSection = document.querySelector('[data-calendar-section]');
+    if (calendarSection) {
+      calendarSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleScheduledTasksClick = () => {
+    const tasksSection = document.querySelector('[data-tasks-section]');
+    if (tasksSection) {
+      tasksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleTimeBlocksClick = () => {
+    const aiSection = document.querySelector('[data-ai-section]');
+    if (aiSection) {
+      aiSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center gap-8">
-      {/* Scheduled Tasks */}
-      <div className="flex items-center gap-2">
-        <CheckSquare className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">
-          {scheduledTasks.length}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          Scheduled Tasks
-        </span>
-      </div>
-
-      {/* Calendar Events */}
-      <div className="flex items-center gap-2">
-        <Calendar className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">
-          {todayEvents.length}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          Calendar Events
-        </span>
-      </div>
-
-      {/* Total Blocks */}
-      <div className="flex items-center gap-2">
-        <Clock className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm font-medium text-foreground">
-          {totalBlocks}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          Total Blocks
-        </span>
-      </div>
+    <div className="flex items-center justify-center gap-6 text-sm">
+      <button 
+        onClick={handleCalendarEventsClick}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors cursor-pointer"
+      >
+        <Calendar className="h-4 w-4" />
+        <span className="font-semibold">{todayEvents.length}</span>
+        <span className="hidden sm:inline">Calendar Events</span>
+        <span className="sm:hidden">Events</span>
+      </button>
+      
+      <button 
+        onClick={handleScheduledTasksClick}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/10 text-green-600 font-medium hover:bg-green-500/20 transition-colors cursor-pointer"
+      >
+        <CheckSquare className="h-4 w-4" />
+        <span className="font-semibold">{scheduledTasks.length}</span>
+        <span className="hidden sm:inline">Scheduled Tasks</span>
+        <span className="sm:hidden">Tasks</span>
+      </button>
+      
+      <button 
+        onClick={handleTimeBlocksClick}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-purple-500/10 text-purple-600 font-medium hover:bg-purple-500/20 transition-colors cursor-pointer"
+      >
+        <Clock className="h-4 w-4" />
+        <span className="font-semibold">{totalBlocks}</span>
+        <span className="hidden sm:inline">Time Blocks</span>
+        <span className="sm:hidden">Blocks</span>
+      </button>
     </div>
   );
 };

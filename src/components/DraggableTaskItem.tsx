@@ -62,6 +62,24 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
 
+  const getPriorityColor = (priority?: string) => {
+    switch (priority) {
+      case 'high': return 'bg-red-500';
+      case 'medium': return 'bg-yellow-500'; 
+      case 'low': return 'bg-green-500';
+      default: return 'bg-gray-400';
+    }
+  };
+
+  const getPriorityBorderColor = (priority?: string) => {
+    switch (priority) {
+      case 'high': return 'border-red-200 bg-red-50/50';
+      case 'medium': return 'border-yellow-200 bg-yellow-50/50'; 
+      case 'low': return 'border-green-200 bg-green-50/50';
+      default: return 'border-gray-200 bg-gray-50/50';
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -69,38 +87,60 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "p-3 rounded-lg border-2 cursor-grab transition-all hover:shadow-soft bg-white flex flex-col min-h-[100px] relative",
+        "p-4 rounded-lg border-2 cursor-grab active:cursor-grabbing transition-all duration-200",
+        "hover:shadow-card hover:scale-[1.02] hover:border-primary/30",
+        "bg-white flex flex-col min-h-[100px] relative group",
+        getPriorityBorderColor(task.priority),
         getProjectBorderColor(task.vibe_projects?.name),
-        isDragging && "opacity-50 shadow-elevated z-50"
+        isDragging && "opacity-50 shadow-elevated z-50 rotate-2"
       )}
     >
+      {/* Priority Indicator Dot */}
+      <div className="absolute top-2 left-2 flex items-center gap-1">
+        <div className={cn("w-2 h-2 rounded-full", getPriorityColor(task.priority))} />
+        {task.priority && (
+          <span className="text-xs font-medium text-muted-foreground capitalize">
+            {task.priority}
+          </span>
+        )}
+      </div>
+
       {/* Duration in upper right corner */}
       {task.estimated_duration && (
-        <div className="absolute top-3 right-3 flex items-center gap-1 text-xs text-muted-foreground">
+        <div className="absolute top-2 right-2 flex items-center gap-1 text-xs text-muted-foreground">
           <Clock className="h-3 w-3" />
-          {task.estimated_duration}m
+          <span className="font-medium">{task.estimated_duration}m</span>
         </div>
       )}
       
-      {/* Project name at top in small text */}
+      {/* Project name at top in small text - Enhanced */}
       {task.vibe_projects?.name && (
-        <div className="text-xs text-muted-foreground mb-2 pr-16">
+        <div className="text-xs text-muted-foreground mb-2 pr-16 pt-4 font-medium">
           {task.vibe_projects.name}
         </div>
       )}
       
-      {/* Task title centered in large text */}
+      {/* Task title centered - Improved Typography */}
       <div className="flex-1 flex items-center justify-center mb-3">
-        <h4 className="font-semibold text-base leading-tight text-foreground text-center">{task.title}</h4>
+        <h4 className="font-bold text-base leading-tight text-foreground text-center">{task.title}</h4>
       </div>
       
       {/* Due date in lower right corner */}
       {task.due_date && (
-        <div className="absolute bottom-3 right-3 flex items-center gap-1 text-xs text-muted-foreground">
+        <div className="absolute bottom-2 right-2 flex items-center gap-1 text-xs text-muted-foreground">
           <Calendar className="h-3 w-3" />
-          {format(new Date(task.due_date), 'MMM d')}
+          <span className="font-medium">{format(new Date(task.due_date), 'MMM d')}</span>
         </div>
       )}
+
+      {/* Drag Handle Indicator */}
+      <div className="absolute top-2 right-8 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="w-1 h-4 bg-muted-foreground/30 rounded-full flex flex-col gap-0.5">
+          <div className="w-full h-0.5 bg-current rounded-full" />
+          <div className="w-full h-0.5 bg-current rounded-full" />
+          <div className="w-full h-0.5 bg-current rounded-full" />
+        </div>
+      </div>
     </div>
   );
 };

@@ -89,14 +89,14 @@ export default function AITaskSequencerInline({ className }: AITaskSequencerInli
   };
 
   return (
-    <Card className={`${className} rounded-xl border shadow-soft bg-muted/30`}>
-      <CardHeader className="pb-3">
+    <Card className={`${className} rounded-xl border shadow-soft border-l-2 border-l-primary/20 bg-gradient-to-br from-primary/5 to-accent/5`}>
+      <CardHeader className="pb-4 sticky top-0 bg-gradient-to-br from-primary/5 to-accent/5 backdrop-blur-sm z-10 border-b">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Sparkles className="h-5 w-5 text-primary animate-pulse" />
           </div>
           <div>
-            <CardTitle className="text-lg font-bold">AI Task Sequencer</CardTitle>
+            <CardTitle className="text-xl font-bold text-foreground">AI Task Sequencer</CardTitle>
             <p className="text-sm text-muted-foreground">
               Organize your tasks optimally
             </p>

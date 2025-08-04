@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import SmartAddButton from '@/components/SmartAddButton';
-import { Plus, Filter } from 'lucide-react';
+import { Plus, Filter, CheckSquare } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
@@ -122,10 +122,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
       )}
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-4 sticky top-0 bg-card/95 backdrop-blur-sm z-10 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-xl font-bold">Tasks</h3>
+            <CheckSquare className="h-5 w-5 text-primary" />
+            <h3 className="text-xl font-bold text-foreground">Tasks</h3>
           </div>
           <SmartAddButton
             projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
