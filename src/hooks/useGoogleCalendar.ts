@@ -71,7 +71,7 @@ export const useGoogleCalendar = () => {
     if (!user) return;
 
     try {
-      // Always fetch all events first for the comprehensive view
+      // Always fetch all events to maintain consistency
       const { data: allEvents, error: allEventsError } = await supabase
         .from('calendar_events')
         .select('*')
@@ -94,21 +94,11 @@ export const useGoogleCalendar = () => {
         isAllDay: event.is_all_day,
       }));
 
-      // If date filter is provided, filter the events client-side to avoid multiple DB calls
-      let filteredEvents = transformedEvents;
-      if (date) {
-        const startOfDay = new Date(`${date}T00:00:00`);
-        const endOfDay = new Date(`${date}T23:59:59`);
-        
-        filteredEvents = transformedEvents.filter(event => {
-          const eventStart = new Date(event.start);
-          return eventStart >= startOfDay && eventStart <= endOfDay;
-        });
-      }
-
+      // Always store all events to prevent disappearing events issue
+      // Components that need date filtering should do it themselves
       setCalendarData(prev => ({
         ...prev,
-        events: filteredEvents,
+        events: transformedEvents,
         loading: false,
       }));
 
