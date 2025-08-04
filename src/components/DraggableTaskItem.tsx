@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import { Badge } from '@/components/ui/badge';
 import { Clock, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -25,22 +24,38 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
     data: task,
   });
 
-  const getPriorityColor = (priority?: string) => {
-    switch (priority) {
-      case 'high': return 'bg-priority-high/10 border-priority-high/30 text-priority-high';
-      case 'medium': return 'bg-priority-medium/10 border-priority-medium/30 text-priority-medium';
-      case 'low': return 'bg-priority-low/10 border-priority-low/30 text-priority-low';
-      default: return 'bg-muted border-sidebar-border text-muted-foreground';
+  const getProjectBorderColor = (projectName?: string) => {
+    if (!projectName) return 'border-gray-200';
+    
+    // Generate consistent colors based on project name
+    const projectColors = {
+      'DGTL Dental': 'border-blue-400',
+      'Ryco Roofing': 'border-green-400', 
+      'Personal': 'border-purple-400',
+      'Work': 'border-orange-400',
+      'Marketing': 'border-pink-400',
+      'Development': 'border-indigo-400',
+      'Design': 'border-cyan-400',
+      'Business': 'border-amber-400',
+    };
+    
+    // If project isn't in our predefined list, generate a color based on hash
+    if (projectColors[projectName as keyof typeof projectColors]) {
+      return projectColors[projectName as keyof typeof projectColors];
     }
-  };
-
-  const getPriorityBadgeColor = (priority?: string) => {
-    switch (priority) {
-      case 'high': return 'bg-priority-high/20 text-priority-high';
-      case 'medium': return 'bg-priority-medium/20 text-priority-medium';
-      case 'low': return 'bg-priority-low/20 text-priority-low';
-      default: return 'bg-muted/50 text-muted-foreground';
-    }
+    
+    // Simple hash-based color generation for unknown projects
+    const hash = projectName.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    
+    const colors = [
+      'border-red-400', 'border-yellow-400', 'border-green-400', 'border-blue-400',
+      'border-purple-400', 'border-pink-400', 'border-indigo-400', 'border-cyan-400'
+    ];
+    
+    return colors[Math.abs(hash) % colors.length];
   };
 
   const style = transform ? {
@@ -54,16 +69,13 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "p-3 rounded-lg border cursor-grab transition-all hover:shadow-soft",
-        getPriorityColor(task.priority),
+        "p-3 rounded-lg border-2 cursor-grab transition-all hover:shadow-soft bg-white",
+        getProjectBorderColor(task.vibe_projects?.name),
         isDragging && "opacity-50 shadow-elevated z-50"
       )}
     >
       <div className="flex items-start justify-between mb-2">
-        <h4 className="font-medium text-sm truncate flex-1">{task.title}</h4>
-        <Badge variant="secondary" className={cn("text-xs", getPriorityBadgeColor(task.priority))}>
-          {task.priority || 'medium'}
-        </Badge>
+        <h4 className="font-medium text-sm truncate flex-1 text-foreground">{task.title}</h4>
       </div>
       
       <div className="space-y-1">
