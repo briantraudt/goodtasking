@@ -1,75 +1,59 @@
-import { CheckSquare, LogOut, User, Settings as SettingsIcon, CalendarCheck } from 'lucide-react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { LogOut, Settings, Calendar, CalendarCheck } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
 
-
-export default function Header() {
+const Header = () => {
   const { user, signOut } = useAuth();
 
-  const handleSignOut = async () => {
-    await signOut();
+  // Get user's first name from email for personalization
+  const getUserName = () => {
+    if (!user?.email) return "there";
+    const emailPrefix = user.email.split('@')[0];
+    // Capitalize first letter and handle common patterns
+    return emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1).toLowerCase();
   };
 
-  const getUserInitials = (email: string) => {
-    return email.charAt(0).toUpperCase();
-  };
+  const today = format(new Date(), 'EEEE, MMMM d, yyyy');
 
   return (
-    <header className="border-b bg-gradient-card shadow-card">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 w-full">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 flex items-center justify-center">
-              <CalendarCheck className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Good Tasking</h1>
-            </div>
-          </div>
-          
-          {/* Centered greeting */}
-          <div className="absolute left-1/2 transform -translate-x-1/2">
-            <h2 className="text-xl font-semibold text-foreground">Hi, Brian!</h2>
-          </div>
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        {getUserInitials(user.email || 'U')}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <div className="flex flex-col space-y-1 p-2">
-                    <p className="text-sm font-medium leading-none">{user.email}</p>
-                  </div>
-                  <DropdownMenuItem asChild>
-                    <Link to="/settings" className="cursor-pointer">
-                      <SettingsIcon className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button asChild variant="default">
-                <Link to="/auth">Sign In</Link>
-              </Button>
-            )}
-          </div>
-        </div>
+    <header className="flex items-center justify-between pb-8">
+      {/* Left side - Modern greeting */}
+      <div className="flex flex-col">
+        <h1 className="text-3xl font-bold text-foreground mb-1">
+          👋 Welcome back, {getUserName()}!
+        </h1>
+        <p className="text-muted-foreground text-lg">
+          Let's plan a productive day together.
+        </p>
+        <p className="text-sm text-muted-foreground mt-1">
+          {today}
+        </p>
+      </div>
+
+      {/* Right side - Action buttons */}
+      <div className="flex items-center gap-3">
+        <Link to="/settings">
+          <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border hover:shadow-soft transition-all">
+            <Settings className="h-4 w-4 mr-2" />
+            Settings
+          </Button>
+        </Link>
+        
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={signOut}
+          className="h-10 px-4 rounded-lg border-border hover:shadow-soft transition-all"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Sign Out
+        </Button>
       </div>
     </header>
   );
-}
+};
+
+export default Header;

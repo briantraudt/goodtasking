@@ -10,86 +10,81 @@ Enhanced with vibrant gradients and modern design tokens.
 
 @layer base {
   :root {
-    --background: 220 26% 96%;
-    --foreground: 240 15% 9%;
+    /* Modern Color System - Updated to match brand guidelines */
+    --background: 210 11% 98%; /* #F9FAFB */
+    --foreground: 222 15% 15%;
 
-    --card: 255 100% 100%;
-    --card-foreground: 240 15% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 15% 15%;
 
-    --popover: 255 100% 100%;
-    --popover-foreground: 240 15% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 15% 15%;
 
-    --primary: 214 100% 59%;  /* #3B82F6 - Logo Blue */
-    --primary-foreground: 255 100% 98%;
+    --primary: 210 90% 63%; /* #437BFF - Brand Blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 98%;  /* Light background for cards */
-    --secondary-foreground: 214 100% 40%;
+    --secondary: 210 11% 96%;
+    --secondary-foreground: 222 15% 15%;
 
-    --muted: 210 20% 98%;  /* #F9FAFB equivalent */
-    --muted-foreground: 215 25% 40%;
+    --muted: 210 11% 96%;
+    --muted-foreground: 215 16% 47%; /* #6B7280 */
 
-    --accent: 214 100% 59%;  /* Blue accent - matches primary */
-    --accent-foreground: 255 100% 98%;
-
-    --success: 152 69% 54%;  /* #34D399 - Low Priority Green */
-    --success-foreground: 255 100% 98%;
-
-    /* Task Priority Colors */
-    --priority-high: 0 77% 70%;     /* #F87171 - High Priority Red */
-    --priority-medium: 45 93% 58%;   /* #FBBF24 - Medium Priority Yellow */
-    --priority-low: 152 69% 54%;     /* #34D399 - Low Priority Green */
-
-    /* Calendar Event Colors */
-    --calendar-event-bg: 214 100% 97%;  /* #EFF6FF - Soft blue */
-    --calendar-event-border: 214 100% 59%;
-
-    /* Sidebar Colors */
-    --sidebar-card-bg: 210 20% 98%;  /* #F9FAFB */
-    --sidebar-border: 220 13% 91%;   /* #E5E7EB */
-
-    --progress-bg: 210 20% 94%;
-    --progress-fill: 214 100% 59%;
-
-    /* Enhanced Gradients for Vibrant Design */
-    --gradient-primary: linear-gradient(135deg, hsl(214 100% 59%), hsl(0 77% 70%));  /* Blue to Red */
-    --gradient-secondary: linear-gradient(90deg, hsl(214 100% 59%), hsl(214 100% 70%));  /* Blue gradient */
-    --gradient-card: linear-gradient(145deg, hsl(255 100% 100%), hsl(210 20% 98%));
-    --gradient-accent: linear-gradient(135deg, hsl(214 100% 59%), hsl(214 100% 70%));  /* Blue gradient */
-    --gradient-ai-planned: linear-gradient(135deg, hsl(152 69% 54%), hsl(166 73% 58%));  /* Green gradient */
-    --gradient-hover: linear-gradient(135deg, hsl(214 100% 65%) 0%, hsl(214 100% 50%) 100%);  /* Blue gradient */
-
-    /* Timeline Block Colors */
-    --google-calendar-bg: 214 100% 97%;  /* #EFF6FF - Blue tint */
-    --google-calendar-border: 214 60% 85%;
-    --ai-scheduled-bg: 152 30% 95%;     /* #F0FDF4 - Green tint */
-    --ai-scheduled-border: 152 60% 70%;
-
-    /* Current Time Indicator */
-    --current-time-line: 0 77% 70%;  /* Red for current time */
-
-    --shadow-card: 0 4px 6px -1px hsl(214 100% 59% / 0.1), 0 2px 4px -1px hsl(214 100% 59% / 0.06);
-    --shadow-elevated: 0 10px 15px -3px hsl(214 100% 59% / 0.1), 0 4px 6px -2px hsl(214 100% 59% / 0.05);
-    --shadow-soft: 0 2px 6px hsl(214 100% 59% / 0.05);
-
-    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --accent: 210 11% 96%;
+    --accent-foreground: 222 15% 15%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214 40% 85%;
-    --input: 214 40% 85%;
-    --ring: 214 95% 52%;
+    --border: 220 13% 91%; /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 210 90% 63%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem; /* 12px */
 
-    --sidebar-background: 220 26% 96%;
-    --sidebar-foreground: 240 15% 20%;
-    --sidebar-primary: 214 95% 52%;
-    --sidebar-primary-foreground: 255 100% 98%;
-    --sidebar-accent: 210 60% 90%;
-    --sidebar-accent-foreground: 214 95% 25%;
-    --sidebar-border: 214 40% 80%;
-    --sidebar-ring: 214 95% 52%;
+    /* Task Priority Colors - Modern palette */
+    --priority-high: 0 84% 60%;     /* Light red */
+    --priority-medium: 47 100% 68%; /* #FFD560 - Modern yellow */
+    --priority-low: 142 71% 45%;    /* Light green */
+
+    /* Google Calendar Colors */
+    --google-calendar: 210 90% 63%;
+    --google-calendar-bg: 210 100% 97%;
+    --google-calendar-border: 210 90% 63%;
+
+    /* AI Colors */
+    --ai-scheduled: 142 71% 45%;
+    --ai-scheduled-bg: 142 71% 96%;
+    --ai-scheduled-border: 142 71% 45%;
+
+    /* Modern Shadows */
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+    /* Timeline Block Colors */
+    --calendar-event-bg: 210 100% 97%;
+    --calendar-event-border: 210 90% 63%;
+
+    /* Current Time Indicator */
+    --current-time-line: 0 84% 60%;
+
+    /* Enhanced Transitions */
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Sidebar */
+    --sidebar-background: 210 11% 98%;
+    --sidebar-foreground: 222 15% 20%;
+    --sidebar-primary: 210 90% 63%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 11% 96%;
+    --sidebar-accent-foreground: 222 15% 15%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 210 90% 63%;
+
+    /* Legacy color mappings for compatibility */
+    --sidebar-card-bg: 0 0% 100%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
   }
 
   .dark {
@@ -165,10 +160,16 @@ Enhanced with vibrant gradients and modern design tokens.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-medium;
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
     font-feature-settings: 'cv11', 'ss01';
     font-variation-settings: 'opsz' 32;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold;
   }
 }
 

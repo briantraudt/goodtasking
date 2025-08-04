@@ -32,20 +32,24 @@ const Index = () => {
   }
 
   return (
-    <div className="h-screen bg-background flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-background">
       <EnableAIAssistant />
-      <Header />
       
-      <main className="flex-1 overflow-hidden max-w-[1440px] mx-auto w-full">
-        <DashboardView
-          projects={projects}
-          onUpdateTask={updateTask}
-          onCreateTask={createTask}
-          onCreateProject={(data) => createProject(data.name, data.description)}
-          onRefreshTasks={refetch}
-          userName={getUserName()}
-        />
-      </main>
+      {/* Modern container with max width and proper padding */}
+      <div className="max-w-app mx-auto px-app-x pt-app-y">
+        <Header />
+        
+        <main className="mt-8">
+          <DashboardView
+            projects={projects}
+            onUpdateTask={updateTask}
+            onCreateTask={createTask}
+            onCreateProject={(data) => createProject(data.name, data.description)}
+            onRefreshTasks={refetch}
+            userName={getUserName()}
+          />
+        </main>
+      </div>
     </div>
   );
 };
