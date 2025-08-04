@@ -122,7 +122,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   const { planMyDay, loading: planningLoading } = useAIPlanner();
   const { toast } = useToast();
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeId, setActiveId] = useState<string | null>(null);
