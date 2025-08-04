@@ -138,11 +138,6 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       <CardContent className="space-y-4">
         {/* Filters */}
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Filter className="h-3 w-3" />
-            Filters
-          </div>
-          
           <div className="grid grid-cols-1 gap-2">
             <Select value={projectFilter} onValueChange={setProjectFilter}>
               <SelectTrigger className="h-8 text-xs">
