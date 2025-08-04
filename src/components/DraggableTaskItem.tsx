@@ -72,14 +72,6 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
         <h4 className="text-sm font-semibold text-gray-900 leading-tight truncate">
           {task.title}
         </h4>
-        
-        {/* Scheduled indicator */}
-        {task.scheduled_date && (
-          <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded ml-2">
-            <Calendar className="h-2.5 w-2.5" />
-            <span className="hidden sm:inline">Scheduled</span>
-          </div>
-        )}
       </div>
 
       {/* Minimal Drag Handle (appears on hover) */}
