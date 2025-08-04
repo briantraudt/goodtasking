@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import Timeline from 'react-calendar-timeline';
 import moment from 'moment';
-import 'react-calendar-timeline/lib/Timeline.css';
 
 interface Task {
   id: string;
