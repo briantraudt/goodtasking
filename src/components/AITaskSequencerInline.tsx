@@ -91,8 +91,7 @@ export default function AITaskSequencerInline({ className }: AITaskSequencerInli
   return (
     <Card className={className}>
       <CardHeader className="pb-3">
-        <CardTitle className="text-title flex items-center">
-          <Sparkles className="h-5 w-5 mr-2 text-primary" />
+        <CardTitle className="text-title">
           AI Task Sequencer
         </CardTitle>
       </CardHeader>
