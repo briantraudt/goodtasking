@@ -111,15 +111,15 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Function to get Good Business project colors
+  // Good Business Brand Colors - Bold and High Contrast
   const getProjectColor = (projectName: string, index: number) => {
     const colors = [
-      { border: 'border-project-navy', bg: 'bg-project-navy-bg', text: 'text-project-navy', name: 'navy' },
-      { border: 'border-project-forest', bg: 'bg-project-forest-bg', text: 'text-project-forest', name: 'forest' },
-      { border: 'border-project-indigo', bg: 'bg-project-indigo-bg', text: 'text-project-indigo', name: 'indigo' },
-      { border: 'border-project-sky', bg: 'bg-project-sky-bg', text: 'text-project-sky', name: 'sky' },
-      { border: 'border-project-purple', bg: 'bg-project-purple-bg', text: 'text-project-purple', name: 'purple' },
-      { border: 'border-project-gold', bg: 'bg-project-gold-bg', text: 'text-project-gold', name: 'gold' }
+      { border: 'border-[#1E3A5F]', bg: 'bg-white', text: 'text-[#1E3A5F]', name: 'navy', hex: '#1E3A5F' },
+      { border: 'border-[#15803D]', bg: 'bg-white', text: 'text-[#15803D]', name: 'green', hex: '#15803D' },
+      { border: 'border-[#7C3AED]', bg: 'bg-white', text: 'text-[#7C3AED]', name: 'purple', hex: '#7C3AED' },
+      { border: 'border-[#F59E0B]', bg: 'bg-white', text: 'text-[#F59E0B]', name: 'gold', hex: '#F59E0B' },
+      { border: 'border-[#DC2626]', bg: 'bg-white', text: 'text-[#DC2626]', name: 'red', hex: '#DC2626' },
+      { border: 'border-[#0891B2]', bg: 'bg-white', text: 'text-[#0891B2]', name: 'cyan', hex: '#0891B2' }
     ];
     
     // Use consistent color assignment based on project name hash
@@ -199,58 +199,56 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
             <div 
               key={project.id} 
               className={cn(
-                "rounded-xl border-2 p-4 shadow-card transition-all duration-200 hover:shadow-elevated",
-                projectColor.border,
-                projectColor.bg
+                "rounded-2xl border-4 p-5 shadow-inner bg-gradient-to-b from-white to-gray-50",
+                "transition-all duration-200 hover:shadow-elevated flex flex-col gap-3",
+                projectColor.border
               )}
             >
-              {/* Bold Project Header with Gradient */}
-              <div className={cn(
-                "mb-4 rounded-lg p-3 -mx-1",
-                "bg-gradient-to-r from-white/60 to-white/30 backdrop-blur-sm"
-              )}>
-                <div className="flex items-center gap-2">
-                  <div className={cn(
-                    "w-3 h-3 rounded-full",
-                    projectColor.border.replace('border-', 'bg-')
-                  )} />
-                  <h3 className={cn(
-                    "font-bold text-base",
-                    projectColor.text
-                  )}>
-                    {project.name}
-                  </h3>
-                </div>
+              {/* Elegant Project Title */}
+              <div className="border-b border-gray-200 pb-3">
+                <h3 className={cn(
+                  "font-bold text-lg",
+                  projectColor.text
+                )}>
+                  {project.name}
+                </h3>
               </div>
 
-              {/* Project Tasks with Enhanced Cards */}
-              <div className="space-y-3">
+              {/* Clean Task List - Pill Style */}
+              <div className="flex flex-col gap-3">
                 {projectTasks.map(task => {
-                  // Determine task status for color coding
-                  let statusColor = 'border-l-gray-300'; // Default: unscheduled
-                  let statusBg = 'bg-white';
-                  
-                  if (task.scheduled_date) {
-                    statusColor = `border-l-${projectColor.name}-500`;
-                    statusBg = 'bg-white';
-                  }
-                  
-                  if (task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date))) {
-                    statusColor = 'border-l-red-500';
-                    statusBg = 'bg-red-50';
-                  }
+                  // Determine if task is overdue for red border
+                  const isOverdue = task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date));
+                  const leftBorderColor = isOverdue ? '#DC2626' : projectColor.hex;
 
                   return (
                     <div
                       key={task.id}
-                      className={cn(
-                        "rounded-lg border-l-4 p-3 shadow-soft transition-all duration-200",
-                        "hover:shadow-card hover:transform hover:scale-[1.02] cursor-pointer",
-                        statusColor,
-                        statusBg
-                      )}
+                      className="group cursor-pointer"
                     >
-                      <DraggableTaskItem task={task} />
+                      <div
+                        className={cn(
+                          "bg-white font-medium text-sm px-4 py-2 rounded-xl shadow-sm border transition-all duration-200",
+                          "hover:shadow-md relative overflow-hidden"
+                        )}
+                        style={{
+                          borderColor: projectColor.hex,
+                          borderLeftColor: leftBorderColor,
+                          borderLeftWidth: '4px',
+                          color: projectColor.hex
+                        }}
+                      >
+                        {/* Hover overlay effect */}
+                        <div 
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                          style={{ backgroundColor: projectColor.hex }}
+                        />
+                        
+                        {/* Task content */}
+                        <div className="relative z-10 group-hover:text-white transition-colors duration-200">
+                          <DraggableTaskItem task={task} />
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
