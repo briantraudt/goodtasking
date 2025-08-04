@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import Timeline from 'react-calendar-timeline';
 import moment from 'moment';
+import 'react-calendar-timeline/lib/Timeline.css';
 
 interface Task {
   id: string;
@@ -115,7 +116,7 @@ const CalendarTimeline: React.FC<CalendarTimelineProps> = ({
   const timeEnd = moment(selectedDate).endOf('day');
 
   return (
-    <div className={className}>
+    <div className={className} style={{ height: '600px', minHeight: '600px' }}>
       <Timeline
         groups={groups}
         items={items}
