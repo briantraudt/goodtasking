@@ -127,12 +127,9 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const { toast } = useToast();
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
   const [selectedDate, setSelectedDate] = useState(() => {
+    // Always default to today's date
     const today = new Date();
-    // Force to YYYY-MM-DD format in local timezone
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return format(today, 'yyyy-MM-dd');
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -630,10 +627,15 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             <div className="flex flex-col h-full">
               {/* Sticky Calendar Header with Good Business Navy */}
               <div className="sticky top-0 z-10 bg-white pb-4 border-b border-timeline-gray mb-4">
-                <h2 className="text-lg font-bold text-navy-blue flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-forest-green" />
-                  Calendar
-                </h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-bold text-navy-blue flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-forest-green" />
+                    Calendar
+                  </h2>
+                  <div className="text-sm font-semibold text-navy-blue">
+                    {format(new Date(selectedDate), 'EEEE, MMMM d')}
+                  </div>
+                </div>
               </div>
               
               {/* Calendar Content */}

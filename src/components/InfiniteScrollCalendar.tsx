@@ -24,10 +24,10 @@ interface InfiniteScrollCalendarProps {
 }
 
 // Configuration
-const HOUR_HEIGHT = 76; // Height per hour (38px * 2 for two 30-min slots)
+const HOUR_HEIGHT = 80; // Increased height per hour for better visibility
 const HOURS_PER_DAY = 24;
-const INITIAL_DAYS_BUFFER = 7; // Show 7 days initially (3 before, current, 3 after)
-const TOTAL_VIRTUAL_HOURS = INITIAL_DAYS_BUFFER * HOURS_PER_DAY; // Total virtual hours
+const DAYS_BUFFER = 30; // Buffer days before and after for infinite scroll
+const SLOT_HEIGHT = HOUR_HEIGHT / 2; // 30-minute slot height
 
 const InfiniteScrollCalendar = ({ 
   selectedDate, 
@@ -39,13 +39,18 @@ const InfiniteScrollCalendar = ({
   const parentRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [visibleDate, setVisibleDate] = useState(selectedDate);
-  const [baseDate, setBaseDate] = useState(() => subDays(new Date(selectedDate), 3)); // Start 3 days before selected
+  
+  // Initialize base date to center around today
+  const [baseDate, setBaseDate] = useState(() => {
+    const today = new Date();
+    return subDays(today, DAYS_BUFFER);
+  });
 
-  // Update current time every minute
+  // Update current time every minute for live time indicator
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 60000);
+    const updateTime = () => setCurrentTime(new Date());
+    updateTime(); // Set immediately
+    const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -59,7 +64,7 @@ const InfiniteScrollCalendar = ({
       dateString: string;
     }> = [];
 
-    for (let dayIndex = 0; dayIndex < INITIAL_DAYS_BUFFER; dayIndex++) {
+    for (let dayIndex = 0; dayIndex < DAYS_BUFFER * 2; dayIndex++) { // Use DAYS_BUFFER * 2 for past and future
       const currentDay = addDays(baseDate, dayIndex);
       const dateString = format(currentDay, 'yyyy-MM-dd');
       
