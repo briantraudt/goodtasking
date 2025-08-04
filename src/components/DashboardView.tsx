@@ -48,14 +48,6 @@ const DashboardView = ({
       {/* Weekly AI Review - only show in week view */}
       {viewMode === 'week' && <WeeklyAIReview />}
       
-      {/* Fixed Header Section */}
-      <div className="flex-shrink-0 px-4 py-4 border-b bg-background">
-        <div className="flex justify-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
-            Hi Brian!
-          </h1>
-        </div>
-      </div>
 
       {/* Scrollable Content Section */}
       <div className="flex-1 overflow-hidden">
