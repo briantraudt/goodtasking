@@ -586,21 +586,22 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
       collisionDetection={pointerWithin}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
-      <div className={cn("flex gap-4 h-screen overflow-hidden relative", className)}>
-        {/* Left side - Calendar Timeline (70%) */}
-        <Card className="flex-[7] flex flex-col">
-          <CardHeader className="flex-shrink-0">
+      <div className={cn("h-screen overflow-hidden flex flex-col", className)}>
+        {/* Fixed Header Section */}
+        <div className="flex-shrink-0 flex gap-4 p-4 border-b bg-background">
+          {/* Left side header */}
+          <div className="flex-[7]">
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
-                Daily Timeline
+                <h2 className="text-xl font-semibold">Daily Timeline</h2>
                 <Badge variant="secondary">{format(new Date(), 'MMM d')}</Badge>
-                 {isToday(new Date(selectedDate)) && (
-                   <Badge variant="outline" className="text-xs">
-                     {format(currentTime, 'h:mm a')}
-                   </Badge>
-                 )}
-              </CardTitle>
+                {isToday(new Date(selectedDate)) && (
+                  <Badge variant="outline" className="text-xs">
+                    {format(currentTime, 'h:mm a')}
+                  </Badge>
+                )}
+              </div>
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -632,143 +633,160 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                 </Button>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="flex-1 overflow-y-auto min-h-0">
-            {!isConnected && (
-              <div className="text-center py-4 text-muted-foreground">
-                <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Connect your Google Calendar to see a unified view</p>
-              </div>
-            )}
+          </div>
+          {/* Right side header - Tasks to Schedule */}
+          <div className="flex-[3]">
+            <h2 className="text-xl font-semibold">Tasks to Schedule</h2>
+          </div>
+        </div>
 
-            {/* Time Grid */}
-            <div className="space-y-0 border rounded-lg overflow-hidden relative">
-              {/* Timeline container with absolute positioning for events */}
-              <div className="relative">
-                {timeSlots.map(hour => (
-                  <div key={hour} className="grid grid-cols-[80px_1fr] border-b last:border-b-0">
-                    {/* Time Label */}
-                    <div className="bg-muted/50 p-2 text-sm font-medium text-center border-r">
-                      {formatHour(hour)}
-                    </div>
-                    
-                    {/* Time Slots */}
-                    <div className="grid grid-rows-2">
-                      {/* First half hour */}
-                      <DroppableTimeSlot 
-                        hour={hour} 
-                        period="first"
-                        hasOverlap={hasTimeSlotOverlap(hour, 'first')}
-                        isCurrentTime={isCurrentTimeSlot(hour, 'first')}
-                      >
-                        {/* Empty - events are positioned absolutely */}
-                      </DroppableTimeSlot>
+        {/* Scrollable Content Section */}
+        <div className="flex-1 flex gap-4 p-4 min-h-0">
+          {/* Left side - Calendar Timeline (70%) */}
+          <Card className="flex-[7] flex flex-col">
+            <CardContent className="flex-1 overflow-y-auto p-4">
+              {!isConnected && (
+                <div className="text-center py-4 text-muted-foreground">
+                  <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>Connect your Google Calendar to see a unified view</p>
+                </div>
+              )}
+
+              {/* Time Grid */}
+              <div className="space-y-0 border rounded-lg overflow-hidden relative">
+                {/* Timeline container with absolute positioning for events */}
+                <div className="relative">
+                  {timeSlots.map(hour => (
+                    <div key={hour} className="grid grid-cols-[80px_1fr] border-b last:border-b-0">
+                      {/* Time Label */}
+                      <div className="bg-muted/50 p-2 text-sm font-medium text-center border-r">
+                        {formatHour(hour)}
+                      </div>
                       
-                      {/* Second half hour */}
-                      <DroppableTimeSlot 
-                        hour={hour} 
-                        period="second"
-                        hasOverlap={hasTimeSlotOverlap(hour, 'second')}
-                        isCurrentTime={isCurrentTimeSlot(hour, 'second')}
-                      >
-                        {/* Empty - events are positioned absolutely */}
-                      </DroppableTimeSlot>
-                    </div>
-                  </div>
-                ))}
-                
-                {/* Absolutely positioned events and tasks */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <div className="relative h-full ml-[80px]">
-                    {timeBlocks.map(block => {
-                      const relatedTask = block.type === 'task' ? 
-                        scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
-                      
-                      // Calculate position based on time
-                      let blockStartHour: number;
-                      let blockStartMinutes: number;
-                      let blockEndHour: number;
-                      let blockEndMinutes: number;
-                      
-                      if (block.start.includes('T')) {
-                        // ISO datetime
-                        const startDate = parseISO(block.start);
-                        const endDate = parseISO(block.end);
-                        blockStartHour = startDate.getHours();
-                        blockStartMinutes = startDate.getMinutes();
-                        blockEndHour = endDate.getHours();
-                        blockEndMinutes = endDate.getMinutes();
-                      } else {
-                        // HH:mm format
-                        [blockStartHour, blockStartMinutes] = block.start.split(':').map(Number);
-                        [blockEndHour, blockEndMinutes] = block.end.split(':').map(Number);
-                      }
-                      
-                      // Only show events within our time range (7 AM to 7 PM)
-                      if (blockStartHour < 7 || blockStartHour >= 20) return null;
-                      
-                      // Calculate precise positioning
-                      const startTimeInMinutes = (blockStartHour - 7) * 60 + blockStartMinutes;
-                      const endTimeInMinutes = (blockEndHour - 7) * 60 + blockEndMinutes;
-                      const durationInMinutes = endTimeInMinutes - startTimeInMinutes;
-                      
-                      // Each hour is 100px (50px per 30-min slot), so 1 minute = 100/60 = 1.67px
-                      const pixelsPerMinute = 100 / 60;
-                      const topOffset = startTimeInMinutes * pixelsPerMinute;
-                      const height = Math.max(durationInMinutes * pixelsPerMinute, 40); // Min 40px height
-                      
-                      return (
-                        <div 
-                          key={block.id}
-                          style={{
-                            position: 'absolute',
-                            top: `${topOffset}px`,
-                            height: `${height}px`,
-                            left: 0,
-                            right: 0,
-                            zIndex: 20
-                          }}
-                          className="pointer-events-auto"
+                      {/* Time Slots */}
+                      <div className="grid grid-rows-2">
+                        {/* First half hour */}
+                        <DroppableTimeSlot 
+                          hour={hour} 
+                          period="first"
+                          hasOverlap={hasTimeSlotOverlap(hour, 'first')}
+                          isCurrentTime={isCurrentTimeSlot(hour, 'first')}
                         >
-                          <DraggableTimelineTask
-                            block={block}
-                            task={relatedTask}
-                          />
-                        </div>
-                      );
-                    })}
+                          {/* Empty - events are positioned absolutely */}
+                        </DroppableTimeSlot>
+                        
+                        {/* Second half hour */}
+                        <DroppableTimeSlot 
+                          hour={hour} 
+                          period="second"
+                          hasOverlap={hasTimeSlotOverlap(hour, 'second')}
+                          isCurrentTime={isCurrentTimeSlot(hour, 'second')}
+                        >
+                          {/* Empty - events are positioned absolutely */}
+                        </DroppableTimeSlot>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Absolutely positioned events and tasks */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div className="relative h-full ml-[80px]">
+                      {timeBlocks.map(block => {
+                        const relatedTask = block.type === 'task' ? 
+                          scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
+                        
+                        // Calculate position based on time
+                        let blockStartHour: number;
+                        let blockStartMinutes: number;
+                        let blockEndHour: number;
+                        let blockEndMinutes: number;
+                        
+                        if (block.start.includes('T')) {
+                          // ISO datetime
+                          const startDate = parseISO(block.start);
+                          const endDate = parseISO(block.end);
+                          blockStartHour = startDate.getHours();
+                          blockStartMinutes = startDate.getMinutes();
+                          blockEndHour = endDate.getHours();
+                          blockEndMinutes = endDate.getMinutes();
+                        } else {
+                          // HH:mm format
+                          [blockStartHour, blockStartMinutes] = block.start.split(':').map(Number);
+                          [blockEndHour, blockEndMinutes] = block.end.split(':').map(Number);
+                        }
+                        
+                        // Only show events within our time range (7 AM to 7 PM)
+                        if (blockStartHour < 7 || blockStartHour >= 20) return null;
+                        
+                        // Calculate precise positioning
+                        const startTimeInMinutes = (blockStartHour - 7) * 60 + blockStartMinutes;
+                        const endTimeInMinutes = (blockEndHour - 7) * 60 + blockEndMinutes;
+                        const durationInMinutes = endTimeInMinutes - startTimeInMinutes;
+                        
+                        // Each hour is 100px (50px per 30-min slot), so 1 minute = 100/60 = 1.67px
+                        const pixelsPerMinute = 100 / 60;
+                        const topOffset = startTimeInMinutes * pixelsPerMinute;
+                        const height = Math.max(durationInMinutes * pixelsPerMinute, 40); // Min 40px height
+                        
+                        return (
+                          <div 
+                            key={block.id}
+                            style={{
+                              position: 'absolute',
+                              top: `${topOffset}px`,
+                              height: `${height}px`,
+                              left: 0,
+                              right: 0,
+                              zIndex: 20
+                            }}
+                            className="pointer-events-auto"
+                          >
+                            <DraggableTimelineTask
+                              block={block}
+                              task={relatedTask}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Quick Stats */}
-            <div className="mt-6 pt-4 border-t">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-primary">{events.length}</p>
-                  <p className="text-xs text-muted-foreground">Calendar Events</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-success">{scheduledTasks.length}</p>
-                  <p className="text-xs text-muted-foreground">Scheduled Tasks</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-accent">{timeBlocks.length}</p>
-                  <p className="text-xs text-muted-foreground">Total Blocks</p>
-                </div>
+          {/* Right side - Task Sidebar (30%) */}
+          <TaskSidebar 
+            projects={projects}
+            selectedDate={selectedDate}
+            onCreateTask={onCreateTask}
+            className="flex-[3]"
+          />
+        </div>
+
+        {/* Fixed Footer Stats Section */}
+        <div className="flex-shrink-0 flex gap-4 p-4 border-t bg-background">
+          <div className="flex-[7]">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <p className="text-2xl font-bold text-primary">{events.length}</p>
+                <p className="text-xs text-muted-foreground">Calendar Events</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-success">{scheduledTasks.length}</p>
+                <p className="text-xs text-muted-foreground">Scheduled Tasks</p>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-accent">{timeBlocks.length}</p>
+                <p className="text-xs text-muted-foreground">Total Blocks</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Right side - Task Sidebar (30%) */}
-        <TaskSidebar 
-          projects={projects}
-          selectedDate={selectedDate}
-          onCreateTask={onCreateTask}
-          className="flex-[3]"
-        />
+          </div>
+          <div className="flex-[3]">
+            {/* Empty space to align with task sidebar */}
+          </div>
+        </div>
+      </div>
 
         {/* Undo Button - Bottom Right */}
         {undoAction && (
@@ -783,21 +801,20 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
             </Button>
           </div>
         )}
-      </div>
 
-      {/* Drag Overlay with Ghost Preview */}
-      <DragOverlay>
-        {activeId ? (
-          <div className="p-3 rounded-lg border bg-primary/10 border-primary/30 text-primary opacity-80 shadow-elevated">
-            <div className="flex items-center gap-2">
-              <Clock className="h-3 w-3" />
-              <span className="text-sm font-medium">Dragging task...</span>
+        {/* Drag Overlay with Ghost Preview */}
+        <DragOverlay>
+          {activeId ? (
+            <div className="p-3 rounded-lg border bg-primary/10 border-primary/30 text-primary opacity-80 shadow-elevated">
+              <div className="flex items-center gap-2">
+                <Clock className="h-3 w-3" />
+                <span className="text-sm font-medium">Dragging task...</span>
+              </div>
             </div>
-          </div>
-        ) : null}
-      </DragOverlay>
-    </DndContext>
-  );
-};
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    );
+  };
 
 export default UnifiedDailyPlanner;
