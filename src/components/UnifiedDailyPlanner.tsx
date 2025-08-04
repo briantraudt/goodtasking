@@ -156,7 +156,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     if (isConnected && refreshEvents) {
       refreshEvents(selectedDate);
     }
-  }, [selectedDate, isConnected, refreshEvents]);
+  }, [selectedDate, isConnected]); // Removed refreshEvents from dependencies
 
   const formatTime = (timeStr: string) => {
     try {
