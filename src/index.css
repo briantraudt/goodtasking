@@ -28,7 +28,7 @@ Enhanced with vibrant gradients and modern design tokens.
     --muted: 210 20% 98%;  /* #F9FAFB equivalent */
     --muted-foreground: 215 25% 40%;
 
-    --accent: 330 81% 60%;  /* #EC4899 - Pink accent */
+    --accent: 214 100% 59%;  /* Blue accent - matches primary */
     --accent-foreground: 255 100% 98%;
 
     --success: 152 69% 54%;  /* #34D399 - Low Priority Green */
@@ -51,12 +51,12 @@ Enhanced with vibrant gradients and modern design tokens.
     --progress-fill: 214 100% 59%;
 
     /* Enhanced Gradients for Vibrant Design */
-    --gradient-primary: linear-gradient(135deg, hsl(262 76% 72%), hsl(0 77% 70%));  /* Purple to Red */
-    --gradient-secondary: linear-gradient(90deg, hsl(214 100% 59%), hsl(330 81% 60%));  /* Blue to Pink */
+    --gradient-primary: linear-gradient(135deg, hsl(214 100% 59%), hsl(0 77% 70%));  /* Blue to Red */
+    --gradient-secondary: linear-gradient(90deg, hsl(214 100% 59%), hsl(214 100% 70%));  /* Blue gradient */
     --gradient-card: linear-gradient(145deg, hsl(255 100% 100%), hsl(210 20% 98%));
-    --gradient-accent: linear-gradient(135deg, hsl(214 100% 59%), hsl(330 81% 60%));
+    --gradient-accent: linear-gradient(135deg, hsl(214 100% 59%), hsl(214 100% 70%));  /* Blue gradient */
     --gradient-ai-planned: linear-gradient(135deg, hsl(152 69% 54%), hsl(166 73% 58%));  /* Green gradient */
-    --gradient-hover: linear-gradient(135deg, hsl(262 76% 72%) 0%, hsl(0 77% 70%) 100%);
+    --gradient-hover: linear-gradient(135deg, hsl(214 100% 65%) 0%, hsl(214 100% 50%) 100%);  /* Blue gradient */
 
     /* Timeline Block Colors */
     --google-calendar-bg: 214 100% 97%;  /* #EFF6FF - Blue tint */
@@ -111,7 +111,7 @@ Enhanced with vibrant gradients and modern design tokens.
     --muted: 215 20% 16%;
     --muted-foreground: 215 30% 70%;
 
-    --accent: 330 81% 65%;  /* Brighter pink for dark mode */
+    --accent: 214 100% 65%;  /* Blue accent for dark mode */
     --accent-foreground: 240 15% 8%;
 
     --success: 152 69% 60%;  /* Brighter green for dark mode */

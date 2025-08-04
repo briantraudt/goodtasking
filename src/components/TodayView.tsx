@@ -77,7 +77,7 @@ const TodayView = ({
       'bg-green-100 text-green-800 border-green-200',
       'bg-purple-100 text-purple-800 border-purple-200',
       'bg-orange-100 text-orange-800 border-orange-200',
-      'bg-pink-100 text-pink-800 border-pink-200',
+      'bg-cyan-100 text-cyan-800 border-cyan-200',
       'bg-indigo-100 text-indigo-800 border-indigo-200'
     ];
     const index = projects.findIndex(p => p.id === projectId) % colors.length;

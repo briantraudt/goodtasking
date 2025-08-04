@@ -167,11 +167,11 @@ const WeeklyAIReview = () => {
   if (loading && !reviewData) return null;
 
   return (
-    <Card className="mb-6 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+    <Card className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
               <Award className="h-4 w-4 text-white" />
             </div>
             <CardTitle className="text-lg font-semibold text-gray-900">
