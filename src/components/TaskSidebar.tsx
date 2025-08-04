@@ -117,7 +117,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, className }: TaskSi
       ref={setNodeRef}
       className={cn(
         className,
-        isOver && "ring-2 ring-blue-500 ring-offset-2 bg-blue-50/50"
+        "bg-sidebar-card border-sidebar-border shadow-soft",
+        isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
       )}
     >
       <CardHeader className="pb-3">
@@ -142,13 +143,13 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, className }: TaskSi
         
         {/* Priority Summary */}
         <div className="flex gap-1 text-xs">
-          <Badge variant="outline" className="bg-red-50 text-red-700">
+          <Badge variant="outline" className="bg-priority-high/10 text-priority-high border-priority-high/30">
             High: {getTaskCountByPriority('high')}
           </Badge>
-          <Badge variant="outline" className="bg-yellow-50 text-yellow-700">
+          <Badge variant="outline" className="bg-priority-medium/10 text-priority-medium border-priority-medium/30">
             Med: {getTaskCountByPriority('medium')}
           </Badge>
-          <Badge variant="outline" className="bg-green-50 text-green-700">
+          <Badge variant="outline" className="bg-priority-low/10 text-priority-low border-priority-low/30">
             Low: {getTaskCountByPriority('low')}
           </Badge>
         </div>

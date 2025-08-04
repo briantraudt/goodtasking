@@ -27,19 +27,19 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
 
   const getPriorityColor = (priority?: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-50 border-red-200 text-red-800';
-      case 'medium': return 'bg-yellow-50 border-yellow-200 text-yellow-800';
-      case 'low': return 'bg-green-50 border-green-200 text-green-800';
-      default: return 'bg-gray-50 border-gray-200 text-gray-800';
+      case 'high': return 'bg-priority-high/10 border-priority-high/30 text-priority-high';
+      case 'medium': return 'bg-priority-medium/10 border-priority-medium/30 text-priority-medium';
+      case 'low': return 'bg-priority-low/10 border-priority-low/30 text-priority-low';
+      default: return 'bg-muted border-sidebar-border text-muted-foreground';
     }
   };
 
   const getPriorityBadgeColor = (priority?: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'low': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'high': return 'bg-priority-high/20 text-priority-high';
+      case 'medium': return 'bg-priority-medium/20 text-priority-medium';
+      case 'low': return 'bg-priority-low/20 text-priority-low';
+      default: return 'bg-muted/50 text-muted-foreground';
     }
   };
 
@@ -54,9 +54,9 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "p-3 rounded-lg border cursor-grab transition-all hover:shadow-sm",
+        "p-3 rounded-lg border cursor-grab transition-all hover:shadow-soft",
         getPriorityColor(task.priority),
-        isDragging && "opacity-50 shadow-lg z-50"
+        isDragging && "opacity-50 shadow-elevated z-50"
       )}
     >
       <div className="flex items-start justify-between mb-2">

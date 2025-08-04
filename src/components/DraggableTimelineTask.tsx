@@ -65,10 +65,10 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       {...(isDraggableTask ? listeners : {})}
       {...(isDraggableTask ? attributes : {})}
       className={cn(
-        "p-2 m-1 rounded text-xs transition-all hover:shadow-sm relative",
+        "p-2 m-1 rounded text-xs transition-all hover:shadow-soft relative border",
         block.color,
         isDraggableTask && "cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50 shadow-lg z-50",
+        isDragging && "opacity-50 shadow-elevated z-50",
         isDraggableTask && "hover:scale-[1.02]"
       )}
     >
@@ -81,7 +81,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
               {getDurationInMinutes()}m
             </div>
           )}
-          <Badge variant="outline" className="text-xs">
+          <Badge variant="outline" className="text-xs bg-background/50">
             {block.type}
           </Badge>
         </div>

@@ -70,36 +70,36 @@ const DashboardView = ({
         
         <div className="flex items-center gap-1 p-1 bg-muted rounded-lg self-start sm:self-auto">
           <Button
-            variant={viewMode === 'planner' ? 'default' : 'ghost'}
+            variant={viewMode === 'planner' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setViewMode('planner')}
             className={cn(
               "gap-2 transition-all text-xs sm:text-sm px-3 sm:px-4",
-              viewMode === 'planner' && "shadow-sm"
+              viewMode === 'planner' ? "bg-gradient-primary text-primary-foreground shadow-elevated" : "hover:bg-muted"
             )}
           >
             <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
             AI Planner
           </Button>
           <Button
-            variant={viewMode === 'today' ? 'default' : 'ghost'}
+            variant={viewMode === 'today' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setViewMode('today')}
             className={cn(
               "gap-2 transition-all text-xs sm:text-sm px-3 sm:px-4",
-              viewMode === 'today' && "shadow-sm"
+              viewMode === 'today' ? "bg-primary text-primary-foreground shadow-card" : "hover:bg-muted border-sidebar-border"
             )}
           >
             <Sun className="h-3 w-3 sm:h-4 sm:w-4" />
             Today
           </Button>
           <Button
-            variant={viewMode === 'week' ? 'default' : 'ghost'}
+            variant={viewMode === 'week' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setViewMode('week')}
             className={cn(
               "gap-2 transition-all text-xs sm:text-sm px-3 sm:px-4",
-              viewMode === 'week' && "shadow-sm"
+              viewMode === 'week' ? "bg-primary text-primary-foreground shadow-card" : "hover:bg-muted border-sidebar-border"
             )}
           >
             <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />

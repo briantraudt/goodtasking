@@ -56,6 +56,18 @@ export default {
 					DEFAULT: 'hsl(var(--success))',
 					foreground: 'hsl(var(--success-foreground))'
 				},
+				// Task Priority Colors
+				'priority-high': 'hsl(var(--priority-high))',
+				'priority-medium': 'hsl(var(--priority-medium))',
+				'priority-low': 'hsl(var(--priority-low))',
+				// Calendar Event Colors
+				'calendar-event': {
+					bg: 'hsl(var(--calendar-event-bg))',
+					border: 'hsl(var(--calendar-event-border))'
+				},
+				// Sidebar Colors
+				'sidebar-card': 'hsl(var(--sidebar-card-bg))',
+				'sidebar-border': 'hsl(var(--sidebar-border))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -75,11 +87,13 @@ export default {
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
 				'gradient-card': 'var(--gradient-card)',
-				'gradient-accent': 'var(--gradient-accent)'
+				'gradient-accent': 'var(--gradient-accent)',
+				'gradient-ai-planned': 'var(--gradient-ai-planned)'
 			},
 			boxShadow: {
 				'card': 'var(--shadow-card)',
-				'elevated': 'var(--shadow-elevated)'
+				'elevated': 'var(--shadow-elevated)',
+				'soft': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
 			},
 			transitionTimingFunction: {
 				'smooth': 'var(--transition-smooth)'

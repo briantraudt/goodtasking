@@ -76,22 +76,22 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
     <div
       ref={setNodeRef}
       className={cn(
-        "min-h-[30px] border-b border-muted transition-colors relative",
-        isOver && !hasOverlap && "bg-blue-50 border-blue-200",
-        isOver && hasOverlap && "bg-red-50 border-red-200",
-        hasOverlap && "bg-red-50/30",
-        isCurrentTime && "bg-yellow-50"
+        "min-h-[30px] border-b border-sidebar-border transition-colors relative",
+        isOver && !hasOverlap && "bg-primary/5 border-primary/20",
+        isOver && hasOverlap && "bg-destructive/5 border-destructive/20",
+        hasOverlap && "bg-destructive/5",
+        isCurrentTime && "bg-priority-medium/10"
       )}
     >
       {/* Current time indicator */}
       {isCurrentTime && (
-        <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-red-500 z-10">
-          <div className="absolute -left-1 -top-1 w-2 h-2 bg-red-500 rounded-full"></div>
+        <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-destructive z-10">
+          <div className="absolute -left-1 -top-1 w-2 h-2 bg-destructive rounded-full"></div>
         </div>
       )}
       {children}
       {hasOverlap && isOver && (
-        <div className="absolute inset-0 flex items-center justify-center bg-red-100/80 text-red-600 text-xs font-medium">
+        <div className="absolute inset-0 flex items-center justify-center bg-destructive/10 text-destructive text-xs font-medium">
           ⚠️ Overlap
         </div>
       )}
@@ -170,7 +170,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
         start: formatTime(event.start),
         end: formatTime(event.end),
         type: 'event',
-        color: 'bg-blue-100 border-blue-300 text-blue-800'
+        color: 'bg-calendar-event-bg border-calendar-event-border text-primary'
       });
     });
 
@@ -194,10 +194,10 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
 
   const getPriorityColor = (priority?: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-100 border-red-300 text-red-800';
-      case 'medium': return 'bg-yellow-100 border-yellow-300 text-yellow-800';
-      case 'low': return 'bg-green-100 border-green-300 text-green-800';
-      default: return 'bg-gray-100 border-gray-300 text-gray-800';
+      case 'high': return 'bg-priority-high/10 border-priority-high/30 text-priority-high';
+      case 'medium': return 'bg-priority-medium/10 border-priority-medium/30 text-priority-medium';
+      case 'low': return 'bg-priority-low/10 border-priority-low/30 text-priority-low';
+      default: return 'bg-muted border-muted-foreground/20 text-muted-foreground';
     }
   };
 
@@ -279,14 +279,14 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
             end_time: planItem.endTime
           });
           
-          // Add to time blocks
+          // Add to time blocks with gradient styling for AI-planned tasks
           updatedBlocks.push({
             id: `task-${planItem.taskId}`,
             title: planItem.title,
             start: planItem.startTime,
             end: planItem.endTime,
             type: 'task',
-            color: 'bg-purple-100 border-purple-300 text-purple-800',
+            color: 'bg-gradient-ai-planned/10 border-2 border-gradient-ai-planned/30 text-primary',
             priority: 'planned',
             taskId: planItem.taskId
           });
@@ -529,7 +529,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-blue-600" />
+                <Calendar className="h-5 w-5 text-primary" />
                 Daily Timeline
                 <Badge variant="secondary">{format(new Date(selectedDate), 'MMM d')}</Badge>
                 {isToday(new Date(selectedDate)) && (
@@ -645,15 +645,15 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
             <div className="mt-6 pt-4 border-t">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <p className="text-2xl font-bold text-blue-600">{events.length}</p>
+                  <p className="text-2xl font-bold text-primary">{events.length}</p>
                   <p className="text-xs text-muted-foreground">Calendar Events</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-green-600">{scheduledTasks.length}</p>
+                  <p className="text-2xl font-bold text-success">{scheduledTasks.length}</p>
                   <p className="text-xs text-muted-foreground">Scheduled Tasks</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-purple-600">{timeBlocks.length}</p>
+                  <p className="text-2xl font-bold text-accent">{timeBlocks.length}</p>
                   <p className="text-xs text-muted-foreground">Total Blocks</p>
                 </div>
               </div>
