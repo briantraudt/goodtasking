@@ -158,14 +158,23 @@ All colors MUST be HSL.
 }
 
 /* React Calendar Timeline Custom Styles */
+.react-calendar-timeline {
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  background: hsl(var(--background));
+  font-family: inherit;
+}
+
 .react-calendar-timeline .rct-sidebar {
   background-color: hsl(var(--card));
   border-right: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
 }
 
 .react-calendar-timeline .rct-header {
   background-color: hsl(var(--background));
   border-bottom: 1px solid hsl(var(--border));
+  color: hsl(var(--foreground));
 }
 
 .react-calendar-timeline .rct-dateHeader {
@@ -178,4 +187,19 @@ All colors MUST be HSL.
 
 .react-calendar-timeline .rct-horizontal-lines .rct-hl {
   border-top: 1px solid hsl(var(--border));
+}
+
+/* Timeline Items */
+.react-calendar-timeline .rct-item {
+  border-radius: 6px;
+  border: 1px solid;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.react-calendar-timeline .rct-item-content {
+  padding: 4px 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
