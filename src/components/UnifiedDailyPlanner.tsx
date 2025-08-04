@@ -630,7 +630,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
         {/* Fixed Layout with Independent Scrolling */}
-        <div className="flex-1 flex gap-8 p-6 min-h-0 overflow-hidden">
+        <div className="flex-1 flex gap-4 p-6 min-h-0 overflow-hidden">
           {/* Left side - Calendar Timeline (50%) - Scrollable */}
           <div className="flex-[50] overflow-y-auto" data-calendar-section>
             <Card className="flex flex-col rounded-xl border shadow-soft h-fit">
@@ -794,7 +794,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           </div>
 
           {/* Right side - AI Task Sequencer (25%) - Fixed (No Scroll) */}
-          <div className="flex-[25] border-l border-border pl-6 flex-shrink-0" data-ai-section>
+          <div className="flex-[25] border-l border-border pl-4 flex-shrink-0" data-ai-section>
             <AITaskSequencerInline />
           </div>
         </div>

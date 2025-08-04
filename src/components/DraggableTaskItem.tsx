@@ -1,9 +1,8 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import { Clock, Calendar, Briefcase, GripVertical } from 'lucide-react';
+import { Clock, GripVertical } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 
 interface Task {
   id: string;
@@ -95,64 +94,58 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "task-card p-4 rounded-xl border cursor-grab active:cursor-grabbing transition-all duration-200",
+        "task-card p-3 rounded-lg border cursor-grab active:cursor-grabbing transition-all duration-200",
         "hover:scale-[1.01] hover:shadow-md shadow-sm",
-        "flex flex-col gap-2 min-h-[120px] relative group",
+        "flex flex-col gap-1 h-[72px] relative group",
         projectStyling.bg,
         projectStyling.text,
         projectStyling.border,
         isDragging && "opacity-50 shadow-lg z-40 rotate-2 scale-105"
       )}
     >
-      {/* Top Row: Project Name & Duration */}
-      <div className="flex justify-between items-start">
+      {/* Top Row: Project Name, Duration, Priority */}
+      <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           {task.vibe_projects?.name && (
-            <>
-              <Briefcase className="h-3 w-3 text-muted-foreground" />
-              <span className="text-sm font-semibold text-muted-foreground">
-                {task.vibe_projects.name}
-              </span>
-            </>
+            <span className="text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
+              {task.vibe_projects.name}
+            </span>
           )}
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {task.estimated_duration && (
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/30 px-1.5 py-0.5 rounded">
               <Clock className="h-3 w-3" />
               <span className="font-medium">{task.estimated_duration}m</span>
             </div>
           )}
           
-          {/* Priority Badge */}
           {priorityBadge && (
-            <Badge 
-              variant="outline" 
+            <span 
               className={cn(
-                "text-xs font-semibold border",
+                "text-xs font-semibold px-1.5 py-0.5 rounded border",
                 priorityBadge.bg,
                 priorityBadge.text,
                 priorityBadge.border
               )}
             >
-              {task.priority?.charAt(0).toUpperCase() + task.priority?.slice(1)}
-            </Badge>
+              {task.priority?.charAt(0).toUpperCase()}
+            </span>
           )}
         </div>
       </div>
       
-      {/* Task Title */}
-      <div className="mt-2 flex-1 flex items-center">
-        <h4 className="text-lg font-bold leading-tight">
+      {/* Task Title - Emphasized and Centered */}
+      <div className="flex-1 flex items-center justify-center">
+        <h4 className="text-base font-bold leading-tight text-center line-clamp-2">
           {task.title}
         </h4>
       </div>
       
-      {/* Bottom Row: Due Date */}
+      {/* Bottom Row: Due Date (if exists) */}
       {task.due_date && (
-        <div className="mt-2 flex items-center gap-2 text-sm text-gray-500">
-          <Calendar className="h-4 w-4" />
+        <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
           <span className="font-medium">
             Due {format(new Date(task.due_date), 'MMM d')}
           </span>
@@ -160,8 +153,8 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       )}
 
       {/* Drag Handle (appears on hover) */}
-      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <GripVertical className="h-4 w-4 text-muted-foreground/50" />
+      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <GripVertical className="h-3 w-3 text-muted-foreground/50" />
       </div>
     </div>
   );
