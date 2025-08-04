@@ -587,7 +587,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   useEffect(() => {
     const newBlocks = generateTimeBlocks();
     setTimeBlocks(newBlocks);
-  }, [events, scheduledTasks, selectedDate]); // Fixed dependencies
+  }, [selectedDate]); // Only depend on selectedDate since generateTimeBlocks already uses useMemo
 
 
   if (calendarLoading) {

@@ -174,11 +174,15 @@ export const useGoogleCalendar = () => {
       const messageHandler = (event: MessageEvent) => {
         if (event.data === 'google-calendar-connected') {
           window.removeEventListener('message', messageHandler);
-          checkConnection();
           toast({
             title: "Calendar Connected",
             description: "Google Calendar has been connected successfully! Syncing your events...",
           });
+          // Add a small delay to ensure tokens are fully saved
+          setTimeout(() => {
+            checkConnection();
+            syncCalendarData();
+          }, 1000);
         }
       };
 
@@ -190,7 +194,11 @@ export const useGoogleCalendar = () => {
           clearInterval(checkClosed);
           window.removeEventListener('message', messageHandler);
           // Give a moment for the message to arrive before checking connection
-          setTimeout(() => checkConnection(), 500);
+          setTimeout(() => {
+            checkConnection();
+            // Try syncing after connection check
+            setTimeout(() => syncCalendarData(), 500);
+          }, 1000);
         }
       }, 1000);
     } catch (error) {
