@@ -2,11 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import SmartAddButton from '@/components/SmartAddButton';
-import { Plus, Filter, CheckSquare } from 'lucide-react';
+import TaskFilters from '@/components/TaskFilters';
+import { Plus, CheckSquare } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
@@ -137,47 +137,22 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Filters - Added top padding for visual separation */}
-        <div className="space-y-2 pt-4">
-          <div className="grid grid-cols-1 gap-2">
-            <Select value={projectFilter} onValueChange={setProjectFilter}>
-              <SelectTrigger className="h-8 text-xs">
-                <SelectValue placeholder="All Projects" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Projects</SelectItem>
-                {projectsWithTasks.map(project => (
-                  <SelectItem key={project.id} value={project.id}>
-                    {project.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-              <SelectTrigger className="h-8 text-xs">
-                <SelectValue placeholder="All Priorities" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Priorities</SelectItem>
-                <SelectItem value="high">High Priority</SelectItem>
-                <SelectItem value="medium">Medium Priority</SelectItem>
-                <SelectItem value="low">Low Priority</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={dueDateFilter} onValueChange={setDueDateFilter}>
-              <SelectTrigger className="h-8 text-xs">
-                <SelectValue placeholder="All Due Dates" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Due Dates</SelectItem>
-                <SelectItem value="overdue">Overdue</SelectItem>
-                <SelectItem value="today">Due Today</SelectItem>
-                <SelectItem value="this-week">Due This Week</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        {/* Modern Filter Component */}
+        <div className="pt-4">
+          <TaskFilters
+            projects={projectsWithTasks}
+            projectFilter={projectFilter}
+            priorityFilter={priorityFilter}
+            dueDateFilter={dueDateFilter}
+            onProjectFilterChange={setProjectFilter}
+            onPriorityFilterChange={setPriorityFilter}
+            onDueDateFilterChange={setDueDateFilter}
+            onClearAllFilters={() => {
+              setProjectFilter('all');
+              setPriorityFilter('all');
+              setDueDateFilter('all');
+            }}
+          />
         </div>
 
         {/* Task List - Increased Height for More Compact Cards */}
