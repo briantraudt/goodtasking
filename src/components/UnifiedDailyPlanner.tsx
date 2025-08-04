@@ -124,12 +124,21 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
-    return today.toISOString().split('T')[0];
+    const todayString = today.toISOString().split('T')[0];
+    console.log('Setting initial selectedDate to:', todayString);
+    return todayString;
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeId, setActiveId] = useState<string | null>(null);
   const [dragOverTimeSlot, setDragOverTimeSlot] = useState<string | null>(null);
+
+  // Force update to today's date on mount
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+    console.log('Force updating selectedDate to today:', today);
+    setSelectedDate(today);
+  }, []);
 
   // Get today's scheduled tasks
   const scheduledTasks = projects.flatMap(project => 
