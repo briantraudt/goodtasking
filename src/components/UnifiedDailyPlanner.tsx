@@ -619,10 +619,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     >
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
-        {/* Fixed Layout with Independent Scrolling */}
-        <div className="flex-1 flex gap-4 p-6 min-h-0 overflow-hidden">
-          {/* Left side - Calendar Timeline (50%) - Enhanced 24-Hour View */}
-          <div className="flex-[50] overflow-hidden" data-calendar-section>
+        {/* Two-Column Grid Layout */}
+        <div className="flex-1 grid grid-cols-[1fr_400px] gap-6 p-6 min-h-0 overflow-hidden">
+          
+          {/* Left Column - Calendar Timeline */}
+          <div className="overflow-hidden" data-calendar-section>
             <Enhanced24HourTimeline
               selectedDate={selectedDate}
               onDateChange={setSelectedDate}
@@ -648,45 +649,38 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             </Enhanced24HourTimeline>
           </div>
 
-          {/* Middle - Task Sidebar (25%) - Scrollable */}
-          <div className="flex-[25] overflow-y-auto" data-tasks-section>
-            <div className="pr-2">
-              <TaskSidebar 
-                projects={projects}
-                selectedDate={selectedDate}
-                onCreateTask={onCreateTask}
-                onCreateProject={onCreateProject}
-              />
+          {/* Right Column - Stacked Sections */}
+          <div className="flex flex-col gap-4 overflow-hidden" data-right-column>
+            
+            {/* Top Section - Tasks Panel */}
+            <div className="flex flex-col overflow-hidden border border-border rounded-xl bg-card shadow-sm" data-tasks-section>
+              <div className="tasks-container flex-1 overflow-hidden" style={{ maxHeight: '50vh' }}>
+                <TaskSidebar 
+                  projects={projects}
+                  selectedDate={selectedDate}
+                  onCreateTask={onCreateTask}
+                  onCreateProject={onCreateProject}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Right side - AI Task Sequencer (25%) - Fixed (No Scroll) */}
-          <div className="flex-[25] border-l border-border pl-4 flex-shrink-0" data-ai-section>
-            <AITaskSequencerInline 
-              targetDate={selectedDate}
-              onTasksScheduled={(tasks) => {
-                // Handle AI-scheduled tasks - add them to timeline
-                console.log('AI scheduled tasks:', tasks);
-                // You can integrate these tasks into your timeline here
-              }}
-            />
+            {/* Bottom Section - AI Task Sequencer */}
+            <div className="flex flex-col overflow-hidden border border-border rounded-xl bg-card shadow-sm" data-ai-section>
+              <div className="ai-sequencer-container flex-1 overflow-y-auto" style={{ maxHeight: '50vh' }}>
+                <AITaskSequencerInline 
+                  targetDate={selectedDate}
+                  onTasksScheduled={(tasks) => {
+                    // Handle AI-scheduled tasks - add them to timeline
+                    console.log('AI scheduled tasks:', tasks);
+                    // You can integrate these tasks into your timeline here
+                  }}
+                />
+              </div>
+            </div>
+
           </div>
         </div>
 
-
-        {/* Undo Button - Bottom Right */}
-        {undoAction && (
-          <div className="fixed bottom-6 right-6 z-50">
-            <Button
-              onClick={handleUndo}
-              className="flex items-center gap-2 shadow-elevated bg-accent text-accent-foreground hover:bg-accent/90"
-              variant="secondary"
-            >
-              <Undo2 className="h-4 w-4" />
-              Undo: {undoAction.taskTitle}
-            </Button>
-          </div>
-        )}
 
         {/* Drag Overlay with Ghost Preview */}
         <DragOverlay>
