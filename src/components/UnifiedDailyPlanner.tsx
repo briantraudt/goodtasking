@@ -125,11 +125,13 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
-    // Ensure we get the local date, not UTC
+    // Force to YYYY-MM-DD format in local timezone
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const todayStr = `${year}-${month}-${day}`;
+    console.log('🗓️ INIT: Initial selectedDate set to:', todayStr);
+    return todayStr;
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -598,11 +600,14 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const navigateDate = (direction: 'prev' | 'next') => {
     const currentDate = new Date(selectedDate);
     const newDate = direction === 'prev' ? subDays(currentDate, 1) : addDays(currentDate, 1);
-    setSelectedDate(newDate.toISOString().split('T')[0]);
+    const newDateStr = newDate.toISOString().split('T')[0];
+    console.log('🗓️ NAV: Navigating', direction, 'from', selectedDate, 'to', newDateStr);
+    setSelectedDate(newDateStr);
   };
 
   const formatSelectedDate = () => {
     const date = new Date(selectedDate);
+    console.log('🗓️ DEBUG: selectedDate state:', selectedDate, 'formatted:', format(date, 'MMM d, yyyy'));
     return format(date, 'MMM d, yyyy');
   };
 
