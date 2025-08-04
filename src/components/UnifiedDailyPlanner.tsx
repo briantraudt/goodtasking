@@ -129,9 +129,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-    console.log('🗓️ INIT: Initial selectedDate set to:', todayStr);
-    return todayStr;
+    return `${year}-${month}-${day}`;
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -213,26 +211,15 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const generateTimeBlocks = useCallback(() => {
     const blocks: TimeBlock[] = [];
 
-    console.log('🔍 DEBUG: Filtering events for selectedDate:', selectedDate);
-    console.log('🔍 DEBUG: All events:', events.map(e => ({
-      title: e.title,
-      start: e.start,
-      localDate: new Date(e.start).toLocaleDateString('en-CA'),
-      localTime: new Date(e.start).toLocaleTimeString()
-    })));
-
     // Filter events for the selected date and add to blocks
     const filteredEvents = events.filter(event => {
       // Parse event start time (it's in UTC)
       const eventStart = new Date(event.start);
       // Get the local date for the event
       const eventLocalDate = eventStart.toLocaleDateString('en-CA'); // YYYY-MM-DD format
-      console.log(`🔍 DEBUG: Event "${event.title}" - UTC: ${event.start}, Local Date: ${eventLocalDate}, Selected: ${selectedDate}, Match: ${eventLocalDate === selectedDate}`);
       // Compare with selected date
       return eventLocalDate === selectedDate;
     });
-
-    console.log('🔍 DEBUG: Filtered events:', filteredEvents.map(e => e.title));
 
     filteredEvents.forEach(event => {
       blocks.push({
@@ -601,13 +588,13 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     const currentDate = new Date(selectedDate);
     const newDate = direction === 'prev' ? subDays(currentDate, 1) : addDays(currentDate, 1);
     const newDateStr = newDate.toISOString().split('T')[0];
-    console.log('🗓️ NAV: Navigating', direction, 'from', selectedDate, 'to', newDateStr);
     setSelectedDate(newDateStr);
   };
 
   const formatSelectedDate = () => {
-    const date = new Date(selectedDate);
-    console.log('🗓️ DEBUG: selectedDate state:', selectedDate, 'formatted:', format(date, 'MMM d, yyyy'));
+    // Parse as local date to avoid timezone issues
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const date = new Date(year, month - 1, day); // month is 0-indexed
     return format(date, 'MMM d, yyyy');
   };
 
