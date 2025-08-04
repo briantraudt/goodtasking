@@ -137,8 +137,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       </CardHeader>
 
       <CardContent className="space-y-4">
-        {/* Filters */}
-        <div className="space-y-2">
+        {/* Filters - Added top padding for visual separation */}
+        <div className="space-y-2 pt-4">
           <div className="grid grid-cols-1 gap-2">
             <Select value={projectFilter} onValueChange={setProjectFilter}>
               <SelectTrigger className="h-8 text-xs">
