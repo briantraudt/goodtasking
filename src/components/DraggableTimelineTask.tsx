@@ -87,7 +87,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       {...(isDraggableTask ? listeners : {})}
       {...(isDraggableTask ? attributes : {})}
       className={cn(
-        "p-2 m-1 rounded text-xs transition-all hover:shadow-soft border h-full w-full",
+        "p-2 rounded text-xs transition-all hover:shadow-soft border h-full w-full ml-0 pl-0 box-border",
         block.type === 'event' ? "bg-blue-50 border-blue-200 text-blue-800" : block.color,
         isDraggableTask && "cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-elevated z-50",

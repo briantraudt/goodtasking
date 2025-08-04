@@ -724,8 +724,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                             position: 'absolute',
                             top: `${topOffset}px`,
                             height: `${height}px`,
-                            left: '4px',
-                            right: '4px',
+                            left: 0,
+                            right: 0,
                             zIndex: 20
                           }}
                           className="pointer-events-auto"
