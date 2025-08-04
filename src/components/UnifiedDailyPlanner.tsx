@@ -5,10 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { useAIScheduler } from '@/hooks/useAIScheduler';
 import { useAIPlanner } from '@/hooks/useAIPlanner';
+import InfiniteScrollCalendar from './InfiniteScrollCalendar';
 import TaskSidebar from '@/components/TaskSidebar';
 import AITaskSequencerInline from '@/components/AITaskSequencerInline';
 import DraggableTimelineTask from '@/components/DraggableTimelineTask';
-import Enhanced24HourTimeline from '@/components/Enhanced24HourTimeline';
 import { Calendar, Clock, Sparkles, Loader2, Undo2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, parseISO, isToday, addDays, subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -632,7 +632,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
               
               {/* Calendar Content */}
               <div className="flex-1 overflow-hidden">
-                <Enhanced24HourTimeline
+                <InfiniteScrollCalendar
                   selectedDate={selectedDate}
                   onDateChange={setSelectedDate}
                   timeBlocks={timeBlocks}
@@ -654,7 +654,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                       </Button>
                     </div>
                   )}
-                </Enhanced24HourTimeline>
+                </InfiniteScrollCalendar>
               </div>
             </div>
           </div>
