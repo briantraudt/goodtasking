@@ -60,7 +60,7 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...attributes}
       className={cn(
         "task-card flex flex-col cursor-grab active:cursor-grabbing transition-all duration-200",
-        "py-2 px-3 rounded-lg border-0 relative group h-14 mb-2",
+        "py-1.5 px-3 rounded-lg border-0 relative group h-12 mb-1",
         "shadow-none hover:shadow-sm",
         cardStyling.bg,
         cardStyling.hover,
@@ -69,21 +69,21 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
     >
       {/* Project/Client Name - Small, subtle gray */}
       {task.vibe_projects?.name && (
-        <div className="text-xs text-gray-500 mb-0.5 font-medium">
+        <div className="text-xs text-gray-500 mb-0.5 font-normal">
           {task.vibe_projects.name}
         </div>
       )}
       
       {/* Task Title - Bold, primary focus */}
       <div className="flex-1 flex items-center justify-between">
-        <h4 className="text-sm font-bold text-gray-900 leading-tight truncate">
+        <h4 className="text-sm font-semibold text-gray-900 leading-tight truncate">
           {task.title}
         </h4>
         
         {/* Scheduled indicator */}
         {task.scheduled_date && (
-          <div className="flex items-center gap-1 text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full ml-2">
-            <Calendar className="h-3 w-3" />
+          <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded ml-2">
+            <Calendar className="h-2.5 w-2.5" />
             <span className="hidden sm:inline">Scheduled</span>
           </div>
         )}

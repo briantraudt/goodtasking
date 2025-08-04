@@ -120,11 +120,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
       )}
     >
-      <CardHeader className="pb-4 sticky top-0 bg-white z-50 border-b shadow-sm">
+      <CardHeader className="pb-3 sticky top-0 bg-white z-50 border-b shadow-sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <CheckSquare className="h-5 w-5 text-primary" />
-            <h3 className="text-xl font-bold text-foreground">Tasks</h3>
+          <div className="flex items-center gap-2">
+            <CheckSquare className="h-4 w-4 text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">Tasks</h3>
           </div>
           <SmartAddButton
             projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
@@ -134,9 +134,9 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 px-4">
         {/* Modern Filter Component */}
-        <div className="pt-4">
+        <div className="pt-2">
           <TaskFilters
             projects={projectsWithTasks}
             projectFilter={projectFilter}
@@ -153,9 +153,9 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
           />
         </div>
 
-        {/* Task List - Increased Height for More Compact Cards */}
-        <ScrollArea className="h-[500px] pr-2">
-          <div className="space-y-0">
+        {/* Task List - Tighter Spacing */}
+        <ScrollArea className="h-[500px] pr-1">
+          <div className="space-y-1">
             {filteredTasks.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
                 {allTasks.length === 0 ? (

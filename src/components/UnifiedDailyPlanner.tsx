@@ -619,8 +619,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     >
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
-        {/* Two-Column Grid Layout */}
-        <div className="flex-1 grid grid-cols-2 gap-6 p-6 min-h-0 overflow-hidden">
+        {/* Two-Column Grid Layout - 60/40 Split */}
+        <div className="flex-1 grid grid-cols-[3fr_2fr] gap-6 p-6 min-h-0 overflow-hidden">
           
           {/* Left Column - Calendar Timeline */}
           <div className="overflow-hidden" data-calendar-section>
@@ -654,8 +654,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             
             {/* Top Section - Tasks Panel */}
             <div className="flex flex-col overflow-hidden border border-border rounded-xl bg-card shadow-sm" data-tasks-section>
-              <div className="tasks-container flex-1 overflow-hidden" style={{ maxHeight: '50vh' }}>
-                <TaskSidebar 
+              <div className="tasks-container flex-1 overflow-y-auto scrollbar-none" style={{ maxHeight: '50vh' }}>
+                <TaskSidebar
                   projects={projects}
                   selectedDate={selectedDate}
                   onCreateTask={onCreateTask}
@@ -665,9 +665,9 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             </div>
 
             {/* Bottom Section - AI Task Sequencer */}
-            <div className="flex flex-col overflow-hidden border border-border rounded-xl bg-card shadow-sm" data-ai-section>
-              <div className="ai-sequencer-container flex-1 overflow-y-auto" style={{ maxHeight: '50vh' }}>
-                <AITaskSequencerInline 
+            <div className="flex flex-col overflow-hidden border border-border rounded-xl bg-card shadow-sm border-t-2 border-t-muted" data-ai-section>
+              <div className="ai-sequencer-container flex-1 overflow-y-auto scrollbar-none" style={{ maxHeight: '50vh' }}>
+                <AITaskSequencerInline
                   targetDate={selectedDate}
                   onTasksScheduled={(tasks) => {
                     // Handle AI-scheduled tasks - add them to timeline

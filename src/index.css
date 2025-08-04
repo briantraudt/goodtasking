@@ -262,3 +262,12 @@ Enhanced with vibrant gradients and modern design tokens.
     box-shadow: var(--shadow-elevated);
   }
 }
+
+/* Custom Scrollbar Utilities */
+.scrollbar-none {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none; /* WebKit */
+}

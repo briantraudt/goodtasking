@@ -216,14 +216,14 @@ const Enhanced24HourTimeline = ({
             <div 
               key={hour} 
               data-hour={hour}
-              className="grid grid-cols-[90px_1fr] border-b border-border/30 last:border-b-0"
+              className="grid grid-cols-[90px_1fr] border-b border-[#E5E7EB] last:border-b-0"
               style={{ 
                 scrollSnapAlign: 'start',
                 height: '76px' // Fixed height for consistent scrolling
               }}
             >
               {/* Time Label - Sticky */}
-              <div className="sticky left-0 bg-muted/30 backdrop-blur-sm p-2 text-sm font-medium text-center border-r border-border/30 flex items-center justify-center">
+              <div className="sticky left-0 bg-muted/30 backdrop-blur-sm text-sm font-semibold text-center border-r border-[#E5E7EB] flex items-center justify-center" style={{ padding: '0' }}>
                 {formatHour(hour)}
               </div>
               
@@ -232,7 +232,7 @@ const Enhanced24HourTimeline = ({
                 {/* First half hour (XX:00) */}
                 <div 
                   className={`
-                    relative border-b border-border/50 transition-colors duration-200
+                    relative border-b border-[#E5E7EB] border-r border-[#E5E7EB] transition-colors duration-200
                     ${isCurrentTimeSlot(hour, 'first') ? 'bg-primary/5' : 'hover:bg-muted/30'}
                   `}
                   style={{ height: '38px' }}
@@ -245,7 +245,7 @@ const Enhanced24HourTimeline = ({
                 {/* Second half hour (XX:30) */}
                 <div 
                   className={`
-                    relative border-b border-border/30 transition-colors duration-200
+                    relative border-b border-[#E5E7EB] border-r border-[#E5E7EB] transition-colors duration-200
                     ${isCurrentTimeSlot(hour, 'second') ? 'bg-primary/5' : 'hover:bg-muted/30'}
                   `}
                   style={{ height: '38px' }}
@@ -319,10 +319,10 @@ const Enhanced24HourTimeline = ({
                     key={block.id}
                     className={`
                       absolute left-2 right-2 rounded-lg p-2 text-xs font-medium
-                      border-l-4 shadow-sm transition-all duration-200 hover:shadow-md
+                      border-l-4 shadow-md border border-black/5 transition-all duration-200 hover:shadow-lg
                       ${block.type === 'event' 
-                        ? 'bg-blue-100 border-blue-500 text-blue-900' 
-                        : 'bg-green-100 border-green-500 text-green-900'
+                        ? 'bg-blue-200 border-blue-600 text-blue-900' 
+                        : 'bg-green-200 border-green-600 text-green-900'
                       }
                     `}
                     style={{

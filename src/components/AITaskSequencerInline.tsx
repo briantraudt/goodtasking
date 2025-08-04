@@ -138,18 +138,18 @@ const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-3 ${className}`}>
       {/* AI Sequencer Header */}
-      <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
-        <CardHeader className="pb-3">
+      <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 mx-4">
+        <CardHeader className="pb-2 pt-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Brain className="h-5 w-5 text-primary" />
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-primary/10">
+                <Brain className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-lg font-bold">AI Task Sequencer</CardTitle>
-                <p className="text-sm text-muted-foreground">
+                <CardTitle className="text-lg font-semibold">AI Task Sequencer</CardTitle>
+                <p className="text-xs text-muted-foreground">
                   Intelligently schedule your unscheduled tasks into available time slots
                 </p>
               </div>
@@ -158,8 +158,8 @@ const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
             <div className="flex items-center gap-2">
               <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Settings className="h-4 w-4" />
+                  <Button variant="outline" size="sm" className="gap-1 px-2">
+                    <Settings className="h-3 w-3" />
                     Settings
                   </Button>
                 </DialogTrigger>
@@ -248,7 +248,8 @@ const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
               <Button 
                 onClick={runAISequencer} 
                 disabled={isLoading}
-                className="gap-2"
+                className="gap-1 px-3"
+                size="sm"
               >
                 {isLoading ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />
@@ -328,8 +329,8 @@ const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
       
       {/* Drag & Drop Timeline Tasks */}
       {scheduledTasks.length > 0 && (
-        <Card>
-          <CardHeader>
+        <Card className="mx-4">
+          <CardHeader className="py-2">
             <CardTitle className="text-lg">Drag & Drop Schedule</CardTitle>
             <p className="text-sm text-muted-foreground">
               Drag these AI-scheduled tasks to the calendar timeline to finalize your schedule
