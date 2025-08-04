@@ -50,12 +50,10 @@ const DashboardView = ({
       
       {/* Fixed Header Section */}
       <div className="flex-shrink-0 px-4 py-4 border-b bg-background">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-          <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
-              {new Date().getHours() < 12 ? "Good Morning Brian" : "Good Afternoon Brian"}
-            </h1>
-          </div>
+        <div className="flex justify-center">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
+            Hi Brian!
+          </h1>
         </div>
       </div>
 
