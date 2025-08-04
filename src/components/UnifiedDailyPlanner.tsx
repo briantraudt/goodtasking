@@ -619,42 +619,56 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     >
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
-        {/* Restructured Layout: Top 2/3 Columns + Bottom 1/3 AI Panel */}
-        <div className="flex-1 flex flex-col gap-6 p-6 min-h-0 overflow-hidden">
+        {/* Redesigned Layout: Grid with White Containers */}
+        <div className="flex-1 grid grid-cols-12 gap-6 p-6 min-h-0 overflow-hidden">
           
-          {/* Top Section: Side-by-Side Columns (66% viewport height) */}
-          <div className="grid grid-cols-[65fr_35fr] gap-6 overflow-hidden" style={{ height: '66vh' }}>
-            
-            {/* Left Column - Calendar Timeline (65% width) */}
-            <div className="overflow-hidden" data-calendar-section>
-              <Enhanced24HourTimeline
-                selectedDate={selectedDate}
-                onDateChange={setSelectedDate}
-                timeBlocks={timeBlocks}
-                onDrop={(hour, period, item) => {
-                  // This will be handled by the existing drag and drop logic
-                  console.log('Drop handled:', hour, period, item);
-                }}
-              >
-                {/* Undo Button */}
-                {undoAction && (
-                  <div className="absolute bottom-6 right-6 z-50">
-                    <Button
-                      onClick={handleUndo}
-                      className="flex items-center gap-2 shadow-elevated bg-accent text-accent-foreground hover:bg-accent/90"
-                      variant="secondary"
-                    >
-                      <Undo2 className="h-4 w-4" />
-                      Undo: {undoAction.taskTitle}
-                    </Button>
-                  </div>
-                )}
-              </Enhanced24HourTimeline>
+          {/* Calendar View - 8 columns (66%) */}
+          <div className="col-span-8 bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-calendar-section>
+            <div className="flex flex-col h-full">
+              {/* Sticky Calendar Header */}
+              <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">Calendar Timeline</h2>
+              </div>
+              
+              {/* Calendar Content */}
+              <div className="flex-1 overflow-hidden">
+                <Enhanced24HourTimeline
+                  selectedDate={selectedDate}
+                  onDateChange={setSelectedDate}
+                  timeBlocks={timeBlocks}
+                  onDrop={(hour, period, item) => {
+                    // This will be handled by the existing drag and drop logic
+                    console.log('Drop handled:', hour, period, item);
+                  }}
+                >
+                  {/* Undo Button */}
+                  {undoAction && (
+                    <div className="absolute bottom-6 right-6 z-50">
+                      <Button
+                        onClick={handleUndo}
+                        className="flex items-center gap-2 shadow-elevated bg-accent text-accent-foreground hover:bg-accent/90"
+                        variant="secondary"
+                      >
+                        <Undo2 className="h-4 w-4" />
+                        Undo: {undoAction.taskTitle}
+                      </Button>
+                    </div>
+                  )}
+                </Enhanced24HourTimeline>
+              </div>
             </div>
+          </div>
 
-            {/* Right Column - Tasks Only (35% width) */}
-            <div className="flex flex-col overflow-hidden border border-border rounded-xl bg-card shadow-sm" data-tasks-section>
-              <div className="flex-1 overflow-y-auto scrollbar-none">
+          {/* Tasks Section - 4 columns (33%) */}
+          <div className="col-span-4 bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-tasks-section>
+            <div className="flex flex-col h-full">
+              {/* Sticky Tasks Header */}
+              <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">Tasks</h2>
+              </div>
+              
+              {/* Tasks Content with Internal Scroll */}
+              <div className="flex-1 overflow-y-auto max-h-[calc(100vh-300px)] scrollbar-none">
                 <TaskSidebar
                   projects={projects}
                   selectedDate={selectedDate}
@@ -663,12 +677,20 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                 />
               </div>
             </div>
-
           </div>
 
-          {/* Bottom Section: Full-Width AI Task Sequencer (remaining viewport space) */}
-          <div className="flex-1 border-t-2 border-muted pt-6" data-ai-footer-section>
-            <div className="border border-border rounded-xl bg-card shadow-sm">
+          {/* AI Task Sequencer - Full Width Below */}
+          <div className="col-span-12 bg-white rounded-xl shadow-sm p-4 border border-t-4 border-t-blue-100 mt-6" data-ai-footer-section>
+            <div className="flex flex-col">
+              {/* Sticky AI Header */}
+              <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
+                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                  AI Task Sequencer
+                </h2>
+              </div>
+              
+              {/* AI Content */}
               <div className="overflow-y-auto scrollbar-none" style={{ maxHeight: '30vh' }}>
                 <AITaskSequencerInline
                   targetDate={selectedDate}

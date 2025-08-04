@@ -112,19 +112,19 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
   };
 
   return (
-    <Card 
+    <div
       ref={setNodeRef}
       className={cn(
-        className,
-        "rounded-xl border shadow-soft bg-card",
+        "h-full",
         isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
       )}
     >
-      <CardHeader className="pb-3 sticky top-0 bg-white z-50 border-b shadow-sm">
-        <div className="flex items-center justify-between">
+      {/* Header Section */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <CheckSquare className="h-4 w-4 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Tasks</h3>
+            <span className="text-sm text-gray-600">Task Management</span>
           </div>
           <SmartAddButton
             projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
@@ -132,48 +132,44 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
             onCreateProject={onCreateProject}
           />
         </div>
-      </CardHeader>
+      </div>
 
-      <CardContent className="space-y-3 px-4">
-        {/* Modern Filter Component */}
-        <div className="pt-2">
-          <TaskFilters
-            projects={projectsWithTasks}
-            projectFilter={projectFilter}
-            priorityFilter={priorityFilter}
-            dueDateFilter={dueDateFilter}
-            onProjectFilterChange={setProjectFilter}
-            onPriorityFilterChange={setPriorityFilter}
-            onDueDateFilterChange={setDueDateFilter}
-            onClearAllFilters={() => {
-              setProjectFilter('all');
-              setPriorityFilter('all');
-              setDueDateFilter('all');
-            }}
-          />
-        </div>
+      {/* Filter Section */}
+      <div className="mb-4">
+        <TaskFilters
+          projects={projectsWithTasks}
+          projectFilter={projectFilter}
+          priorityFilter={priorityFilter}
+          dueDateFilter={dueDateFilter}
+          onProjectFilterChange={setProjectFilter}
+          onPriorityFilterChange={setPriorityFilter}
+          onDueDateFilterChange={setDueDateFilter}
+          onClearAllFilters={() => {
+            setProjectFilter('all');
+            setPriorityFilter('all');
+            setDueDateFilter('all');
+          }}
+        />
+      </div>
 
-        {/* Task List - Tighter Spacing */}
-        <ScrollArea className="h-[500px] pr-1">
-          <div className="space-y-1">
-            {filteredTasks.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground text-sm">
-                {allTasks.length === 0 ? (
-                  <p>🎉 All tasks are complete!</p>
-                ) : (
-                  <p>No tasks match the current filters</p>
-                )}
-              </div>
+      {/* Task List */}
+      <div className="space-y-1">
+        {filteredTasks.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground text-sm">
+            {allTasks.length === 0 ? (
+              <p>🎉 All tasks are complete!</p>
             ) : (
-              filteredTasks.map(task => (
-                <DraggableTaskItem key={task.id} task={task} />
-              ))
+              <p>No tasks match the current filters</p>
             )}
           </div>
-        </ScrollArea>
+        ) : (
+          filteredTasks.map(task => (
+            <DraggableTaskItem key={task.id} task={task} />
+          ))
+        )}
+      </div>
 
-      </CardContent>
-    </Card>
+    </div>
   );
 };
 

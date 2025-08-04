@@ -216,14 +216,14 @@ const Enhanced24HourTimeline = ({
             <div 
               key={hour} 
               data-hour={hour}
-              className="grid grid-cols-[90px_1fr] border-b border-[#E5E7EB] last:border-b-0"
+              className="grid grid-cols-[90px_1fr] border-t border-gray-200 last:border-b-0"
               style={{ 
                 scrollSnapAlign: 'start',
                 height: '76px' // Fixed height for consistent scrolling
               }}
             >
               {/* Time Label - Sticky */}
-              <div className="sticky left-0 bg-muted/30 backdrop-blur-sm text-sm font-semibold text-center border-r border-[#E5E7EB] flex items-center justify-center" style={{ padding: '0' }}>
+              <div className="sticky left-0 bg-gray-50 text-sm font-semibold text-center border-r border-gray-200 flex items-center justify-center" style={{ padding: '0' }}>
                 {formatHour(hour)}
               </div>
               
@@ -232,8 +232,8 @@ const Enhanced24HourTimeline = ({
                 {/* First half hour (XX:00) */}
                 <div 
                   className={`
-                    relative border-b border-[#E5E7EB] border-r border-[#E5E7EB] transition-colors duration-200
-                    ${isCurrentTimeSlot(hour, 'first') ? 'bg-primary/5' : 'hover:bg-muted/30'}
+                    relative border-b border-gray-200 border-r border-gray-200 transition-colors duration-200
+                    ${isCurrentTimeSlot(hour, 'first') ? 'bg-primary/5' : 'hover:bg-gray-50'}
                   `}
                   style={{ height: '38px' }}
                 >
@@ -245,8 +245,8 @@ const Enhanced24HourTimeline = ({
                 {/* Second half hour (XX:30) */}
                 <div 
                   className={`
-                    relative border-b border-[#E5E7EB] border-r border-[#E5E7EB] transition-colors duration-200
-                    ${isCurrentTimeSlot(hour, 'second') ? 'bg-primary/5' : 'hover:bg-muted/30'}
+                    relative border-b border-gray-200 border-r border-gray-200 transition-colors duration-200
+                    ${isCurrentTimeSlot(hour, 'second') ? 'bg-primary/5' : 'hover:bg-gray-50'}
                   `}
                   style={{ height: '38px' }}
                 >
