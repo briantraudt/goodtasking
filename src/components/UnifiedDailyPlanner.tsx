@@ -208,7 +208,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
         start: formatTime(event.start),
         end: formatTime(event.end),
         type: 'event',
-        color: 'bg-calendar-event-bg border-calendar-event-border text-foreground'
+        color: ''
       });
     });
 
