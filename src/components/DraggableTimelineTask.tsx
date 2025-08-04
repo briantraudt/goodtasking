@@ -119,7 +119,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
             </div>
           )}
           {block.type === 'event' ? (
-            <img src={googleCalendarLogo} alt="Google Calendar" className="h-full w-auto" />
+            <img src={googleCalendarLogo} alt="Google Calendar" className="w-4 h-4" />
           ) : (
             <span className="px-2 py-1 text-xs rounded-full border bg-background/50 border-current">
               Task
