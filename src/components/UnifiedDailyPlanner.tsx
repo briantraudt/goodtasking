@@ -620,7 +620,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
         {/* Two-Column Grid Layout */}
-        <div className="flex-1 grid grid-cols-[1fr_400px] gap-6 p-6 min-h-0 overflow-hidden">
+        <div className="flex-1 grid grid-cols-2 gap-6 p-6 min-h-0 overflow-hidden">
           
           {/* Left Column - Calendar Timeline */}
           <div className="overflow-hidden" data-calendar-section>
