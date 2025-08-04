@@ -650,18 +650,21 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                     →
                   </button>
                 </div>
-                <div className="flex justify-center mt-2">
-                  <button
-                    onClick={() => {
-                      const today = format(new Date(), 'yyyy-MM-dd');
-                      setSelectedDate(today);
-                      // Scroll to current time will be handled by the calendar component
-                    }}
-                    className="px-3 py-1 text-sm bg-forest-green text-white rounded-md hover:bg-forest-green/90 transition-colors"
-                  >
-                    Today
-                  </button>
-                </div>
+                {/* Only show Today button when not viewing today */}
+                {!isToday(new Date(selectedDate)) && (
+                  <div className="flex justify-center mt-2">
+                    <button
+                      onClick={() => {
+                        const today = format(new Date(), 'yyyy-MM-dd');
+                        setSelectedDate(today);
+                        // Scroll to current time will be handled by the calendar component
+                      }}
+                      className="px-3 py-1 text-sm bg-forest-green text-white rounded-md hover:bg-forest-green/90 transition-colors"
+                    >
+                      Today
+                    </button>
+                  </div>
+                )}
               </div>
               
               {/* Calendar Content with Proper Scrolling */}

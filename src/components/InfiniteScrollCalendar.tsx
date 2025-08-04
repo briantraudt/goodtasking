@@ -301,20 +301,22 @@ const InfiniteScrollCalendar = ({
                 }}
               >
                 <div className={cn(
-                  "grid grid-cols-[100px_1fr] h-full",
+                  "grid grid-cols-[100px_1fr] h-full border-t border-timeline-gray",
                   // Add alternating backgrounds for better visual hierarchy
                   Math.floor(item.hour / 2) % 2 === 0 ? "bg-off-white/50" : "bg-white"
                 )}>
-                  {/* Time Label - Navy background with white text */}
+                  {/* Time Label - Navy background with white text - FIXED VISIBILITY */}
                   {isHourStart && (
                     <div 
                       className="sticky left-0 text-white text-sm font-medium text-center border-r-2 border-timeline-gray flex items-center justify-center row-span-2 py-2 px-3"
                       style={{ 
                         height: `${HOUR_HEIGHT}px`,
-                        backgroundColor: '#1E3A5F' // Navy background
+                        backgroundColor: '#1E3A5F', // Navy background
+                        fontSize: '12px', // Ensure readable font size
+                        fontWeight: '500' // Medium weight for better readability
                       }}
                     >
-                      {formatHour(item.hour)}
+                      <span className="text-white">{formatHour(item.hour)}</span>
                     </div>
                   )}
                   {!isHourStart && (
@@ -324,7 +326,7 @@ const InfiniteScrollCalendar = ({
                     />
                   )}
                   
-                  {/* Time Slot with enhanced visual hierarchy */}
+                  {/* Time Slot with half-hour grid lines */}
                   <div 
                     className={cn(
                       "relative border-r transition-all duration-200 px-2 py-1",
@@ -332,7 +334,8 @@ const InfiniteScrollCalendar = ({
                       isCurrentTimeSlot(item.date, item.hour, item.period) 
                         ? 'ring-2 ring-current-time-green/30 bg-current-time-green/5' 
                         : 'hover:bg-forest-green/5',
-                      item.period === 'second' ? 'border-b border-timeline-gray' : '',
+                      // Add half-hour border for 30-minute divisions
+                      item.period === 'second' ? 'border-b-2 border-timeline-gray' : 'border-b border-timeline-gray/50',
                       "min-h-[40px]" // Increased padding for better visual hierarchy
                     )}
                   >
