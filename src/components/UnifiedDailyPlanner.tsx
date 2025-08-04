@@ -6,6 +6,7 @@ import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { useAIScheduler } from '@/hooks/useAIScheduler';
 import { useAIPlanner } from '@/hooks/useAIPlanner';
 import TaskSidebar from '@/components/TaskSidebar';
+import AITaskSequencerInline from '@/components/AITaskSequencerInline';
 import DraggableTimelineTask from '@/components/DraggableTimelineTask';
 import { Calendar, Clock, Sparkles, Loader2, Undo2 } from 'lucide-react';
 import { format, parseISO, isToday } from 'date-fns';
@@ -641,8 +642,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
 
         {/* Scrollable Content Section */}
         <div className="flex-1 flex gap-4 p-4 min-h-0">
-          {/* Left side - Calendar Timeline (70%) */}
-          <Card className="flex-[70] flex flex-col">
+          {/* Left side - Calendar Timeline (50%) */}
+          <Card className="flex-[50] flex flex-col">
             <CardContent className="flex-1 overflow-y-auto p-4">
               {!isConnected && (
                 <div className="text-center py-4 text-muted-foreground">
@@ -754,14 +755,17 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             </CardContent>
           </Card>
 
-          {/* Right side - Task Sidebar (30% - reduced by 50%) */}
+          {/* Middle - Task Sidebar (25%) */}
           <TaskSidebar 
             projects={projects}
             selectedDate={selectedDate}
             onCreateTask={onCreateTask}
             onCreateProject={onCreateProject}
-            className="flex-[30]"
+            className="flex-[25]"
           />
+
+          {/* Right side - AI Task Sequencer (25%) */}
+          <AITaskSequencerInline className="flex-[25]" />
         </div>
 
         {/* Fixed Footer Stats Section */}
