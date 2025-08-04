@@ -24,6 +24,7 @@ interface TimeBlock {
   color: string;
   priority?: string;
   taskId?: string;
+  googleEventId?: string; // Add Google event ID
 }
 
 interface DraggableTimelineTaskProps {
@@ -81,19 +82,28 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
     return getDurationInMinutes();
   };
 
+  const handleCalendarEventClick = () => {
+    if (block.type === 'event' && block.googleEventId) {
+      // Open the specific event in Google Calendar
+      const calendarUrl = `https://calendar.google.com/calendar/event?eid=${block.googleEventId}`;
+      window.open(calendarUrl, '_blank');
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...(isDraggableTask ? listeners : {})}
       {...(isDraggableTask ? attributes : {})}
+      onClick={block.type === 'event' ? handleCalendarEventClick : undefined}
       aria-label={block.type === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
         "transition-all hover:shadow-soft w-full m-0 p-0 border-0 box-border flex flex-col justify-center",
         "h-full min-h-full overflow-hidden border-l-4",
         // Enhanced color scheme for different block types
         block.type === 'event' 
-          ? "bg-google-calendar-bg border-google-calendar-border text-blue-800" 
+          ? "bg-google-calendar-bg border-google-calendar-border text-blue-800 cursor-pointer hover:bg-blue-50" 
           : "bg-ai-scheduled-bg border-ai-scheduled-border text-green-800",
         isDraggableTask && "cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-elevated z-50",

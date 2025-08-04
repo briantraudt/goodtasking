@@ -59,6 +59,7 @@ interface TimeBlock {
   color: string;
   priority?: string;
   taskId?: string;
+  googleEventId?: string; // Add Google event ID
 }
 
 interface DroppableTimeSlotProps {
@@ -218,7 +219,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
         start: formatTime(event.start),
         end: formatTime(event.end),
         type: 'event',
-        color: ''
+        color: '',
+        googleEventId: event.id // Pass the Google event ID
       });
     });
 
