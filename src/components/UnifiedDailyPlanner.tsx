@@ -642,8 +642,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
 
         {/* Scrollable Content Section */}
         <div className="flex-1 flex gap-4 p-4 min-h-0">
-          {/* Left side - Calendar Timeline (35% - reduced by 50%) */}
-          <Card className="flex-[35] flex flex-col">
+          {/* Left side - Calendar Timeline (70%) */}
+          <Card className="flex-[70] flex flex-col">
             <CardContent className="flex-1 overflow-y-auto p-4">
               {!isConnected && (
                 <div className="text-center py-4 text-muted-foreground">
@@ -755,13 +755,13 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             </CardContent>
           </Card>
 
-          {/* Right side - Task Sidebar (65% - increased to balance) */}
+          {/* Right side - Task Sidebar (30% - reduced by 50%) */}
           <TaskSidebar 
             projects={projects}
             selectedDate={selectedDate}
             onCreateTask={onCreateTask}
             onCreateProject={onCreateProject}
-            className="flex-[65]"
+            className="flex-[30]"
           />
         </div>
 
