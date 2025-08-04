@@ -77,47 +77,25 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
   };
 
   const getDisplayDurationInMinutes = () => {
-    // For display purposes in the current slot, cap at 30 minutes
-    return Math.min(getDurationInMinutes(), 30);
-  };
-
-  const getSlotHeight = () => {
-    const durationInMinutes = getDurationInMinutes();
-    const SLOT_HEIGHT = 50; // Each 30-minute slot is 50px
-    const MINUTES_PER_SLOT = 30;
-    
-    // Calculate height based on duration: 30min = 50px, 60min = 100px, etc.
-    const calculatedHeight = (durationInMinutes / MINUTES_PER_SLOT) * SLOT_HEIGHT;
-    
-    // Ensure minimum height for readability but respect actual duration
-    return Math.max(calculatedHeight, 40);
+    return getDurationInMinutes();
   };
 
   return (
     <div
       ref={setNodeRef}
-      style={{
-        ...style,
-        height: `${getSlotHeight()}px`,
-        minHeight: '40px',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 10
-      }}
+      style={style}
       {...(isDraggableTask ? listeners : {})}
       {...(isDraggableTask ? attributes : {})}
       className={cn(
-        "p-2 m-1 rounded text-xs transition-all hover:shadow-soft relative border box-border",
+        "p-2 m-1 rounded text-xs transition-all hover:shadow-soft border h-full w-full",
         block.type === 'event' ? "bg-blue-50 border-blue-200 text-blue-800" : block.color,
         isDraggableTask && "cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-elevated z-50",
         isDraggableTask && "hover:scale-[1.02]"
       )}
     >
-      <div className="flex items-center justify-between">
-        <span className="font-medium">
+      <div className="flex items-center justify-between mb-1">
+        <span className="text-xs font-medium">
           {block.start.includes('T') ? 
             format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
             block.start + ' - ' + block.end
@@ -135,7 +113,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
           </Badge>
         </div>
       </div>
-      <p className="font-medium mt-1">{block.title}</p>
+      <p className="font-medium text-xs line-clamp-2">{block.title}</p>
       
       {isDraggableTask && (
         <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">

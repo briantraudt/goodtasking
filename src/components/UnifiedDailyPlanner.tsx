@@ -62,7 +62,7 @@ interface TimeBlock {
 interface DroppableTimeSlotProps {
   hour: number;
   period: 'first' | 'second';
-  children: React.ReactNode;
+  children?: React.ReactNode;
   hasOverlap: boolean;
   isCurrentTime: boolean;
 }
@@ -86,10 +86,9 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
     <div
       ref={setNodeRef}
       className={cn(
-        "h-[50px] border-b border-sidebar-border transition-colors relative group overflow-visible",
+        "h-[50px] border-b border-sidebar-border transition-colors relative",
         isOver && !hasOverlap && "bg-primary/10 border-primary/30 ring-1 ring-primary/20",
         isOver && hasOverlap && "bg-destructive/10 border-destructive/30 ring-1 ring-destructive/20",
-        hasOverlap && "bg-destructive/5",
         isCurrentTime && "bg-priority-medium/10"
       )}
     >
@@ -106,9 +105,9 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
           <div className="absolute -left-1 -top-1 w-2 h-2 bg-destructive rounded-full"></div>
         </div>
       )}
-      {children}
+      
       {hasOverlap && isOver && (
-        <div className="absolute inset-0 flex items-center justify-center bg-destructive/10 text-destructive text-xs font-medium">
+        <div className="absolute inset-0 flex items-center justify-center bg-destructive/10 text-destructive text-xs font-medium z-30">
           ⚠️ Overlap
         </div>
       )}
@@ -643,106 +642,104 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
             )}
 
             {/* Time Grid */}
-            <div className="space-y-0 border rounded-lg overflow-hidden">
-              {timeSlots.map(hour => (
-                <div key={hour} className="grid grid-cols-[80px_1fr] border-b last:border-b-0">
-                  {/* Time Label */}
-                  <div className="bg-muted/50 p-2 text-sm font-medium text-center border-r">
-                    {formatHour(hour)}
-                  </div>
-                  
-                  {/* Time Slots */}
-                  <div className="grid grid-rows-2">
-                    {/* First half hour */}
-                    <DroppableTimeSlot 
-                      hour={hour} 
-                      period="first"
-                      hasOverlap={hasTimeSlotOverlap(hour, 'first')}
-                      isCurrentTime={isCurrentTimeSlot(hour, 'first')}
-                    >
-                       {timeBlocks
-                         .filter(block => {
-                           // Handle both HH:mm format and potential datetime formats
-                           let blockStartHour: number;
-                           let blockStartMinutes: number;
-                           
-                           if (block.start.includes('T')) {
-                             // ISO datetime - extract hour and minutes
-                             const date = parseISO(block.start);
-                             blockStartHour = date.getHours();
-                             blockStartMinutes = date.getMinutes();
-                           } else {
-                             // HH:mm format
-                             blockStartHour = parseInt(block.start.split(':')[0]);
-                             blockStartMinutes = parseInt(block.start.split(':')[1]);
-                           }
-                           
-                           // Show event only in the slot where it starts to avoid duplicates
-                           const eventStartsInThisSlot = blockStartHour === hour && blockStartMinutes >= 0 && blockStartMinutes < 30;
-                           
-                           return eventStartsInThisSlot;
-                         })
-                         .map(block => {
-                          const relatedTask = block.type === 'task' ? 
-                            scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
-                          
-                          return (
-                            <DraggableTimelineTask
-                              key={block.id}
-                              block={block}
-                              task={relatedTask}
-                            />
-                          );
-                        })
-                      }
-                    </DroppableTimeSlot>
+            <div className="space-y-0 border rounded-lg overflow-hidden relative">
+              {/* Timeline container with absolute positioning for events */}
+              <div className="relative">
+                {timeSlots.map(hour => (
+                  <div key={hour} className="grid grid-cols-[80px_1fr] border-b last:border-b-0">
+                    {/* Time Label */}
+                    <div className="bg-muted/50 p-2 text-sm font-medium text-center border-r">
+                      {formatHour(hour)}
+                    </div>
                     
-                    {/* Second half hour */}
-                    <DroppableTimeSlot 
-                      hour={hour} 
-                      period="second"
-                      hasOverlap={hasTimeSlotOverlap(hour, 'second')}
-                      isCurrentTime={isCurrentTimeSlot(hour, 'second')}
-                    >
-                       {timeBlocks
-                         .filter(block => {
-                           // Handle both HH:mm format and potential datetime formats
-                           let blockStartHour: number;
-                           let blockStartMinutes: number;
-                           
-                           if (block.start.includes('T')) {
-                             // ISO datetime - extract hour and minutes
-                             const date = parseISO(block.start);
-                             blockStartHour = date.getHours();
-                             blockStartMinutes = date.getMinutes();
-                           } else {
-                             // HH:mm format
-                             blockStartHour = parseInt(block.start.split(':')[0]);
-                             blockStartMinutes = parseInt(block.start.split(':')[1]);
-                           }
-                           
-                           // Show event only in the slot where it starts to avoid duplicates
-                           const eventStartsInThisSlot = blockStartHour === hour && blockStartMinutes >= 30 && blockStartMinutes < 60;
-                           
-                           return eventStartsInThisSlot;
-                         })
-                         .map(block => {
-                          const relatedTask = block.type === 'task' ? 
-                            scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
-                          
-                          return (
-                            <DraggableTimelineTask
-                              key={block.id}
-                              block={block}
-                              task={relatedTask}
-                            />
-                          );
-                        })
+                    {/* Time Slots */}
+                    <div className="grid grid-rows-2">
+                      {/* First half hour */}
+                      <DroppableTimeSlot 
+                        hour={hour} 
+                        period="first"
+                        hasOverlap={hasTimeSlotOverlap(hour, 'first')}
+                        isCurrentTime={isCurrentTimeSlot(hour, 'first')}
+                      >
+                        {/* Empty - events are positioned absolutely */}
+                      </DroppableTimeSlot>
+                      
+                      {/* Second half hour */}
+                      <DroppableTimeSlot 
+                        hour={hour} 
+                        period="second"
+                        hasOverlap={hasTimeSlotOverlap(hour, 'second')}
+                        isCurrentTime={isCurrentTimeSlot(hour, 'second')}
+                      >
+                        {/* Empty - events are positioned absolutely */}
+                      </DroppableTimeSlot>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* Absolutely positioned events and tasks */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="relative h-full ml-[80px]">
+                    {timeBlocks.map(block => {
+                      const relatedTask = block.type === 'task' ? 
+                        scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
+                      
+                      // Calculate position based on time
+                      let blockStartHour: number;
+                      let blockStartMinutes: number;
+                      let blockEndHour: number;
+                      let blockEndMinutes: number;
+                      
+                      if (block.start.includes('T')) {
+                        // ISO datetime
+                        const startDate = parseISO(block.start);
+                        const endDate = parseISO(block.end);
+                        blockStartHour = startDate.getHours();
+                        blockStartMinutes = startDate.getMinutes();
+                        blockEndHour = endDate.getHours();
+                        blockEndMinutes = endDate.getMinutes();
+                      } else {
+                        // HH:mm format
+                        [blockStartHour, blockStartMinutes] = block.start.split(':').map(Number);
+                        [blockEndHour, blockEndMinutes] = block.end.split(':').map(Number);
                       }
-                    </DroppableTimeSlot>
+                      
+                      // Only show events within our time range (7 AM to 7 PM)
+                      if (blockStartHour < 7 || blockStartHour >= 20) return null;
+                      
+                      // Calculate precise positioning
+                      const startTimeInMinutes = (blockStartHour - 7) * 60 + blockStartMinutes;
+                      const endTimeInMinutes = (blockEndHour - 7) * 60 + blockEndMinutes;
+                      const durationInMinutes = endTimeInMinutes - startTimeInMinutes;
+                      
+                      // Each hour is 100px (50px per 30-min slot), so 1 minute = 100/60 = 1.67px
+                      const pixelsPerMinute = 100 / 60;
+                      const topOffset = startTimeInMinutes * pixelsPerMinute;
+                      const height = Math.max(durationInMinutes * pixelsPerMinute, 40); // Min 40px height
+                      
+                      return (
+                        <div 
+                          key={block.id}
+                          style={{
+                            position: 'absolute',
+                            top: `${topOffset}px`,
+                            height: `${height}px`,
+                            left: '4px',
+                            right: '4px',
+                            zIndex: 20
+                          }}
+                          className="pointer-events-auto"
+                        >
+                          <DraggableTimelineTask
+                            block={block}
+                            task={relatedTask}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
 
             {/* Quick Stats */}
