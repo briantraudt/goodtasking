@@ -568,7 +568,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
     if (isConnected) {
       refreshEvents(selectedDate);
     }
-  }, [selectedDate, isConnected]);
+  }, [selectedDate, isConnected, refreshEvents]);
 
   if (calendarLoading) {
     return (
