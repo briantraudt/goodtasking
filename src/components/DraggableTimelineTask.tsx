@@ -101,58 +101,58 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       className={cn(
         "transition-all hover:shadow-soft w-full m-0 p-0 border-0 box-border flex flex-col justify-center",
         "h-full min-h-full overflow-hidden border-l-4",
-        // Enhanced color scheme for different block types
+        // Use priority color for tasks, blue for events
         block.type === 'event' 
           ? "bg-google-calendar-bg border-google-calendar-border text-blue-800 cursor-pointer hover:bg-blue-50" 
-          : "bg-ai-scheduled-bg border-ai-scheduled-border text-green-800",
+          : block.color || "bg-ai-scheduled-bg border-ai-scheduled-border text-green-800",
         isDraggableTask && "cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-elevated z-50",
         isDraggableTask && "hover:scale-[1.02]"
       )}
     >
-      {/* Content container fills full height */}
-      <div className="h-full flex flex-col justify-center pl-3 pr-2">
-        {/* Event/Task Title - Left aligned with padding */}
+      {/* Content container with proper spacing for overlays */}
+      <div className="h-full flex flex-col justify-center pl-3 pr-16 pb-8">
+        {/* Event/Task Title - Left aligned with proper spacing */}
         <div className={cn(
-          "text-task-title leading-tight text-left",
-          block.type === 'event' ? "text-blue-800" : "text-green-800"
+          "text-task-title leading-tight text-left font-medium",
+          block.type === 'event' ? "text-blue-800" : ""
         )}>
           {block.title}
         </div>
-        
-        {/* Header with badge - positioned absolutely to not affect centering */}
-        <div className="absolute top-2 right-2 flex items-center gap-2">
-          {isDraggableTask && (
-            <div className="flex items-center gap-1 text-xs opacity-70">
-              <Clock className="h-3 w-3" />
-              {getDisplayDurationInMinutes()}m
-            </div>
-          )}
-          {block.type === 'event' ? (
-            <img src={googleCalendarLogo} alt="Google Calendar" className="w-6 h-6" />
-          ) : (
-            <span className="px-2 py-1 text-xs rounded-full border bg-background/50 border-current">
-              Task
-            </span>
-          )}
-        </div>
-        
-        {/* Show time only for tasks at bottom */}
-        {block.type === 'task' && (
-          <div className="absolute bottom-2 left-3 text-xs font-medium opacity-75">
-            {block.start.includes('T') ? 
-              format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
-              block.start + ' - ' + block.end
-            }
+      </div>
+      
+      {/* Header with badge - positioned absolutely to not affect centering */}
+      <div className="absolute top-2 right-2 flex items-center gap-2">
+        {isDraggableTask && (
+          <div className="flex items-center gap-1 text-xs opacity-70">
+            <Clock className="h-3 w-3" />
+            {getDisplayDurationInMinutes()}m
           </div>
         )}
-        
-        {isDraggableTask && (
-          <div className="absolute top-1 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="w-2 h-2 bg-current rounded-full"></div>
-          </div>
+        {block.type === 'event' ? (
+          <img src={googleCalendarLogo} alt="Google Calendar" className="w-6 h-6" />
+        ) : (
+          <span className="px-2 py-1 text-xs rounded-full border bg-background/50 border-current">
+            Task
+          </span>
         )}
       </div>
+      
+      {/* Show time only for tasks at bottom */}
+      {block.type === 'task' && (
+        <div className="absolute bottom-2 left-3 text-xs font-medium opacity-75">
+          {block.start.includes('T') ? 
+            format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
+            block.start + ' - ' + block.end
+          }
+        </div>
+      )}
+      
+      {isDraggableTask && (
+        <div className="absolute top-1 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="w-2 h-2 bg-current rounded-full"></div>
+        </div>
+      )}
     </div>
   );
 };
