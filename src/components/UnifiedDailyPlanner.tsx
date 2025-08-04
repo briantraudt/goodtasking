@@ -563,12 +563,6 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
     setTimeBlocks(newBlocks);
   }, [events, scheduledTasks, selectedDate]); // Fixed dependencies
 
-  // Refresh Google Calendar events when selectedDate changes
-  useEffect(() => {
-    if (isConnected) {
-      refreshEvents(selectedDate);
-    }
-  }, [selectedDate, isConnected, refreshEvents]);
 
   if (calendarLoading) {
     return (
