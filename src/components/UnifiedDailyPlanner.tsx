@@ -93,12 +93,12 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
         isCurrentTime && "bg-priority-medium/10"
       )}
     >
-      {/* Time label on hover */}
-      {isOver && (
-        <div className="absolute -top-6 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded z-20">
-          Drop at {hour}:{period === 'first' ? '00' : '30'}
-        </div>
-      )}
+       {/* Time label on hover */}
+       {isOver && (
+         <div className="absolute -top-6 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded z-20">
+           Drop at {format(new Date().setHours(hour, period === 'first' ? 0 : 30, 0, 0), 'h:mm a')}
+         </div>
+       )}
       
       {/* Current time indicator */}
       {isCurrentTime && (
@@ -146,9 +146,15 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
 
   const formatTime = (timeStr: string) => {
     if (timeStr.includes('T')) {
-      return format(parseISO(timeStr), 'HH:mm');
+      return format(parseISO(timeStr), 'h:mm a');
     }
     return timeStr;
+  };
+
+  const formatHour = (hour: number) => {
+    const date = new Date();
+    date.setHours(hour, 0, 0, 0);
+    return format(date, 'h:00 a');
   };
 
   const isCurrentTimeSlot = useCallback((hour: number, period: 'first' | 'second') => {
@@ -541,8 +547,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
     }
   };
 
-  // Generate time slots (9 AM to 6 PM)
-  const timeSlots = Array.from({ length: 9 }, (_, i) => i + 9);
+  // Generate time slots (7 AM to 7 PM)
+  const timeSlots = Array.from({ length: 12 }, (_, i) => i + 7);
 
   useEffect(() => {
     const newBlocks = generateTimeBlocks();
@@ -577,11 +583,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                 <Calendar className="h-5 w-5 text-primary" />
                 Daily Timeline
                 <Badge variant="secondary">{format(new Date(selectedDate), 'MMM d')}</Badge>
-                {isToday(new Date(selectedDate)) && (
-                  <Badge variant="outline" className="text-xs">
-                    {format(currentTime, 'HH:mm')}
-                  </Badge>
-                )}
+                 {isToday(new Date(selectedDate)) && (
+                   <Badge variant="outline" className="text-xs">
+                     {format(currentTime, 'h:mm a')}
+                   </Badge>
+                 )}
               </CardTitle>
               <div className="flex gap-2">
                 <Button
@@ -629,7 +635,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                 <div key={hour} className="grid grid-cols-[80px_1fr] border-b last:border-b-0">
                   {/* Time Label */}
                   <div className="bg-muted/50 p-2 text-sm font-medium text-center border-r">
-                    {hour}:00
+                    {formatHour(hour)}
                   </div>
                   
                   {/* Time Slots */}
