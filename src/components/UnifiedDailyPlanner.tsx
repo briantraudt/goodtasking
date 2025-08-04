@@ -657,7 +657,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                 {/* Timeline container with absolute positioning for events */}
                 <div className="relative">
                   {timeSlots.map(hour => (
-                    <div key={hour} className="grid grid-cols-[80px_1fr] border-b last:border-b-0">
+                    <div key={hour} className="grid grid-cols-[90px_1fr] border-b last:border-b-0">
                       {/* Time Label */}
                       <div className="bg-muted/50 p-2 text-sm font-medium text-center border-r">
                         {formatHour(hour)}
@@ -690,7 +690,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                   
                   {/* Absolutely positioned events and tasks */}
                   <div className="absolute inset-0 pointer-events-none">
-                    <div className="relative h-full ml-[80px]">
+                    <div className="relative h-full ml-[90px]">
                       {timeBlocks.map(block => {
                         const relatedTask = block.type === 'task' ? 
                           scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
