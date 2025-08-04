@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
-import AddTaskDialog from '@/components/AddTaskDialog';
+import SmartAddButton from '@/components/SmartAddButton';
 import { Plus, Filter } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
@@ -32,10 +32,11 @@ interface TaskSidebarProps {
   projects: Project[];
   selectedDate: string;
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
+  onCreateProject?: (project: { name: string; description: string; tasks: any[] }) => void;
   className?: string;
 }
 
-const TaskSidebar = ({ projects, selectedDate, onCreateTask, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, className }: TaskSidebarProps) => {
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
@@ -123,21 +124,16 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, className }: TaskSi
     >
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base flex items-center gap-2">
-            📋 Tasks To Schedule
-            <Badge variant="secondary" className="text-xs">
+          <div className="flex items-center gap-3">
+            <h3 className="text-title">📋 Tasks To Schedule</h3>
+            <Badge variant="secondary" className="rounded-xl font-medium">
               {unscheduledTasks.length}
             </Badge>
-          </CardTitle>
-          <AddTaskDialog
-            projects={projects.map(p => ({ id: p.id, name: p.name }))}
+          </div>
+          <SmartAddButton
+            projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
             onCreateTask={handleCreateTask}
-            triggerButton={
-              <Button variant="outline" size="sm">
-                <Plus className="h-3 w-3 mr-1" />
-                Add
-              </Button>
-            }
+            onCreateProject={onCreateProject}
           />
         </div>
         

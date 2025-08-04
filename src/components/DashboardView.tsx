@@ -113,11 +113,12 @@ const DashboardView = ({
       {/* Scrollable Content Section */}
       <div className="flex-1 overflow-hidden">
         {viewMode === 'planner' ? (
-          <UnifiedDailyPlanner
-            projects={projects}
-            onUpdateTask={onUpdateTask}
-            onCreateTask={onCreateTask}
-          />
+        <UnifiedDailyPlanner
+          projects={projects}
+          onUpdateTask={onUpdateTask}
+          onCreateTask={onCreateTask}
+          onCreateProject={onCreateProject}
+        />
         ) : viewMode === 'today' ? (
           <TodayView
             projects={projects}

@@ -45,6 +45,7 @@ interface UnifiedDailyPlannerProps {
   projects: Project[];
   onUpdateTask: (taskId: string, updates: Partial<Task>) => void;
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
+  onCreateProject?: (project: { name: string; description: string; tasks: any[] }) => void;
   className?: string;
 }
 
@@ -114,7 +115,7 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
   );
 };
 
-const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }: UnifiedDailyPlannerProps) => {
+const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreateProject, className }: UnifiedDailyPlannerProps) => {
   const { events, isConnected, loading: calendarLoading, refreshEvents } = useGoogleCalendar();
   const { scheduleTasksWithAI, updateTaskSchedule, loading: aiLoading } = useAIScheduler();
   const { planMyDay, loading: planningLoading } = useAIPlanner();
@@ -759,6 +760,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
             projects={projects}
             selectedDate={selectedDate}
             onCreateTask={onCreateTask}
+            onCreateProject={onCreateProject}
             className="flex-[3]"
           />
         </div>
