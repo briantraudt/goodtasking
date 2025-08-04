@@ -33,12 +33,12 @@ const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddBut
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-elevated bg-white z-50">
         <DropdownMenuItem asChild>
-          <div className="p-3 cursor-pointer rounded-lg hover:bg-blue-50 transition-colors">
+          <div className="p-3 cursor-pointer rounded-lg hover:bg-blue-100 hover:text-blue-800 transition-colors">
             <AddTaskDialog
               projects={projects}
               onCreateTask={onCreateTask}
               triggerButton={
-                <span className="text-task-title text-gray-900">Task</span>
+                <span className="text-task-title text-gray-900 hover:text-blue-800">Task</span>
               }
             />
           </div>
