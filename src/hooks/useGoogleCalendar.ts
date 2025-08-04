@@ -71,30 +71,20 @@ export const useGoogleCalendar = () => {
     if (!user) return;
 
     try {
-      let query = supabase
+      // Always fetch all events first for the comprehensive view
+      const { data: allEvents, error: allEventsError } = await supabase
         .from('calendar_events')
         .select('*')
         .eq('user_id', user.id)
         .order('start_time');
 
-      // If specific date is provided, filter for that date
-      if (date) {
-        const startOfDay = `${date}T00:00:00`;
-        const endOfDay = `${date}T23:59:59`;
-        query = query
-          .gte('start_time', startOfDay)
-          .lte('start_time', endOfDay);
-      }
-
-      const { data: eventsData, error } = await query;
-
-      if (error) {
-        console.error('Error fetching events from database:', error);
+      if (allEventsError) {
+        console.error('Error fetching events from database:', allEventsError);
         return;
       }
 
       // Transform database events to match the interface
-      const transformedEvents: CalendarEvent[] = (eventsData || []).map(event => ({
+      const transformedEvents: CalendarEvent[] = (allEvents || []).map(event => ({
         id: event.google_event_id,
         title: event.title,
         start: event.start_time,
@@ -104,9 +94,21 @@ export const useGoogleCalendar = () => {
         isAllDay: event.is_all_day,
       }));
 
+      // If date filter is provided, filter the events client-side to avoid multiple DB calls
+      let filteredEvents = transformedEvents;
+      if (date) {
+        const startOfDay = new Date(`${date}T00:00:00`);
+        const endOfDay = new Date(`${date}T23:59:59`);
+        
+        filteredEvents = transformedEvents.filter(event => {
+          const eventStart = new Date(event.start);
+          return eventStart >= startOfDay && eventStart <= endOfDay;
+        });
+      }
+
       setCalendarData(prev => ({
         ...prev,
-        events: transformedEvents,
+        events: filteredEvents,
         loading: false,
       }));
 
