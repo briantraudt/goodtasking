@@ -634,7 +634,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           {/* Left side - Calendar Timeline (50%) - Scrollable */}
           <div className="flex-[50] overflow-y-auto" data-calendar-section>
             <Card className="flex flex-col rounded-xl border shadow-soft h-fit">
-            <CardHeader className="pb-3 sticky top-0 bg-card/95 backdrop-blur-sm z-20 border-b">
+            <CardHeader className="pb-3 sticky top-0 bg-white z-50 border-b shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xl font-bold text-foreground">Calendar</h3>

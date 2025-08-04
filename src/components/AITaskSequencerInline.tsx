@@ -90,7 +90,7 @@ export default function AITaskSequencerInline({ className }: AITaskSequencerInli
 
   return (
     <Card className={`${className} rounded-xl border shadow-soft border-l-2 border-l-primary/20 bg-gradient-to-br from-primary/5 to-accent/5`}>
-      <CardHeader className="pb-4 sticky top-0 bg-gradient-to-br from-primary/5 to-accent/5 backdrop-blur-sm z-20 border-b">
+      <CardHeader className="pb-4 sticky top-0 bg-gradient-to-br from-primary/5 to-accent/5 z-50 border-b shadow-sm">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10">
             <Sparkles className="h-5 w-5 text-primary animate-pulse" />

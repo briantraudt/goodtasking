@@ -101,7 +101,7 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
         projectStyling.bg,
         projectStyling.text,
         projectStyling.border,
-        isDragging && "opacity-50 shadow-lg z-30 rotate-2 scale-105"
+        isDragging && "opacity-50 shadow-lg z-40 rotate-2 scale-105"
       )}
     >
       {/* Top Row: Project Name & Duration */}

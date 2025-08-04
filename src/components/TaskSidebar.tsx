@@ -122,7 +122,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
       )}
     >
-      <CardHeader className="pb-4 sticky top-0 bg-card/95 backdrop-blur-sm z-20 border-b">
+      <CardHeader className="pb-4 sticky top-0 bg-white z-50 border-b shadow-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <CheckSquare className="h-5 w-5 text-primary" />

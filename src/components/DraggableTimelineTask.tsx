@@ -99,14 +99,14 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       onClick={block.type === 'event' ? handleCalendarEventClick : undefined}
       aria-label={block.type === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
-        "transition-all hover:shadow-card w-full m-0 p-0 border-0 box-border flex flex-col justify-center group",
+        "transition-all hover:shadow-card w-full m-0 p-0 border-0 box-border flex flex-col justify-center group relative z-10",
         "h-full min-h-full overflow-hidden border-l-4 bg-white",
         // Enhanced colors and hover effects
         block.type === 'event' 
           ? "border-blue-400 text-blue-800 cursor-pointer hover:bg-blue-50/50 hover:scale-[1.01]" 
           : block.color || "border-green-400 text-green-800",
         isDraggableTask && "cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50 shadow-elevated z-30 rotate-1",
+        isDragging && "opacity-50 shadow-elevated z-40 rotate-1",
         isDraggableTask && "hover:scale-[1.02] hover:shadow-card"
       )}
     >
