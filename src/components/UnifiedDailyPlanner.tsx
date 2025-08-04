@@ -117,7 +117,7 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
 };
 
 const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }: UnifiedDailyPlannerProps) => {
-  const { events, isConnected, loading: calendarLoading } = useGoogleCalendar();
+  const { events, isConnected, loading: calendarLoading, refreshEvents } = useGoogleCalendar();
   const { scheduleTasksWithAI, updateTaskSchedule, loading: aiLoading } = useAIScheduler();
   const { planMyDay, loading: planningLoading } = useAIPlanner();
   const { toast } = useToast();
@@ -562,6 +562,13 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
     const newBlocks = generateTimeBlocks();
     setTimeBlocks(newBlocks);
   }, [events, scheduledTasks, selectedDate]); // Fixed dependencies
+
+  // Refresh Google Calendar events when selectedDate changes
+  useEffect(() => {
+    if (isConnected) {
+      refreshEvents(selectedDate);
+    }
+  }, [selectedDate, isConnected]);
 
   if (calendarLoading) {
     return (

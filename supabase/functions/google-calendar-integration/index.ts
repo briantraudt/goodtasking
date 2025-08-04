@@ -227,9 +227,9 @@ serve(async (req) => {
       }
 
       // Fetch calendar events with proper timezone handling
-      // Use local timezone boundaries instead of UTC
-      const startOfDay = `${date}T00:00:00`;
-      const endOfDay = `${date}T23:59:59`;
+      // Use local timezone boundaries but ensure proper ISO format for Google API
+      const startOfDay = new Date(date + 'T00:00:00').toISOString();
+      const endOfDay = new Date(date + 'T23:59:59').toISOString();
 
       const calendarResponse = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
