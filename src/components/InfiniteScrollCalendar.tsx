@@ -312,10 +312,6 @@ const InfiniteScrollCalendar = ({
             >
               Today
             </button>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              Infinite Scroll
-            </div>
           </div>
         </div>
       </div>
