@@ -88,18 +88,19 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       {...(isDraggableTask ? attributes : {})}
       aria-label={block.type === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
-        "transition-all hover:shadow-soft h-full w-full m-0 p-0 border-0 box-border flex flex-col justify-center",
+        "transition-all hover:shadow-soft w-full m-0 p-0 border-0 box-border flex flex-col justify-center",
+        "h-full min-h-full overflow-hidden",
         block.type === 'event' ? "bg-blue-50 text-blue-800" : block.color,
         isDraggableTask && "cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-elevated z-50",
         isDraggableTask && "hover:scale-[1.02]"
       )}
     >
-      {/* Content container with proper vertical centering */}
-      <div className="px-3 h-full flex flex-col justify-center">
-        {/* Event/Task Title - Main content, centered */}
+      {/* Content container fills full height */}
+      <div className="h-full flex flex-col justify-center pl-3 pr-2">
+        {/* Event/Task Title - Left aligned with padding */}
         <div className={cn(
-          "font-medium leading-tight text-center",
+          "font-medium leading-tight text-left",
           block.type === 'event' ? "text-base text-blue-800" : "text-sm"
         )}>
           {block.title}
