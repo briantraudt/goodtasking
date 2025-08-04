@@ -114,7 +114,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
         {/* Event/Task Title - Enhanced Typography */}
         <div className={cn(
           "text-base leading-tight text-left font-bold",
-          block.type === 'event' ? "text-blue-900" : "text-gray-900"
+          block.type === 'event' ? "text-blue-600" : "text-gray-900"
         )}>
           {block.title}
         </div>
