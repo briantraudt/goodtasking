@@ -53,7 +53,7 @@ const DashboardView = ({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div className="space-y-1">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
-              {new Date().getHours() < 12 ? "Good Morning Brian" : "Good Afternoon Brian"}
+              Good Afternoon, Brian!
             </h1>
           </div>
         </div>

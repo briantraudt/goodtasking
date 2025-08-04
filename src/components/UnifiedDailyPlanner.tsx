@@ -588,58 +588,6 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
       modifiers={[restrictToFirstScrollableAncestor]}
     >
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
-        {/* Fixed Header Section */}
-        <div className="flex-shrink-0 flex gap-4 p-4 border-b bg-background">
-          {/* Left side header */}
-          <div className="flex-[7]">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Calendar className="h-6 w-6 text-primary" />
-                <h2 className="text-title">Daily Timeline</h2>
-                <Badge variant="secondary" className="rounded-xl font-medium">{format(new Date(), 'MMM d')}</Badge>
-                {isToday(new Date(selectedDate)) && (
-                  <Badge variant="outline" className="text-xs rounded-xl">
-                    {format(currentTime, 'h:mm a')}
-                  </Badge>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handlePlanMyDay}
-                  disabled={planningLoading || !isConnected}
-                  className="btn-gradient-hover flex items-center gap-2 rounded-xl font-semibold px-4 py-2 transition-all duration-200"
-                >
-                  {planningLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Calendar className="h-4 w-4" />
-                  )}
-                  Plan My Day
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleSmartSchedule}
-                  disabled={aiLoading}
-                  className="btn-gradient-hover flex items-center gap-2 rounded-xl font-semibold px-4 py-2 transition-all duration-200"
-                >
-                  {aiLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Sparkles className="h-4 w-4" />
-                  )}
-                  Smart Schedule
-                </Button>
-              </div>
-            </div>
-          </div>
-          {/* Right side header */}
-          <div className="flex-[3]">
-          </div>
-        </div>
-
         {/* Scrollable Content Section */}
         <div className="flex-1 flex gap-4 p-4 min-h-0">
           {/* Left side - Calendar Timeline (50%) */}
