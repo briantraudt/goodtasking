@@ -62,6 +62,45 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_webhooks: {
+        Row: {
+          channel_id: string
+          channel_token: string | null
+          created_at: string
+          expiration_time: string | null
+          id: string
+          last_notification: string | null
+          resource_id: string | null
+          status: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          channel_id: string
+          channel_token?: string | null
+          created_at?: string
+          expiration_time?: string | null
+          id?: string
+          last_notification?: string | null
+          resource_id?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          channel_id?: string
+          channel_token?: string | null
+          created_at?: string
+          expiration_time?: string | null
+          id?: string
+          last_notification?: string | null
+          resource_id?: string | null
+          status?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       daily_reminders: {
         Row: {
           created_at: string
@@ -195,6 +234,11 @@ export type Database = {
           ai_tone_preference: string | null
           auto_schedule_unscheduled: boolean | null
           calendar_last_sync: string | null
+          calendar_sync_token: string | null
+          calendar_watch_channel_id: string | null
+          calendar_watch_expiration: string | null
+          calendar_watch_resource_id: string | null
+          calendar_watch_token: string | null
           check_in_dates: string[] | null
           created_at: string
           current_streak: number | null
@@ -217,6 +261,11 @@ export type Database = {
           ai_tone_preference?: string | null
           auto_schedule_unscheduled?: boolean | null
           calendar_last_sync?: string | null
+          calendar_sync_token?: string | null
+          calendar_watch_channel_id?: string | null
+          calendar_watch_expiration?: string | null
+          calendar_watch_resource_id?: string | null
+          calendar_watch_token?: string | null
           check_in_dates?: string[] | null
           created_at?: string
           current_streak?: number | null
@@ -239,6 +288,11 @@ export type Database = {
           ai_tone_preference?: string | null
           auto_schedule_unscheduled?: boolean | null
           calendar_last_sync?: string | null
+          calendar_sync_token?: string | null
+          calendar_watch_channel_id?: string | null
+          calendar_watch_expiration?: string | null
+          calendar_watch_resource_id?: string | null
+          calendar_watch_token?: string | null
           check_in_dates?: string[] | null
           created_at?: string
           current_streak?: number | null

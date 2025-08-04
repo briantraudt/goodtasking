@@ -23,53 +23,74 @@ interface CalendarEvent {
   status?: string;
 }
 
+interface SyncRequest {
+  userId?: string;
+  source?: 'webhook' | 'manual' | 'polling';
+  useSyncToken?: boolean;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
+    // Get request data for webhook calls
+    let requestData: SyncRequest = {};
+    if (req.method === 'POST') {
+      try {
+        requestData = await req.json();
+      } catch {
+        // If no body or invalid JSON, use empty object
+      }
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
     )
 
-    // Get the authorization header from the request
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
-      throw new Error('No authorization header')
-    }
-
-    // Get user from the auth header and set the auth context
-    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''))
+    // Get user from auth token or request
+    let userId = requestData.userId;
+    let authHeader = req.headers.get('Authorization');
     
-    if (authError || !user) {
-      throw new Error('Invalid auth token')
+    if (!userId && authHeader) {
+      // Get user from the auth header
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser(authHeader.replace('Bearer ', ''))
+      
+      if (authError || !user) {
+        throw new Error('Invalid auth token')
+      }
+      userId = user.id;
     }
 
-    // Create a new client with the user's auth token for RLS
+    if (!userId) {
+      throw new Error('User ID required')
+    }
+
+    console.log('Calendar sync for user:', userId, 'Source:', requestData.source || 'unknown')
+
+    // Create authenticated client for this user
     const authenticatedClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
         global: {
-          headers: {
+          headers: authHeader ? {
             Authorization: authHeader,
-          },
+          } : {},
         },
       }
     )
 
-    console.log('Calendar sync for user:', user.id)
-
-    // Get the user's Google Calendar token using authenticated client
+    // Get the user's Google Calendar token
     const { data: tokenData, error: tokenError } = await authenticatedClient
       .from('google_calendar_tokens')
       .select('access_token, refresh_token, expires_at')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .single()
 
-    console.log('Token query result:', { tokenData, tokenError })
+    console.log('Token query result:', { tokenData: !!tokenData, tokenError })
 
     if (tokenError || !tokenData) {
       throw new Error('No Google Calendar token found')
@@ -110,23 +131,47 @@ Deno.serve(async (req) => {
           expires_at: newExpiresAt.toISOString(),
           updated_at: new Date().toISOString(),
         })
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
 
       tokenData.access_token = refreshData.access_token
     }
 
-    // Fetch events from Google Calendar (from beginning of today + next 30 days)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0) // Start from beginning of today
-    const timeMin = today.toISOString()
-    const timeMax = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
+    // Get current sync token for incremental sync
+    const { data: preferences } = await authenticatedClient
+      .from('user_preferences')
+      .select('calendar_sync_token')
+      .eq('user_id', userId)
+      .single();
 
-    const calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
-      `timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime&maxResults=2500`
+    const syncToken = preferences?.calendar_sync_token;
+    
+    // Prepare Google Calendar API request
+    const calendarUrl = new URL('https://www.googleapis.com/calendar/v3/calendars/primary/events');
+    
+    // Add query parameters for optimization
+    if (syncToken && requestData.useSyncToken !== false) {
+      // Use sync token for incremental sync
+      calendarUrl.searchParams.set('syncToken', syncToken);
+      console.log('Using sync token for incremental sync');
+    } else {
+      // Full sync - get events from beginning of today onwards
+      const today = new Date()
+      today.setHours(0, 0, 0, 0) // Start from beginning of today
+      const timeMin = today.toISOString()
+      const timeMax = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year from now
+      
+      calendarUrl.searchParams.set('timeMin', timeMin);
+      calendarUrl.searchParams.set('timeMax', timeMax);
+      calendarUrl.searchParams.set('singleEvents', 'true');
+      calendarUrl.searchParams.set('orderBy', 'startTime');
+      console.log('Performing full sync from', timeMin, 'to', timeMax);
+    }
+
+    calendarUrl.searchParams.set('maxResults', '2500');
 
     console.log('Fetching calendar events from Google API...')
     
-    const calendarResponse = await fetch(calendarUrl, {
+    const calendarResponse = await fetch(calendarUrl.toString(), {
       headers: {
         'Authorization': `Bearer ${tokenData.access_token}`,
       },
@@ -135,6 +180,13 @@ Deno.serve(async (req) => {
     if (!calendarResponse.ok) {
       const errorText = await calendarResponse.text()
       console.error('Google Calendar API error:', errorText)
+      
+      if (calendarResponse.status === 410 && syncToken) {
+        // Sync token is invalid, perform full sync
+        console.log('Sync token invalid, performing full sync...');
+        return await performFullSync(userId, tokenData.access_token, authenticatedClient);
+      }
+      
       throw new Error(`Failed to fetch calendar events: ${errorText}`)
     }
 
@@ -143,48 +195,61 @@ Deno.serve(async (req) => {
 
     console.log(`Fetched ${events.length} events from Google Calendar`)
 
-    // Delete existing events for this user (to handle deleted events)
-    await authenticatedClient
-      .from('calendar_events')
-      .delete()
-      .eq('user_id', user.id)
-
-    // Insert new events
-    if (events.length > 0) {
-      const eventsToInsert = events.map(event => {
-        // Handle both dateTime and date formats
-        const startTime = event.start.dateTime || event.start.date
-        const endTime = event.end.dateTime || event.end.date
-        const isAllDay = !event.start.dateTime
-
-        return {
-          user_id: user.id,
-          google_event_id: event.id,
-          title: event.summary || 'Untitled Event',
-          description: event.description || null,
-          start_time: startTime,
-          end_time: endTime,
-          location: event.location || null,
-          is_all_day: isAllDay,
-          status: event.status || 'confirmed',
+    // Process events based on sync type
+    if (syncToken && requestData.useSyncToken !== false) {
+      // Incremental sync - handle updates and deletions
+      for (const event of events) {
+        if (event.status === 'cancelled') {
+          // Delete cancelled events
+          await authenticatedClient
+            .from('calendar_events')
+            .delete()
+            .eq('user_id', userId)
+            .eq('google_event_id', event.id);
+          console.log('Deleted cancelled event:', event.id);
+        } else {
+          // Upsert updated/new events
+          await upsertEvent(event, userId, authenticatedClient);
         }
-      })
-
-      const { error: insertError } = await authenticatedClient
+      }
+    } else {
+      // Full sync - replace all events
+      await authenticatedClient
         .from('calendar_events')
-        .insert(eventsToInsert)
+        .delete()
+        .eq('user_id', userId)
 
-      if (insertError) {
-        console.error('Error inserting events:', insertError)
-        throw new Error('Failed to save calendar events')
+      // Insert new events
+      if (events.length > 0) {
+        const eventsToInsert = events
+          .filter(event => event.status !== 'cancelled')
+          .map(event => formatEventForDB(event, userId))
+
+        const { error: insertError } = await authenticatedClient
+          .from('calendar_events')
+          .insert(eventsToInsert)
+
+        if (insertError) {
+          console.error('Error inserting events:', insertError)
+          throw new Error('Failed to save calendar events')
+        }
       }
     }
 
-    // Update last sync time
+    // Update sync token and last sync time
+    const updates: any = {
+      calendar_last_sync: new Date().toISOString()
+    };
+    
+    if (calendarData.nextSyncToken) {
+      updates.calendar_sync_token = calendarData.nextSyncToken;
+      console.log('Updated sync token for incremental sync');
+    }
+
     await authenticatedClient
       .from('user_preferences')
-      .update({ calendar_last_sync: new Date().toISOString() })
-      .eq('user_id', user.id)
+      .update(updates)
+      .eq('user_id', userId)
 
     console.log(`Successfully synced ${events.length} calendar events`)
 
@@ -192,6 +257,8 @@ Deno.serve(async (req) => {
       JSON.stringify({ 
         success: true, 
         eventCount: events.length,
+        syncType: syncToken ? 'incremental' : 'full',
+        source: requestData.source || 'unknown',
         message: `Synced ${events.length} calendar events`
       }),
       {
@@ -213,3 +280,62 @@ Deno.serve(async (req) => {
     )
   }
 })
+
+async function performFullSync(userId: string, accessToken: string, supabaseClient: any) {
+  console.log('Performing full sync recovery for user:', userId);
+  
+  // Clear existing sync token
+  await supabaseClient
+    .from('user_preferences')
+    .update({ calendar_sync_token: null })
+    .eq('user_id', userId);
+  
+  // Recursively call sync without sync token
+  const fullSyncResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/calendar-sync`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      userId,
+      source: 'full_sync_recovery',
+      useSyncToken: false
+    })
+  });
+  
+  return fullSyncResponse;
+}
+
+async function upsertEvent(event: CalendarEvent, userId: string, supabaseClient: any) {
+  const eventData = formatEventForDB(event, userId);
+  
+  const { error } = await supabaseClient
+    .from('calendar_events')
+    .upsert(eventData, {
+      onConflict: 'user_id,google_event_id',
+      ignoreDuplicates: false
+    });
+
+  if (error) {
+    console.error('Error upserting event:', error);
+  }
+}
+
+function formatEventForDB(event: CalendarEvent, userId: string) {
+  // Handle both dateTime and date formats
+  const startTime = event.start.dateTime || event.start.date
+  const endTime = event.end.dateTime || event.end.date
+  const isAllDay = !event.start.dateTime
+
+  return {
+    user_id: userId,
+    google_event_id: event.id,
+    title: event.summary || 'Untitled Event',
+    description: event.description || null,
+    start_time: startTime,
+    end_time: endTime,
+    location: event.location || null,
+    is_all_day: isAllDay,
+    status: event.status || 'confirmed',
+  }
+}
