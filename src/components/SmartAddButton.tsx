@@ -38,9 +38,9 @@ const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddBut
               projects={projects}
               onCreateTask={onCreateTask}
               triggerButton={
-                <div className="w-full p-3 cursor-pointer rounded-lg bg-primary hover:bg-primary/90 transition-colors flex items-center gap-3">
-                  <CheckSquare className="h-4 w-4 text-white" />
-                  <span className="text-white font-medium">Task</span>
+                <div className="w-full p-3 cursor-pointer rounded-lg bg-primary hover:bg-primary text-white transition-colors flex items-center gap-3">
+                  <CheckSquare className="h-4 w-4" />
+                  <span className="font-medium">Task</span>
                 </div>
               }
             />
@@ -49,9 +49,9 @@ const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddBut
         <DropdownMenuItem asChild>
           <div className="rounded-lg overflow-hidden">
             <CreateProjectDialog onCreateProject={onCreateProject}>
-              <div className="w-full p-3 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-3">
-                <FolderPlus className="h-4 w-4 text-gray-700" />
-                <span className="text-gray-700 font-medium">Project</span>
+              <div className="w-full p-3 cursor-pointer rounded-lg hover:bg-primary hover:text-white transition-colors flex items-center gap-3">
+                <FolderPlus className="h-4 w-4" />
+                <span className="font-medium">Project</span>
               </div>
             </CreateProjectDialog>
           </div>
