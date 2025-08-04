@@ -11,6 +11,7 @@ import { Progress } from '@/components/ui/progress';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { supabase } from '@/integrations/supabase/client';
 import { Brain, Settings as SettingsIcon, User, AlertTriangle, Calendar, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -49,6 +50,7 @@ interface DashboardStats {
 const Settings = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
+  const { isConnected, loading: calendarLoading, connectCalendar, disconnectCalendar } = useGoogleCalendar();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -557,16 +559,35 @@ const Settings = () => {
 
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label>Google Calendar integration</Label>
+                  <Label>Google Calendar Integration</Label>
                   <p className="text-sm text-muted-foreground">
-                    Show your calendar events alongside tasks (read-only access)
+                    Connect your Google Calendar to show events alongside tasks (read-only access)
                   </p>
+                  {isConnected && (
+                    <p className="text-xs text-success">✓ Connected - Calendar events will sync automatically</p>
+                  )}
                 </div>
-                <Switch
-                  checked={preferences.google_calendar_enabled}
-                  onCheckedChange={(checked) => savePreferences({ google_calendar_enabled: checked })}
-                  disabled={saving}
-                />
+                <div className="flex gap-2">
+                  {isConnected ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={disconnectCalendar}
+                      disabled={calendarLoading}
+                    >
+                      Disconnect
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={connectCalendar}
+                      disabled={calendarLoading}
+                    >
+                      {calendarLoading ? 'Connecting...' : 'Connect Calendar'}
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
