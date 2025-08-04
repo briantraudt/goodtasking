@@ -87,7 +87,7 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
     <div
       ref={setNodeRef}
       className={cn(
-        "h-[50px] border-b border-sidebar-border transition-colors relative",
+        "h-[38px] border-b border-sidebar-border transition-colors relative",
         isOver && !hasOverlap && "bg-primary/10 border-primary/30 ring-1 ring-primary/20",
         isOver && hasOverlap && "bg-destructive/10 border-destructive/30 ring-1 ring-destructive/20",
         isCurrentTime && "bg-priority-medium/10"
@@ -642,8 +642,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
 
         {/* Scrollable Content Section */}
         <div className="flex-1 flex gap-4 p-4 min-h-0">
-          {/* Left side - Calendar Timeline (70%) */}
-          <Card className="flex-[7] flex flex-col">
+          {/* Left side - Calendar Timeline (35% - reduced by 50%) */}
+          <Card className="flex-[35] flex flex-col">
             <CardContent className="flex-1 overflow-y-auto p-4">
               {!isConnected && (
                 <div className="text-center py-4 text-muted-foreground">
@@ -723,9 +723,9 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                         const endTimeInMinutes = (blockEndHour - 7) * 60 + blockEndMinutes;
                         const durationInMinutes = endTimeInMinutes - startTimeInMinutes;
                         
-                        // Each hour is 100px (50px per 30-min slot), so 1 minute = 100/60 = 1.67px
-                        const pixelsPerMinute = 100 / 60;
-                        const topOffset = startTimeInMinutes * pixelsPerMinute;
+                         // Each hour is 76px (38px per 30-min slot), so 1 minute = 76/60 = 1.27px
+                         const pixelsPerMinute = 76 / 60;
+                         const topOffset = startTimeInMinutes * pixelsPerMinute;
                         const height = Math.max(durationInMinutes * pixelsPerMinute, 40); // Min 40px height
                         
                         return (
@@ -755,13 +755,13 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             </CardContent>
           </Card>
 
-          {/* Right side - Task Sidebar (30%) */}
+          {/* Right side - Task Sidebar (65% - increased to balance) */}
           <TaskSidebar 
             projects={projects}
             selectedDate={selectedDate}
             onCreateTask={onCreateTask}
             onCreateProject={onCreateProject}
-            className="flex-[3]"
+            className="flex-[65]"
           />
         </div>
 
