@@ -634,9 +634,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
               </div>
             </div>
           </div>
-          {/* Right side header - Tasks to Schedule */}
+          {/* Right side header */}
           <div className="flex-[3]">
-            <h2 className="text-title">Tasks to Schedule</h2>
           </div>
         </div>
 
