@@ -209,22 +209,17 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                 "mb-4 rounded-lg p-3 -mx-1",
                 "bg-gradient-to-r from-white/60 to-white/30 backdrop-blur-sm"
               )}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={cn(
-                      "w-3 h-3 rounded-full",
-                      projectColor.border.replace('border-', 'bg-')
-                    )} />
-                    <h3 className={cn(
-                      "font-bold text-base",
-                      projectColor.text
-                    )}>
-                      {project.name}
-                    </h3>
-                  </div>
-                  <Badge variant="secondary" className="text-xs font-medium">
-                    {projectTasks.length}
-                  </Badge>
+                <div className="flex items-center gap-2">
+                  <div className={cn(
+                    "w-3 h-3 rounded-full",
+                    projectColor.border.replace('border-', 'bg-')
+                  )} />
+                  <h3 className={cn(
+                    "font-bold text-base",
+                    projectColor.text
+                  )}>
+                    {project.name}
+                  </h3>
                 </div>
               </div>
 
