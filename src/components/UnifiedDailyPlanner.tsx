@@ -151,6 +151,13 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     return () => clearInterval(interval);
   }, []);
 
+  // Refresh calendar events when date changes
+  useEffect(() => {
+    if (isConnected && refreshEvents) {
+      refreshEvents(selectedDate);
+    }
+  }, [selectedDate, isConnected, refreshEvents]);
+
   const formatTime = (timeStr: string) => {
     try {
       // Handle different time formats from Google Calendar
