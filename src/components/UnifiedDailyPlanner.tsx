@@ -7,7 +7,8 @@ import { useAIScheduler } from '@/hooks/useAIScheduler';
 import { useAIPlanner } from '@/hooks/useAIPlanner';
 import InfiniteScrollCalendar from './InfiniteScrollCalendar';
 import TaskSidebar from '@/components/TaskSidebar';
-import AITaskSequencerInline from '@/components/AITaskSequencerInline';
+import AIChatBubble from '@/components/AIChatBubble';
+import FooterMetrics from '@/components/FooterMetrics';
 import DraggableTimelineTask from '@/components/DraggableTimelineTask';
 import { Calendar, Clock, Sparkles, Loader2, Undo2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, parseISO, isToday, addDays, subDays } from 'date-fns';
@@ -134,6 +135,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [lastAISequence, setLastAISequence] = useState<Date | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [dragOverTimeSlot, setDragOverTimeSlot] = useState<string | null>(null);
 
@@ -619,11 +621,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     >
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
-        {/* Redesigned Layout: Grid with White Containers */}
-        <div className="flex-1 grid grid-cols-12 gap-6 p-6 min-h-0 overflow-hidden">
+        {/* Clean 2-Column Layout */}
+        <div className="flex-1 grid grid-cols-2 gap-6 p-6 min-h-0 overflow-hidden pb-24">
           
-          {/* Calendar View - 8 columns (66%) */}
-          <div className="col-span-8 bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-calendar-section>
+          {/* Left Column - Calendar Timeline (50%) */}
+          <div className="bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-calendar-section>
             <div className="flex flex-col h-full">
               {/* Sticky Calendar Header */}
               <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
@@ -659,16 +661,16 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             </div>
           </div>
 
-          {/* Tasks Section - 4 columns (33%) */}
-          <div className="col-span-4 bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-tasks-section>
+          {/* Right Column - Tasks (50%) */}
+          <div className="bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-tasks-section>
             <div className="flex flex-col h-full">
               {/* Sticky Tasks Header */}
               <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">Tasks</h2>
               </div>
               
-              {/* Tasks Content with Internal Scroll */}
-              <div className="flex-1 overflow-y-auto max-h-[calc(100vh-300px)] scrollbar-none">
+              {/* Tasks Content with Independent Scroll */}
+              <div className="flex-1 overflow-y-auto scrollbar-none">
                 <TaskSidebar
                   projects={projects}
                   selectedDate={selectedDate}
@@ -679,33 +681,25 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
             </div>
           </div>
 
-          {/* AI Task Sequencer - Full Width Below */}
-          <div className="col-span-12 bg-white rounded-xl shadow-sm p-4 border border-t-4 border-t-blue-100 mt-6" data-ai-footer-section>
-            <div className="flex flex-col">
-              {/* Sticky AI Header */}
-              <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                  AI Task Sequencer
-                </h2>
-              </div>
-              
-              {/* AI Content */}
-              <div className="overflow-y-auto scrollbar-none" style={{ maxHeight: '30vh' }}>
-                <AITaskSequencerInline
-                  targetDate={selectedDate}
-                  onTasksScheduled={(tasks) => {
-                    // Handle AI-scheduled tasks - add them to timeline
-                    console.log('AI scheduled tasks:', tasks);
-                    // You can integrate these tasks into your timeline here
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
         </div>
 
+        {/* AI Chat Bubble - Floating */}
+        <AIChatBubble
+          targetDate={selectedDate}
+          projects={projects}
+          onTasksScheduled={(tasks) => {
+            setLastAISequence(new Date());
+            console.log('AI scheduled tasks:', tasks);
+            // You can integrate these tasks into your timeline here
+          }}
+        />
+
+        {/* Footer Metrics */}
+        <FooterMetrics
+          projects={projects}
+          selectedDate={selectedDate}
+          lastAISequence={lastAISequence}
+        />
 
         {/* Drag Overlay with Ghost Preview */}
         <DragOverlay>
