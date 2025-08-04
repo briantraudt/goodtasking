@@ -1,4 +1,4 @@
-import { Code2, LogOut, User, Settings as SettingsIcon } from 'lucide-react';
+import { CheckSquare, LogOut, User, Settings as SettingsIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -23,7 +23,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 w-full">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <Code2 className="h-5 w-5 text-primary-foreground" />
+              <CheckSquare className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">Good Tasking</h1>
