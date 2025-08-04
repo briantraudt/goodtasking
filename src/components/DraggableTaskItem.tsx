@@ -77,17 +77,17 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {/* Project name at top in small text */}
       {task.vibe_projects?.name && (
         <div className="text-xs text-muted-foreground mb-2">
-          📁 {task.vibe_projects.name}
+          {task.vibe_projects.name}
         </div>
       )}
       
-      {/* Task title centered in large text */}
-      <div className="flex-1 flex items-center justify-center mb-3">
-        <h4 className="font-semibold text-base text-center leading-tight text-foreground">{task.title}</h4>
+      {/* Task title left-aligned in large text */}
+      <div className="flex-1 flex items-center mb-3">
+        <h4 className="font-semibold text-base leading-tight text-foreground">{task.title}</h4>
       </div>
       
-      {/* Duration and date at bottom */}
-      <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+      {/* Duration and date at bottom, left-aligned */}
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
         {task.estimated_duration && (
           <div className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
