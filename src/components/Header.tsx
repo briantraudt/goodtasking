@@ -1,4 +1,4 @@
-import { CheckSquare, LogOut, User, Settings as SettingsIcon } from 'lucide-react';
+import { CheckSquare, LogOut, User, Settings as SettingsIcon, CalendarCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -23,11 +23,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16 w-full">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 flex items-center justify-center">
-              <img 
-                src="/lovable-uploads/2652078d-7bef-4d7c-951a-1712b7c246a6.png" 
-                alt="Good Tasking Logo" 
-                className="h-8 w-8"
-              />
+              <CalendarCheck className="h-8 w-8 text-primary" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">Good Tasking</h1>
