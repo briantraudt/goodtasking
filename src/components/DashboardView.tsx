@@ -53,20 +53,8 @@ const DashboardView = ({
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
           <div className="space-y-1">
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
-              {viewMode === 'planner' ? `Hi ${userName} 🤖 Let's plan your day!` : 
-               viewMode === 'today' ? `Hi ${userName} 👋` : 
-               `Hi ${userName} 👋 Here's your week.`}
+              {new Date().getHours() < 12 ? "Good Morning Brian" : "Good Afternoon Brian"}
             </h1>
-            {viewMode === 'planner' && (
-              <p className="text-sm sm:text-base text-muted-foreground">
-                AI-powered scheduling with your calendar integration
-              </p>
-            )}
-            {viewMode === 'week' && (
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Your weekly overview and planning space
-              </p>
-            )}
           </div>
           
           <div className="flex items-center gap-1 p-1 bg-muted rounded-lg self-start sm:self-auto">
