@@ -723,10 +723,10 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                         const endTimeInMinutes = (blockEndHour - 7) * 60 + blockEndMinutes;
                         const durationInMinutes = endTimeInMinutes - startTimeInMinutes;
                         
-                         // Each hour is 76px (38px per 30-min slot), so 1 minute = 76/60 = 1.27px
-                         const pixelsPerMinute = 76 / 60;
-                         const topOffset = startTimeInMinutes * pixelsPerMinute;
-                        const height = Math.max(durationInMinutes * pixelsPerMinute, 40); // Min 40px height
+                        // Each hour is 76px (38px per 30-min slot), so we round to ensure alignment
+                        const pixelsPerMinute = 76 / 60;
+                        const topOffset = Math.round(startTimeInMinutes * pixelsPerMinute);
+                        const height = Math.max(Math.round(durationInMinutes * pixelsPerMinute), 38); // Min 38px height to match slot height
                         
                         return (
                           <div 
