@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
+import AddTaskDialog from '@/components/AddTaskDialog';
 import { Plus, Filter } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
@@ -30,10 +31,11 @@ interface Project {
 interface TaskSidebarProps {
   projects: Project[];
   selectedDate: string;
+  onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
   className?: string;
 }
 
-const TaskSidebar = ({ projects, selectedDate, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, className }: TaskSidebarProps) => {
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
@@ -103,7 +105,10 @@ const TaskSidebar = ({ projects, selectedDate, className }: TaskSidebarProps) =>
     );
   }, [projects]);
 
-  const getTaskCountByPriority = (priority: string) => {
+  const handleCreateTask = (projectId: string, title: string, scheduledDate: Date) => {
+    onCreateTask?.(projectId, title, undefined, scheduledDate);
+  };
+    const getTaskCountByPriority = (priority: string) => {
     return unscheduledTasks.filter(task => task.priority === priority).length;
   };
 
@@ -123,10 +128,16 @@ const TaskSidebar = ({ projects, selectedDate, className }: TaskSidebarProps) =>
               {unscheduledTasks.length}
             </Badge>
           </CardTitle>
-          <Button variant="outline" size="sm">
-            <Plus className="h-3 w-3 mr-1" />
-            Add
-          </Button>
+          <AddTaskDialog
+            projects={projects.map(p => ({ id: p.id, name: p.name }))}
+            onCreateTask={handleCreateTask}
+            triggerButton={
+              <Button variant="outline" size="sm">
+                <Plus className="h-3 w-3 mr-1" />
+                Add
+              </Button>
+            }
+          />
         </div>
         
         {/* Priority Summary */}

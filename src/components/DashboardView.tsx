@@ -113,6 +113,7 @@ const DashboardView = ({
         <UnifiedDailyPlanner
           projects={projects}
           onUpdateTask={onUpdateTask}
+          onCreateTask={onCreateTask}
         />
       ) : viewMode === 'today' ? (
         <TodayView
