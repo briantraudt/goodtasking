@@ -586,7 +586,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
       collisionDetection={pointerWithin}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
-      <div className={cn("h-screen overflow-hidden flex flex-col", className)}>
+      <div className={cn("h-full overflow-hidden flex flex-col", className)}>
         {/* Fixed Header Section */}
         <div className="flex-shrink-0 flex gap-4 p-4 border-b bg-background">
           {/* Left side header */}
