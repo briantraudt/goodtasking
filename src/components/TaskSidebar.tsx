@@ -137,8 +137,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     >
       {/* No header section needed - Add button is now in parent component */}
 
-      {/* Filter Section */}
-      <div className="mb-6">
+      {/* Filter Section - Moved to right */}
+      <div className="mb-6 flex justify-end">
         <TaskFilters
           projects={projectsWithTasks}
           projectFilter={projectFilter}
@@ -155,8 +155,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         />
       </div>
 
-      {/* Projects Grid - 3 Columns with Bold Design */}
-      <div className="grid grid-cols-3 gap-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+      {/* Projects Grid - 2 Columns for Wider Tasks */}
+      <div className="grid grid-cols-2 gap-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
         {projectsWithTasks.map((project, index) => {
           // Get filtered tasks for this project
           const projectTasks = allTasks.filter(task => {
