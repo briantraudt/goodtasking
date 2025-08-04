@@ -265,61 +265,7 @@ const InfiniteScrollCalendar = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Fixed Header */}
-      <div className="sticky top-0 z-30 bg-white border-b border-gray-200 p-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                const prevDay = subDays(new Date(visibleDate), 1);
-                const prevDateStr = format(prevDay, 'yyyy-MM-dd');
-                setVisibleDate(prevDateStr);
-                onDateChange(prevDateStr);
-              }}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Previous day"
-            >
-              ←
-            </button>
-            <h2 className="text-lg font-semibold min-w-[200px] text-center">
-              {(() => {
-                const date = new Date(visibleDate);
-                const dayName = format(date, 'EEEE');
-                const monthDay = format(date, 'MMMM d');
-                
-                if (isToday(date)) {
-                  return `Today, ${monthDay}`;
-                }
-                return `${dayName}, ${monthDay}`;
-              })()}
-            </h2>
-            <button
-              onClick={() => {
-                const nextDay = addDays(new Date(visibleDate), 1);
-                const nextDateStr = format(nextDay, 'yyyy-MM-dd');
-                setVisibleDate(nextDateStr);
-                onDateChange(nextDateStr);
-              }}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Next day"
-            >
-              →
-            </button>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                const today = format(new Date(), 'yyyy-MM-dd');
-                setVisibleDate(today);
-                onDateChange(today);
-              }}
-              className="px-3 py-1 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-            >
-              Today
-            </button>
-          </div>
-        </div>
-      </div>
+      {/* Header removed - now handled by parent component */}
       
       {/* Infinite Scrollable Timeline */}
       <div 
