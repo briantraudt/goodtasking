@@ -69,37 +69,38 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "p-3 rounded-lg border-2 cursor-grab transition-all hover:shadow-soft bg-white",
+        "p-3 rounded-lg border-2 cursor-grab transition-all hover:shadow-soft bg-white flex flex-col min-h-[100px]",
         getProjectBorderColor(task.vibe_projects?.name),
         isDragging && "opacity-50 shadow-elevated z-50"
       )}
     >
-      <div className="flex items-start justify-between mb-2">
-        <h4 className="font-medium text-sm truncate flex-1 text-foreground">{task.title}</h4>
+      {/* Project name at top in small text */}
+      {task.vibe_projects?.name && (
+        <div className="text-xs text-muted-foreground mb-2">
+          📁 {task.vibe_projects.name}
+        </div>
+      )}
+      
+      {/* Task title centered in large text */}
+      <div className="flex-1 flex items-center justify-center mb-3">
+        <h4 className="font-semibold text-base text-center leading-tight text-foreground">{task.title}</h4>
       </div>
       
-      <div className="space-y-1">
-        {task.vibe_projects?.name && (
-          <div className="text-xs text-muted-foreground">
-            📁 {task.vibe_projects.name}
+      {/* Duration and date at bottom */}
+      <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+        {task.estimated_duration && (
+          <div className="flex items-center gap-1">
+            <Clock className="h-3 w-3" />
+            {task.estimated_duration}m
           </div>
         )}
         
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          {task.estimated_duration && (
-            <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              {task.estimated_duration}m
-            </div>
-          )}
-          
-          {task.due_date && (
-            <div className="flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              {format(new Date(task.due_date), 'MMM d')}
-            </div>
-          )}
-        </div>
+        {task.due_date && (
+          <div className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            {format(new Date(task.due_date), 'MMM d')}
+          </div>
+        )}
       </div>
     </div>
   );
