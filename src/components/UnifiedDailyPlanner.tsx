@@ -586,10 +586,10 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
       collisionDetection={pointerWithin}
       modifiers={[restrictToFirstScrollableAncestor]}
     >
-      <div className={cn("flex gap-4 h-full relative", className)}>
+      <div className={cn("flex gap-4 h-screen overflow-hidden relative", className)}>
         {/* Left side - Calendar Timeline (70%) */}
-        <Card className="flex-[7]">
-          <CardHeader>
+        <Card className="flex-[7] flex flex-col">
+          <CardHeader className="flex-shrink-0">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
@@ -633,7 +633,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 overflow-y-auto min-h-0">
             {!isConnected && (
               <div className="text-center py-4 text-muted-foreground">
                 <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
