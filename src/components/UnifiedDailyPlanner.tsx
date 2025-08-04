@@ -212,17 +212,14 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     const blocks: TimeBlock[] = [];
 
     // Filter events for the selected date and add to blocks
-    // Parse selected date in local timezone
-    const selectedDateObj = new Date(selectedDate + 'T00:00:00');
-    const startOfDay = new Date(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), selectedDateObj.getDate(), 0, 0, 0);
-    const endOfDay = new Date(selectedDateObj.getFullYear(), selectedDateObj.getMonth(), selectedDateObj.getDate(), 23, 59, 59, 999);
-    
     events
       .filter(event => {
-        // Parse event start time and convert to local timezone
+        // Parse event start time (it's in UTC)
         const eventStart = new Date(event.start);
-        // Compare using local dates to handle timezone properly
-        return eventStart >= startOfDay && eventStart <= endOfDay;
+        // Get the local date for the event
+        const eventLocalDate = eventStart.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+        // Compare with selected date
+        return eventLocalDate === selectedDate;
       })
       .forEach(event => {
         blocks.push({
