@@ -648,7 +648,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <div className="text-sm font-medium px-3 py-1 bg-muted rounded-md min-w-[120px] text-center">
+                  <div className="text-sm font-medium px-3 py-1 bg-primary text-white rounded-md min-w-[120px] text-center">
                     {formatSelectedDate()}
                   </div>
                   <Button
