@@ -153,7 +153,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       </div>
 
       {/* Projects Grid - 3 Columns */}
-      <div className="grid grid-cols-1 gap-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 400px)' }}>
+      <div className="grid grid-cols-3 gap-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 400px)' }}>
         {projectsWithTasks.map(project => {
           // Get filtered tasks for this project
           const projectTasks = allTasks.filter(task => {
