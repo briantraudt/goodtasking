@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Plus } from 'lucide-react';
+import { Plus, CheckSquare, FolderPlus } from 'lucide-react';
 import AddTaskDialog from '@/components/AddTaskDialog';
 import CreateProjectDialog from '@/components/CreateProjectDialog';
 
@@ -31,22 +31,28 @@ const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddBut
           Add
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40 rounded-xl shadow-elevated bg-white z-50">
+      <DropdownMenuContent align="end" className="w-48 rounded-xl shadow-elevated bg-white z-50 p-2">
         <DropdownMenuItem asChild>
-          <div className="p-3 cursor-pointer rounded-lg hover:bg-blue-100 hover:text-blue-800 transition-colors">
+          <div className="rounded-lg overflow-hidden">
             <AddTaskDialog
               projects={projects}
               onCreateTask={onCreateTask}
               triggerButton={
-                <span className="text-task-title text-gray-900 hover:text-blue-800">Task</span>
+                <div className="w-full p-3 cursor-pointer rounded-lg bg-primary hover:bg-primary/90 transition-colors flex items-center gap-3">
+                  <CheckSquare className="h-4 w-4 text-white" />
+                  <span className="text-white font-medium">Task</span>
+                </div>
               }
             />
           </div>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <div className="p-3 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors">
+          <div className="rounded-lg overflow-hidden">
             <CreateProjectDialog onCreateProject={onCreateProject}>
-              <span className="text-task-title text-gray-900">Project</span>
+              <div className="w-full p-3 cursor-pointer rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-3">
+                <FolderPlus className="h-4 w-4 text-gray-700" />
+                <span className="text-gray-700 font-medium">Project</span>
+              </div>
             </CreateProjectDialog>
           </div>
         </DropdownMenuItem>
