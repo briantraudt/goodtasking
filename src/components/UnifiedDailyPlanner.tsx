@@ -635,17 +635,10 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           <div className="flex-[50] overflow-y-auto" data-calendar-section>
             <Card className="flex flex-col rounded-xl border shadow-soft h-fit">
             <CardHeader className="pb-3 sticky top-0 bg-white z-50 border-b shadow-sm">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-foreground">Calendar</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {(() => {
-                      const [year, month, day] = selectedDate.split('-').map(Number);
-                      const date = new Date(year, month - 1, day);
-                      return format(date, 'EEEE, MMMM d');
-                    })()}
-                  </p>
-                </div>
+               <div className="flex items-center justify-between">
+                 <div>
+                   <h3 className="text-xl font-bold text-foreground">Calendar</h3>
+                 </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
