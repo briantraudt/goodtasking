@@ -114,16 +114,16 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
         {/* Event/Task Title - Enhanced Typography */}
         <div className={cn(
           "text-sm leading-tight text-left font-bold",
-          block.type === 'event' ? "text-blue-400" : "text-gray-900"
+          block.type === 'event' ? "text-gray-900" : "text-gray-900"
         )}>
           {block.title}
         </div>
       </div>
       
-      {/* Header with badge - positioned in bottom-right for events */}
+      {/* Header with badge - positioned in top-right for events */}
       <div className={cn(
         "absolute flex items-center gap-2",
-        block.type === 'event' ? "bottom-2 right-2" : "top-2 right-2"
+        block.type === 'event' ? "top-2 right-2" : "top-2 right-2"
       )}>
         {isDraggableTask && (
           <div className="flex items-center gap-1 text-xs opacity-70">
