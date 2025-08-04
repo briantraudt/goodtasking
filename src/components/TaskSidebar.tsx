@@ -182,7 +182,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
 
         {/* Task List - Increased Height for More Compact Cards */}
         <ScrollArea className="h-[500px] pr-2">
-          <div className="space-y-1.5">
+          <div className="space-y-0">
             {filteredTasks.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-sm">
                 {unscheduledTasks.length === 0 ? (

@@ -24,64 +24,48 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
     data: task,
   });
 
-  const getProjectStyling = (projectName?: string) => {
-    if (!projectName) return {
-      bg: 'bg-gray-50',
-      text: 'text-gray-900',
-      border: 'border-gray-200'
-    };
-    
-    // Project-specific color schemes
-    const projectStyles = {
-      'DGTL Dental': { bg: 'bg-blue-50', text: 'text-blue-900', border: 'border-blue-200' },
-      'Ryco Roofing': { bg: 'bg-green-50', text: 'text-green-900', border: 'border-green-200' },
-      'Personal': { bg: 'bg-purple-50', text: 'text-purple-900', border: 'border-purple-200' },
-      'Work': { bg: 'bg-orange-50', text: 'text-orange-900', border: 'border-orange-200' },
-      'Marketing': { bg: 'bg-pink-50', text: 'text-pink-900', border: 'border-pink-200' },
-      'Development': { bg: 'bg-indigo-50', text: 'text-indigo-900', border: 'border-indigo-200' },
-      'Design': { bg: 'bg-cyan-50', text: 'text-cyan-900', border: 'border-cyan-200' },
-      'Business': { bg: 'bg-amber-50', text: 'text-amber-900', border: 'border-amber-200' },
-    };
-    
-    // Return project-specific styling or generate from hash
-    if (projectStyles[projectName as keyof typeof projectStyles]) {
-      return projectStyles[projectName as keyof typeof projectStyles];
+  const getCardStyling = (projectName?: string, priority?: string) => {
+    // Subtle backgrounds based on priority/project, keeping it minimal
+    if (priority === 'high') {
+      return {
+        bg: 'bg-red-50/50',
+        border: 'border-red-100',
+        hover: 'hover:bg-red-50'
+      };
+    }
+    if (priority === 'medium') {
+      return {
+        bg: 'bg-yellow-50/50',
+        border: 'border-yellow-100',
+        hover: 'hover:bg-yellow-50'
+      };
+    }
+    if (priority === 'low') {
+      return {
+        bg: 'bg-green-50/50',
+        border: 'border-green-100',
+        hover: 'hover:bg-green-50'
+      };
     }
     
-    // Generate consistent colors for unknown projects
-    const hash = projectName.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    
-    const colors = [
-      { bg: 'bg-red-50', text: 'text-red-900', border: 'border-red-200' },
-      { bg: 'bg-yellow-50', text: 'text-yellow-900', border: 'border-yellow-200' },
-      { bg: 'bg-green-50', text: 'text-green-900', border: 'border-green-200' },
-      { bg: 'bg-blue-50', text: 'text-blue-900', border: 'border-blue-200' },
-      { bg: 'bg-purple-50', text: 'text-purple-900', border: 'border-purple-200' },
-      { bg: 'bg-pink-50', text: 'text-pink-900', border: 'border-pink-200' },
-      { bg: 'bg-indigo-50', text: 'text-indigo-900', border: 'border-indigo-200' },
-      { bg: 'bg-cyan-50', text: 'text-cyan-900', border: 'border-cyan-200' }
-    ];
-    
-    return colors[Math.abs(hash) % colors.length];
-  };
-
-  const getPriorityBadge = (priority?: string) => {
-    if (!priority) return null;
-    
-    const priorityStyles = {
-      'high': { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-200' },
-      'medium': { bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-200' },
-      'low': { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200' },
+    // Default neutral clean tone
+    return {
+      bg: 'bg-gray-50/50',
+      border: 'border-gray-100',
+      hover: 'hover:bg-gray-100/70'
     };
-    
-    return priorityStyles[priority as keyof typeof priorityStyles];
   };
 
-  const projectStyling = getProjectStyling(task.vibe_projects?.name);
-  const priorityBadge = getPriorityBadge(task.priority);
+  const getPriorityIcon = (priority?: string) => {
+    switch (priority) {
+      case 'high': return '🔴';
+      case 'medium': return '🟡'; 
+      case 'low': return '🟢';
+      default: return null;
+    }
+  };
+
+  const cardStyling = getCardStyling(task.vibe_projects?.name, task.priority);
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
@@ -94,67 +78,64 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "task-card p-3 rounded-lg border cursor-grab active:cursor-grabbing transition-all duration-200",
-        "hover:scale-[1.01] hover:shadow-md shadow-sm",
-        "flex flex-col gap-1 h-[72px] relative group",
-        projectStyling.bg,
-        projectStyling.text,
-        projectStyling.border,
-        isDragging && "opacity-50 shadow-lg z-40 rotate-2 scale-105"
+        "task-card flex flex-col cursor-grab active:cursor-grabbing transition-all duration-200",
+        "py-2 px-3 rounded-[10px] border mb-2 relative group",
+        "shadow-[0_1px_2px_rgba(0,0,0,0.04)] font-inter h-16",
+        cardStyling.bg,
+        cardStyling.border,
+        cardStyling.hover,
+        "hover:shadow-[0_2px_4px_rgba(0,0,0,0.08)]",
+        isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105"
       )}
     >
-      {/* Top Row: Project Name, Duration, Priority */}
-      <div className="flex justify-between items-center">
+      {/* Top Row - Meta (small, muted) */}
+      <div className="flex justify-between items-center text-xs text-gray-500 mb-1">
         <div className="flex items-center gap-2">
           {task.vibe_projects?.name && (
-            <span className="text-xs font-medium text-muted-foreground bg-muted/50 px-2 py-0.5 rounded">
-              {task.vibe_projects.name}
-            </span>
+            <span className="font-medium">{task.vibe_projects.name}</span>
           )}
         </div>
-        
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
           {task.estimated_duration && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/30 px-1.5 py-0.5 rounded">
-              <Clock className="h-3 w-3" />
-              <span className="font-medium">{task.estimated_duration}m</span>
+            <div className="flex items-center gap-1">
+              <span>•</span>
+              <span>{task.estimated_duration}m</span>
             </div>
-          )}
-          
-          {priorityBadge && (
-            <span 
-              className={cn(
-                "text-xs font-semibold px-1.5 py-0.5 rounded border",
-                priorityBadge.bg,
-                priorityBadge.text,
-                priorityBadge.border
-              )}
-            >
-              {task.priority?.charAt(0).toUpperCase()}
-            </span>
           )}
         </div>
       </div>
       
-      {/* Task Title - Emphasized and Centered */}
-      <div className="flex-1 flex items-center justify-center">
-        <h4 className="text-base font-bold leading-tight text-center line-clamp-2">
+      {/* Title - Primary focus (large, bold, single-line) */}
+      <div className="flex-1 flex items-center">
+        <h4 className="text-base font-semibold text-gray-900 leading-tight truncate">
           {task.title}
         </h4>
       </div>
       
-      {/* Bottom Row: Due Date (if exists) */}
-      {task.due_date && (
-        <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
-          <span className="font-medium">
-            Due {format(new Date(task.due_date), 'MMM d')}
-          </span>
+      {/* Footer - Optional (due date + priority) */}
+      {(task.due_date || task.priority) && (
+        <div className="flex justify-between items-center text-xs text-gray-500 mt-1">
+          <div>
+            {task.due_date && (
+              <span className="font-medium">
+                {format(new Date(task.due_date), 'MMM d')}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            {getPriorityIcon(task.priority) && (
+              <>
+                <span className="text-[10px]">{getPriorityIcon(task.priority)}</span>
+                <span className="capitalize">{task.priority}</span>
+              </>
+            )}
+          </div>
         </div>
       )}
 
       {/* Drag Handle (appears on hover) */}
-      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <GripVertical className="h-3 w-3 text-muted-foreground/50" />
+      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-60 transition-opacity">
+        <GripVertical className="h-3 w-3 text-gray-400" />
       </div>
     </div>
   );
