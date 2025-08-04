@@ -113,8 +113,8 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       <div className="h-full flex flex-col justify-center">
         {/* Event/Task Title - Enhanced Typography */}
         <div className={cn(
-          "text-base leading-tight text-left font-bold",
-          block.type === 'event' ? "text-blue-600" : "text-gray-900"
+          "text-sm leading-tight text-left font-bold",
+          block.type === 'event' ? "text-blue-400" : "text-gray-900"
         )}>
           {block.title}
         </div>
@@ -132,7 +132,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
           </div>
         )}
         {block.type === 'event' ? (
-          <Calendar className="w-4 h-4 text-blue-600" />
+          <Calendar className="w-3.5 h-3.5 text-blue-400" />
         ) : (
           <span className="px-2 py-1 text-xs rounded-full border bg-background/50 border-current">
             Task
