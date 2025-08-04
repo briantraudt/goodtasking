@@ -648,8 +648,22 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                       isCurrentTime={isCurrentTimeSlot(hour, 'first')}
                     >
                        {timeBlocks
-                        .filter(block => block.start.startsWith(`${hour.toString().padStart(2, '0')}:0`))
-                        .map(block => {
+                         .filter(block => {
+                           const blockStartHour = parseInt(block.start.split(':')[0]);
+                           const blockStartMinutes = parseInt(block.start.split(':')[1]);
+                           const blockEndHour = parseInt(block.end.split(':')[0]);
+                           const blockEndMinutes = parseInt(block.end.split(':')[1]);
+                           
+                           // Check if this block starts within this 30-minute time slot
+                           const slotStart = hour * 60; // Start of this hour in minutes
+                           const slotEnd = hour * 60 + 30; // End of first half hour in minutes
+                           const blockStartInMinutes = blockStartHour * 60 + blockStartMinutes;
+                           const blockEndInMinutes = blockEndHour * 60 + blockEndMinutes;
+                           
+                            // Show block only if it actually overlaps with this time slot
+                            return (blockStartInMinutes < slotEnd && blockEndInMinutes > slotStart);
+                         })
+                         .map(block => {
                           const relatedTask = block.type === 'task' ? 
                             scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
                           
@@ -671,9 +685,23 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
                       hasOverlap={hasTimeSlotOverlap(hour, 'second')}
                       isCurrentTime={isCurrentTimeSlot(hour, 'second')}
                     >
-                      {timeBlocks
-                        .filter(block => block.start.startsWith(`${hour.toString().padStart(2, '0')}:3`))
-                        .map(block => {
+                       {timeBlocks
+                         .filter(block => {
+                           const blockStartHour = parseInt(block.start.split(':')[0]);
+                           const blockStartMinutes = parseInt(block.start.split(':')[1]);
+                           const blockEndHour = parseInt(block.end.split(':')[0]);
+                           const blockEndMinutes = parseInt(block.end.split(':')[1]);
+                           
+                           // Check if this block is active during this 30-minute time slot
+                           const slotStart = hour * 60 + 30; // Start of second half hour in minutes
+                           const slotEnd = hour * 60 + 60; // End of this hour in minutes
+                           const blockStartInMinutes = blockStartHour * 60 + blockStartMinutes;
+                           const blockEndInMinutes = blockEndHour * 60 + blockEndMinutes;
+                           
+                            // Show block only if it actually overlaps with this time slot
+                            return (blockStartInMinutes < slotEnd && blockEndInMinutes > slotStart);
+                         })
+                         .map(block => {
                           const relatedTask = block.type === 'task' ? 
                             scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
                           
