@@ -100,12 +100,11 @@ const TaskFilters = ({
           <Button
             variant="outline"
             size="sm"
-            className="w-full justify-start gap-2 h-8 text-xs"
+            className="w-full justify-center gap-2 h-8 text-xs"
           >
             <SlidersHorizontal className="h-3 w-3" />
-            Filter Tasks
             {hasActiveFilters && (
-              <Badge variant="secondary" className="ml-auto h-4 px-1 text-[10px]">
+              <Badge variant="secondary" className="h-4 px-1 text-[10px]">
                 {activeFilters.length}
               </Badge>
             )}
