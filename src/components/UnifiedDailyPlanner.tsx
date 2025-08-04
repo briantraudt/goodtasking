@@ -625,21 +625,54 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           {/* Left Column - Calendar Timeline (50%) */}
           <div className="bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-calendar-section>
             <div className="flex flex-col h-full">
-              {/* Sticky Calendar Header with Good Business Navy */}
+              {/* Clean Calendar Header - Only Date Navigation */}
               <div className="sticky top-0 z-10 bg-white pb-4 border-b border-timeline-gray mb-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-navy-blue flex items-center gap-2">
-                    <Calendar className="h-5 w-5 text-forest-green" />
-                    Calendar
-                  </h2>
-                  <div className="text-sm font-semibold text-navy-blue">
+                <div className="flex items-center justify-center gap-4">
+                  <button 
+                    onClick={() => {
+                      const prevDay = format(subDays(new Date(selectedDate), 1), 'yyyy-MM-dd');
+                      setSelectedDate(prevDay);
+                    }}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    ←
+                  </button>
+                  <span className="font-semibold text-lg text-[#1E3A5F]">
                     {format(new Date(selectedDate), 'EEEE, MMMM d')}
-                  </div>
+                  </span>
+                  <button 
+                    onClick={() => {
+                      const nextDay = format(addDays(new Date(selectedDate), 1), 'yyyy-MM-dd');
+                      setSelectedDate(nextDay);
+                    }}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    →
+                  </button>
+                </div>
+                <div className="flex justify-center mt-2">
+                  <button
+                    onClick={() => {
+                      const today = format(new Date(), 'yyyy-MM-dd');
+                      setSelectedDate(today);
+                      // Scroll to current time will be handled by the calendar component
+                    }}
+                    className="px-3 py-1 text-sm bg-forest-green text-white rounded-md hover:bg-forest-green/90 transition-colors"
+                  >
+                    Today
+                  </button>
                 </div>
               </div>
               
-              {/* Calendar Content */}
-              <div className="flex-1 overflow-hidden">
+              {/* Calendar Content with Proper Scrolling */}
+              <div 
+                className="flex-1 overflow-hidden"
+                style={{
+                  maxHeight: 'calc(100vh - 300px)',
+                  overflowY: 'scroll',
+                  scrollBehavior: 'smooth'
+                }}
+              >
                 <InfiniteScrollCalendar
                   selectedDate={selectedDate}
                   onDateChange={setSelectedDate}

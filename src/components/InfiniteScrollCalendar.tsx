@@ -355,34 +355,42 @@ const InfiniteScrollCalendar = ({
                 }}
               >
                 <div className={cn(
-                  "grid grid-cols-[90px_1fr] h-full border-t",
-                  "border-timeline-gray", // Good Business timeline gray
-                  // Add subtle alternating backgrounds for better visual hierarchy
+                  "grid grid-cols-[100px_1fr] h-full",
+                  // Add alternating backgrounds for better visual hierarchy
                   Math.floor(item.hour / 2) % 2 === 0 ? "bg-off-white/50" : "bg-white"
                 )}>
-                  {/* Time Label - Navy styled headers */}
+                  {/* Time Label - Navy background with white text */}
                   {isHourStart && (
-                    <div className="sticky left-0 bg-navy-blue text-white text-sm font-bold text-center border-r-2 border-timeline-gray flex items-center justify-center row-span-2"
-                         style={{ height: `${HOUR_HEIGHT}px` }}>
+                    <div 
+                      className="sticky left-0 text-white text-sm font-medium text-center border-r-2 border-timeline-gray flex items-center justify-center row-span-2 py-2 px-3"
+                      style={{ 
+                        height: `${HOUR_HEIGHT}px`,
+                        backgroundColor: '#1E3A5F' // Navy background
+                      }}
+                    >
                       {formatHour(item.hour)}
                     </div>
                   )}
                   {!isHourStart && (
-                    <div className="border-r-2 border-timeline-gray bg-navy-blue"></div>
+                    <div 
+                      className="border-r-2 border-timeline-gray"
+                      style={{ backgroundColor: '#1E3A5F' }}
+                    />
                   )}
                   
-                  {/* Time Slot with Good Business styling */}
+                  {/* Time Slot with enhanced visual hierarchy */}
                   <div 
                     className={cn(
                       "relative border-r transition-all duration-200 px-2 py-1",
-                      "border-timeline-gray", // Timeline gray borders
+                      "border-timeline-gray bg-white", // Clean white background
                       isCurrentTimeSlot(item.date, item.hour, item.period) 
-                        ? 'bg-forest-green/10 ring-1 ring-current-time-green/30' 
+                        ? 'ring-2 ring-current-time-green/30 bg-current-time-green/5' 
                         : 'hover:bg-forest-green/5',
                       item.period === 'second' ? 'border-b border-timeline-gray' : '',
                       "min-h-[40px]" // Increased padding for better visual hierarchy
                     )}
                   >
+                    {/* Current time indicator with enhanced styling */}
                     {isCurrentTimeSlot(item.date, item.hour, item.period) && (
                       <div className="absolute inset-0 bg-current-time-green/10 animate-pulse border border-current-time-green/20 rounded-sm" />
                     )}
@@ -395,17 +403,19 @@ const InfiniteScrollCalendar = ({
             );
           })}
           
-          {/* Current Time Indicator Line - Good Business Green */}
+          {/* Current Time Indicator Line - Enhanced with Good Business styling */}
           {currentTimePosition !== null && (
             <div 
               className="absolute left-0 right-0 h-0.5 bg-current-time-green z-20 pointer-events-none"
               style={{ 
                 top: `${currentTimePosition}px`,
-                boxShadow: '0 0 4px rgba(39, 174, 96, 0.5)'
+                boxShadow: '0 0 6px rgba(39, 174, 96, 0.6)'
               }}
             >
-              <div className="absolute -left-2 -top-1.5 w-3 h-3 bg-current-time-green rounded-full" />
-              <div className="absolute right-4 -top-2 bg-current-time-green text-white text-xs px-2 py-0.5 rounded">
+              {/* Enhanced circular indicator */}
+              <div className="absolute -left-2 -top-1.5 w-3 h-3 bg-current-time-green rounded-full ring-2 ring-white" />
+              {/* Time label with better contrast */}
+              <div className="absolute right-4 -top-3 bg-current-time-green text-white text-xs px-3 py-1 rounded-full font-medium shadow-sm">
                 {format(currentTime, 'h:mm a')}
               </div>
             </div>
