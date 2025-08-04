@@ -120,18 +120,13 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       )}
     >
       {/* Header Section */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <CheckSquare className="h-4 w-4 text-primary" />
-            <span className="text-sm text-gray-600">Task Management</span>
-          </div>
-          <SmartAddButton
-            projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
-            onCreateTask={handleCreateTask}
-            onCreateProject={onCreateProject}
-          />
-        </div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Tasks</h2>
+        <SmartAddButton
+          projects={projects.map(p => ({ id: p.id, name: p.name, tasks: [] }))}
+          onCreateTask={handleCreateTask}
+          onCreateProject={onCreateProject}
+        />
       </div>
 
       {/* Filter Section */}
