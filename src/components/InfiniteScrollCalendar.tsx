@@ -350,37 +350,39 @@ const InfiniteScrollCalendar = ({
                 }}
               >
                 <div className={cn(
-                  "grid grid-cols-[90px_1fr] h-full border-t border-gray-200/60",
-                  // Add alternating backgrounds for better visual hierarchy
-                  Math.floor(item.hour / 2) % 2 === 0 ? "bg-gray-50/30" : "bg-white"
+                  "grid grid-cols-[90px_1fr] h-full border-t",
+                  "border-timeline-gray", // Good Business timeline gray
+                  // Add subtle alternating backgrounds for better visual hierarchy
+                  Math.floor(item.hour / 2) % 2 === 0 ? "bg-off-white/50" : "bg-white"
                 )}>
-                  {/* Time Label - Show only on hour start with enhanced styling */}
+                  {/* Time Label - Navy styled headers */}
                   {isHourStart && (
-                    <div className="sticky left-0 bg-gradient-to-r from-gray-100 to-gray-50 text-sm font-bold text-center border-r-2 border-gray-300 flex items-center justify-center row-span-2 text-gray-700"
+                    <div className="sticky left-0 bg-navy-blue text-white text-sm font-bold text-center border-r-2 border-timeline-gray flex items-center justify-center row-span-2"
                          style={{ height: `${HOUR_HEIGHT}px` }}>
                       {formatHour(item.hour)}
                     </div>
                   )}
                   {!isHourStart && (
-                    <div className="border-r-2 border-gray-300"></div>
+                    <div className="border-r-2 border-timeline-gray bg-navy-blue"></div>
                   )}
                   
-                  {/* Time Slot with enhanced visual hierarchy */}
+                  {/* Time Slot with Good Business styling */}
                   <div 
                     className={cn(
-                      "relative border-r border-gray-200/60 transition-all duration-200 px-1",
+                      "relative border-r transition-all duration-200 px-2 py-1",
+                      "border-timeline-gray", // Timeline gray borders
                       isCurrentTimeSlot(item.date, item.hour, item.period) 
-                        ? 'bg-primary/10 ring-1 ring-primary/20' 
-                        : 'hover:bg-primary/5',
-                      item.period === 'second' ? 'border-b border-gray-200/60' : '',
-                      "min-h-[38px]" // Increased padding
+                        ? 'bg-forest-green/10 ring-1 ring-current-time-green/30' 
+                        : 'hover:bg-forest-green/5',
+                      item.period === 'second' ? 'border-b border-timeline-gray' : '',
+                      "min-h-[40px]" // Increased padding for better visual hierarchy
                     )}
                   >
                     {isCurrentTimeSlot(item.date, item.hour, item.period) && (
-                      <div className="absolute inset-0 bg-primary/5 animate-pulse border border-primary/20 rounded-sm" />
+                      <div className="absolute inset-0 bg-current-time-green/10 animate-pulse border border-current-time-green/20 rounded-sm" />
                     )}
                     
-                    {/* Render time blocks for this slot with enhanced cards */}
+                    {/* Render time blocks for this slot with enhanced Good Business cards */}
                     {renderTimeBlocks(item)}
                   </div>
                 </div>
@@ -388,17 +390,17 @@ const InfiniteScrollCalendar = ({
             );
           })}
           
-          {/* Current Time Indicator Line */}
+          {/* Current Time Indicator Line - Good Business Green */}
           {currentTimePosition !== null && (
             <div 
-              className="absolute left-0 right-0 h-0.5 bg-red-500 z-20 pointer-events-none"
+              className="absolute left-0 right-0 h-0.5 bg-current-time-green z-20 pointer-events-none"
               style={{ 
                 top: `${currentTimePosition}px`,
-                boxShadow: '0 0 4px rgba(239, 68, 68, 0.5)'
+                boxShadow: '0 0 4px rgba(39, 174, 96, 0.5)'
               }}
             >
-              <div className="absolute -left-2 -top-1.5 w-3 h-3 bg-red-500 rounded-full" />
-              <div className="absolute right-4 -top-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded">
+              <div className="absolute -left-2 -top-1.5 w-3 h-3 bg-current-time-green rounded-full" />
+              <div className="absolute right-4 -top-2 bg-current-time-green text-white text-xs px-2 py-0.5 rounded">
                 {format(currentTime, 'h:mm a')}
               </div>
             </div>

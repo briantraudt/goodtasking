@@ -23,7 +23,7 @@ const Header = () => {
         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
           <CalendarCheck className="h-5 w-5 text-white" />
         </div>
-        <span className="text-xl font-bold text-foreground">Good Tasking</span>
+        <span className="text-xl font-bold text-navy-blue">Good Tasking</span>
       </div>
 
       {/* Right side - Action buttons */}

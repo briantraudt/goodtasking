@@ -628,10 +628,10 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           {/* Left Column - Calendar Timeline (50%) */}
           <div className="bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-calendar-section>
             <div className="flex flex-col h-full">
-              {/* Sticky Calendar Header */}
-              <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
+              {/* Sticky Calendar Header with Good Business Navy */}
+              <div className="sticky top-0 z-10 bg-white pb-4 border-b border-timeline-gray mb-4">
+                <h2 className="text-lg font-bold text-navy-blue flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-forest-green" />
                   Calendar
                 </h2>
               </div>
@@ -668,11 +668,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
           {/* Right Column - Tasks (50%) */}
           <div className="bg-white rounded-xl shadow-sm p-4 border overflow-hidden" data-tasks-section>
             <div className="flex flex-col h-full">
-              {/* Sticky Tasks Header */}
-              <div className="sticky top-0 z-10 bg-white pb-4 border-b border-gray-200 mb-4">
+              {/* Sticky Tasks Header with Good Business Navy */}
+              <div className="sticky top-0 z-10 bg-white pb-4 border-b border-timeline-gray mb-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <CheckSquare className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-bold text-navy-blue flex items-center gap-2">
+                    <CheckSquare className="h-5 w-5 text-forest-green" />
                     Tasks
                   </h2>
                   <SmartAddButton

@@ -111,15 +111,15 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Function to get project color based on project name/id
+  // Function to get Good Business project colors
   const getProjectColor = (projectName: string, index: number) => {
     const colors = [
-      { border: 'border-project-blue', bg: 'bg-project-blue-bg', text: 'text-project-blue', name: 'blue' },
-      { border: 'border-project-green', bg: 'bg-project-green-bg', text: 'text-project-green', name: 'green' },
+      { border: 'border-project-navy', bg: 'bg-project-navy-bg', text: 'text-project-navy', name: 'navy' },
+      { border: 'border-project-forest', bg: 'bg-project-forest-bg', text: 'text-project-forest', name: 'forest' },
+      { border: 'border-project-indigo', bg: 'bg-project-indigo-bg', text: 'text-project-indigo', name: 'indigo' },
+      { border: 'border-project-sky', bg: 'bg-project-sky-bg', text: 'text-project-sky', name: 'sky' },
       { border: 'border-project-purple', bg: 'bg-project-purple-bg', text: 'text-project-purple', name: 'purple' },
-      { border: 'border-project-orange', bg: 'bg-project-orange-bg', text: 'text-project-orange', name: 'orange' },
-      { border: 'border-project-pink', bg: 'bg-project-pink-bg', text: 'text-project-pink', name: 'pink' },
-      { border: 'border-project-teal', bg: 'bg-project-teal-bg', text: 'text-project-teal', name: 'teal' }
+      { border: 'border-project-gold', bg: 'bg-project-gold-bg', text: 'text-project-gold', name: 'gold' }
     ];
     
     // Use consistent color assignment based on project name hash
@@ -257,10 +257,10 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                     >
                       <DraggableTaskItem task={task} />
                       
-                      {/* Task Status Pills */}
+                      {/* Task Status Pills with Good Business Colors */}
                       <div className="flex flex-wrap gap-1 mt-2">
                         {task.scheduled_date && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-project-navy-bg text-project-navy">
                             📅 Scheduled
                           </span>
                         )}
@@ -269,8 +269,13 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                             🔥 High
                           </span>
                         )}
+                        {task.priority === 'medium' && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-project-gold-bg text-project-gold">
+                            ⚡ Medium
+                          </span>
+                        )}
                         {task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date)) && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-project-gold-bg text-project-gold">
                             ⚠️ Overdue
                           </span>
                         )}

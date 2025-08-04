@@ -108,31 +108,31 @@ const FooterMetrics: React.FC<FooterMetricsProps> = ({
 
   if (isCollapsed) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 z-40">
+      <div className="fixed bottom-0 left-0 right-0 bg-navy-blue backdrop-blur-sm border-t border-timeline-gray z-40">
         <div className="max-w-7xl mx-auto px-6 py-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6 text-sm text-gray-600">
+            <div className="flex items-center gap-6 text-sm text-white">
               <span className="font-medium">{getDateLabel()}</span>
               <div className="flex items-center gap-1">
-                <CheckSquare className="h-3 w-3 text-green-600" />
+                <CheckSquare className="h-3 w-3 text-footer-accent-green" />
                 <span>{completedTasks.length}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3 text-blue-600" />
+                <Calendar className="h-3 w-3 text-footer-accent-blue" />
                 <span>{dayEvents.length}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Clock className="h-3 w-3 text-purple-600" />
+                <Clock className="h-3 w-3 text-footer-accent-yellow" />
                 <span>{formatFocusTime(totalFocusTime)}</span>
               </div>
             </div>
             
             <button 
               onClick={() => setIsCollapsed(false)}
-              className="p-1 hover:bg-gray-100 rounded transition-colors"
+              className="p-1 hover:bg-navy-blue-light rounded transition-colors"
               title="Expand metrics"
             >
-              <ChevronUp className="h-4 w-4 text-gray-500" />
+              <ChevronUp className="h-4 w-4 text-white" />
             </button>
           </div>
         </div>
@@ -141,69 +141,69 @@ const FooterMetrics: React.FC<FooterMetricsProps> = ({
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 z-40">
+    <div className="fixed bottom-0 left-0 right-0 bg-navy-blue backdrop-blur-sm border-t border-timeline-gray z-40">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <div className="text-sm font-medium text-gray-900">
+            <div className="text-sm font-bold text-white">
               {getDateLabel()} Metrics
             </div>
             
-            {/* Tasks Completed */}
+            {/* Tasks Completed - Forest Green */}
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-green-100">
-                <CheckSquare className="h-4 w-4 text-green-600" />
+              <div className="p-2 rounded-lg bg-forest-green/20">
+                <CheckSquare className="h-4 w-4 text-footer-accent-green" />
               </div>
               <div>
-                <div className="text-lg font-semibold text-gray-900">
+                <div className="text-lg font-semibold text-white">
                   {completedTasks.length}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-300">
                   Tasks Completed
                 </div>
               </div>
             </div>
 
-            {/* Calendar Events */}
+            {/* Calendar Events - Sky Blue */}
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-blue-100">
-                <Calendar className="h-4 w-4 text-blue-600" />
+              <div className="p-2 rounded-lg bg-sky-blue/20">
+                <Calendar className="h-4 w-4 text-footer-accent-blue" />
               </div>
               <div>
-                <div className="text-lg font-semibold text-gray-900">
+                <div className="text-lg font-semibold text-white">
                   {dayEvents.length}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-300">
                   Calendar Events
                 </div>
               </div>
             </div>
 
-            {/* Last AI Sequence */}
+            {/* Last AI Sequence - Indigo Purple */}
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-purple-100">
-                <Brain className="h-4 w-4 text-purple-600" />
+              <div className="p-2 rounded-lg bg-indigo-purple/20">
+                <Brain className="h-4 w-4 text-indigo-purple" />
               </div>
               <div>
-                <div className="text-lg font-semibold text-gray-900">
+                <div className="text-lg font-semibold text-white">
                   {formatLastAISequence(lastAISequence)}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-300">
                   Last AI Sequence
                 </div>
               </div>
             </div>
 
-            {/* Total Focus Time */}
+            {/* Total Focus Time - Golden Yellow */}
             <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-orange-100">
-                <Clock className="h-4 w-4 text-orange-600" />
+              <div className="p-2 rounded-lg bg-golden-yellow/20">
+                <Clock className="h-4 w-4 text-footer-accent-yellow" />
               </div>
               <div>
-                <div className="text-lg font-semibold text-gray-900">
+                <div className="text-lg font-semibold text-white">
                   {formatFocusTime(totalFocusTime)}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-gray-300">
                   Focus Time Scheduled
                 </div>
               </div>
@@ -212,10 +212,10 @@ const FooterMetrics: React.FC<FooterMetricsProps> = ({
           
           <button 
             onClick={() => setIsCollapsed(true)}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
+            className="p-1 hover:bg-navy-blue-light rounded transition-colors"
             title="Collapse metrics"
           >
-            <ChevronDown className="h-4 w-4 text-gray-500" />
+            <ChevronDown className="h-4 w-4 text-white" />
           </button>
         </div>
       </div>
