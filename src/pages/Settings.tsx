@@ -6,11 +6,13 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Brain, Settings as SettingsIcon, User, AlertTriangle, Calendar, Target, Save, ArrowLeft } from 'lucide-react';
+import { Brain, Settings as SettingsIcon, User, AlertTriangle, Calendar, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 
@@ -30,6 +32,18 @@ interface UserPreferences {
 interface Project {
   id: string;
   name: string;
+  description?: string;
+  task_count?: number;
+  completed_tasks?: number;
+}
+
+interface DashboardStats {
+  totalTasks: number;
+  completedTasks: number;
+  totalProjects: number;
+  completedProjects: number;
+  currentStreak: number;
+  completionRate: number;
 }
 
 const Settings = () => {
@@ -50,6 +64,14 @@ const Settings = () => {
     auto_schedule_unscheduled: false,
   });
   const [projects, setProjects] = useState<Project[]>([]);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalTasks: 0,
+    completedTasks: 0,
+    totalProjects: 0,
+    completedProjects: 0,
+    currentStreak: 0,
+    completionRate: 0,
+  });
   const [fullName, setFullName] = useState('');
 
   useEffect(() => {
@@ -101,17 +123,53 @@ const Settings = () => {
         setFullName(profileData.display_name || '');
       }
 
-      // Load projects for default project selection
+      // Load projects with task counts for dashboard and default project selection
       const { data: projectsData, error: projectsError } = await supabase
         .from('vibe_projects')
-        .select('id, name')
+        .select(`
+          id, 
+          name, 
+          description,
+          vibe_tasks(
+            id,
+            completed
+          )
+        `)
         .eq('user_id', user.id)
         .order('name');
 
       if (projectsError) {
         console.error('Error loading projects:', projectsError);
       } else {
-        setProjects(projectsData || []);
+        const projectsWithStats = (projectsData || []).map(project => ({
+          ...project,
+          task_count: project.vibe_tasks?.length || 0,
+          completed_tasks: project.vibe_tasks?.filter(task => task.completed).length || 0
+        }));
+        setProjects(projectsWithStats);
+      }
+
+      // Load dashboard statistics
+      const { data: tasksData, error: tasksError } = await supabase
+        .from('vibe_tasks')
+        .select('id, completed')
+        .eq('user_id', user.id);
+
+      if (tasksError) {
+        console.error('Error loading tasks:', tasksError);
+      } else {
+        const totalTasks = tasksData?.length || 0;
+        const completedTasks = tasksData?.filter(task => task.completed).length || 0;
+        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+        setStats({
+          totalTasks,
+          completedTasks,
+          totalProjects: projectsData?.length || 0,
+          completedProjects: projectsData?.filter(p => p.vibe_tasks?.every(t => t.completed)).length || 0,
+          currentStreak: prefsData?.current_streak || 0,
+          completionRate
+        });
       }
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -307,6 +365,128 @@ const Settings = () => {
             </div>
           </div>
 
+          {/* Dashboard Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Tasks Completed</p>
+                    <p className="text-2xl font-bold">{stats.completedTasks}/{stats.totalTasks}</p>
+                    <div className="flex items-center gap-2">
+                      <Progress value={stats.completionRate} className="h-2 flex-1" />
+                      <span className="text-xs text-muted-foreground">{stats.completionRate}%</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-success/10 rounded-lg">
+                    <FolderOpen className="h-5 w-5 text-success" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Active Projects</p>
+                    <p className="text-2xl font-bold">{stats.totalProjects}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {stats.completedProjects} completed
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-accent/10 rounded-lg">
+                    <TrendingUp className="h-5 w-5 text-accent" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Current Streak</p>
+                    <p className="text-2xl font-bold">{stats.currentStreak}</p>
+                    <p className="text-xs text-muted-foreground">days</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-secondary/10 rounded-lg">
+                    <BarChart3 className="h-5 w-5 text-secondary" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Productivity</p>
+                    <p className="text-2xl font-bold">{stats.completionRate}%</p>
+                    <p className="text-xs text-muted-foreground">completion rate</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Projects Overview */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FolderOpen className="h-5 w-5" />
+                Your Projects
+              </CardTitle>
+              <CardDescription>
+                Overview of all your projects and their progress
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {projects.length === 0 ? (
+                <div className="text-center py-8">
+                  <FolderOpen className="h-12 w-12 mx-auto text-muted-foreground/50" />
+                  <h3 className="mt-4 text-lg font-semibold">No projects yet</h3>
+                  <p className="text-sm text-muted-foreground">Create your first project to get started!</p>
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {projects.map((project) => (
+                    <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="space-y-1">
+                        <h4 className="font-medium">{project.name}</h4>
+                        {project.description && (
+                          <p className="text-sm text-muted-foreground">{project.description}</p>
+                        )}
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>{project.task_count || 0} tasks</span>
+                          <span>{project.completed_tasks || 0} completed</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        {project.task_count && project.task_count > 0 ? (
+                          <div className="flex items-center gap-2">
+                            <Progress 
+                              value={((project.completed_tasks || 0) / project.task_count) * 100} 
+                              className="h-2 w-16" 
+                            />
+                            <span className="text-xs text-muted-foreground">
+                              {Math.round(((project.completed_tasks || 0) / project.task_count) * 100)}%
+                            </span>
+                          </div>
+                        ) : (
+                          <Badge variant="outline">No tasks</Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* AI Assistant Settings */}
           <Card>
             <CardHeader>
@@ -469,17 +649,17 @@ const Settings = () => {
                 <div className="space-y-2">
                   <Label>Default Project for Quick Tasks</Label>
                   <Select
-                    value={preferences.default_project_id || ''}
-                    onValueChange={(value) => 
-                      savePreferences({ default_project_id: value || null })
-                    }
+                     value={preferences.default_project_id || 'none'}
+                     onValueChange={(value) => 
+                       savePreferences({ default_project_id: value === 'none' ? null : value })
+                     }
                     disabled={saving}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="No default project" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No default project</SelectItem>
+                      <SelectItem value="none">No default project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem key={project.id} value={project.id}>
                           {project.name}
