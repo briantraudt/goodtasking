@@ -8,6 +8,7 @@ import { useAIPlanner } from '@/hooks/useAIPlanner';
 import TaskSidebar from '@/components/TaskSidebar';
 import AITaskSequencerInline from '@/components/AITaskSequencerInline';
 import DraggableTimelineTask from '@/components/DraggableTimelineTask';
+import Enhanced24HourTimeline from '@/components/Enhanced24HourTimeline';
 import { Calendar, Clock, Sparkles, Loader2, Undo2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, parseISO, isToday, addDays, subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -584,17 +585,6 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     }
   };
 
-  // Generate time slots (7 AM to 7 PM)
-  const timeSlots = Array.from({ length: 13 }, (_, i) => i + 7);
-
-  // Date navigation functions
-  const navigateDate = (direction: 'prev' | 'next') => {
-    const currentDate = new Date(selectedDate);
-    const newDate = direction === 'prev' ? subDays(currentDate, 1) : addDays(currentDate, 1);
-    const newDateStr = newDate.toISOString().split('T')[0];
-    setSelectedDate(newDateStr);
-  };
-
   const formatSelectedDate = () => {
     // Parse as local date to avoid timezone issues
     const [year, month, day] = selectedDate.split('-').map(Number);
@@ -631,150 +621,31 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
 
         {/* Fixed Layout with Independent Scrolling */}
         <div className="flex-1 flex gap-4 p-6 min-h-0 overflow-hidden">
-          {/* Left side - Calendar Timeline (50%) - Scrollable */}
-          <div className="flex-[50] overflow-y-auto" data-calendar-section>
-            <Card className="flex flex-col rounded-xl border shadow-soft h-fit">
-            <CardHeader className="pb-3 sticky top-0 bg-white z-50 border-b shadow-sm">
-               <div className="flex items-center justify-between">
-                 <div>
-                   <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
-                     <Calendar className="h-5 w-5 text-primary" />
-                     Calendar
-                   </h3>
-                 </div>
-                <div className="flex items-center gap-2">
+          {/* Left side - Calendar Timeline (50%) - Enhanced 24-Hour View */}
+          <div className="flex-[50] overflow-hidden" data-calendar-section>
+            <Enhanced24HourTimeline
+              selectedDate={selectedDate}
+              onDateChange={setSelectedDate}
+              timeBlocks={timeBlocks}
+              onDrop={(hour, period, item) => {
+                // This will be handled by the existing drag and drop logic
+                console.log('Drop handled:', hour, period, item);
+              }}
+            >
+              {/* Undo Button */}
+              {undoAction && (
+                <div className="absolute bottom-6 right-6 z-50">
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigateDate('prev')}
-                    className="h-8 w-8 p-0"
+                    onClick={handleUndo}
+                    className="flex items-center gap-2 shadow-elevated bg-accent text-accent-foreground hover:bg-accent/90"
+                    variant="secondary"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <Undo2 className="h-4 w-4" />
+                    Undo: {undoAction.taskTitle}
                   </Button>
-                  <div className="text-sm font-medium px-3 py-1 bg-primary text-white rounded-md min-w-[120px] text-center">
-                    {formatSelectedDate()}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigateDate('next')}
-                    className="h-8 w-8 p-0"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 overflow-y-auto p-4">
-              {!isConnected && (
-                <div className="text-center py-4 text-muted-foreground">
-                  <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p>Connect your Google Calendar to see a unified view</p>
                 </div>
               )}
-
-              {/* Time Grid with refined styling */}
-              <div className="space-y-0 border border-border rounded-xl overflow-hidden relative bg-card">
-                {/* Timeline container with absolute positioning for events */}
-                <div className="relative">
-                  {timeSlots.map(hour => (
-                    <div key={hour} className="grid grid-cols-[90px_1fr] border-b last:border-b-0">
-                      {/* Time Label */}
-                      <div className="bg-muted/50 p-2 text-sm font-medium text-center border-r">
-                        {formatHour(hour)}
-                      </div>
-                      
-                      {/* Time Slots */}
-                      <div className="grid grid-rows-2">
-                        {/* First half hour */}
-                        <DroppableTimeSlot 
-                          hour={hour} 
-                          period="first"
-                          hasOverlap={hasTimeSlotOverlap(hour, 'first')}
-                          isCurrentTime={isCurrentTimeSlot(hour, 'first')}
-                        >
-                          {/* Empty - events are positioned absolutely */}
-                        </DroppableTimeSlot>
-                        
-                        {/* Second half hour */}
-                        <DroppableTimeSlot 
-                          hour={hour} 
-                          period="second"
-                          hasOverlap={hasTimeSlotOverlap(hour, 'second')}
-                          isCurrentTime={isCurrentTimeSlot(hour, 'second')}
-                        >
-                          {/* Empty - events are positioned absolutely */}
-                        </DroppableTimeSlot>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {/* Absolutely positioned events and tasks */}
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div className="relative h-full ml-[90px]">
-                      {timeBlocks.map(block => {
-                        const relatedTask = block.type === 'task' ? 
-                          scheduledTasks.find(task => `task-${task.id}` === block.id) : undefined;
-                        
-                        // Calculate position based on time
-                        let blockStartHour: number;
-                        let blockStartMinutes: number;
-                        let blockEndHour: number;
-                        let blockEndMinutes: number;
-                        
-                        if (block.start.includes('T')) {
-                          // ISO datetime
-                          const startDate = parseISO(block.start);
-                          const endDate = parseISO(block.end);
-                          blockStartHour = startDate.getHours();
-                          blockStartMinutes = startDate.getMinutes();
-                          blockEndHour = endDate.getHours();
-                          blockEndMinutes = endDate.getMinutes();
-                        } else {
-                          // HH:mm format
-                          [blockStartHour, blockStartMinutes] = block.start.split(':').map(Number);
-                          [blockEndHour, blockEndMinutes] = block.end.split(':').map(Number);
-                        }
-                        
-                        // Only show events within our time range (7 AM to 7 PM)
-                        if (blockStartHour < 7 || blockStartHour >= 20) return null;
-                        
-                        // Calculate precise positioning
-                        const startTimeInMinutes = (blockStartHour - 7) * 60 + blockStartMinutes;
-                        const endTimeInMinutes = (blockEndHour - 7) * 60 + blockEndMinutes;
-                        const durationInMinutes = endTimeInMinutes - startTimeInMinutes;
-                        
-                        // Each hour is 76px (38px per 30-min slot), so we round to ensure alignment
-                        const pixelsPerMinute = 76 / 60;
-                        const topOffset = Math.round(startTimeInMinutes * pixelsPerMinute);
-                        const height = Math.max(Math.round(durationInMinutes * pixelsPerMinute), 38); // Min 38px height to match slot height
-                        
-                        return (
-                          <div 
-                            key={block.id}
-                            style={{
-                              position: 'absolute',
-                              top: `${topOffset}px`,
-                              height: `${height}px`,
-                              left: 0,
-                              right: 0,
-                              zIndex: 20
-                            }}
-                            className="pointer-events-auto"
-                          >
-                            <DraggableTimelineTask
-                              block={block}
-                              task={relatedTask}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            </Card>
+            </Enhanced24HourTimeline>
           </div>
 
           {/* Middle - Task Sidebar (25%) - Scrollable */}
