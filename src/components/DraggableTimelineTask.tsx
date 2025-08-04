@@ -100,11 +100,11 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       aria-label={block.type === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
         "transition-all hover:shadow-soft w-full m-0 p-0 border-0 box-border flex flex-col justify-center",
-        "h-full min-h-full overflow-hidden border-l-4",
-        // Use priority color for tasks, blue for events
+        "h-full min-h-full overflow-hidden border-l-4 bg-white",
+        // Use border colors only, no background colors
         block.type === 'event' 
-          ? "bg-google-calendar-bg border-google-calendar-border text-blue-800 cursor-pointer hover:bg-blue-50" 
-          : block.color || "bg-ai-scheduled-bg border-ai-scheduled-border text-green-800",
+          ? "border-blue-400 text-blue-800 cursor-pointer hover:bg-blue-50/30" 
+          : block.color || "border-green-400 text-green-800",
         isDraggableTask && "cursor-grab active:cursor-grabbing",
         isDragging && "opacity-50 shadow-elevated z-50",
         isDraggableTask && "hover:scale-[1.02]"
