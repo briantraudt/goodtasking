@@ -40,10 +40,10 @@ const InfiniteScrollCalendar = ({
   const [currentTime, setCurrentTime] = useState(new Date());
   const [visibleDate, setVisibleDate] = useState(selectedDate);
   
-  // Initialize base date to center around today
+  // Initialize base date to center around today - FIXED for August 4th navigation
   const [baseDate, setBaseDate] = useState(() => {
-    const today = new Date();
-    return subDays(today, DAYS_BUFFER);
+    const today = new Date(); // This should be August 4th, 2024
+    return subDays(today, DAYS_BUFFER); // Go back DAYS_BUFFER days from today
   });
 
   // Update current time every minute for live time indicator
@@ -53,6 +53,11 @@ const InfiniteScrollCalendar = ({
     const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
+
+  // FIXED: Sync visibleDate with selectedDate for proper navigation
+  useEffect(() => {
+    setVisibleDate(selectedDate);
+  }, [selectedDate]);
 
   // Calculate virtual items (each representing a half-hour slot)
   const virtualItems = useMemo(() => {
@@ -301,22 +306,32 @@ const InfiniteScrollCalendar = ({
                 }}
               >
                 <div className={cn(
-                  "grid grid-cols-[100px_1fr] h-full border-t border-timeline-gray",
+                  "grid grid-cols-[120px_1fr] h-full border-t border-timeline-gray",
                   // Add alternating backgrounds for better visual hierarchy
-                  Math.floor(item.hour / 2) % 2 === 0 ? "bg-off-white/50" : "bg-white"
+                  Math.floor(item.hour / 2) % 2 === 0 ? "bg-off-white/30" : "bg-white"
                 )}>
-                  {/* Time Label - Navy background with white text - FIXED VISIBILITY */}
+                  {/* Time Label - FIXED VISIBILITY WITH GUARANTEED WHITE TEXT */}
                   {isHourStart && (
                     <div 
-                      className="sticky left-0 text-white text-sm font-medium text-center border-r-2 border-timeline-gray flex items-center justify-center row-span-2 py-2 px-3"
+                      className="sticky left-0 border-r-2 border-timeline-gray flex items-center justify-center row-span-2 py-3 px-4"
                       style={{ 
                         height: `${HOUR_HEIGHT}px`,
                         backgroundColor: '#1E3A5F', // Navy background
-                        fontSize: '12px', // Ensure readable font size
-                        fontWeight: '500' // Medium weight for better readability
+                        color: 'white !important', // Force white text
+                        fontSize: '14px',
+                        fontWeight: '600'
                       }}
                     >
-                      <span className="text-white">{formatHour(item.hour)}</span>
+                      <span 
+                        style={{ 
+                          color: 'white',
+                          textShadow: '0 0 1px rgba(0,0,0,0.5)', // Add text shadow for contrast
+                          fontSize: '14px',
+                          fontWeight: '600'
+                        }}
+                      >
+                        {formatHour(item.hour)}
+                      </span>
                     </div>
                   )}
                   {!isHourStart && (
@@ -326,25 +341,25 @@ const InfiniteScrollCalendar = ({
                     />
                   )}
                   
-                  {/* Time Slot with half-hour grid lines */}
+                  {/* Time Slot with proper half-hour grid lines */}
                   <div 
                     className={cn(
-                      "relative border-r transition-all duration-200 px-2 py-1",
+                      "relative border-r transition-all duration-200 px-3 py-2",
                       "border-timeline-gray bg-white", // Clean white background
                       isCurrentTimeSlot(item.date, item.hour, item.period) 
-                        ? 'ring-2 ring-current-time-green/30 bg-current-time-green/5' 
+                        ? 'ring-2 ring-current-time-green/40 bg-current-time-green/8' 
                         : 'hover:bg-forest-green/5',
-                      // Add half-hour border for 30-minute divisions
-                      item.period === 'second' ? 'border-b-2 border-timeline-gray' : 'border-b border-timeline-gray/50',
-                      "min-h-[40px]" // Increased padding for better visual hierarchy
+                      // Add proper half-hour border divisions
+                      item.period === 'second' ? 'border-b-2 border-timeline-gray' : 'border-b border-timeline-gray/60',
+                      "min-h-[40px]" // Adequate padding
                     )}
                   >
-                    {/* Current time indicator with enhanced styling */}
+                    {/* Enhanced current time indicator */}
                     {isCurrentTimeSlot(item.date, item.hour, item.period) && (
-                      <div className="absolute inset-0 bg-current-time-green/10 animate-pulse border border-current-time-green/20 rounded-sm" />
+                      <div className="absolute inset-0 bg-current-time-green/10 animate-pulse border border-current-time-green/30 rounded-sm" />
                     )}
                     
-                    {/* Render time blocks for this slot with enhanced Good Business cards */}
+                    {/* Render time blocks for this slot */}
                     {renderTimeBlocks(item)}
                   </div>
                 </div>

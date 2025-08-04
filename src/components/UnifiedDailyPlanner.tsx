@@ -127,9 +127,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const { toast } = useToast();
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
   const [selectedDate, setSelectedDate] = useState(() => {
-    // Always default to today's date
-    const today = new Date();
-    return format(today, 'yyyy-MM-dd');
+    // Always default to today's date - August 4th, 2024
+    return format(new Date(), 'yyyy-MM-dd');
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -650,16 +649,15 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                     →
                   </button>
                 </div>
-                {/* Only show Today button when not viewing today */}
-                {!isToday(new Date(selectedDate)) && (
+                {/* FIXED: Only show Today button when NOT viewing the actual current date */}
+                {selectedDate !== format(new Date(), 'yyyy-MM-dd') && (
                   <div className="flex justify-center mt-2">
                     <button
                       onClick={() => {
                         const today = format(new Date(), 'yyyy-MM-dd');
                         setSelectedDate(today);
-                        // Scroll to current time will be handled by the calendar component
                       }}
-                      className="px-3 py-1 text-sm bg-forest-green text-white rounded-md hover:bg-forest-green/90 transition-colors"
+                      className="px-4 py-2 text-sm bg-forest-green text-white rounded-lg hover:bg-forest-green/90 transition-colors font-medium"
                     >
                       Today
                     </button>
