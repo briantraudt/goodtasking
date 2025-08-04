@@ -181,7 +181,11 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   };
 
   const isCurrentTimeSlot = useCallback((hour: number, period: 'first' | 'second') => {
-    if (!isToday(new Date(selectedDate))) return false;
+    // Parse selectedDate as local date to avoid timezone issues
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const selectedDateLocal = new Date(year, month - 1, day); // month is 0-indexed
+    
+    if (!isToday(selectedDateLocal)) return false;
     
     const now = currentTime;
     const currentHour = now.getHours();
