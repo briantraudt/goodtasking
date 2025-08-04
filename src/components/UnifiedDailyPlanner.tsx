@@ -125,20 +125,12 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   const [selectedDate, setSelectedDate] = useState(() => {
     const today = new Date();
     const todayString = today.toISOString().split('T')[0];
-    console.log('Setting initial selectedDate to:', todayString);
     return todayString;
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeId, setActiveId] = useState<string | null>(null);
   const [dragOverTimeSlot, setDragOverTimeSlot] = useState<string | null>(null);
-
-  // Force update to today's date on mount
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    console.log('Force updating selectedDate to today:', today);
-    setSelectedDate(today);
-  }, []);
 
   // Get today's scheduled tasks
   const scheduledTasks = projects.flatMap(project => 
@@ -603,7 +595,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-primary" />
                 Daily Timeline
-                <Badge variant="secondary">{format(new Date(selectedDate), 'MMM d')}</Badge>
+                <Badge variant="secondary">{format(new Date(), 'MMM d')}</Badge>
                  {isToday(new Date(selectedDate)) && (
                    <Badge variant="outline" className="text-xs">
                      {format(currentTime, 'h:mm a')}
