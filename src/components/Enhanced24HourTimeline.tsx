@@ -232,7 +232,7 @@ const Enhanced24HourTimeline = ({
                 {/* First half hour (XX:00) */}
                 <div 
                   className={`
-                    relative border-b border-border/20 transition-colors duration-200
+                    relative border-b border-border/50 transition-colors duration-200
                     ${isCurrentTimeSlot(hour, 'first') ? 'bg-primary/5' : 'hover:bg-muted/30'}
                   `}
                   style={{ height: '38px' }}
@@ -245,7 +245,7 @@ const Enhanced24HourTimeline = ({
                 {/* Second half hour (XX:30) */}
                 <div 
                   className={`
-                    relative transition-colors duration-200
+                    relative border-b border-border/30 transition-colors duration-200
                     ${isCurrentTimeSlot(hour, 'second') ? 'bg-primary/5' : 'hover:bg-muted/30'}
                   `}
                   style={{ height: '38px' }}
