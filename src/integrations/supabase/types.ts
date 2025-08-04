@@ -250,11 +250,13 @@ export type Database = {
           created_at: string
           description: string | null
           due_date: string | null
+          end_time: string | null
           estimated_duration: number | null
           id: string
           priority: string | null
           project_id: string
           scheduled_date: string | null
+          start_time: string | null
           title: string
           updated_at: string
           user_id: string
@@ -264,11 +266,13 @@ export type Database = {
           created_at?: string
           description?: string | null
           due_date?: string | null
+          end_time?: string | null
           estimated_duration?: number | null
           id?: string
           priority?: string | null
           project_id: string
           scheduled_date?: string | null
+          start_time?: string | null
           title: string
           updated_at?: string
           user_id: string
@@ -278,11 +282,13 @@ export type Database = {
           created_at?: string
           description?: string | null
           due_date?: string | null
+          end_time?: string | null
           estimated_duration?: number | null
           id?: string
           priority?: string | null
           project_id?: string
           scheduled_date?: string | null
+          start_time?: string | null
           title?: string
           updated_at?: string
           user_id?: string
