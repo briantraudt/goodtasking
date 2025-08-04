@@ -115,8 +115,10 @@ Deno.serve(async (req) => {
       tokenData.access_token = refreshData.access_token
     }
 
-    // Fetch events from Google Calendar (next 30 days)
-    const timeMin = new Date().toISOString()
+    // Fetch events from Google Calendar (from beginning of today + next 30 days)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Start from beginning of today
+    const timeMin = today.toISOString()
     const timeMax = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
 
     const calendarUrl = `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
