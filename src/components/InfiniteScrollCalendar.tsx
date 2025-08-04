@@ -23,11 +23,12 @@ interface InfiniteScrollCalendarProps {
   children?: React.ReactNode;
 }
 
-// Configuration
-const HOUR_HEIGHT = 80; // Increased height per hour for better visibility
+// Enhanced configuration for Good Business styling
+const HOUR_HEIGHT = 80;
 const HOURS_PER_DAY = 24;
-const DAYS_BUFFER = 30; // Buffer days before and after for infinite scroll
-const SLOT_HEIGHT = HOUR_HEIGHT / 2; // 30-minute slot height
+const DAYS_BUFFER = 60; // Increased buffer for smooth infinite scroll
+const SLOT_HEIGHT = HOUR_HEIGHT / 2;
+const TIME_COLUMN_WIDTH = 160; // Increased for better time visibility
 
 const InfiniteScrollCalendar = ({ 
   selectedDate, 
@@ -38,26 +39,21 @@ const InfiniteScrollCalendar = ({
 }: InfiniteScrollCalendarProps) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [visibleDate, setVisibleDate] = useState(selectedDate);
+  const [isScrolling, setIsScrolling] = useState(false);
   
-  // Initialize base date to center around today - FIXED for August 4th navigation
-  const [baseDate, setBaseDate] = useState(() => {
+  // FIXED: Always center around today (August 4th, 2024)
+  const baseDate = useMemo(() => {
     const today = new Date(2024, 7, 4); // August 4th, 2024 (month is 0-indexed)
-    return subDays(today, DAYS_BUFFER); // Go back DAYS_BUFFER days from today
-  });
+    return subDays(today, DAYS_BUFFER);
+  }, []);
 
   // Update current time every minute for live time indicator
   useEffect(() => {
     const updateTime = () => setCurrentTime(new Date());
-    updateTime(); // Set immediately
+    updateTime();
     const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
-
-  // FIXED: Sync visibleDate with selectedDate for proper navigation
-  useEffect(() => {
-    setVisibleDate(selectedDate);
-  }, [selectedDate]);
 
   // Calculate virtual items (each representing a half-hour slot)
   const virtualItems = useMemo(() => {
@@ -69,12 +65,11 @@ const InfiniteScrollCalendar = ({
       dateString: string;
     }> = [];
 
-    for (let dayIndex = 0; dayIndex < DAYS_BUFFER * 2; dayIndex++) { // Use DAYS_BUFFER * 2 for past and future
+    for (let dayIndex = 0; dayIndex < DAYS_BUFFER * 2; dayIndex++) {
       const currentDay = addDays(baseDate, dayIndex);
       const dateString = format(currentDay, 'yyyy-MM-dd');
       
       for (let hour = 0; hour < HOURS_PER_DAY; hour++) {
-        // First half hour (XX:00)
         items.push({
           index: dayIndex * HOURS_PER_DAY * 2 + hour * 2,
           date: currentDay,
@@ -83,7 +78,6 @@ const InfiniteScrollCalendar = ({
           dateString
         });
         
-        // Second half hour (XX:30)
         items.push({
           index: dayIndex * HOURS_PER_DAY * 2 + hour * 2 + 1,
           date: currentDay,
@@ -96,53 +90,69 @@ const InfiniteScrollCalendar = ({
     return items;
   }, [baseDate]);
 
-  // Virtual scrolling setup
+  // Enhanced virtual scrolling setup
   const virtualizer = useVirtualizer({
     count: virtualItems.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => HOUR_HEIGHT / 2, // Half-hour slot height
-    overscan: 10,
+    estimateSize: () => SLOT_HEIGHT,
+    overscan: 20, // Increased overscan for smoother scrolling
   });
 
-  // Handle visible date changes based on scroll position
+  // FIXED: Scroll to selected date without snapping back
   useEffect(() => {
+    if (!virtualItems.length) return;
+    
+    const selectedDay = new Date(selectedDate);
+    const daysDiff = Math.floor((selectedDay.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysDiff >= 0 && daysDiff < DAYS_BUFFER * 2) {
+      // Scroll to 8 AM for better viewing, or current hour if today
+      const hourToShow = isToday(selectedDay) ? Math.max(8, new Date().getHours() - 2) : 8;
+      const indexToScroll = daysDiff * HOURS_PER_DAY * 2 + hourToShow * 2;
+      
+      // Use requestAnimationFrame for smooth scrolling
+      requestAnimationFrame(() => {
+        virtualizer.scrollToIndex(indexToScroll, { 
+          align: 'start',
+          behavior: 'smooth'
+        });
+      });
+    }
+  }, [selectedDate, baseDate, virtualItems.length, virtualizer]);
+
+  // FIXED: Handle visible date changes with debouncing
+  useEffect(() => {
+    if (isScrolling) return;
+    
     const handleScroll = () => {
       const items = virtualizer.getVirtualItems();
-      if (items.length > 0) {
-        const firstVisibleItem = items[Math.floor(items.length / 3)]; // Middle visible item
-        if (firstVisibleItem) {
-          const virtualItem = virtualItems[firstVisibleItem.index];
-          if (virtualItem && virtualItem.dateString !== visibleDate) {
-            setVisibleDate(virtualItem.dateString);
-            onDateChange(virtualItem.dateString);
-          }
+      if (items.length === 0) return;
+      
+      // Use middle visible item for date detection
+      const middleIndex = Math.floor(items.length / 2);
+      const middleItem = items[middleIndex];
+      
+      if (middleItem) {
+        const virtualItem = virtualItems[middleItem.index];
+        if (virtualItem && virtualItem.dateString !== selectedDate) {
+          // Debounce date changes to prevent rapid updates
+          setTimeout(() => {
+            if (!isScrolling) {
+              onDateChange(virtualItem.dateString);
+            }
+          }, 150);
         }
       }
     };
 
     const scrollElement = parentRef.current;
     if (scrollElement) {
-      scrollElement.addEventListener('scroll', handleScroll);
+      scrollElement.addEventListener('scroll', handleScroll, { passive: true });
       return () => scrollElement.removeEventListener('scroll', handleScroll);
     }
-  }, [virtualizer, virtualItems, visibleDate, onDateChange]);
+  }, [virtualizer, virtualItems, selectedDate, onDateChange, isScrolling]);
 
-  // Auto-scroll to selected date
-  useEffect(() => {
-    const selectedDay = new Date(selectedDate);
-    const daysDiff = Math.floor((selectedDay.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysDiff >= 0 && daysDiff < DAYS_BUFFER * 2) {
-      const hourToShow = isToday(selectedDay) ? new Date().getHours() : 9; // 9 AM for non-today dates
-      const indexToScroll = daysDiff * HOURS_PER_DAY * 2 + hourToShow * 2;
-      
-      setTimeout(() => {
-        virtualizer.scrollToIndex(indexToScroll, { align: 'start' });
-      }, 200);
-    }
-  }, [selectedDate, baseDate, virtualizer]);
-
-  // Format hour for display
+  // Enhanced format hour for Good Business styling
   const formatHour = (hour: number) => {
     if (hour === 0) return '12:00 AM';
     if (hour === 12) return '12:00 PM';
@@ -162,9 +172,9 @@ const InfiniteScrollCalendar = ({
     return period === 'first' ? currentMinutes < 30 : currentMinutes >= 30;
   };
 
-  // Get current time position for the red line indicator
+  // Enhanced current time position calculation
   const getCurrentTimePosition = () => {
-    if (!isToday(new Date(visibleDate))) return null;
+    if (!isToday(new Date(selectedDate))) return null;
     
     const currentHour = currentTime.getHours();
     const currentMinutes = currentTime.getMinutes();
@@ -179,18 +189,22 @@ const InfiniteScrollCalendar = ({
     
     if (!currentHourFirstHalf) return null;
     
-    const basePosition = currentHourFirstHalf.index * (HOUR_HEIGHT / 2);
-    const minuteOffset = (currentMinutes / 60) * HOUR_HEIGHT;
+    // Get virtual item for positioning
+    const virtualItem = virtualizer.getVirtualItems().find(vi => 
+      virtualItems[vi.index]?.index === currentHourFirstHalf.index
+    );
     
-    return basePosition + minuteOffset;
+    if (!virtualItem) return null;
+    
+    const minuteOffset = (currentMinutes / 60) * HOUR_HEIGHT;
+    return virtualItem.start + minuteOffset;
   };
 
   const currentTimePosition = getCurrentTimePosition();
 
-  // Render time blocks for each virtual item
+  // Enhanced time blocks rendering with Google Calendar integration
   const renderTimeBlocks = (virtualItem: typeof virtualItems[0]) => {
     const dayBlocks = timeBlocks.filter(block => {
-      // Match blocks to this specific date
       if (block.start.includes('T')) {
         const blockDate = parseISO(block.start);
         return isSameDay(blockDate, virtualItem.date);
@@ -199,7 +213,6 @@ const InfiniteScrollCalendar = ({
     });
 
     return dayBlocks.map(block => {
-      // Calculate position for each block
       let blockStartHour: number;
       let blockStartMinutes: number;
       let blockEndHour: number;
@@ -217,18 +230,16 @@ const InfiniteScrollCalendar = ({
         [blockEndHour, blockEndMinutes] = block.end.split(':').map(Number);
       }
       
-      // Calculate if this block overlaps with current virtual item
+      // Calculate overlap with current slot
       const itemStartMinutes = virtualItem.hour * 60 + (virtualItem.period === 'second' ? 30 : 0);
       const itemEndMinutes = itemStartMinutes + 30;
       const blockStartTotalMinutes = blockStartHour * 60 + blockStartMinutes;
       const blockEndTotalMinutes = blockEndHour * 60 + blockEndMinutes;
       
-      // Check if block overlaps with this 30-minute slot
       if (blockEndTotalMinutes <= itemStartMinutes || blockStartTotalMinutes >= itemEndMinutes) {
-        return null; // No overlap
+        return null;
       }
       
-      // Calculate relative position within this slot
       const overlapStart = Math.max(blockStartTotalMinutes, itemStartMinutes);
       const overlapEnd = Math.min(blockEndTotalMinutes, itemEndMinutes);
       const overlapDuration = overlapEnd - overlapStart;
@@ -236,20 +247,19 @@ const InfiniteScrollCalendar = ({
       if (overlapDuration <= 0) return null;
       
       const relativeStart = overlapStart - itemStartMinutes;
-      const relativeHeight = (overlapDuration / 30) * (HOUR_HEIGHT / 2);
-      const relativeTop = (relativeStart / 30) * (HOUR_HEIGHT / 2);
+      const relativeHeight = (overlapDuration / 30) * SLOT_HEIGHT;
+      const relativeTop = (relativeStart / 30) * SLOT_HEIGHT;
       
       return (
         <div
           key={`${block.id}-${virtualItem.index}`}
-          className={`
-            absolute left-2 right-2 rounded-lg p-2 text-xs font-medium
-            border-l-4 shadow-md border border-black/5 transition-all duration-200 hover:shadow-lg
-            ${block.type === 'event' 
-              ? 'bg-blue-200 border-blue-600 text-blue-900' 
-              : 'bg-green-200 border-green-600 text-green-900'
-            }
-          `}
+          className={cn(
+            "absolute left-2 right-2 rounded-lg p-2 text-xs font-semibold",
+            "border-l-4 shadow-card transition-all duration-200 hover:shadow-elevated hover:scale-[1.02]",
+            block.type === 'event' 
+              ? 'bg-blue-50 border-blue-600 text-blue-900 hover:bg-blue-100' 
+              : 'bg-green-50 border-green-600 text-green-900 hover:bg-green-100'
+          )}
           style={{
             top: `${relativeTop}px`,
             height: `${relativeHeight}px`,
@@ -267,16 +277,50 @@ const InfiniteScrollCalendar = ({
     }).filter(Boolean);
   };
 
+  // Handle scroll start/end for debouncing
+  const handleScrollStart = useCallback(() => {
+    setIsScrolling(true);
+  }, []);
+
+  const handleScrollEnd = useCallback(() => {
+    setTimeout(() => setIsScrolling(false), 150);
+  }, []);
+
+  useEffect(() => {
+    const scrollElement = parentRef.current;
+    if (!scrollElement) return;
+
+    scrollElement.addEventListener('scrollstart', handleScrollStart, { passive: true });
+    scrollElement.addEventListener('scrollend', handleScrollEnd, { passive: true });
+    
+    // Fallback for browsers without scrollend
+    let scrollTimeout: NodeJS.Timeout;
+    const handleScroll = () => {
+      if (!isScrolling) setIsScrolling(true);
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => setIsScrolling(false), 150);
+    };
+    
+    scrollElement.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      scrollElement.removeEventListener('scrollstart', handleScrollStart);
+      scrollElement.removeEventListener('scrollend', handleScrollEnd);
+      scrollElement.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+    };
+  }, [handleScrollStart, handleScrollEnd, isScrolling]);
+
   return (
     <div className="flex flex-col h-full">
-      {/* Header removed - now handled by parent component */}
-      
-      {/* Infinite Scrollable Timeline */}
+      {/* Enhanced Infinite Scrollable Timeline with Good Business styling */}
       <div 
         ref={parentRef}
-        className="flex-1 overflow-auto"
+        className="flex-1 overflow-auto bg-white rounded-lg border border-border shadow-card"
         style={{ 
-          scrollBehavior: 'smooth' 
+          scrollBehavior: 'smooth',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'hsl(var(--border)) transparent'
         }}
       >
         <div
@@ -305,52 +349,56 @@ const InfiniteScrollCalendar = ({
                 }}
               >
                 <div className={cn(
-                  "grid grid-cols-[140px_1fr] h-full border-t border-timeline-gray",
-                  // Add alternating backgrounds for better visual hierarchy
-                  Math.floor(item.hour / 2) % 2 === 0 ? "bg-off-white/30" : "bg-white"
-                )}>
-                  {/* Time Label - FIXED VISIBILITY WITH GUARANTEED WHITE TEXT */}
+                  "h-full border-t border-border",
+                  // Enhanced alternating backgrounds for better visual hierarchy
+                  Math.floor(item.hour / 2) % 2 === 0 ? "bg-off-white/20" : "bg-white"
+                )} style={{ display: 'grid', gridTemplateColumns: `${TIME_COLUMN_WIDTH}px 1fr` }}>
+                  
+                  {/* Enhanced Time Label with Good Business Navy Styling */}
                   {isHourStart && (
                     <div 
-                      className="sticky left-0 border-r-2 border-timeline-gray flex items-center justify-center row-span-2 py-3 px-4"
+                      className="border-r-2 border-border flex items-center justify-center font-bold text-white"
                       style={{ 
                         height: `${HOUR_HEIGHT}px`,
-                        backgroundColor: '#1E3A5F', // Navy background
-                        color: 'white !important', // Force white text
-                        fontSize: '14px',
-                        fontWeight: '600'
+                        backgroundColor: 'hsl(var(--navy-blue))', // Good Business navy
+                        fontSize: '16px',
+                        fontWeight: '700',
+                        textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                        position: 'sticky',
+                        left: 0,
+                        zIndex: 5
                       }}
                     >
-                      <span 
-                        style={{ 
-                          color: 'white',
-                          textShadow: '0 0 1px rgba(0,0,0,0.5)', // Add text shadow for contrast
-                          fontSize: '14px',
-                          fontWeight: '600'
-                        }}
-                      >
+                      <span className="text-white">
                         {formatHour(item.hour)}
                       </span>
                     </div>
                   )}
                   {!isHourStart && (
                     <div 
-                      className="border-r-2 border-timeline-gray"
-                      style={{ backgroundColor: '#1E3A5F' }}
+                      className="border-r-2 border-border"
+                      style={{ 
+                        backgroundColor: 'hsl(var(--navy-blue))',
+                        position: 'sticky',
+                        left: 0,
+                        zIndex: 5
+                      }}
                     />
                   )}
                   
-                  {/* Time Slot with proper half-hour grid lines */}
+                  {/* Enhanced Time Slot with proper half-hour grid lines */}
                   <div 
                     className={cn(
-                      "relative border-r transition-all duration-200 px-3 py-2",
-                      "border-timeline-gray bg-white", // Clean white background
+                      "relative transition-all duration-200 px-3 py-2",
+                      "border-r border-border bg-white hover:bg-forest-green/5",
+                      // Enhanced border system for half-hour visibility
+                      item.period === 'second' 
+                        ? 'border-b-2 border-border' 
+                        : 'border-b border-border/40',
                       isCurrentTimeSlot(item.date, item.hour, item.period) 
-                        ? 'ring-2 ring-current-time-green/40 bg-current-time-green/8' 
-                        : 'hover:bg-forest-green/5',
-                      // Add proper half-hour border divisions
-                      item.period === 'second' ? 'border-b-2 border-timeline-gray' : 'border-b border-timeline-gray/60',
-                      "min-h-[40px]" // Adequate padding
+                        ? 'ring-2 ring-current-time-green/50 bg-current-time-green/10' 
+                        : '',
+                      "min-h-[40px]"
                     )}
                   >
                     {/* Enhanced current time indicator */}
@@ -366,19 +414,28 @@ const InfiniteScrollCalendar = ({
             );
           })}
           
-          {/* Current Time Indicator Line - Enhanced with Good Business styling */}
+          {/* Enhanced Current Time Indicator Line with Good Business styling */}
           {currentTimePosition !== null && (
             <div 
-              className="absolute left-0 right-0 h-0.5 bg-current-time-green z-20 pointer-events-none"
+              className="absolute left-0 right-0 h-0.5 z-20 pointer-events-none"
               style={{ 
                 top: `${currentTimePosition}px`,
-                boxShadow: '0 0 6px rgba(39, 174, 96, 0.6)'
+                backgroundColor: 'hsl(var(--current-time-green))',
+                boxShadow: '0 0 8px hsl(var(--current-time-green) / 0.6)'
               }}
             >
-              {/* Enhanced circular indicator */}
-              <div className="absolute -left-2 -top-1.5 w-3 h-3 bg-current-time-green rounded-full ring-2 ring-white" />
-              {/* Time label with better contrast */}
-              <div className="absolute right-4 -top-3 bg-current-time-green text-white text-xs px-3 py-1 rounded-full font-medium shadow-sm">
+              <div 
+                className="absolute w-3 h-3 rounded-full ring-2 ring-white"
+                style={{ 
+                  left: `${TIME_COLUMN_WIDTH - 6}px`,
+                  top: '-6px',
+                  backgroundColor: 'hsl(var(--current-time-green))'
+                }}
+              />
+              <div 
+                className="absolute right-4 -top-3 text-white text-xs px-3 py-1 rounded-full font-bold shadow-sm"
+                style={{ backgroundColor: 'hsl(var(--current-time-green))' }}
+              >
                 {format(currentTime, 'h:mm a')}
               </div>
             </div>
