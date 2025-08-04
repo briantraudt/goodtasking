@@ -160,13 +160,22 @@ export const useAIScheduler = () => {
     if (!session) return false;
 
     try {
+      // If scheduledDate is empty string, set to null (unschedule)
+      const updateData: any = {
+        scheduled_date: scheduledDate || null,
+      };
+
+      // Add time fields if provided
+      if (startTime) {
+        updateData.start_time = startTime;
+      }
+      if (endTime) {
+        updateData.end_time = endTime;
+      }
+
       const { error } = await supabase
         .from('vibe_tasks')
-        .update({
-          scheduled_date: scheduledDate,
-          // Note: We don't have start_time/end_time columns yet, 
-          // but this is where they would be updated
-        })
+        .update(updateData)
         .eq('id', taskId)
         .eq('user_id', session.user.id);
 

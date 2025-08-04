@@ -20,6 +20,8 @@ interface Task {
   estimated_duration?: number;
   due_date?: string | null;
   scheduled_date?: string | null;
+  start_time?: string;
+  end_time?: string;
   completed: boolean;
 }
 
@@ -44,6 +46,7 @@ interface TimeBlock {
   type: 'event' | 'task';
   color: string;
   priority?: string;
+  taskId?: string;
 }
 
 interface DroppableTimeSlotProps {
@@ -209,24 +212,50 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
     const result = await scheduleTasksWithAI(events, unscheduledTasks, selectedDate);
     
     if (result && result.scheduledTasks.length > 0) {
-      // Update time blocks with AI suggestions
-      const updatedBlocks = [...timeBlocks];
+      const updatedBlocks = [...timeBlocks.filter(block => block.type === 'event')];
       
-      result.scheduledTasks.forEach(suggestion => {
-        const blockIndex = updatedBlocks.findIndex(block => 
-          block.id === `task-${suggestion.taskId}`
+      // Process each scheduled task
+      for (const suggestion of result.scheduledTasks) {
+        // Update task in database
+        const success = await updateTaskSchedule(
+          suggestion.taskId, 
+          selectedDate, 
+          suggestion.proposedStartTime, 
+          suggestion.proposedEndTime
         );
         
-        if (blockIndex !== -1) {
-          updatedBlocks[blockIndex] = {
-            ...updatedBlocks[blockIndex],
-            start: suggestion.proposedStartTime,
-            end: suggestion.proposedEndTime
-          };
+        if (success) {
+          // Update the task in the projects state
+          onUpdateTask(suggestion.taskId, { 
+            scheduled_date: selectedDate,
+            start_time: suggestion.proposedStartTime,
+            end_time: suggestion.proposedEndTime
+          });
+          
+          // Find the task to get its details
+          const task = unscheduledTasks.find(t => t.id === suggestion.taskId);
+          
+          if (task) {
+            updatedBlocks.push({
+              id: `task-${suggestion.taskId}`,
+              title: task.title,
+              start: suggestion.proposedStartTime,
+              end: suggestion.proposedEndTime,
+              type: 'task',
+              color: getPriorityColor(task.priority),
+              priority: task.priority,
+              taskId: suggestion.taskId
+            });
+          }
         }
-      });
+      }
       
       setTimeBlocks(updatedBlocks.sort((a, b) => a.start.localeCompare(b.start)));
+      
+      toast({
+        title: "Smart Schedule Complete! 🤖",
+        description: `Optimally scheduled ${result.scheduledTasks.length} tasks around your calendar events.`,
+      });
     }
   };
 
@@ -237,19 +266,39 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
       // Update time blocks with AI day plan
       const updatedBlocks = [...timeBlocks.filter(block => block.type === 'event')];
       
-      result.dayPlan.forEach(planItem => {
-        updatedBlocks.push({
-          id: `planned-${planItem.taskId}`,
-          title: planItem.title,
-          start: planItem.startTime,
-          end: planItem.endTime,
-          type: 'task',
-          color: 'bg-purple-100 border-purple-300 text-purple-800',
-          priority: 'planned'
-        });
-      });
+      // Update tasks in database and UI
+      for (const planItem of result.dayPlan) {
+        // Update task in database
+        const success = await updateTaskSchedule(planItem.taskId, selectedDate, planItem.startTime, planItem.endTime);
+        
+        if (success) {
+          // Update the task in the projects state
+          onUpdateTask(planItem.taskId, { 
+            scheduled_date: selectedDate,
+            start_time: planItem.startTime,
+            end_time: planItem.endTime
+          });
+          
+          // Add to time blocks
+          updatedBlocks.push({
+            id: `task-${planItem.taskId}`,
+            title: planItem.title,
+            start: planItem.startTime,
+            end: planItem.endTime,
+            type: 'task',
+            color: 'bg-purple-100 border-purple-300 text-purple-800',
+            priority: 'planned',
+            taskId: planItem.taskId
+          });
+        }
+      }
       
       setTimeBlocks(updatedBlocks.sort((a, b) => a.start.localeCompare(b.start)));
+      
+      toast({
+        title: "Day Planned Successfully! 📅",
+        description: `Scheduled ${result.dayPlan.length} tasks for ${format(new Date(selectedDate), 'MMM d')}.`,
+      });
     }
   };
 
