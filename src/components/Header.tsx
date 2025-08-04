@@ -19,7 +19,7 @@ export default function Header() {
 
   return (
     <header className="border-b bg-gradient-card shadow-card">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
