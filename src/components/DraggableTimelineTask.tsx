@@ -106,7 +106,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
           ? "border-blue-400 text-blue-800 cursor-pointer hover:bg-blue-50/50 hover:scale-[1.01]" 
           : block.color || "border-green-400 text-green-800",
         isDraggableTask && "cursor-grab active:cursor-grabbing",
-        isDragging && "opacity-50 shadow-elevated z-50 rotate-1",
+        isDragging && "opacity-50 shadow-elevated z-30 rotate-1",
         isDraggableTask && "hover:scale-[1.02] hover:shadow-card"
       )}
     >

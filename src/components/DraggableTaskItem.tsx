@@ -92,7 +92,7 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
         "bg-white flex flex-col min-h-[100px] relative group",
         getPriorityBorderColor(task.priority),
         getProjectBorderColor(task.vibe_projects?.name),
-        isDragging && "opacity-50 shadow-elevated z-50 rotate-2"
+        isDragging && "opacity-50 shadow-elevated z-30 rotate-2"
       )}
     >
       {/* Priority Indicator Dot */}
