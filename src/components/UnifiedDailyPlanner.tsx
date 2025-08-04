@@ -619,42 +619,42 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
     >
       <div className={cn("h-full overflow-hidden flex flex-col", className)}>
 
-        {/* Two-Column Grid Layout - 60/40 Split */}
-        <div className="flex-1 grid grid-cols-[3fr_2fr] gap-6 p-6 min-h-0 overflow-hidden">
+        {/* Restructured Layout: Top 2/3 Columns + Bottom 1/3 AI Panel */}
+        <div className="flex-1 flex flex-col gap-6 p-6 min-h-0 overflow-hidden">
           
-          {/* Left Column - Calendar Timeline */}
-          <div className="overflow-hidden" data-calendar-section>
-            <Enhanced24HourTimeline
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
-              timeBlocks={timeBlocks}
-              onDrop={(hour, period, item) => {
-                // This will be handled by the existing drag and drop logic
-                console.log('Drop handled:', hour, period, item);
-              }}
-            >
-              {/* Undo Button */}
-              {undoAction && (
-                <div className="absolute bottom-6 right-6 z-50">
-                  <Button
-                    onClick={handleUndo}
-                    className="flex items-center gap-2 shadow-elevated bg-accent text-accent-foreground hover:bg-accent/90"
-                    variant="secondary"
-                  >
-                    <Undo2 className="h-4 w-4" />
-                    Undo: {undoAction.taskTitle}
-                  </Button>
-                </div>
-              )}
-            </Enhanced24HourTimeline>
-          </div>
-
-          {/* Right Column - Stacked Sections */}
-          <div className="flex flex-col gap-4 overflow-hidden" data-right-column>
+          {/* Top Section: Side-by-Side Columns (66% viewport height) */}
+          <div className="grid grid-cols-[65fr_35fr] gap-6 overflow-hidden" style={{ height: '66vh' }}>
             
-            {/* Top Section - Tasks Panel */}
+            {/* Left Column - Calendar Timeline (65% width) */}
+            <div className="overflow-hidden" data-calendar-section>
+              <Enhanced24HourTimeline
+                selectedDate={selectedDate}
+                onDateChange={setSelectedDate}
+                timeBlocks={timeBlocks}
+                onDrop={(hour, period, item) => {
+                  // This will be handled by the existing drag and drop logic
+                  console.log('Drop handled:', hour, period, item);
+                }}
+              >
+                {/* Undo Button */}
+                {undoAction && (
+                  <div className="absolute bottom-6 right-6 z-50">
+                    <Button
+                      onClick={handleUndo}
+                      className="flex items-center gap-2 shadow-elevated bg-accent text-accent-foreground hover:bg-accent/90"
+                      variant="secondary"
+                    >
+                      <Undo2 className="h-4 w-4" />
+                      Undo: {undoAction.taskTitle}
+                    </Button>
+                  </div>
+                )}
+              </Enhanced24HourTimeline>
+            </div>
+
+            {/* Right Column - Tasks Only (35% width) */}
             <div className="flex flex-col overflow-hidden border border-border rounded-xl bg-card shadow-sm" data-tasks-section>
-              <div className="tasks-container flex-1 overflow-y-auto scrollbar-none" style={{ maxHeight: '50vh' }}>
+              <div className="flex-1 overflow-y-auto scrollbar-none">
                 <TaskSidebar
                   projects={projects}
                   selectedDate={selectedDate}
@@ -664,9 +664,12 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
               </div>
             </div>
 
-            {/* Bottom Section - AI Task Sequencer */}
-            <div className="flex flex-col overflow-hidden border border-border rounded-xl bg-card shadow-sm border-t-2 border-t-muted" data-ai-section>
-              <div className="ai-sequencer-container flex-1 overflow-y-auto scrollbar-none" style={{ maxHeight: '50vh' }}>
+          </div>
+
+          {/* Bottom Section: Full-Width AI Task Sequencer (remaining viewport space) */}
+          <div className="flex-1 border-t-2 border-muted pt-6" data-ai-footer-section>
+            <div className="border border-border rounded-xl bg-card shadow-sm">
+              <div className="overflow-y-auto scrollbar-none" style={{ maxHeight: '30vh' }}>
                 <AITaskSequencerInline
                   targetDate={selectedDate}
                   onTasksScheduled={(tasks) => {
@@ -677,8 +680,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                 />
               </div>
             </div>
-
           </div>
+
         </div>
 
 
