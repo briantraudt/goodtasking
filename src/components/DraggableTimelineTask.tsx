@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { parseISO, format } from 'date-fns';
-import googleCalendarIcon from '@/assets/google-calendar-icon.png';
+import googleCalendarLogo from '@/assets/google-calendar-logo.png';
 
 interface Task {
   id: string;
@@ -118,18 +118,13 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
               {getDisplayDurationInMinutes()}m
             </div>
           )}
-          <span className={cn(
-            "px-2 py-1 text-xs rounded-full border flex items-center",
-            block.type === 'event' 
-              ? "bg-gray-100 text-gray-600 border-gray-300" 
-              : "bg-background/50 border-current"
-          )}>
-            {block.type === 'event' ? (
-              <img src={googleCalendarIcon} alt="Google Calendar" className="w-5 h-5" />
-            ) : (
-              'Task'
-            )}
-          </span>
+          {block.type === 'event' ? (
+            <img src={googleCalendarLogo} alt="Google Calendar" className="h-full w-auto" />
+          ) : (
+            <span className="px-2 py-1 text-xs rounded-full border bg-background/50 border-current">
+              Task
+            </span>
+          )}
         </div>
         
         {/* Show time only for tasks at bottom */}
