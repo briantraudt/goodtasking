@@ -84,8 +84,9 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
 
   const handleCalendarEventClick = () => {
     if (block.type === 'event' && block.googleEventId) {
-      // Open the specific event in Google Calendar
-      const calendarUrl = `https://calendar.google.com/calendar/event?eid=${block.googleEventId}`;
+      // Open Google Calendar to today's view (more reliable than specific event URLs)
+      const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      const calendarUrl = `https://calendar.google.com/calendar/u/0/r/day/${today}`;
       window.open(calendarUrl, '_blank');
     }
   };
