@@ -11,7 +11,17 @@ import { Calendar, Clock, Sparkles, Loader2, Undo2 } from 'lucide-react';
 import { format, parseISO, isToday } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { DndContext, DragEndEvent, DragOverEvent, useDroppable, useDraggable } from '@dnd-kit/core';
+import { 
+  DndContext, 
+  DragEndEvent, 
+  DragOverEvent, 
+  useDroppable, 
+  useDraggable, 
+  DragOverlay,
+  pointerWithin,
+  closestCorners 
+} from '@dnd-kit/core';
+import { restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 
 interface Task {
   id: string;
@@ -76,13 +86,20 @@ const DroppableTimeSlot = ({ hour, period, children, hasOverlap, isCurrentTime }
     <div
       ref={setNodeRef}
       className={cn(
-        "min-h-[30px] border-b border-sidebar-border transition-colors relative",
-        isOver && !hasOverlap && "bg-primary/5 border-primary/20",
-        isOver && hasOverlap && "bg-destructive/5 border-destructive/20",
+        "min-h-[30px] border-b border-sidebar-border transition-colors relative group",
+        isOver && !hasOverlap && "bg-primary/10 border-primary/30 ring-1 ring-primary/20",
+        isOver && hasOverlap && "bg-destructive/10 border-destructive/30 ring-1 ring-destructive/20",
         hasOverlap && "bg-destructive/5",
         isCurrentTime && "bg-priority-medium/10"
       )}
     >
+      {/* Time label on hover */}
+      {isOver && (
+        <div className="absolute -top-6 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded z-20">
+          Drop at {hour}:{period === 'first' ? '00' : '30'}
+        </div>
+      )}
+      
       {/* Current time indicator */}
       {isCurrentTime && (
         <div className="absolute left-0 right-0 top-1/2 h-0.5 bg-destructive z-10">
@@ -108,6 +125,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [dragOverTimeSlot, setDragOverTimeSlot] = useState<string | null>(null);
 
   // Get today's scheduled tasks
   const scheduledTasks = projects.flatMap(project => 
@@ -144,11 +163,12 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
     return period === 'first' ? currentMinutes < 30 : currentMinutes >= 30;
   }, [selectedDate, currentTime]);
 
-  const hasTimeSlotOverlap = useCallback((hour: number, period: 'first' | 'second') => {
+  const hasTimeSlotOverlap = useCallback((hour: number, period: 'first' | 'second', currentBlocks?: TimeBlock[]) => {
+    const blocksToCheck = currentBlocks || timeBlocks;
     const targetTime = `${hour.toString().padStart(2, '0')}:${period === 'first' ? '00' : '30'}`;
     const nextSlotTime = `${hour.toString().padStart(2, '0')}:${period === 'first' ? '30' : '60'}`;
     
-    return timeBlocks.some(block => {
+    return blocksToCheck.some(block => {
       const blockStart = block.start;
       const blockEnd = block.end;
       
@@ -176,21 +196,23 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
 
     // Add scheduled tasks
     scheduledTasks.forEach(task => {
-      blocks.push({
-        id: `task-${task.id}`,
-        title: task.title,
-        start: '09:00', // Default start time - would be actual scheduled time
-        end: '09:30', // Default end time based on duration
-        type: 'task',
-        color: getPriorityColor(task.priority),
-        priority: task.priority
-      });
+      if (task.start_time && task.end_time) {
+        blocks.push({
+          id: `task-${task.id}`,
+          title: task.title,
+          start: task.start_time,
+          end: task.end_time,
+          type: 'task',
+          color: getPriorityColor(task.priority),
+          priority: task.priority,
+          taskId: task.id
+        });
+      }
     });
 
     // Sort by time
-    blocks.sort((a, b) => a.start.localeCompare(b.start));
-    setTimeBlocks(blocks);
-  }, [events, scheduledTasks]);
+    return blocks.sort((a, b) => a.start.localeCompare(b.start));
+  }, [events, scheduledTasks]); // Remove timeBlocks dependency
 
   const getPriorityColor = (priority?: string) => {
     switch (priority) {
@@ -303,6 +325,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
+    setActiveId(null);
+    setDragOverTimeSlot(null);
     const { active, over } = event;
     
     if (!over || !active.data.current) return;
@@ -364,7 +388,8 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
           end: endTime,
           type: 'task',
           color: getPriorityColor(task.priority),
-          priority: task.priority
+          priority: task.priority,
+          taskId: task.id
         };
         
         setTimeBlocks(prev => [...prev, newBlock].sort((a, b) => a.start.localeCompare(b.start)));
@@ -503,12 +528,26 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
     }
   };
 
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const { over } = event;
+    if (over) {
+      setDragOverTimeSlot(over.id as string);
+    } else {
+      setDragOverTimeSlot(null);
+    }
+  };
+
   // Generate time slots (9 AM to 6 PM)
   const timeSlots = Array.from({ length: 9 }, (_, i) => i + 9);
 
   useEffect(() => {
-    generateTimeBlocks();
-  }, [generateTimeBlocks]);
+    const newBlocks = generateTimeBlocks();
+    setTimeBlocks(newBlocks);
+  }, [events, scheduledTasks, selectedDate]); // Fixed dependencies
 
   if (calendarLoading) {
     return (
@@ -522,7 +561,13 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext 
+      onDragEnd={handleDragEnd}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      collisionDetection={pointerWithin}
+      modifiers={[restrictToFirstScrollableAncestor]}
+    >
       <div className={cn("flex gap-4 h-full relative", className)}>
         {/* Left side - Calendar Timeline (70%) */}
         <Card className="flex-[7]">
@@ -674,7 +719,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
           <div className="fixed bottom-6 right-6 z-50">
             <Button
               onClick={handleUndo}
-              className="flex items-center gap-2 shadow-lg"
+              className="flex items-center gap-2 shadow-elevated bg-accent text-accent-foreground hover:bg-accent/90"
               variant="secondary"
             >
               <Undo2 className="h-4 w-4" />
@@ -683,6 +728,18 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, className }
           </div>
         )}
       </div>
+
+      {/* Drag Overlay with Ghost Preview */}
+      <DragOverlay>
+        {activeId ? (
+          <div className="p-3 rounded-lg border bg-primary/10 border-primary/30 text-primary opacity-80 shadow-elevated">
+            <div className="flex items-center gap-2">
+              <Clock className="h-3 w-3" />
+              <span className="text-sm font-medium">Dragging task...</span>
+            </div>
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 };
