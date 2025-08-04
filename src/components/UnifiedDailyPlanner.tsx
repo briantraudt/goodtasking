@@ -211,18 +211,26 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const generateTimeBlocks = useCallback(() => {
     const blocks: TimeBlock[] = [];
 
-    // Add calendar events
-    events.forEach(event => {
-      blocks.push({
-        id: `event-${event.id}`,
-        title: event.title,
-        start: formatTime(event.start),
-        end: formatTime(event.end),
-        type: 'event',
-        color: '',
-        googleEventId: event.id // Pass the Google event ID
+    // Filter events for the selected date and add to blocks
+    const selectedDateStart = new Date(`${selectedDate}T00:00:00`);
+    const selectedDateEnd = new Date(`${selectedDate}T23:59:59`);
+    
+    events
+      .filter(event => {
+        const eventStart = new Date(event.start);
+        return eventStart >= selectedDateStart && eventStart <= selectedDateEnd;
+      })
+      .forEach(event => {
+        blocks.push({
+          id: `event-${event.id}`,
+          title: event.title,
+          start: formatTime(event.start),
+          end: formatTime(event.end),
+          type: 'event',
+          color: '',
+          googleEventId: event.id // Pass the Google event ID
+        });
       });
-    });
 
     // Add scheduled tasks
     scheduledTasks.forEach(task => {
@@ -242,7 +250,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
 
     // Sort by time
     return blocks.sort((a, b) => a.start.localeCompare(b.start));
-  }, [events, scheduledTasks]); // Remove timeBlocks dependency
+  }, [events, scheduledTasks, selectedDate]); // Add selectedDate dependency
 
   const getPriorityColor = (priority?: string) => {
     switch (priority) {
