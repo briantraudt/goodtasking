@@ -162,6 +162,8 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
       const startDate = startOfDay(new Date(date)).toISOString();
       const endDate = endOfDay(new Date(date)).toISOString();
 
+      console.log('🔄 Syncing calendar for date:', date, 'Range:', startDate, 'to', endDate);
+
       const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
         body: {
           action: 'sync',
@@ -174,6 +176,8 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
         throw error;
       }
 
+      console.log('📅 Sync response:', data);
+
       if (data?.events) {
         const formattedEvents: CalendarEvent[] = data.events.map((event: any) => ({
           id: event.id || event.google_event_id,
@@ -185,7 +189,11 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
           isAllDay: !!(event.start?.date) // All-day if no time specified
         }));
 
+        console.log('📅 Formatted events:', formattedEvents);
         setEvents(formattedEvents);
+      } else {
+        console.log('📅 No events returned from sync');
+        setEvents([]);
       }
     } catch (error) {
       console.error('Error syncing calendar:', error);
@@ -290,13 +298,13 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
     checkConnection();
   }, [checkConnection]);
 
-  // Auto-sync current day's events when connected
+  // Auto-sync current day's events when connected (only once)
   useEffect(() => {
     if (isConnected && user) {
       const today = format(new Date(), 'yyyy-MM-dd');
       syncCalendar(today);
     }
-  }, [isConnected, user, syncCalendar]);
+  }, [isConnected, user]); // Removed syncCalendar from dependencies to prevent infinite loop
 
   return {
     events,
