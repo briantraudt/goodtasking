@@ -11,8 +11,9 @@ import { Progress } from '@/components/ui/progress';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { supabase } from '@/integrations/supabase/client';
-import { Brain, Settings as SettingsIcon, User, AlertTriangle, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3 } from 'lucide-react';
+import { Brain, Settings as SettingsIcon, User, AlertTriangle, Calendar, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 
@@ -21,6 +22,7 @@ interface UserPreferences {
   weekly_review_enabled: boolean;
   reminders_enabled: boolean;
   streak_tracking_enabled: boolean;
+  google_calendar_enabled: boolean;
   ai_tone_preference: 'coaching' | 'friendly' | 'direct' | 'motivational';
   ai_summary_time: 'morning' | 'evening';
   default_task_day: 'today' | 'tomorrow' | 'none';
@@ -48,6 +50,7 @@ interface DashboardStats {
 const Settings = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
+  const { isConnected, loading: calendarLoading, connectCalendar, disconnectCalendar } = useGoogleCalendar();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -55,6 +58,7 @@ const Settings = () => {
     weekly_review_enabled: true,
     reminders_enabled: true,
     streak_tracking_enabled: true,
+    google_calendar_enabled: false,
     ai_tone_preference: 'coaching',
     ai_summary_time: 'morning',
     default_task_day: 'today',
@@ -99,6 +103,7 @@ const Settings = () => {
           weekly_review_enabled: prefsData.weekly_review_enabled,
           reminders_enabled: prefsData.reminders_enabled ?? true,
           streak_tracking_enabled: prefsData.streak_tracking_enabled ?? true,
+          google_calendar_enabled: prefsData.google_calendar_enabled ?? false,
           ai_tone_preference: prefsData.ai_tone_preference as 'coaching' | 'friendly' | 'direct' | 'motivational',
           ai_summary_time: prefsData.ai_summary_time as 'morning' | 'evening',
           default_task_day: prefsData.default_task_day as 'today' | 'tomorrow' | 'none',
@@ -552,6 +557,39 @@ const Settings = () => {
                 />
               </div>
 
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label>Google Calendar Integration</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Connect your Google Calendar to show events alongside tasks (read-only access)
+                  </p>
+                  {isConnected && (
+                    <p className="text-xs text-success">✓ Connected - Calendar events will sync automatically</p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  {isConnected ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={disconnectCalendar}
+                      disabled={calendarLoading}
+                    >
+                      Disconnect
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={connectCalendar}
+                      disabled={calendarLoading}
+                    >
+                      {calendarLoading ? 'Connecting...' : 'Connect Calendar'}
+                    </Button>
+                  )}
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Preferred AI Tone</Label>
@@ -600,7 +638,7 @@ const Settings = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5" />
+                <Calendar className="h-5 w-5" />
                 Default Behavior
               </CardTitle>
               <CardDescription>

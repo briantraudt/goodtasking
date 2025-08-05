@@ -140,15 +140,15 @@ const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
   return (
     <div className={`space-y-3 ${className}`}>
       {/* AI Sequencer Header */}
-      <div className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 p-4 rounded-lg">
-        <div className="pb-2 pt-3">
+      <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10 mx-4">
+        <CardHeader className="pb-2 pt-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-primary/10">
                 <Brain className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold">AI Task Sequencer</h3>
+                <CardTitle className="text-lg font-semibold">AI Task Sequencer</CardTitle>
                 <p className="text-xs text-muted-foreground">
                   Intelligently schedule your unscheduled tasks into available time slots
                 </p>
@@ -260,10 +260,10 @@ const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
               </Button>
             </div>
           </div>
-        </div>
+        </CardHeader>
         
         {(availableBlocks.length > 0 || scheduledTasks.length > 0) && (
-          <div className="p-4">
+          <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Available Time Blocks */}
               {availableBlocks.length > 0 && (
@@ -323,20 +323,20 @@ const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
                 </div>
               )}
             </div>
-          </div>
+          </CardContent>
         )}
-      </div>
+      </Card>
       
       {/* Drag & Drop Timeline Tasks */}
       {scheduledTasks.length > 0 && (
-        <div className="bg-white rounded-lg border p-4">
-          <div className="py-2">
-            <h3 className="text-lg font-semibold">Drag & Drop Schedule</h3>
+        <Card className="mx-4">
+          <CardHeader className="py-2">
+            <CardTitle className="text-lg">Drag & Drop Schedule</CardTitle>
             <p className="text-sm text-muted-foreground">
               Drag these AI-scheduled tasks to the calendar timeline to finalize your schedule
             </p>
-          </div>
-          <div>
+          </CardHeader>
+          <CardContent>
             <div className="grid gap-2">
               {scheduledTasks.map((task) => {
                 const timeBlock = {
@@ -367,8 +367,8 @@ const AITaskSequencerInline: React.FC<AITaskSequencerInlineProps> = ({
                 );
               })}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

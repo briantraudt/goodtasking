@@ -66,61 +66,22 @@ export default {
 					DEFAULT: 'hsl(var(--success))',
 					foreground: 'hsl(var(--success-foreground))'
 				},
-				// Good Business Brand Colors
-				'forest-green': 'hsl(var(--forest-green))',
-				'navy-blue': 'hsl(var(--navy-blue))',
-				'navy-blue-light': 'hsl(var(--navy-blue-light))',
-				'indigo-purple': 'hsl(var(--indigo-purple))',
-				'sky-blue': 'hsl(var(--sky-blue))',
-				'golden-yellow': 'hsl(var(--golden-yellow))',
-				'near-black': 'hsl(var(--near-black))',
-				'off-white': 'hsl(var(--off-white))',
-				'light-gray': 'hsl(var(--light-gray))',
-				'timeline-gray': 'hsl(var(--timeline-gray))',
-				'current-time-green': 'hsl(var(--current-time-green))',
 				// Task Priority Colors
 				'priority-high': 'hsl(var(--priority-high))',
 				'priority-medium': 'hsl(var(--priority-medium))',
 				'priority-low': 'hsl(var(--priority-low))',
-				// Good Business Project Colors
-				'project-navy': {
-					DEFAULT: 'hsl(var(--project-navy))',
-					bg: 'hsl(var(--project-navy-bg))'
-				},
-				'project-forest': {
-					DEFAULT: 'hsl(var(--project-forest))',
-					bg: 'hsl(var(--project-forest-bg))'
-				},
-				'project-indigo': {
-					DEFAULT: 'hsl(var(--project-indigo))',
-					bg: 'hsl(var(--project-indigo-bg))'
-				},
-				'project-sky': {
-					DEFAULT: 'hsl(var(--project-sky))',
-					bg: 'hsl(var(--project-sky-bg))'
-				},
-				'project-purple': {
-					DEFAULT: 'hsl(var(--project-purple))',
-					bg: 'hsl(var(--project-purple-bg))'
-				},
-				'project-gold': {
-					DEFAULT: 'hsl(var(--project-gold))',
-					bg: 'hsl(var(--project-gold-bg))'
-				},
 				// Calendar and Timeline Colors
 				'calendar-event': {
 					bg: 'hsl(var(--calendar-event-bg))',
 					border: 'hsl(var(--calendar-event-border))'
 				},
-				'calendar-grid': 'hsl(var(--calendar-grid))',
-				'current-time-line': 'hsl(var(--current-time-line))',
-				// Footer Colors
-				'footer': {
-					bg: 'hsl(var(--footer-background))',
-					foreground: 'hsl(var(--footer-foreground))',
-					'accent-green': 'hsl(var(--footer-accent-green))',
-					'accent-blue': 'hsl(var(--footer-accent-blue))',
-					'accent-yellow': 'hsl(var(--footer-accent-yellow))'
+				'google-calendar': {
+					bg: 'hsl(var(--google-calendar-bg))',
+					border: 'hsl(var(--google-calendar-border))'
+				},
+				'ai-scheduled': {
+					bg: 'hsl(var(--ai-scheduled-bg))',
+					border: 'hsl(var(--ai-scheduled-border))'
 				},
 				// Sidebar Colors
 				'sidebar-card': 'hsl(var(--sidebar-card-bg))',

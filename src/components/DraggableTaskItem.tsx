@@ -59,19 +59,39 @@ const DraggableTaskItem = ({ task }: DraggableTaskItemProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "flex items-center justify-between cursor-grab active:cursor-grabbing",
-        "w-full",
-        isDragging && "opacity-50 z-40"
+        "task-card flex flex-col cursor-grab active:cursor-grabbing transition-all duration-200",
+        "py-1.5 px-3 rounded-lg border-0 relative group h-12 mb-1",
+        "shadow-none hover:shadow-sm",
+        cardStyling.bg,
+        cardStyling.hover,
+        isDragging && "opacity-50 shadow-md z-40 rotate-1 scale-105"
       )}
     >
-      {/* Task Title - Clean and minimal */}
-      <span className="text-sm font-medium truncate">
-        {task.title}
-      </span>
+      {/* Project/Client Name - Small, subtle gray */}
+      {task.vibe_projects?.name && (
+        <div className="text-xs text-gray-500 mb-0.5 font-normal">
+          {task.vibe_projects.name}
+        </div>
+      )}
+      
+      {/* Task Title - Bold, primary focus */}
+      <div className="flex-1 flex items-center justify-between">
+        <h4 className="text-sm font-semibold text-gray-900 leading-tight truncate">
+          {task.title}
+        </h4>
+        
+        {/* Scheduled indicator */}
+        {task.scheduled_date && (
+          <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded ml-2">
+            <Calendar className="h-2.5 w-2.5" />
+            <span className="hidden sm:inline">Scheduled</span>
+          </div>
+        )}
+      </div>
 
       {/* Minimal Drag Handle (appears on hover) */}
-      <div className="opacity-0 group-hover:opacity-60 transition-opacity ml-2 flex-shrink-0">
-        <GripVertical className="h-3 w-3" />
+      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-50 transition-opacity">
+        <GripVertical className="h-3 w-3 text-gray-400" />
       </div>
     </div>
   );

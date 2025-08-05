@@ -10,103 +10,80 @@ Enhanced with vibrant gradients and modern design tokens.
 
 @layer base {
   :root {
-    /* Good Business Brand Colors */
-    --forest-green: 142 71% 40%; /* #219653 - Primary CTAs */
-    --navy-blue: 210 54% 24%; /* #1E3A5F - Headers, sidebar */
-    --navy-blue-light: 210 54% 30%; /* Lighter navy for hover states */
-    --indigo-purple: 260 60% 55%; /* Task bucket colors */
-    --sky-blue: 200 80% 55%; /* Task bucket colors */
-    --golden-yellow: 45 100% 50%; /* Warnings, overdue */
-    --near-black: 0 0% 10%; /* #1A1A1A - Text */
-    --off-white: 0 0% 98%; /* #FAFAFA - Body background */
-    --light-gray: 0 0% 95%; /* #F2F2F2 - Alternative background */
-    --timeline-gray: 0 0% 84%; /* #D5D5D5 - Timeline lines */
-    --current-time-green: 145 63% 42%; /* #27AE60 - Current time marker */
+    /* Modern Color System - Updated to match brand guidelines */
+    --background: 210 11% 98%; /* #F9FAFB */
+    --foreground: 222 15% 15%;
 
-    /* Updated Design System - Good Business Palette */
-    --background: 0 0% 98%; /* Off-white #FAFAFA */
-    --foreground: 0 0% 10%; /* Near-black #1A1A1A */
-
-    --card: 0 0% 100%; /* Pure white for cards */
-    --card-foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 222 15% 15%;
 
-    --primary: 200 80% 55%; /* Light blue #4DA8DA - matching logo */
+    --primary: 210 90% 63%; /* #437BFF - Brand Blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 54% 24%; /* Navy blue #1E3A5F */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 210 11% 96%;
+    --secondary-foreground: 222 15% 15%;
 
-    --muted: 0 0% 95%; /* Light gray #F2F2F2 */
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 11% 96%;
+    --muted-foreground: 215 16% 47%; /* #6B7280 */
 
-    --accent: 200 80% 55%; /* Light blue */
-    --accent-foreground: 0 0% 100%;
+    --accent: 210 11% 96%;
+    --accent-foreground: 222 15% 15%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 84%; /* Timeline gray #D5D5D5 */
-    --input: 0 0% 84%;
-    --ring: 142 71% 40%; /* Forest green focus ring */
+    --border: 220 13% 91%; /* #E5E7EB */
+    --input: 220 13% 91%;
+    --ring: 210 90% 63%;
 
     --radius: 0.75rem; /* 12px */
 
-    /* Good Business Task Priority Colors */
-    --priority-high: 0 84% 60%; /* Keep red for high priority */
-    --priority-medium: 45 100% 50%; /* Golden yellow */
-    --priority-low: 142 71% 40%; /* Forest green */
+    /* Task Priority Colors - Modern palette */
+    --priority-high: 0 84% 60%;     /* Light red */
+    --priority-medium: 47 100% 68%; /* #FFD560 - Modern yellow */
+    --priority-low: 142 71% 45%;    /* Light green */
 
-    /* Good Business Project Colors */
-    --project-navy: 210 54% 24%;
-    --project-navy-bg: 210 54% 97%;
-    --project-forest: 142 71% 40%;
-    --project-forest-bg: 142 71% 97%;
-    --project-indigo: 260 60% 55%;
-    --project-indigo-bg: 260 60% 97%;
-    --project-sky: 200 80% 55%;
-    --project-sky-bg: 200 80% 97%;
-    --project-purple: 270 67% 60%;
-    --project-purple-bg: 270 67% 97%;
-    --project-gold: 45 100% 50%;
-    --project-gold-bg: 45 100% 97%;
+    /* Google Calendar Colors */
+    --google-calendar: 210 90% 63%;
+    --google-calendar-bg: 210 100% 97%;
+    --google-calendar-border: 210 90% 63%;
 
-    /* Calendar & Timeline Colors */
-    --calendar-event-bg: 0 0% 100%; /* Pure white */
-    --calendar-event-border: 210 54% 24%; /* Navy blue */
-    --calendar-grid: 0 0% 84%; /* Timeline gray */
-    --current-time-line: 145 63% 42%; /* Current time green */
+    /* AI Colors */
+    --ai-scheduled: 142 71% 45%;
+    --ai-scheduled-bg: 142 71% 96%;
+    --ai-scheduled-border: 142 71% 45%;
 
-    /* Enhanced Shadows for white cards */
-    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.15);
-    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.10);
+    /* Modern Shadows */
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+    /* Timeline Block Colors */
+    --calendar-event-bg: 210 100% 97%;
+    --calendar-event-border: 210 90% 63%;
+
+    /* Current Time Indicator */
+    --current-time-line: 0 84% 60%;
 
     /* Enhanced Transitions */
     --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* Sidebar - Navy Background */
-    --sidebar-background: 210 54% 24%; /* Navy blue */
-    --sidebar-foreground: 0 0% 100%; /* White text */
-    --sidebar-primary: 142 71% 40%; /* Forest green accents */
+    /* Sidebar */
+    --sidebar-background: 210 11% 98%;
+    --sidebar-foreground: 222 15% 20%;
+    --sidebar-primary: 210 90% 63%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 54% 30%; /* Lighter navy for hover */
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 84%;
-    --sidebar-ring: 142 71% 40%;
+    --sidebar-accent: 210 11% 96%;
+    --sidebar-accent-foreground: 222 15% 15%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 210 90% 63%;
 
-    /* Footer Metrics - Navy Background */
-    --footer-background: 210 54% 24%; /* Navy blue */
-    --footer-foreground: 0 0% 100%; /* White text */
-    --footer-accent-green: 142 71% 40%; /* Forest green for task metrics */
-    --footer-accent-blue: 200 80% 55%; /* Sky blue for calendar metrics */
-    --footer-accent-yellow: 45 100% 50%; /* Golden yellow for other metrics */
-
-    /* Legacy compatibility */
+    /* Legacy color mappings for compatibility */
     --sidebar-card-bg: 0 0% 100%;
-    --success: 142 71% 40%; /* Forest green */
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
   }
 

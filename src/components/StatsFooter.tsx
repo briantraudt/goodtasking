@@ -1,5 +1,6 @@
 import React from 'react';
-import { CheckSquare, Clock } from 'lucide-react';
+import { Calendar, CheckSquare, Clock } from 'lucide-react';
+import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 
 interface Project {
   id: string;
@@ -19,6 +20,8 @@ interface StatsFooterProps {
 }
 
 const StatsFooter = ({ projects }: StatsFooterProps) => {
+  const { events, isConnected } = useGoogleCalendar();
+
   // Calculate scheduled tasks for today
   const today = new Date().toISOString().split('T')[0];
   const scheduledTasks = projects.flatMap(project => 
@@ -30,8 +33,21 @@ const StatsFooter = ({ projects }: StatsFooterProps) => {
     )
   );
 
-  // Calculate total time blocks (scheduled tasks only)
-  const totalBlocks = scheduledTasks.length;
+  // Calculate calendar events for today
+  const todayEvents = events.filter(event => {
+    const eventDate = new Date(event.start).toLocaleDateString('en-CA');
+    return eventDate === today;
+  });
+
+  // Calculate total time blocks (scheduled tasks + calendar events)
+  const totalBlocks = scheduledTasks.length + todayEvents.length;
+
+  const handleCalendarEventsClick = () => {
+    const calendarSection = document.querySelector('[data-calendar-section]');
+    if (calendarSection) {
+      calendarSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const handleScheduledTasksClick = () => {
     const tasksSection = document.querySelector('[data-tasks-section]');
@@ -48,7 +64,17 @@ const StatsFooter = ({ projects }: StatsFooterProps) => {
   };
 
   return (
-    <div className="flex items-center justify-center gap-6 text-sm">      
+    <div className="flex items-center justify-center gap-6 text-sm">
+      <button 
+        onClick={handleCalendarEventsClick}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors cursor-pointer"
+      >
+        <Calendar className="h-4 w-4" />
+        <span className="font-semibold">{todayEvents.length}</span>
+        <span className="hidden sm:inline">Calendar Events</span>
+        <span className="sm:hidden">Events</span>
+      </button>
+      
       <button 
         onClick={handleScheduledTasksClick}
         className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/10 text-green-600 font-medium hover:bg-green-500/20 transition-colors cursor-pointer"
