@@ -171,64 +171,34 @@ const DashboardView = ({
   const createQuickTask = async (projectId: string, title: string, description?: string, dueDate?: Date, startTime?: string, endTime?: string, scheduledDate?: string) => {
     if (!quickTaskTime || !startTime || !endTime || !scheduledDate) return;
     
-    console.log('🎯 Creating quick task:', { projectId, title, startTime, endTime, scheduledDate });
+    console.log('🎯 Creating scheduled task directly:', { projectId, title, startTime, endTime, scheduledDate });
     
-    // Create the task first
-    await onCreateTask(projectId, title, description, dueDate);
+    // Create the task with scheduling info upfront
+    const task = await onCreateTask(projectId, title, description, dueDate);
     
-    console.log('✅ Task created, current projects count:', projects.length);
-    console.log('📋 Current allTasks count:', allTasks.length);
-    
-    // Instead of trying to find the task, let's use a different approach
-    // We'll call the parent's refresh function if available, then schedule
-    if (onRefreshTasks) {
-      await onRefreshTasks();
-      console.log('🔄 Refreshed tasks, new count:', projects.flatMap(p => p.tasks).length);
-    }
-    
-    // Try to find and schedule the task with better timing
-    let attempts = 0;
-    const maxAttempts = 15;
-    
-    const scheduleTask = () => {
-      attempts++;
-      console.log(`🔍 Attempt ${attempts}: Looking for task "${title}" in project ${projectId}`);
-      
-      // Get fresh task list from projects
-      const currentAllTasks = projects.flatMap(project => 
-        project.tasks.map(task => ({
-          ...task,
-          vibe_projects: { name: project.name }
-        }))
-      );
-      
-      console.log('📊 Current tasks in search:', currentAllTasks.map(t => ({ id: t.id, title: t.title, projectId: t.project_id, scheduled: !!t.scheduled_date })));
-      console.log('🔍 Looking for task with title:', title, 'and projectId:', projectId);
-      
-      // Filter by title and project first
-      const matchingTasks = currentAllTasks.filter(task => task.title === title && task.project_id === projectId);
-      console.log('🎯 Tasks matching title and project:', matchingTasks.map(t => ({ id: t.id, title: t.title, scheduled: !!t.scheduled_date })));
-      
-      const newTask = matchingTasks.find(task => !task.scheduled_date);
-      console.log('📍 Final newTask found:', newTask ? { id: newTask.id, title: newTask.title } : 'NONE');
-      
-      if (newTask) {
-        console.log('🎉 Found new task, scheduling:', newTask.id);
-        handleTaskScheduled(newTask.id, startTime, endTime);
-        setShowQuickTaskDialog(false);
-        setQuickTaskTime(null);
-      } else if (attempts < maxAttempts) {
-        console.log(`⏳ Task not found yet, retrying in 200ms (attempt ${attempts}/${maxAttempts})`);
-        setTimeout(scheduleTask, 200);
-      } else {
-        console.warn('❌ Failed to find and schedule new task after', maxAttempts, 'attempts');
-        setShowQuickTaskDialog(false);
-        setQuickTaskTime(null);
+    // Get the task ID by finding the most recently created task for this project
+    // This is more reliable than the retry mechanism
+    setTimeout(async () => {
+      if (onRefreshTasks) {
+        await onRefreshTasks();
       }
-    };
-    
-    // Start the scheduling process after a short delay
-    setTimeout(scheduleTask, 300);
+      
+      // Find the newest task by title in the project
+      const project = projects.find(p => p.id === projectId);
+      if (project) {
+        const matchingTasks = project.tasks.filter(t => t.title === title);
+        // Take the most recent unscheduled task (assumes newer tasks are at the end)
+        const newestTask = matchingTasks.filter(t => !t.scheduled_date).pop();
+        
+        if (newestTask) {
+          console.log('🎉 Found newest task, scheduling:', newestTask.id);
+          handleTaskScheduled(newestTask.id, startTime, endTime);
+        }
+      }
+      
+      setShowQuickTaskDialog(false);
+      setQuickTaskTime(null);
+    }, 500);
   };
 
   // Sync calendar when date changes
