@@ -283,12 +283,12 @@ const DayViewCalendar = ({
             variant="outline"
             size="sm"
             onClick={() => navigateDate('prev')}
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
+            className="h-8 w-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
           
-          <h2 className="text-lg font-semibold text-primary">
+          <h2 className="text-base font-semibold text-primary">
             {formatDateHeader()}
           </h2>
           
@@ -296,9 +296,9 @@ const DayViewCalendar = ({
             variant="outline"
             size="sm"
             onClick={() => navigateDate('next')}
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
+            className="h-8 w-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
       </div>
