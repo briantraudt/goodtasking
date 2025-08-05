@@ -277,9 +277,13 @@ const DayViewCalendar = ({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Calendar Header with Centered Date and Week Button */}
+      {/* Calendar Header with Icon, Centered Date and Week Button */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
-        <div></div> {/* Empty left side for spacing */}
+        {/* Calendar Icon and Text on Left */}
+        <div className="flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-primary" />
+          <h1 className="text-lg font-semibold text-foreground">Calendar</h1>
+        </div>
         
         {/* Centered Date Navigation */}
         <div className="flex items-center gap-3">
