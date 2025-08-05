@@ -103,22 +103,11 @@ const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps)
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
 
-  const handleDoubleClick = (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🗑️ Double-click detected, removing task from schedule:', task.id);
-    onRemove?.(task.id);
-  };
-
-  const handleSingleClick = (e: React.MouseEvent) => {
-    // Prevent single click when double-clicking
-    e.stopPropagation();
-    
-    // Use a timeout to distinguish between single and double clicks
-    setTimeout(() => {
-      console.log('✏️ Single click detected, editing task:', task.id);
-      onEdit?.(task);
-    }, 200);
+    console.log('✏️ Task clicked for editing:', task.title);
+    onEdit?.(task);
   };
 
   return (
@@ -126,16 +115,23 @@ const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps)
       ref={setNodeRef}
       style={style}
       className={cn(
-        "absolute inset-0 rounded-lg border border-[#4DA8DA] bg-[#4DA8DA] cursor-grab z-10 shadow-sm text-white",
+        "absolute inset-0 rounded-lg border border-[#4DA8DA] bg-[#4DA8DA] z-10 shadow-sm text-white",
         isDragging && "opacity-50"
       )}
-      onDoubleClick={handleDoubleClick}
-      onClick={handleSingleClick}
-      title="Click to edit • Double-click to remove from schedule"
-      {...listeners}
-      {...attributes}
+      title="Click to edit"
     >
-      <div className="p-2 h-full flex flex-col justify-center">
+      {/* Draggable area - excludes the content area */}
+      <div 
+        {...listeners}
+        {...attributes}
+        className="absolute inset-0 cursor-grab"
+      />
+      
+      {/* Clickable content area for editing */}
+      <div 
+        className="relative p-2 h-full flex flex-col justify-center cursor-pointer z-10"
+        onClick={handleClick}
+      >
         <div className="text-sm truncate">
           <span className="font-bold">{task.title}</span>
           {task.vibe_projects?.name && (
