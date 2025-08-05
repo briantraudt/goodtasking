@@ -63,7 +63,7 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime }: TimeSlotProps) => {
       className={cn(
         "h-10 border-b border-border/30 relative transition-colors hover:bg-primary/10",
         isOver && "bg-primary/20 border-primary/40",
-        isCurrentTime && "bg-yellow-50/50",
+        isCurrentTime && "border-2 border-[#4DA8DA] bg-transparent", // Light blue outline instead of yellow fill
         minute === 0 ? "border-border" : "border-border/20"
       )}
     >
@@ -373,14 +373,14 @@ const DayViewCalendar = ({
                   data-hour={hour}
                   className={cn(
                     "relative flex",
-                    isCurrentHour && "bg-primary/10"
+                    isCurrentHour && "border-l-4 border-l-[#4DA8DA] bg-transparent" // Light blue left border instead of background
                   )}
                 >
                   {/* Time label */}
                   <div className={cn(
                     "w-20 flex-shrink-0 py-2 pl-4 pr-3 text-sm font-semibold text-gray-800 border-r border-border",
                     isToday(new Date(selectedDate)) ? "bg-primary/5" : "bg-muted/30",
-                    isCurrentHour && "bg-primary/20 text-primary font-bold"
+                    isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold" // Light blue border and text
                   )}>
                     {formatTimeLabel(hour)}
                   </div>
@@ -456,7 +456,7 @@ const DayViewCalendar = ({
             {/* Current time indicator */}
             {isToday(new Date(selectedDate)) && (
               <div
-                className="absolute right-0 h-0.5 bg-red-500 z-30"
+                className="absolute right-0 h-0.5 bg-[#4DA8DA] z-30" // Changed from red to light blue
                 style={{
                   top: (currentTime.getHours() * 80) + (currentTime.getMinutes() / 60 * 80),
                   left: 84,
