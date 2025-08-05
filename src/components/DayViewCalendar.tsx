@@ -424,48 +424,39 @@ const DayViewCalendar = ({
                 <div 
                   key={hour} 
                   data-hour={hour}
-                  className={cn(
-                    "relative flex",
-                    isCurrentHour && "border-l-4 border-l-[#4DA8DA] bg-transparent" // Light blue left border instead of background
-                  )}
+                  className="flex w-full h-24 border-t border-gray-200"
                 >
-                   {/* Time column - matches exact structure of calendar grid */}
-                   <div className={cn(
-                     "w-28 flex-shrink-0 border-r border-border",
-                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
-                   )}>
-                      {/* First 30-min slot with time label at top */}
-                       <div className={cn(
-                         "h-12 border-b border-border/30 flex items-center justify-end pr-2 text-sm font-semibold text-gray-700",
-                         isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold"
-                       )}>
-                         {formatTimeLabel(hour)}
-                       </div>
-                     {/* Second 30-min slot - empty for half-hour tasks */}
-                     <div className={cn(
-                       "h-12 border-b border-border/20",
-                       isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent"
-                     )} />
-                   </div>
-                   
-                   {/* Time slots container */}
-                   <div className="flex-1">
-                     {/* 30-minute slots for this hour */}
-                     {Array.from({ length: 2 }, (_, halfIndex) => {
-                       const minute = halfIndex * 30;
-                       const hasTask = hasTaskAtTime(hour, minute);
-                       
-                       return (
-                         <TimeSlot
-                           key={`${hour}-${minute}`}
-                           hour={hour}
-                           minute={minute}
-                           isCurrentTime={false}
-                           hasTask={hasTask}
-                           onClick={() => onQuickTaskCreate?.(hour, minute)}
-                         />
-                       );
-                     })}
+                  {/* Time column */}
+                  <div className={cn(
+                    "w-28 h-full pr-2 flex items-start justify-end border-r border-border",
+                    isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
+                  )}>
+                    <span className={cn(
+                      "pt-1 text-sm font-semibold text-gray-700",
+                      isCurrentHour && "text-[#4DA8DA] font-bold"
+                    )}>
+                      {formatTimeLabel(hour)}
+                    </span>
+                  </div>
+
+                  {/* Event block container - spans full hour */}
+                  <div className="flex-1 h-full relative">
+                    {/* 30-minute slots for this hour */}
+                    {Array.from({ length: 2 }, (_, halfIndex) => {
+                      const minute = halfIndex * 30;
+                      const hasTask = hasTaskAtTime(hour, minute);
+                      
+                      return (
+                        <TimeSlot
+                          key={`${hour}-${minute}`}
+                          hour={hour}
+                          minute={minute}
+                          isCurrentTime={false}
+                          hasTask={hasTask}
+                          onClick={() => onQuickTaskCreate?.(hour, minute)}
+                        />
+                      );
+                    })}
                   </div>
                 </div>
               );
@@ -483,7 +474,7 @@ const DayViewCalendar = ({
                     position: 'absolute',
                     top: position.top + 2, // Add 2px top margin for spacing
                     height: Math.max(position.height - 4, 16), // Reduce height by 4px (2px top + 2px bottom), minimum 16px
-                    left: 116, // Space for time labels + padding (w-28 = 112px + 4px padding)
+                    left: 120, // Space for time labels + padding (w-28 = 112px + 8px padding)
                     right: 16,
                     zIndex: 10
                   }}
@@ -532,7 +523,7 @@ const DayViewCalendar = ({
                 className="absolute right-0 h-0.5 bg-[#4DA8DA] z-30" // Changed from red to light blue
                 style={{
                   top: (currentTime.getHours() * 96) + (currentTime.getMinutes() / 60 * 96),
-                  left: 116, // Updated to match widened time column (w-28 = 112px + 4px padding)
+                  left: 120, // Updated to match widened time column (w-28 = 112px + 8px padding)
                 }}
               >
                 <div className="absolute -left-2 -top-2 w-4 h-4 bg-red-500 rounded-full"></div>
