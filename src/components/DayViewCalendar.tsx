@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { format, addDays, subDays, isToday, parseISO, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar, Clock, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, Star, GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
@@ -114,21 +114,14 @@ const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps)
       ref={setNodeRef}
       style={style}
       className={cn(
-        "absolute inset-0 rounded-lg border border-[#4DA8DA] bg-[#4DA8DA] z-10 shadow-sm text-white",
+        "absolute inset-0 rounded-lg border border-primary bg-primary z-10 shadow-sm text-white flex items-center",
         isDragging && "opacity-50"
       )}
-      title="Click to edit"
+      title="Click to edit • Drag handle on right to move"
     >
-      {/* Draggable area - excludes the content area */}
-      <div 
-        {...listeners}
-        {...attributes}
-        className="absolute inset-0 cursor-grab"
-      />
-      
       {/* Clickable content area for editing */}
       <div 
-        className="relative p-2 h-full flex flex-col justify-center cursor-pointer z-10"
+        className="flex-1 p-2 h-full flex flex-col justify-center cursor-pointer"
         onClick={handleClick}
       >
         <div className="text-sm truncate">
@@ -137,6 +130,16 @@ const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps)
             <span className="font-normal"> - {task.vibe_projects.name}</span>
           )}
         </div>
+      </div>
+      
+      {/* Drag handle with dots */}
+      <div 
+        {...listeners}
+        {...attributes}
+        className="w-6 h-full bg-primary/20 rounded-r-lg cursor-grab active:cursor-grabbing flex items-center justify-center border-l border-white/20 hover:bg-white/10 transition-colors"
+        title="Drag to move task"
+      >
+        <GripVertical className="h-4 w-4 text-white/80" />
       </div>
     </div>
   );
