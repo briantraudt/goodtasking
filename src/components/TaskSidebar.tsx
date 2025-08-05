@@ -107,9 +107,12 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     );
   }, [projects]);
 
+  // Wrapper to handle type compatibility with SmartAddButton
   const handleCreateTask = (projectId: string, title: string, scheduledDate: Date) => {
     onCreateTask?.(projectId, title, undefined, scheduledDate);
   };
+
+  
   
   const getTaskCountByPriority = (priority: string) => {
     return allTasks.filter(task => task.priority === priority).length;
@@ -140,9 +143,16 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
       )}
     >
       {/* Tasks Section Header */}
-      <div className="flex items-center gap-2 mb-4 pb-2 border-b">
-        <CheckSquare className="h-5 w-5 text-primary" />
-        <h1 className="text-lg font-semibold text-foreground">Tasks</h1>
+      <div className="flex items-center justify-between mb-4 pb-2 border-b">
+        <div className="flex items-center gap-2">
+          <CheckSquare className="h-5 w-5 text-primary" />
+          <h1 className="text-lg font-semibold text-foreground">Tasks</h1>
+        </div>
+        <SmartAddButton
+          projects={projects}
+          onCreateTask={handleCreateTask}
+          onCreateProject={onCreateProject}
+        />
       </div>
       
       {/* No header section needed - Add button is now in parent component */}
