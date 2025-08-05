@@ -20,11 +20,11 @@ const Header = () => {
     <header className="flex items-center justify-between">
       {/* Left side - Good Tasking Logo */}
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 bg-blue-400 rounded-lg flex items-center justify-center">
           <CalendarCheck className="h-5 w-5 text-white" />
         </div>
         <span className="text-2xl font-bold text-gray-800">
-          G<span className="text-orange-500">o</span>od Tasking
+          Go<span className="text-blue-400">o</span>d Tasking
         </span>
       </div>
 
