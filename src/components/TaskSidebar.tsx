@@ -310,7 +310,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                                     onMouseEnter={(e) => {
                                       if (!isSelected) {
                                         e.currentTarget.style.borderColor = categoryColor.hex;
-                                        e.currentTarget.style.backgroundColor = `${categoryColor.hex}20`;
+                                        e.currentTarget.style.backgroundColor = categoryColor.hex;
                                       }
                                     }}
                                     onMouseLeave={(e) => {
