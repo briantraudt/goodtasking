@@ -164,18 +164,44 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Unified Light Blue Color System - Match the Add button blue
-  const getProjectColor = () => {
-    // All projects use the same light blue color (#4DA8DA) for consistency
-    return {
-      hex: '#4DA8DA',
-      border: 'border-[#4DA8DA]',
-      text: 'text-[#4DA8DA]', 
-      accent: 'text-[#4DA8DA]',
-      taskBg: 'bg-[#4DA8DA]',
-      taskHover: 'hover:brightness-110',
-      name: 'brand-light-blue'
-    };
+  // Dynamic Color System Based on Project Category
+  const getProjectColor = (category: string = 'work') => {
+    switch (category) {
+      case 'personal':
+        return {
+          hex: 'hsl(120, 61%, 50%)', // Green
+          border: 'border-[hsl(120,61%,50%)]',
+          text: 'text-[hsl(120,61%,50%)]', 
+          accent: 'text-[hsl(120,61%,50%)]',
+          taskBg: 'bg-[hsl(120,61%,50%)]',
+          taskHover: 'hover:brightness-110',
+          name: 'personal-green',
+          cssVar: 'hsl(var(--personal))'
+        };
+      case 'home':
+        return {
+          hex: 'hsl(25, 95%, 53%)', // Orange
+          border: 'border-[hsl(25,95%,53%)]',
+          text: 'text-[hsl(25,95%,53%)]', 
+          accent: 'text-[hsl(25,95%,53%)]',
+          taskBg: 'bg-[hsl(25,95%,53%)]',
+          taskHover: 'hover:brightness-110',
+          name: 'home-orange',
+          cssVar: 'hsl(var(--home))'
+        };
+      case 'work':
+      default:
+        return {
+          hex: '#4DA8DA', // Blue - keep existing work color
+          border: 'border-[#4DA8DA]',
+          text: 'text-[#4DA8DA]', 
+          accent: 'text-[#4DA8DA]',
+          taskBg: 'bg-[#4DA8DA]',
+          taskHover: 'hover:brightness-110',
+          name: 'work-blue',
+          cssVar: 'hsl(var(--work))'
+        };
+    }
   };
 
   return (
@@ -241,7 +267,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
 
           if (projectTasks.length === 0) return null;
 
-          const projectColor = getProjectColor();
+          const projectColor = getProjectColor(project.category);
 
           return (
             <div 
@@ -267,26 +293,48 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                         <div className="space-y-2">
                           <Label className="text-sm font-medium">Change Category</Label>
                           <div className="space-y-2">
-                            {(['work', 'personal', 'home'] as const).map((category) => (
-                              <div key={category} className="flex items-center space-x-2">
-                                <Checkbox
-                                  id={`${project.id}-${category}`}
-                                  checked={project.category === category}
-                                  onCheckedChange={() => {
-                                    if (onUpdateProject && project.category !== category) {
-                                      onUpdateProject(project.id, { category });
-                                    }
-                                    setEditingProjectId(null);
-                                  }}
-                                />
-                                <Label 
-                                  htmlFor={`${project.id}-${category}`} 
-                                  className="text-sm font-normal capitalize cursor-pointer"
-                                >
-                                  {category}
-                                </Label>
-                              </div>
-                            ))}
+                            {(['work', 'personal', 'home'] as const).map((category) => {
+                              const categoryColor = getProjectColor(category);
+                              const isSelected = project.category === category;
+                              
+                              return (
+                                <div key={category} className="flex items-center space-x-2">
+                                  <div 
+                                    className={cn(
+                                      "w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-200 flex items-center justify-center",
+                                      isSelected 
+                                        ? `bg-[${categoryColor.hex}] border-[${categoryColor.hex}]`
+                                        : `border-gray-300 hover:border-[${categoryColor.hex}] hover:bg-[${categoryColor.hex}]/10`
+                                    )}
+                                    onClick={() => {
+                                      if (onUpdateProject && project.category !== category) {
+                                        onUpdateProject(project.id, { category });
+                                      }
+                                      setEditingProjectId(null);
+                                    }}
+                                  >
+                                    {isSelected && (
+                                      <div className="w-2 h-2 bg-white rounded-full" />
+                                    )}
+                                  </div>
+                                  <Label 
+                                    htmlFor={`${project.id}-${category}`} 
+                                    className={cn(
+                                      "text-sm font-normal capitalize cursor-pointer transition-colors",
+                                      isSelected ? categoryColor.text : "text-gray-700 hover:text-gray-900"
+                                    )}
+                                    onClick={() => {
+                                      if (onUpdateProject && project.category !== category) {
+                                        onUpdateProject(project.id, { category });
+                                      }
+                                      setEditingProjectId(null);
+                                    }}
+                                  >
+                                    {category}
+                                  </Label>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       </PopoverContent>

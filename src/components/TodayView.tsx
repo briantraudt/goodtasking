@@ -27,6 +27,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
+  category?: 'work' | 'personal' | 'home';
   tasks: Task[];
 }
 
@@ -72,16 +73,19 @@ const TodayView = ({
   };
 
   const getProjectColor = (projectId: string) => {
-    const colors = [
-      'bg-blue-100 text-blue-800 border-blue-200',
-      'bg-green-100 text-green-800 border-green-200',
-      'bg-purple-100 text-purple-800 border-purple-200',
-      'bg-orange-100 text-orange-800 border-orange-200',
-      'bg-cyan-100 text-cyan-800 border-cyan-200',
-      'bg-indigo-100 text-indigo-800 border-indigo-200'
-    ];
-    const index = projects.findIndex(p => p.id === projectId) % colors.length;
-    return colors[index];
+    // Find the project to get its category
+    const project = projects.find(p => p.id === projectId);
+    const category = project?.category || 'work';
+    
+    switch (category) {
+      case 'personal':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'home':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'work':
+      default:
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+    }
   };
 
   const handleTaskToggle = async (taskId: string, completed: boolean) => {

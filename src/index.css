@@ -45,11 +45,14 @@ Enhanced with vibrant gradients and modern design tokens.
     --accent: 200 80% 55%; /* Light blue */
     --accent-foreground: 0 0% 100%;
 
-    --personal: 142 71% 40%; /* Forest green for personal projects */
+    --personal: 120 61% 50%; /* Green for personal projects */
     --personal-foreground: 0 0% 100%;
 
-    --home: 45 100% 50%; /* Golden yellow for home projects */
-    --home-foreground: 0 0% 10%;
+    --home: 25 95% 53%; /* Orange for home projects */
+    --home-foreground: 0 0% 100%;
+
+    --work: 200 80% 55%; /* Blue for work projects - same as primary */
+    --work-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
