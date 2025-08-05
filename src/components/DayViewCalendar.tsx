@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { format, addDays, subDays, isToday, parseISO, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
@@ -271,6 +271,12 @@ const DayViewCalendar = ({
 
   return (
     <div className="h-full flex flex-col">
+      {/* Calendar Section Header */}
+      <div className="flex items-center gap-2 mb-4 pb-2 border-b">
+        <Calendar className="h-5 w-5 text-primary" />
+        <h1 className="text-lg font-semibold text-foreground">Calendar</h1>
+      </div>
+      
       {/* Header */}
       <div className="flex items-center justify-between pb-4 mb-4 border-b">
         <div className="flex items-center gap-3">

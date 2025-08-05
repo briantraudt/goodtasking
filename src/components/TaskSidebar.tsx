@@ -139,6 +139,12 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
       )}
     >
+      {/* Tasks Section Header */}
+      <div className="flex items-center gap-2 mb-4 pb-2 border-b">
+        <CheckSquare className="h-5 w-5 text-primary" />
+        <h1 className="text-lg font-semibold text-foreground">Tasks</h1>
+      </div>
+      
       {/* No header section needed - Add button is now in parent component */}
 
       {/* Filter Section - Moved to right */}
