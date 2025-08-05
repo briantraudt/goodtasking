@@ -4,6 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import SmartAddButton from '@/components/SmartAddButton';
 import TaskFilters from '@/components/TaskFilters';
@@ -34,7 +41,7 @@ interface Project {
 interface TaskSidebarProps {
   projects: Project[];
   selectedDate: string;
-  onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
+  onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => void;
   onCreateProject?: (project: { name: string; description: string; tasks: any[] }) => void;
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
@@ -49,6 +56,14 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  
+  // Add Task Form State
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+  const [taskDueDate, setTaskDueDate] = useState<Date | undefined>(undefined);
+  const [taskPriority, setTaskPriority] = useState<'low' | 'medium' | 'high'>('medium');
+  const [taskDuration, setTaskDuration] = useState('30');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Set up droppable for the sidebar
   const { isOver, setNodeRef } = useDroppable({
@@ -304,14 +319,148 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
         )}
       </div>
 
-      {/* Add Task Dialog - Custom component that doesn't use the interface from AddTaskDialog */}
+      {/* Add Task Dialog */}
       {showAddTaskDialog && (
         <Dialog open={showAddTaskDialog} onOpenChange={setShowAddTaskDialog}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Add Task</DialogTitle>
+              <DialogTitle>Add New Task</DialogTitle>
             </DialogHeader>
-            {/* Simple form would go here - using existing onCreateTask function */}
+            
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!taskTitle.trim()) return;
+              
+              setIsSubmitting(true);
+              try {
+                await onCreateTask?.(
+                  selectedProjectId, 
+                  taskTitle.trim(), 
+                  taskDescription.trim() || undefined,
+                  taskDueDate,
+                  parseInt(taskDuration),
+                  taskPriority
+                );
+                
+                // Reset form
+                setTaskTitle('');
+                setTaskDescription('');
+                setTaskDueDate(undefined);
+                setTaskPriority('medium');
+                setTaskDuration('30');
+                setShowAddTaskDialog(false);
+                setSelectedProjectId('');
+              } catch (error) {
+                console.error('Error creating task:', error);
+              } finally {
+                setIsSubmitting(false);
+              }
+            }} className="space-y-4">
+              <div>
+                <Label htmlFor="task-title">Task Name</Label>
+                <Input
+                  id="task-title"
+                  placeholder="What needs to be done?"
+                  value={taskTitle}
+                  onChange={(e) => setTaskTitle(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="task-description">Description (optional)</Label>
+                <Input
+                  id="task-description"
+                  placeholder="Add more details..."
+                  value={taskDescription}
+                  onChange={(e) => setTaskDescription(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <Label>Due Date (optional)</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !taskDueDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {taskDueDate ? format(taskDueDate, "PPP") : <span>Choose a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={taskDueDate}
+                      onSelect={setTaskDueDate}
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div>
+                <Label>Priority</Label>
+                <Select value={taskPriority} onValueChange={(value) => setTaskPriority(value as 'low' | 'medium' | 'high')}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="high">High</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label>Duration</Label>
+                <Select value={taskDuration} onValueChange={setTaskDuration}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 minutes</SelectItem>
+                    <SelectItem value="60">1 hour</SelectItem>
+                    <SelectItem value="120">2 hours</SelectItem>
+                    <SelectItem value="180">3 hours</SelectItem>
+                    <SelectItem value="360">6 hours</SelectItem>
+                    <SelectItem value="480">8 hours</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex gap-2 pt-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => {
+                    setShowAddTaskDialog(false);
+                    setSelectedProjectId('');
+                    setTaskTitle('');
+                    setTaskDescription('');
+                    setTaskDueDate(undefined);
+                    setTaskPriority('medium');
+                    setTaskDuration('30');
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting || !taskTitle.trim()}
+                  className="flex-1"
+                >
+                  {isSubmitting ? 'Adding...' : 'Add Task'}
+                </Button>
+              </div>
+            </form>
           </DialogContent>
         </Dialog>
       )}
