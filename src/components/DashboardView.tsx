@@ -282,6 +282,7 @@ const DashboardView = ({
                       }}
                       isGoogleConnected={isConnected}
                       onConnectGoogle={connectGoogleCalendar}
+                      onDisconnectGoogle={disconnectGoogleCalendar}
                       onViewModeChange={(mode) => setViewMode(mode)}
                       onQuickTaskCreate={handleQuickTaskCreate}
                     />

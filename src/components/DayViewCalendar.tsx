@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { format, addDays, subDays, isToday, parseISO, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar, Clock, Star, GripVertical } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, Star, GripVertical, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
@@ -43,6 +43,7 @@ interface DayViewCalendarProps {
   onEventClick?: (event: CalendarEvent) => void;
   isGoogleConnected?: boolean;
   onConnectGoogle?: () => void;
+  onDisconnectGoogle?: () => void;
   onViewModeChange?: (mode: 'week') => void;
   onQuickTaskCreate?: (hour: number, minute: number) => void;
 }
@@ -178,13 +179,28 @@ const DayViewCalendar = ({
   onEventClick,
   isGoogleConnected = false,
   onConnectGoogle,
+  onDisconnectGoogle,
   onViewModeChange,
   onQuickTaskCreate
 }: DayViewCalendarProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showUnsyncOption, setShowUnsyncOption] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const hasAutoScrolled = useRef(false);
   const { toast } = useToast();
+
+  const handleCalendarClick = () => {
+    if (isGoogleConnected) {
+      setShowUnsyncOption(!showUnsyncOption);
+    } else {
+      onConnectGoogle?.();
+    }
+  };
+
+  const handleUnsync = () => {
+    onDisconnectGoogle?.();
+    setShowUnsyncOption(false);
+  };
 
   // Update current time every minute
   useEffect(() => {
@@ -370,10 +386,37 @@ const DayViewCalendar = ({
     <div className="h-full flex flex-col">
       {/* Calendar Header with Icon, Centered Date and Week Button */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
-        {/* Calendar Icon and Text on Left */}
-        <div className="flex items-center gap-2">
+        {/* Calendar Icon and Clickable Text on Left */}
+        <div className="flex items-center gap-2 relative">
           <Calendar className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-semibold text-foreground">Calendar</h1>
+          <div 
+            className={cn(
+              "cursor-pointer select-none relative transition-colors duration-200",
+              isGoogleConnected ? "text-green-600 hover:text-green-700" : "text-foreground hover:text-primary"
+            )}
+            onClick={handleCalendarClick}
+          >
+            <h1 className="text-lg font-semibold flex items-center gap-2">
+              Calendar
+              {isGoogleConnected && <Check className="h-4 w-4" />}
+            </h1>
+            
+            {/* Unsync option tooltip */}
+            {showUnsyncOption && isGoogleConnected && (
+              <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-lg shadow-lg p-2 z-50 min-w-[120px]">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUnsync();
+                  }}
+                  className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 w-full p-2 rounded transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                  Unsync
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         
         {/* Centered Date Navigation */}
