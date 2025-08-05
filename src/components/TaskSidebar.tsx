@@ -118,80 +118,56 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Enhanced Theme Colors - Matching requested design with gradients
+  // Bold, Solid Primary Color Theme
   const getProjectColor = (projectName: string, index: number) => {
     const colors = [
       { 
-        border: 'border-blue-500', 
-        gradient: 'from-white to-blue-50',
-        text: 'text-blue-700', 
-        accent: 'text-blue-500',
-        taskBg: 'bg-blue-50',
-        taskBorder: 'border-blue-300',
-        taskText: 'text-blue-600',
-        hover: 'hover:bg-blue-50',
-        name: 'blue', 
-        hex: '#3B82F6' 
+        border: 'border-blue-600', 
+        text: 'text-blue-600', 
+        accent: 'text-blue-600',
+        taskBg: 'bg-blue-600',
+        taskHover: 'hover:bg-blue-700',
+        name: 'blue'
       },
       { 
         border: 'border-green-600', 
-        gradient: 'from-white to-green-50',
-        text: 'text-green-700', 
-        accent: 'text-green-500',
-        taskBg: 'bg-green-50',
-        taskBorder: 'border-green-300',
-        taskText: 'text-green-600',
-        hover: 'hover:bg-green-50',
-        name: 'green', 
-        hex: '#059669' 
+        text: 'text-green-600', 
+        accent: 'text-green-600',
+        taskBg: 'bg-green-600',
+        taskHover: 'hover:bg-green-700',
+        name: 'green'
       },
       { 
-        border: 'border-purple-500', 
-        gradient: 'from-white to-purple-50',
-        text: 'text-purple-700', 
-        accent: 'text-purple-500',
-        taskBg: 'bg-purple-50',
-        taskBorder: 'border-purple-300',
-        taskText: 'text-purple-600',
-        hover: 'hover:bg-purple-50',
-        name: 'purple', 
-        hex: '#8B5CF6' 
+        border: 'border-purple-600', 
+        text: 'text-purple-600', 
+        accent: 'text-purple-600',
+        taskBg: 'bg-purple-600',
+        taskHover: 'hover:bg-purple-700',
+        name: 'purple'
       },
       { 
-        border: 'border-cyan-600', 
-        gradient: 'from-white to-cyan-50',
-        text: 'text-cyan-700', 
-        accent: 'text-cyan-500',
-        taskBg: 'bg-cyan-50',
-        taskBorder: 'border-cyan-300',
-        taskText: 'text-cyan-600',
-        hover: 'hover:bg-cyan-50',
-        name: 'cyan', 
-        hex: '#0891B2' 
+        border: 'border-red-600', 
+        text: 'text-red-600', 
+        accent: 'text-red-600',
+        taskBg: 'bg-red-600',
+        taskHover: 'hover:bg-red-700',
+        name: 'red'
       },
       { 
-        border: 'border-amber-500', 
-        gradient: 'from-white to-amber-50',
-        text: 'text-amber-700', 
-        accent: 'text-amber-500',
-        taskBg: 'bg-amber-50',
-        taskBorder: 'border-amber-300',
-        taskText: 'text-amber-600',
-        hover: 'hover:bg-amber-50',
-        name: 'amber', 
-        hex: '#F59E0B' 
+        border: 'border-amber-600', 
+        text: 'text-amber-600', 
+        accent: 'text-amber-600',
+        taskBg: 'bg-amber-600',
+        taskHover: 'hover:bg-amber-700',
+        name: 'amber'
       },
       { 
-        border: 'border-rose-500', 
-        gradient: 'from-white to-rose-50',
-        text: 'text-rose-700', 
-        accent: 'text-rose-500',
-        taskBg: 'bg-rose-50',
-        taskBorder: 'border-rose-300',
-        taskText: 'text-rose-600',
-        hover: 'hover:bg-rose-50',
-        name: 'rose', 
-        hex: '#F43F5E' 
+        border: 'border-pink-600', 
+        text: 'text-pink-600', 
+        accent: 'text-pink-600',
+        taskBg: 'bg-pink-600',
+        taskHover: 'hover:bg-pink-700',
+        name: 'pink'
       }
     ];
     
@@ -285,9 +261,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
             <div 
               key={project.id} 
               className={cn(
-                "rounded-2xl p-4 shadow-md w-full bg-gradient-to-br transition-all duration-200 hover:shadow-lg border-2",
-                projectColor.border,
-                projectColor.gradient
+                "rounded-2xl p-4 shadow-sm w-full transition-all duration-200 border-2",
+                projectColor.border
               )}
             >
               {/* Enhanced Project Header with Color Theme */}
@@ -322,11 +297,10 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                     <div
                       key={task.id}
                       className={cn(
-                        "bg-white rounded-xl px-3 py-2 text-sm font-medium shadow-inner border cursor-pointer transition-all duration-200",
+                        "text-white font-semibold rounded-xl px-4 py-2 text-sm shadow cursor-pointer transition-all duration-200",
                         isOverdue 
-                          ? "border-red-300 text-red-600 hover:bg-red-50" 
-                          : cn(projectColor.taskBorder, projectColor.taskText, projectColor.hover),
-                        "hover:shadow-sm animate-fade-in"
+                          ? "bg-red-600 hover:bg-red-700" 
+                          : cn(projectColor.taskBg, projectColor.taskHover)
                       )}
                     >
                       <div className="flex items-center justify-between">
