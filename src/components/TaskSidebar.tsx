@@ -143,17 +143,17 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Unified Blue Color System - Same blue for all projects
+  // Unified Light Blue Color System - Match the Add button blue
   const getProjectColor = () => {
-    // All projects use the same blue color for consistency
+    // All projects use the same light blue color (#4DA8DA) for consistency
     return {
-      hex: '#2563EB',
-      border: 'border-[#2563EB]',
-      text: 'text-[#2563EB]', 
-      accent: 'text-[#2563EB]',
-      taskBg: 'bg-[#2563EB]',
+      hex: '#4DA8DA',
+      border: 'border-[#4DA8DA]',
+      text: 'text-[#4DA8DA]', 
+      accent: 'text-[#4DA8DA]',
+      taskBg: 'bg-[#4DA8DA]',
       taskHover: 'hover:brightness-110',
-      name: 'brand-blue'
+      name: 'brand-light-blue'
     };
   };
 
@@ -252,10 +252,10 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                 </button>
               </div>
 
-              {/* Good Business Task Pills */}
+              {/* Light Blue Task Pills */}
               <div className="flex flex-col gap-2">
                 {projectTasks.map(task => {
-                  // Determine if task is overdue for red styling
+                  // Determine if task is overdue for red border styling
                   const isOverdue = task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date));
                   
                   return (
@@ -264,7 +264,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       className={cn(
                         "text-white font-medium rounded-md px-4 py-2 text-sm cursor-pointer transition-all duration-150",
                         isOverdue 
-                          ? "bg-[#DC2626] hover:brightness-110" 
+                          ? "bg-[#4DA8DA] hover:brightness-110 border-2 border-red-500" // Light blue background with red border for overdue
                           : cn(projectColor.taskBg, projectColor.taskHover)
                       )}
                     >
