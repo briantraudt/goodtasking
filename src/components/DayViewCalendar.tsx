@@ -208,15 +208,18 @@ const DayViewCalendar = ({
   }, [onDateChange]); // Only depend on onDateChange function
 
   const navigateDate = (direction: 'prev' | 'next') => {
-    const currentDateObj = new Date(selectedDate);
+    // Parse selectedDate using local timezone to avoid UTC issues
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const currentDateObj = new Date(year, month - 1, day); // month is 0-indexed
     const newDate = direction === 'prev' ? subDays(currentDateObj, 1) : addDays(currentDateObj, 1);
     
     // Use local timezone for consistency
-    const year = newDate.getFullYear();
-    const month = String(newDate.getMonth() + 1).padStart(2, '0');
-    const day = String(newDate.getDate()).padStart(2, '0');
-    const newDateString = `${year}-${month}-${day}`;
+    const newYear = newDate.getFullYear();
+    const newMonth = String(newDate.getMonth() + 1).padStart(2, '0');
+    const newDay = String(newDate.getDate()).padStart(2, '0');
+    const newDateString = `${newYear}-${newMonth}-${newDay}`;
     
+    console.log('📅 Navigating from', selectedDate, 'to', newDateString);
     onDateChange(newDateString);
   };
 
