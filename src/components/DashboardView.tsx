@@ -41,7 +41,7 @@ const DashboardView = ({
   onRefreshTasks,
   userName = "there"
 }: DashboardViewProps) => {
-  const [viewMode, setViewMode] = useState<ViewMode>('today');
+  const [viewMode, setViewMode] = useState<ViewMode>('planner');
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
