@@ -230,12 +230,9 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                 projectColor.border
               )}
             >
-              {/* Good Business Project Header */}
+              {/* Project Header with Black Text */}
               <div className="flex justify-between items-center mb-2">
-                <h3 className={cn(
-                  "font-semibold",
-                  projectColor.text
-                )}>
+                <h3 className="font-semibold text-black">
                   {project.name}
                 </h3>
                 <button
