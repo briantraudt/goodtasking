@@ -173,13 +173,7 @@ const SimpleCalendar = ({ selectedDate, onDateChange, timeBlocks, children }: {
       .map(block => (
         <DraggableTimelineTask
           key={block.id}
-          timeBlock={block}
-          task={{
-            id: block.taskId || '',
-            title: block.title,
-            priority: block.priority as 'high' | 'medium' | 'low' | undefined,
-            estimated_duration: 30
-          }}
+          block={block}
         />
       ));
   };
