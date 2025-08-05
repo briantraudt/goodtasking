@@ -6,10 +6,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Edit2 } from 'lucide-react';
 import { format } from 'date-fns';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import SmartAddButton from '@/components/SmartAddButton';
@@ -35,6 +36,7 @@ interface Task {
 interface Project {
   id: string;
   name: string;
+  category: 'work' | 'home' | 'personal';
   tasks: Task[];
 }
 
@@ -43,12 +45,13 @@ interface TaskSidebarProps {
   selectedDate: string;
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => void;
   onCreateProject?: (project: { name: string; description: string; category: 'work' | 'home' | 'personal'; tasks: any[] }) => void;
+  onUpdateProject?: (id: string, updates: { category?: 'work' | 'home' | 'personal' }) => void;
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
   className?: string;
 }
 
-const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateTask, onDeleteTask, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onUpdateTask, onDeleteTask, className }: TaskSidebarProps) => {
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
@@ -56,6 +59,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   
   // Add Task Form State
   const [taskTitle, setTaskTitle] = useState('');
@@ -247,11 +251,56 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                 projectColor.border
               )}
             >
-              {/* Project Header with Black Text */}
+              {/* Project Header with Editable Category */}
               <div className="flex justify-between items-center mb-2">
-                <h3 className="font-semibold text-black">
-                  {project.name}
-                </h3>
+                <div className="flex items-center gap-2">
+                  {editingProjectId === project.id ? (
+                    <Popover open={true} onOpenChange={(open) => !open && setEditingProjectId(null)}>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-auto p-0">
+                          <h3 className="font-semibold text-black cursor-pointer hover:text-primary transition-colors">
+                            {project.name}
+                          </h3>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-48 p-3">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">Change Category</Label>
+                          <div className="space-y-2">
+                            {(['work', 'personal', 'home'] as const).map((category) => (
+                              <div key={category} className="flex items-center space-x-2">
+                                <Checkbox
+                                  id={`${project.id}-${category}`}
+                                  checked={project.category === category}
+                                  onCheckedChange={() => {
+                                    if (onUpdateProject && project.category !== category) {
+                                      onUpdateProject(project.id, { category });
+                                    }
+                                    setEditingProjectId(null);
+                                  }}
+                                />
+                                <Label 
+                                  htmlFor={`${project.id}-${category}`} 
+                                  className="text-sm font-normal capitalize cursor-pointer"
+                                >
+                                  {category}
+                                </Label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  ) : (
+                    <h3 
+                      className="font-semibold text-black cursor-pointer hover:text-primary transition-colors flex items-center gap-1"
+                      onClick={() => setEditingProjectId(project.id)}
+                    >
+                      {project.name}
+                      <Edit2 className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </h3>
+                  )}
+                </div>
                 <button
                   onClick={() => {
                     setSelectedProjectId(project.id);

@@ -11,6 +11,7 @@ const Index = () => {
     projects, 
     loading, 
     createProject, 
+    updateProject,
     createTask,
     updateTask,
     deleteTask,
@@ -50,6 +51,7 @@ const Index = () => {
           <DashboardView
             projects={projects}
             onCreateProject={(data) => createProject(data.name, data.description, data.category)}
+            onUpdateProject={updateProject}
             onCreateTask={createTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}

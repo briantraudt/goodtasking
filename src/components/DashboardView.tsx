@@ -30,12 +30,14 @@ interface Project {
   id: string;
   name: string;
   description?: string;
+  category: 'work' | 'home' | 'personal';
   tasks: Task[];
 }
 
 interface DashboardViewProps {
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
+  onUpdateProject?: (id: string, updates: Partial<Project>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => Promise<any>;
   onCreateProject: (data: { name: string; description: string; category: 'work' | 'home' | 'personal' }) => void;
   onDeleteTask?: (taskId: string) => Promise<void>;
@@ -48,6 +50,7 @@ type ViewMode = 'planner' | 'today' | 'week';
 const DashboardView = ({ 
   projects, 
   onUpdateTask, 
+  onUpdateProject,
   onCreateTask, 
   onCreateProject,
   onDeleteTask,
@@ -293,6 +296,7 @@ const DashboardView = ({
                       selectedDate={selectedDate}
                       onCreateTask={onCreateTask}
                       onCreateProject={onCreateProject}
+                      onUpdateProject={(id: string, updates: { category?: 'work' | 'home' | 'personal' }) => onUpdateProject?.(id, updates)}
                       onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
                         onUpdateTask(taskId, updates);
                       }}
