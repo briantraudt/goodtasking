@@ -221,6 +221,8 @@ const DashboardView = ({
                         console.log('Event clicked:', event);
                         // TODO: Implement event edit/delete modal
                       }}
+                      isGoogleConnected={isConnected}
+                      onConnectGoogle={connectGoogleCalendar}
                     />
                   </div>
                 </div>

@@ -36,9 +36,11 @@ interface DayViewCalendarProps {
   onDateChange: (date: string) => void;
   tasks: Task[];
   calendarEvents?: CalendarEvent[];
-  onTaskScheduled: (taskId: string, startTime: string, endTime: string) => void;
-  onTaskUnscheduled: (taskId: string) => void;
+  onTaskScheduled?: (taskId: string, startTime: string, endTime: string) => void;
+  onTaskUnscheduled?: (taskId: string) => void;
   onEventClick?: (event: CalendarEvent) => void;
+  isGoogleConnected?: boolean;
+  onConnectGoogle?: () => void;
 }
 
 interface TimeSlotProps {
@@ -154,7 +156,9 @@ const DayViewCalendar = ({
   calendarEvents = [],
   onTaskScheduled,
   onTaskUnscheduled,
-  onEventClick
+  onEventClick,
+  isGoogleConnected = false,
+  onConnectGoogle
 }: DayViewCalendarProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -271,11 +275,21 @@ const DayViewCalendar = ({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Calendar Section Header with Date Navigation */}
+      {/* Calendar Section Header with Google Connection */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
         <div className="flex items-center gap-2">
           <Calendar className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-semibold text-foreground">Calendar</h1>
+          <button
+            onClick={onConnectGoogle}
+            disabled={!onConnectGoogle}
+            className={cn(
+              "text-lg font-semibold transition-colors hover:opacity-80 disabled:cursor-default",
+              isGoogleConnected ? "text-green-600" : "text-foreground"
+            )}
+            title={isGoogleConnected ? "Connected to Google Calendar" : "Click to connect Google Calendar"}
+          >
+            Calendar
+          </button>
         </div>
         
         <div className="flex items-center gap-3">
