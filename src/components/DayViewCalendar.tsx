@@ -66,7 +66,7 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: T
     <div
       ref={setNodeRef}
       className={cn(
-        "h-10 border-b border-border/30 relative transition-colors",
+        "h-12 border-b border-border/30 relative transition-colors",
         hasTask 
           ? "cursor-default" 
           : "hover:bg-primary/10 cursor-pointer",
