@@ -131,6 +131,14 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   });
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Force component to re-initialize with today's date on mount
+  useEffect(() => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    if (selectedDate !== today) {
+      setSelectedDate(today);
+    }
+  }, []);
   const [lastAISequence, setLastAISequence] = useState<Date | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [dragOverTimeSlot, setDragOverTimeSlot] = useState<string | null>(null);

@@ -363,21 +363,25 @@ const InfiniteScrollCalendar = ({
                   {/* Enhanced Time Label with Good Business Navy Styling */}
                   {isHourStart && (
                     <div 
-                      className="border-r-2 border-border flex items-center justify-center font-bold text-white"
+                      className="border-r-2 border-border flex items-center justify-center font-bold"
                       style={{ 
                         height: `${HOUR_HEIGHT}px`,
                         backgroundColor: '#172A45', // Good Business navy
-                        fontSize: '16px',
-                        fontWeight: '700',
-                        textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                        fontSize: '18px',
+                        fontWeight: '800',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.8)',
                         position: 'sticky',
                         left: 0,
                         zIndex: 5,
-                        paddingLeft: '12px',
-                        lineHeight: '1.75rem'
+                        paddingLeft: '16px',
+                        paddingRight: '8px',
+                        lineHeight: '1.75rem',
+                        color: '#ffffff',
+                        minWidth: '80px',
+                        textAlign: 'center'
                       }}
                     >
-                      <span className="text-white font-semibold">
+                      <span className="text-white font-bold text-lg drop-shadow-lg">
                         {formatHour(item.hour)}
                       </span>
                     </div>
