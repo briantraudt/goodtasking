@@ -178,13 +178,19 @@ const DashboardView = ({
       const newTask = await onCreateTask(projectId, title, description, dueDate);
       
       console.log('✅ Task created successfully:', newTask);
+      console.log('🔍 Checking task conditions:', {
+        hasNewTask: !!newTask,
+        hasId: newTask?.id,
+        taskId: newTask?.id
+      });
       
       // If we got the task back, schedule it immediately
       if (newTask && newTask.id) {
         console.log('🎉 Scheduling task immediately:', newTask.id);
-        handleTaskScheduled(newTask.id, startTime, endTime);
+        await handleTaskScheduled(newTask.id, startTime, endTime);
+        console.log('✅ Task scheduled successfully');
       } else {
-        console.error('❌ No task returned from creation');
+        console.error('❌ No task returned from creation or missing ID:', { newTask, hasId: !!newTask?.id });
       }
       
       setShowQuickTaskDialog(false);
