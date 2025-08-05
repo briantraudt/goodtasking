@@ -62,17 +62,45 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
     try {
       setIsLoading(true);
       
+      // First get the client ID to construct the OAuth URL
       const { data, error } = await supabase.functions.invoke('google-calendar-integration', {
-        body: { action: 'connect' }
+        body: { action: 'client-id' }
       });
 
       if (error) {
         throw error;
       }
 
-      if (data?.authUrl) {
-        // Redirect to Google OAuth
-        window.location.href = data.authUrl;
+      if (data?.clientId) {
+        // Construct Google OAuth URL
+        const redirectUri = `${window.location.origin}/auth/callback/google`;
+        const scope = 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events';
+        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${data.clientId}&` +
+          `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+          `response_type=code&` +
+          `scope=${encodeURIComponent(scope)}&` +
+          `state=${user.id}&` +
+          `access_type=offline&` +
+          `prompt=consent`;
+        
+        // Open OAuth in a popup window
+        const popup = window.open(
+          authUrl,
+          'google-oauth',
+          'width=500,height=600,scrollbars=yes,resizable=yes'
+        );
+
+        // Listen for the popup to close or send a message
+        const checkClosed = setInterval(() => {
+          if (popup?.closed) {
+            clearInterval(checkClosed);
+            // Check connection status after popup closes
+            setTimeout(() => {
+              checkConnection();
+            }, 1000);
+          }
+        }, 1000);
       }
     } catch (error) {
       console.error('Error connecting Google Calendar:', error);
@@ -84,7 +112,7 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [user, toast]);
+  }, [user, toast, checkConnection]);
 
   // Disconnect from Google Calendar
   const disconnectGoogleCalendar = useCallback(async () => {
