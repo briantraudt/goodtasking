@@ -32,11 +32,13 @@ interface DraggableTimelineTaskProps {
 }
 
 const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
-  // Ensure proper type determination - if we have a task object, it should be a task type
-  // Only use 'event' type if we have a googleEventId and no task object
-  const isActualEvent = block.type === 'event' && block.googleEventId && !task;
-  const isActualTask = task || block.taskId || block.type === 'task';
-  const actualBlockType = isActualEvent ? 'event' : 'task';
+  // More robust type determination: 
+  // If we have a googleEventId and NO task object, it's definitely an event
+  // If we have a task object OR taskId, it's definitely a task
+  const hasGoogleEventId = !!block.googleEventId;
+  const hasTaskData = !!task || !!block.taskId;
+  
+  const actualBlockType = hasGoogleEventId && !hasTaskData ? 'event' : 'task';
   
   const isDraggableTask = actualBlockType === 'task' && task;
   
