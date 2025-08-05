@@ -158,50 +158,6 @@ const DashboardView = ({
         {/* Weekly AI Review - only show in week view */}
         {viewMode === 'week' && <WeeklyAIReview />}
         
-        {/* Google Calendar Connection Status */}
-        {viewMode === 'planner' && (
-          <div className="p-4 border-b bg-muted/30">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={cn(
-                  "w-2 h-2 rounded-full",
-                  isConnected ? "bg-green-500" : "bg-red-500"
-                )} />
-                <span className="text-sm font-medium">
-                  Google Calendar: {isConnected ? 'Connected' : 'Not Connected'}
-                </span>
-                {!isConnected && (
-                  <span className="text-xs text-muted-foreground">
-                    Connect to sync tasks to Google Calendar
-                  </span>
-                )}
-                {isConnected && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => syncCalendar(selectedDate)}
-                    disabled={isLoading}
-                    className="h-6 w-6 p-0 hover:bg-primary/10"
-                  >
-                    <RefreshCw className={cn("h-3 w-3", isLoading && "animate-spin")} />
-                  </Button>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={isConnected ? disconnectGoogleCalendar : connectGoogleCalendar}
-                  disabled={isLoading}
-                  className="hover:bg-primary/10 hover:border-primary"
-                >
-                  {isLoading ? 'Loading...' : isConnected ? 'Disconnect' : 'Connect'}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Scrollable Content Section */}
         <div className="flex-1 overflow-hidden">
           {viewMode === 'planner' ? (
