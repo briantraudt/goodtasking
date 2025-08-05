@@ -326,9 +326,6 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                                       setEditingProjectId(null);
                                     }}
                                   >
-                                    {isSelected && (
-                                      <div className="w-2 h-2 bg-white rounded-full" />
-                                    )}
                                   </div>
                                   <Label 
                                     htmlFor={`${project.id}-${category}`} 
