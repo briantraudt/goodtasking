@@ -284,7 +284,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     <Popover open={true} onOpenChange={(open) => !open && setEditingProjectId(null)}>
                       <PopoverTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-auto p-0">
-                          <h3 className="font-semibold text-black cursor-pointer hover:text-primary transition-colors">
+                          <h3 className="font-semibold text-black cursor-pointer transition-colors">
                             {project.name}
                           </h3>
                         </Button>
@@ -341,7 +341,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     </Popover>
                   ) : (
                     <h3 
-                      className="font-semibold text-black cursor-pointer hover:text-primary transition-colors flex items-center gap-1"
+                      className="font-semibold text-black cursor-pointer transition-colors flex items-center gap-1"
                       onClick={() => setEditingProjectId(project.id)}
                     >
                       {project.name}
