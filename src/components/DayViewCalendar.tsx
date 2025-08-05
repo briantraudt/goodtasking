@@ -18,6 +18,7 @@ interface Task {
   end_time?: string;
   completed: boolean;
   project_id: string;
+  vibe_projects?: { name: string };
 }
 
 interface CalendarEvent {
@@ -92,15 +93,6 @@ const ScheduledTaskBlock = ({ task, onRemove }: ScheduledTaskBlockProps) => {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
 
-  const getPriorityColor = () => {
-    switch (task.priority) {
-      case 'high': return 'bg-red-50 border-red-200 text-red-800';
-      case 'medium': return 'bg-yellow-50 border-yellow-200 text-yellow-800';
-      case 'low': return 'bg-green-50 border-green-200 text-green-800';
-      default: return 'bg-primary/10 border-primary/30 text-primary';
-    }
-  };
-
   return (
     <div
       ref={setNodeRef}
@@ -108,22 +100,22 @@ const ScheduledTaskBlock = ({ task, onRemove }: ScheduledTaskBlockProps) => {
       {...listeners}
       {...attributes}
       className={cn(
-        "absolute left-2 right-2 rounded-lg border p-2 cursor-grab z-10 shadow-sm",
-        getPriorityColor(),
+        "absolute inset-0 rounded-lg border border-[#4DA8DA] bg-[#4DA8DA] cursor-grab z-10 shadow-sm text-white",
         isDragging && "opacity-50"
       )}
       onDoubleClick={() => onRemove(task.id)}
       title="Double-click to remove from schedule"
     >
-      <div className="text-xs font-medium truncate">
-        {task.title}
-      </div>
-      {task.start_time && task.end_time && (
-        <div className="text-xs opacity-70 mt-1">
-          {format(parseISO(`2000-01-01T${task.start_time}`), 'h:mm a')} - 
-          {format(parseISO(`2000-01-01T${task.end_time}`), 'h:mm a')}
+      <div className="p-2 h-full flex flex-col justify-center">
+        <div className="text-xs font-medium truncate">
+          {task.title}
         </div>
-      )}
+        {task.vibe_projects?.name && (
+          <div className="text-xs opacity-80 mt-1 truncate">
+            {task.vibe_projects.name}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
