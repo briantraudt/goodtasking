@@ -72,8 +72,8 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
       }
 
       if (data?.clientId) {
-        // Construct Google OAuth URL
-        const redirectUri = `${window.location.origin}/auth/callback/google`;
+        // Construct Google OAuth URL with Supabase callback
+        const redirectUri = `https://ychheamigqjpxtnzqina.supabase.co/functions/v1/google-calendar-callback`;
         const scope = 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events';
         const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
           `client_id=${data.clientId}&` +
