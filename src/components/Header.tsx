@@ -24,7 +24,7 @@ const Header = () => {
           <CalendarCheck className="h-5 w-5 text-white" />
         </div>
         <span className="text-2xl font-bold text-gray-800">
-          G<span className="text-orange-500">o</span><span className="text-orange-500">o</span>d Tasking
+          G<span className="text-orange-500">o</span>od Tasking
         </span>
       </div>
 
