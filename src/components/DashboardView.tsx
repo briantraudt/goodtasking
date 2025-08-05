@@ -168,25 +168,23 @@ const DashboardView = ({
     setShowQuickTaskDialog(true);
   };
 
-  const createQuickTask = async (projectId: string, title: string, description?: string, startTime?: string, endTime?: string) => {
-    if (!quickTaskTime || !startTime || !endTime) return;
+  const createQuickTask = async (projectId: string, title: string, description?: string, dueDate?: Date, startTime?: string, endTime?: string, scheduledDate?: string) => {
+    if (!quickTaskTime || !startTime || !endTime || !scheduledDate) return;
     
-    // Create the task first
-    await onCreateTask(projectId, title, description);
+    // Create the task with all scheduling information at once
+    await onCreateTask(projectId, title, description, dueDate);
     
-    // Since we don't have access to the created task ID immediately,
-    // we'll need to use a different approach - schedule after a short delay
-    // to allow the task to be created and the state to update
+    // Find the newly created task and schedule it
+    // Wait for a short moment for the state to update
     setTimeout(async () => {
       const newTask = allTasks
         .filter(task => task.title === title && task.project_id === projectId)
-        .find(task => !task.scheduled_date); // Find unscheduled task
+        .find(task => !task.scheduled_date);
       
       if (newTask) {
-        // Schedule the task immediately
         await handleTaskScheduled(newTask.id, startTime, endTime);
       }
-    }, 500);
+    }, 200);
     
     setShowQuickTaskDialog(false);
     setQuickTaskTime(null);

@@ -19,7 +19,7 @@ interface QuickTaskDialogProps {
   selectedDate: string;
   startTime: string;
   projects: Project[];
-  onCreateTask: (projectId: string, title: string, description?: string, startTime?: string, endTime?: string) => Promise<void>;
+  onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date, startTime?: string, endTime?: string, selectedDate?: string) => Promise<void>;
 }
 
 const QuickTaskDialog = ({ 
@@ -100,8 +100,10 @@ const QuickTaskDialog = ({
         selectedProject,
         title.trim(),
         description.trim() || undefined,
+        undefined, // dueDate
         `${taskStartTime}:00`,
-        `${taskEndTime}:00`
+        `${taskEndTime}:00`,
+        selectedDate
       );
       
       toast({
