@@ -40,6 +40,7 @@ const InfiniteScrollCalendar = ({
   const parentRef = useRef<HTMLDivElement>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   
   // Center around actual today
   const baseDate = useMemo(() => {
@@ -98,7 +99,7 @@ const InfiniteScrollCalendar = ({
     overscan: 20, // Increased overscan for smoother scrolling
   });
 
-  // FIXED: Scroll to selected date without snapping back
+  // FIXED: Scroll to selected date without snapping back - with initialization tracking
   useEffect(() => {
     if (!virtualItems.length) return;
     
@@ -114,15 +115,20 @@ const InfiniteScrollCalendar = ({
       requestAnimationFrame(() => {
         virtualizer.scrollToIndex(indexToScroll, { 
           align: 'start',
-          behavior: 'smooth'
+          behavior: isInitializing ? 'auto' : 'smooth'
         });
+        
+        // Mark initialization as complete after first scroll
+        if (isInitializing) {
+          setTimeout(() => setIsInitializing(false), 500);
+        }
       });
     }
-  }, [selectedDate, baseDate, virtualItems.length, virtualizer]);
+  }, [selectedDate, baseDate, virtualItems.length, virtualizer, isInitializing]);
 
-  // FIXED: Handle visible date changes with debouncing
+  // FIXED: Handle visible date changes with debouncing - only after initialization
   useEffect(() => {
-    if (isScrolling) return;
+    if (isScrolling || isInitializing) return;
     
     const handleScroll = () => {
       const items = virtualizer.getVirtualItems();
@@ -137,7 +143,7 @@ const InfiniteScrollCalendar = ({
         if (virtualItem && virtualItem.dateString !== selectedDate) {
           // Debounce date changes to prevent rapid updates
           setTimeout(() => {
-            if (!isScrolling) {
+            if (!isScrolling && !isInitializing) {
               onDateChange(virtualItem.dateString);
             }
           }, 150);
@@ -150,7 +156,7 @@ const InfiniteScrollCalendar = ({
       scrollElement.addEventListener('scroll', handleScroll, { passive: true });
       return () => scrollElement.removeEventListener('scroll', handleScroll);
     }
-  }, [virtualizer, virtualItems, selectedDate, onDateChange, isScrolling]);
+  }, [virtualizer, virtualItems, selectedDate, onDateChange, isScrolling, isInitializing]);
 
   // Enhanced format hour for Good Business styling
   const formatHour = (hour: number) => {

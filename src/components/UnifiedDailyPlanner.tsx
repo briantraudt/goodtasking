@@ -649,7 +649,7 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
                   </button>
                 </div>
                 {/* Today button logic - only show when not viewing today */}
-                {!isToday(new Date(selectedDate)) && (
+                {selectedDate !== format(new Date(), 'yyyy-MM-dd') && (
                   <div className="flex justify-center mt-2">
                     <button
                       onClick={() => {
