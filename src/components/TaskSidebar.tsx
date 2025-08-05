@@ -8,6 +8,7 @@ import DraggableTaskItem from '@/components/DraggableTaskItem';
 import SmartAddButton from '@/components/SmartAddButton';
 import TaskFilters from '@/components/TaskFilters';
 import AddTaskDialog from '@/components/AddTaskDialog';
+import TaskEditDialog from '@/components/TaskEditDialog';
 import { Plus, CheckSquare } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
@@ -35,15 +36,19 @@ interface TaskSidebarProps {
   selectedDate: string;
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
   onCreateProject?: (project: { name: string; description: string; tasks: any[] }) => void;
+  onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
+  onDeleteTask?: (taskId: string) => Promise<void>;
   className?: string;
 }
 
-const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateTask, onDeleteTask, className }: TaskSidebarProps) => {
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
   const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   // Set up droppable for the sidebar
   const { isOver, setNodeRef } = useDroppable({
@@ -110,6 +115,26 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
   // Wrapper to handle type compatibility with SmartAddButton
   const handleCreateTask = (projectId: string, title: string, scheduledDate: Date) => {
     onCreateTask?.(projectId, title, undefined, scheduledDate);
+  };
+
+  // Handle task click for editing
+  const handleTaskClick = (task: Task) => {
+    setSelectedTask(task);
+    setShowEditTaskDialog(true);
+  };
+
+  // Handle task edit
+  const handleTaskEdit = async (taskId: string, updates: Partial<Task>) => {
+    if (onUpdateTask) {
+      await onUpdateTask(taskId, updates);
+    }
+  };
+
+  // Handle task delete
+  const handleTaskDelete = async (taskId: string) => {
+    if (onDeleteTask) {
+      await onDeleteTask(taskId);
+    }
   };
 
   
@@ -320,7 +345,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1 truncate">
-                          <DraggableTaskItem task={task} />
+                          <DraggableTaskItem task={task} onTaskClick={handleTaskClick} />
                         </div>
                       </div>
                     </div>
@@ -352,6 +377,30 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
           </div>
         )}
       </div>
+
+      {/* Add Task Dialog - Custom component that doesn't use the interface from AddTaskDialog */}
+      {showAddTaskDialog && (
+        <Dialog open={showAddTaskDialog} onOpenChange={setShowAddTaskDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Task</DialogTitle>
+            </DialogHeader>
+            {/* Simple form would go here - using existing onCreateTask function */}
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Edit Task Dialog */}
+      <TaskEditDialog
+        task={selectedTask}
+        isOpen={showEditTaskDialog}
+        onClose={() => {
+          setShowEditTaskDialog(false);
+          setSelectedTask(null);
+        }}
+        onSave={handleTaskEdit}
+        onDelete={handleTaskDelete}
+      />
 
     </div>
   );

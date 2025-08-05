@@ -36,6 +36,7 @@ interface DashboardViewProps {
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
   onCreateProject: (data: { name: string; description: string }) => void;
+  onDeleteTask?: (taskId: string) => Promise<void>;
   onRefreshTasks?: () => void;
   userName?: string;
 }
@@ -47,6 +48,7 @@ const DashboardView = ({
   onUpdateTask, 
   onCreateTask, 
   onCreateProject,
+  onDeleteTask,
   onRefreshTasks,
   userName = "there"
 }: DashboardViewProps) => {
@@ -163,6 +165,10 @@ const DashboardView = ({
                       selectedDate={selectedDate}
                       onCreateTask={onCreateTask}
                       onCreateProject={onCreateProject}
+                      onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
+                        onUpdateTask(taskId, updates);
+                      }}
+                      onDeleteTask={onDeleteTask}
                     />
                   </div>
                 </div>
