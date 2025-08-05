@@ -171,23 +171,42 @@ const DashboardView = ({
   const createQuickTask = async (projectId: string, title: string, description?: string, dueDate?: Date, startTime?: string, endTime?: string, scheduledDate?: string) => {
     if (!quickTaskTime || !startTime || !endTime || !scheduledDate) return;
     
-    // Create the task with all scheduling information at once
+    // Create the task first
     await onCreateTask(projectId, title, description, dueDate);
     
-    // Find the newly created task and schedule it
-    // Wait for a short moment for the state to update
-    setTimeout(async () => {
-      const newTask = allTasks
+    // Force a longer delay and multiple attempts to find the task
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    const scheduleTask = () => {
+      attempts++;
+      
+      // Get fresh task list from projects
+      const currentAllTasks = projects.flatMap(project => 
+        project.tasks.map(task => ({
+          ...task,
+          vibe_projects: { name: project.name }
+        }))
+      );
+      
+      const newTask = currentAllTasks
         .filter(task => task.title === title && task.project_id === projectId)
         .find(task => !task.scheduled_date);
       
       if (newTask) {
-        await handleTaskScheduled(newTask.id, startTime, endTime);
+        handleTaskScheduled(newTask.id, startTime, endTime);
+        setShowQuickTaskDialog(false);
+        setQuickTaskTime(null);
+      } else if (attempts < maxAttempts) {
+        setTimeout(scheduleTask, 100);
+      } else {
+        console.warn('Failed to find and schedule new task after', maxAttempts, 'attempts');
+        setShowQuickTaskDialog(false);
+        setQuickTaskTime(null);
       }
-    }, 200);
+    };
     
-    setShowQuickTaskDialog(false);
-    setQuickTaskTime(null);
+    setTimeout(scheduleTask, 100);
   };
 
   // Sync calendar when date changes
