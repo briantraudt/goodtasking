@@ -10,39 +10,36 @@ Enhanced with vibrant gradients and modern design tokens.
 
 @layer base {
   :root {
-    /* Good Business Brand Colors */
-    --forest-green: 142 71% 40%; /* #219653 - Primary CTAs */
-    --navy-blue: 210 54% 24%; /* #1E3A5F - Headers, sidebar */
-    --navy-blue-light: 210 54% 30%; /* Lighter navy for hover states */
-    --indigo-purple: 260 60% 55%; /* Task bucket colors */
-    --sky-blue: 200 80% 55%; /* Task bucket colors */
-    --golden-yellow: 45 100% 50%; /* Warnings, overdue */
-    --near-black: 0 0% 10%; /* #1A1A1A - Text */
-    --off-white: 0 0% 98%; /* #FAFAFA - Body background */
-    --light-gray: 0 0% 95%; /* #F2F2F2 - Alternative background */
-    --timeline-gray: 0 0% 84%; /* #D5D5D5 - Timeline lines */
-    --current-time-green: 145 63% 42%; /* #27AE60 - Current time marker */
+    /* Updated Good Business Brand Colors (HSL) */
+    --gb-green: 162 56% 46%; /* #36B37E */
+    --gb-blue: 209 100% 58%; /* #2684FF */
+    --gb-purple: 261 34% 54%; /* #6554C0 */
+    --gb-yellow: 45 100% 50%; /* #FFAB00 */
+    --gb-red: 9 100% 58%; /* #FF5630 */
+    --gb-orange: 32 100% 50%; /* #FF8B00 */
+    --gb-dark: 215 41% 20%; /* #172B4D */
+    --gb-light: 210 22% 96%; /* #F4F5F7 */
 
-    /* Updated Design System - Good Business Palette */
-    --background: 0 0% 98%; /* Off-white #FAFAFA */
-    --foreground: 0 0% 10%; /* Near-black #1A1A1A */
+    /* Semantic Design Tokens (Your Specified Colors) */
+    --background: 210 40% 98%; /* Off white */
+    --foreground: 222.2 84% 4.9%; /* Dark gray */
 
     --card: 0 0% 100%; /* Pure white for cards */
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 200 80% 55%; /* Light blue #4DA8DA - matching logo */
+    --primary: 162 56% 46%; /* Teal green */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 54% 24%; /* Navy blue #1E3A5F */
+    --secondary: 209 100% 58%; /* Bright blue */
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 95%; /* Light gray #F2F2F2 */
+    --muted: 210 40% 96.1%; /* Light gray */
     --muted-foreground: 0 0% 45%;
 
-    --accent: 200 80% 55%; /* Light blue */
+    --accent: 261 34% 54%; /* Purple */
     --accent-foreground: 0 0% 100%;
 
     --personal: 150 45% 45%; /* Darker professional green for personal projects */
@@ -57,9 +54,9 @@ Enhanced with vibrant gradients and modern design tokens.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 84%; /* Timeline gray #D5D5D5 */
-    --input: 0 0% 84%;
-    --ring: 142 71% 40%; /* Forest green focus ring */
+    --border: 214.3 31.8% 91.4%; /* Light border */
+    --input: 214.3 31.8% 91.4%;
+    --ring: 162 56% 46%; /* Primary teal green focus ring */
 
     --radius: 0.75rem; /* 12px */
 
