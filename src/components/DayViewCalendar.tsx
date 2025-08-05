@@ -288,7 +288,7 @@ const DayViewCalendar = ({
             <ChevronLeft className="h-4 w-4" />
           </Button>
           
-          <h2 className="text-xl font-semibold text-primary">
+          <h2 className="text-lg font-semibold text-primary">
             {formatDateHeader()}
           </h2>
           
