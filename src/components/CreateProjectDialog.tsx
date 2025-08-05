@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Plus } from 'lucide-react';
 
 interface Project {
   id: string;
   name: string;
   description: string;
+  category: 'work' | 'home' | 'personal';
   tasks: any[];
 }
 
@@ -22,6 +24,7 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [category, setCategory] = useState<'work' | 'home' | 'personal'>('work');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,10 +32,12 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
       onCreateProject({
         name: name.trim(),
         description: description.trim(),
+        category,
         tasks: []
       });
       setName('');
       setDescription('');
+      setCategory('work');
       setOpen(false);
     }
   };
@@ -71,6 +76,35 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
             />
+          </div>
+          <div>
+            <Label>Category</Label>
+            <div className="flex gap-4 mt-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="work"
+                  checked={category === 'work'}
+                  onCheckedChange={() => setCategory('work')}
+                />
+                <Label htmlFor="work" className="text-sm font-normal">Work</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="personal"
+                  checked={category === 'personal'}
+                  onCheckedChange={() => setCategory('personal')}
+                />
+                <Label htmlFor="personal" className="text-sm font-normal">Personal</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="home"
+                  checked={category === 'home'}
+                  onCheckedChange={() => setCategory('home')}
+                />
+                <Label htmlFor="home" className="text-sm font-normal">Home</Label>
+              </div>
+            </div>
           </div>
           <div className="flex gap-2 pt-2">
             <Button 

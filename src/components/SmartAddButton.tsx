@@ -14,7 +14,7 @@ interface Project {
 interface SmartAddButtonProps {
   projects: Project[];
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => void;
-  onCreateProject?: (project: { name: string; description: string; tasks: any[] }) => void;
+  onCreateProject?: (project: { name: string; description: string; category: 'work' | 'home' | 'personal'; tasks: any[] }) => void;
 }
 
 const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddButtonProps) => {

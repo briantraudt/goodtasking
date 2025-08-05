@@ -23,6 +23,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
+  category: 'work' | 'home' | 'personal';
   tasks: Task[];
 }
 
@@ -89,8 +90,28 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
     onDeleteProject(project.id);
   };
 
+  const getCategoryColors = (category: 'work' | 'home' | 'personal') => {
+    switch (category) {
+      case 'work':
+        return 'border-l-primary bg-primary/5';
+      case 'personal':
+        return 'border-l-[hsl(var(--personal))] bg-[hsl(var(--personal))]/5';
+      case 'home':
+        return 'border-l-[hsl(var(--home))] bg-[hsl(var(--home))]/5';
+      default:
+        return 'border-l-primary bg-primary/5';
+    }
+  };
+
+  const getCategoryLabel = (category: 'work' | 'home' | 'personal') => {
+    return category.charAt(0).toUpperCase() + category.slice(1);
+  };
+
   return (
-    <Card className="p-6 bg-gradient-card shadow-card hover:shadow-elevated transition-all duration-200 border-0">
+    <Card className={cn(
+      "p-6 shadow-card hover:shadow-elevated transition-all duration-200 border-0 border-l-4",
+      getCategoryColors(project.category)
+    )}>
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <div className="space-y-1 flex-1">
@@ -120,6 +141,9 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
               </h3>
             )}
             {project.description && <p className="text-sm text-muted-foreground">{project.description}</p>}
+            <Badge variant="outline" className="text-xs mt-1 w-fit">
+              {getCategoryLabel(project.category)}
+            </Badge>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

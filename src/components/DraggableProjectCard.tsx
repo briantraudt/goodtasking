@@ -13,6 +13,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
+  category: 'work' | 'home' | 'personal';
   created_at: string;
   updated_at: string;
   tasks: Task[];

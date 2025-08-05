@@ -18,6 +18,7 @@ export interface Project {
   id: string;
   name: string;
   description?: string;
+  category: 'work' | 'home' | 'personal';
   created_at: string;
   updated_at: string;
   scheduledDay?: string;
@@ -52,6 +53,7 @@ export const useProjects = () => {
       // Combine projects with their tasks and convert scheduled_day to scheduledDay
       const projectsWithTasks = projectsData.map(project => ({
         ...project,
+        category: (project.category || 'work') as 'work' | 'home' | 'personal',
         scheduledDay: project.scheduled_day,
         tasks: tasksData.filter(task => task.project_id === project.id)
       }));
@@ -64,19 +66,23 @@ export const useProjects = () => {
     }
   };
 
-  const createProject = async (name: string, description?: string) => {
+  const createProject = async (name: string, description?: string, category: 'work' | 'home' | 'personal' = 'work') => {
     if (!user) return;
 
     try {
       const { data, error } = await supabase
         .from('vibe_projects')
-        .insert([{ name, description, user_id: user.id }])
+        .insert([{ name, description, category, user_id: user.id }])
         .select()
         .single();
 
       if (error) throw error;
 
-      const newProject = { ...data, tasks: [] };
+      const newProject = { 
+        ...data, 
+        category: (data.category || 'work') as 'work' | 'home' | 'personal',
+        tasks: [] 
+      };
       setProjects([newProject, ...projects]);
 
       return newProject;

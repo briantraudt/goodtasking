@@ -31,7 +31,7 @@ interface WeeklyScheduleProps {
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
-  onCreateProject: (data: { name: string; description: string }) => void;
+  onCreateProject: (data: { name: string; description: string; category: 'work' | 'home' | 'personal' }) => void;
   onRefreshTasks?: () => void;
   userName?: string;
 }

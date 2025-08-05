@@ -37,7 +37,7 @@ interface DashboardViewProps {
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => Promise<any>;
-  onCreateProject: (data: { name: string; description: string }) => void;
+  onCreateProject: (data: { name: string; description: string; category: 'work' | 'home' | 'personal' }) => void;
   onDeleteTask?: (taskId: string) => Promise<void>;
   onRefreshTasks?: () => void;
   userName?: string;

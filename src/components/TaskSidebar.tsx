@@ -42,7 +42,7 @@ interface TaskSidebarProps {
   projects: Project[];
   selectedDate: string;
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => void;
-  onCreateProject?: (project: { name: string; description: string; tasks: any[] }) => void;
+  onCreateProject?: (project: { name: string; description: string; category: 'work' | 'home' | 'personal'; tasks: any[] }) => void;
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
   className?: string;
