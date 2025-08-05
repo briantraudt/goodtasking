@@ -9,7 +9,7 @@ import DayViewCalendar from './DayViewCalendar';
 import TaskSidebar from './TaskSidebar';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { format } from 'date-fns';
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
 
 interface Task {
   id: string;
@@ -22,6 +22,7 @@ interface Task {
   due_date?: string | null;
   start_time?: string;
   end_time?: string;
+  vibe_projects?: { name: string };
 }
 
 interface Project {
@@ -52,6 +53,7 @@ const DashboardView = ({
   onRefreshTasks,
   userName = "there"
 }: DashboardViewProps) => {
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('planner');
   const [selectedDate, setSelectedDate] = useState(() => {
     // ALWAYS start with today's date using local timezone
@@ -118,6 +120,14 @@ const DashboardView = ({
     });
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const activeId = active.id.toString();
+    const taskId = activeId.replace('task-', '').replace('scheduled-', '');
+    const task = allTasks.find(t => t.id === taskId);
+    setActiveTask(task || null);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
@@ -148,6 +158,7 @@ const DashboardView = ({
       const taskId = activeId.replace('scheduled-', '');
       handleTaskUnscheduled(taskId);
     }
+    setActiveTask(null);
   };
 
   // Sync calendar when date changes
@@ -158,7 +169,7 @@ const DashboardView = ({
   }, [selectedDate, isConnected, viewMode, syncCalendar]);
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="h-full flex flex-col overflow-hidden">
         {/* Navigation - Start in planner view by default */}
 
@@ -229,6 +240,22 @@ const DashboardView = ({
           )}
         </div>
       </div>
+      
+      {/* Drag Overlay */}
+      <DragOverlay>
+        {activeTask ? (
+          <div className="w-64 h-10 rounded-lg border border-[#4DA8DA] bg-[#4DA8DA] shadow-lg text-white">
+            <div className="p-2 h-full flex flex-col justify-center">
+              <div className="text-sm truncate">
+                <span className="font-bold">{activeTask.title}</span>
+                {activeTask.vibe_projects?.name && (
+                  <span className="font-normal"> - {activeTask.vibe_projects.name}</span>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 };
