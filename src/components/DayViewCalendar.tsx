@@ -302,12 +302,13 @@ const DayViewCalendar = ({
     const endHour = endTime.getHours();
     const endMinute = endTime.getMinutes();
     
-    // Each hour is 80px (2 slots of 40px each)
-    const startPosition = (startHour * 80) + (startMinute / 60 * 80);
-    const duration = ((endHour - startHour) * 80) + ((endMinute - startMinute) / 60 * 80);
+    // Each 30-minute slot is 48px (h-12)
+    const startSlot = (startHour * 2) + (startMinute >= 30 ? 1 : 0);
+    const endSlot = (endHour * 2) + (endMinute >= 30 ? 1 : 0);
+    const duration = (endSlot - startSlot) * 48;
     
     return {
-      top: startPosition,
+      top: startSlot * 48,
       height: Math.max(duration, 20) // Minimum height
     };
   };
@@ -321,21 +322,22 @@ const DayViewCalendar = ({
     const endHour = endTime.getHours();
     const endMinute = endTime.getMinutes();
     
-    // Each hour is 80px (2 slots of 40px each)
-    const startPosition = (startHour * 80) + (startMinute / 60 * 80);
-    const duration = ((endHour - startHour) * 80) + ((endMinute - startMinute) / 60 * 80);
+    // Each 30-minute slot is 48px (h-12)
+    const startSlot = (startHour * 2) + (startMinute >= 30 ? 1 : 0);
+    const endSlot = (endHour * 2) + (endMinute >= 30 ? 1 : 0);
+    const duration = (endSlot - startSlot) * 48;
     
     return {
-      top: startPosition,
+      top: startSlot * 48,
       height: Math.max(duration, 20)
     };
   };
 
-  const formatTimeLabel = (hour: number) => {
-    if (hour === 0) return '12:00 AM';
-    if (hour === 12) return '12:00 PM';
-    if (hour < 12) return `${hour}:00 AM`;
-    return `${hour - 12}:00 PM`;
+  const formatTimeLabel = (hour: number, minute: number) => {
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    const period = hour < 12 ? 'AM' : 'PM';
+    const minuteStr = minute.toString().padStart(2, '0');
+    return `${displayHour}:${minuteStr} ${period}`;
   };
 
   // Check if a time slot has a task or event
@@ -412,19 +414,23 @@ const DayViewCalendar = ({
           style={{ scrollBehavior: 'smooth' }}
         >
           <div className="relative">
-            {/* Time labels and slots */}
-            {Array.from({ length: 24 }, (_, hour) => {
+            {/* Time labels and slots - 30-minute increments */}
+            {Array.from({ length: 48 }, (_, index) => {
+              const hour = Math.floor(index / 2);
+              const minute = (index % 2) * 30;
+              
               // Parse selectedDate using local timezone for consistent comparison
               const [year, month, day] = selectedDate.split('-').map(Number);
               const selectedDateObj = new Date(year, month - 1, day);
-              const isCurrentHour = isToday(selectedDateObj) && 
-                                  hour === currentTime.getHours();
+              const isCurrentSlot = isCurrentTimeSlot(hour, minute);
+              const hasTask = hasTaskAtTime(hour, minute);
               
               return (
                 <div 
-                  key={hour} 
+                  key={`${hour}-${minute}`} 
                   data-hour={hour}
-                  className="flex w-full h-24 border-t border-gray-200"
+                  data-minute={minute}
+                  className="flex w-full h-12 border-t border-gray-200"
                 >
                   {/* Time column */}
                   <div className={cn(
@@ -433,30 +439,21 @@ const DayViewCalendar = ({
                   )}>
                     <span className={cn(
                       "pt-1 text-sm font-semibold text-gray-700",
-                      isCurrentHour && "text-[#4DA8DA] font-bold"
+                      isCurrentSlot && "text-[#4DA8DA] font-bold"
                     )}>
-                      {formatTimeLabel(hour)}
+                      {formatTimeLabel(hour, minute)}
                     </span>
                   </div>
 
-                  {/* Event block container - spans full hour */}
+                  {/* Time slot container */}
                   <div className="flex-1 h-full relative">
-                    {/* 30-minute slots for this hour */}
-                    {Array.from({ length: 2 }, (_, halfIndex) => {
-                      const minute = halfIndex * 30;
-                      const hasTask = hasTaskAtTime(hour, minute);
-                      
-                      return (
-                        <TimeSlot
-                          key={`${hour}-${minute}`}
-                          hour={hour}
-                          minute={minute}
-                          isCurrentTime={false}
-                          hasTask={hasTask}
-                          onClick={() => onQuickTaskCreate?.(hour, minute)}
-                        />
-                      );
-                    })}
+                    <TimeSlot
+                      hour={hour}
+                      minute={minute}
+                      isCurrentTime={isCurrentSlot}
+                      hasTask={hasTask}
+                      onClick={() => onQuickTaskCreate?.(hour, minute)}
+                    />
                   </div>
                 </div>
               );
@@ -521,10 +518,10 @@ const DayViewCalendar = ({
             })() && (
               <div
                 className="absolute right-0 h-0.5 bg-[#4DA8DA] z-30" // Changed from red to light blue
-                style={{
-                  top: (currentTime.getHours() * 96) + (currentTime.getMinutes() / 60 * 96),
-                  left: 120, // Updated to match widened time column (w-28 = 112px + 8px padding)
-                }}
+                 style={{
+                   top: ((currentTime.getHours() * 2) + (currentTime.getMinutes() >= 30 ? 1 : 0)) * 48,
+                   left: 120, // Updated to match widened time column (w-28 = 112px + 8px padding)
+                 }}
               >
                 <div className="absolute -left-2 -top-2 w-4 h-4 bg-red-500 rounded-full"></div>
               </div>
