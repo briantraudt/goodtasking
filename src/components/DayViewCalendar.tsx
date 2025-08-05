@@ -271,14 +271,13 @@ const DayViewCalendar = ({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Calendar Section Header */}
-      <div className="flex items-center gap-2 mb-4 pb-2 border-b">
-        <Calendar className="h-5 w-5 text-primary" />
-        <h1 className="text-lg font-semibold text-foreground">Calendar</h1>
-      </div>
-      
-      {/* Header */}
-      <div className="flex items-center justify-between pb-4 mb-4 border-b">
+      {/* Calendar Section Header with Date Navigation */}
+      <div className="flex items-center justify-between mb-4 pb-2 border-b">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-5 w-5 text-primary" />
+          <h1 className="text-lg font-semibold text-foreground">Calendar</h1>
+        </div>
+        
         <div className="flex items-center gap-3">
           <Button
             variant="outline"
@@ -302,17 +301,6 @@ const DayViewCalendar = ({
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
-        
-        {!isToday(new Date(selectedDate)) && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={goToToday}
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
-          >
-            Today
-          </Button>
-        )}
       </div>
 
       {/* Calendar Grid */}
