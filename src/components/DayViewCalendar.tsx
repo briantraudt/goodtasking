@@ -437,12 +437,18 @@ const DayViewCalendar = ({
                     "w-28 h-full pr-2 flex items-start justify-end border-r border-border",
                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
                   )}>
-                    <span className={cn(
-                      "pt-1 text-sm font-semibold text-gray-700",
-                      isCurrentSlot && "text-[#4DA8DA] font-bold"
-                    )}>
-                      {formatTimeLabel(hour, minute)}
-                    </span>
+                    {minute === 0 ? (
+                      <span className={cn(
+                        "pt-1 text-sm font-semibold text-gray-700",
+                        isCurrentSlot && "text-[#4DA8DA] font-bold"
+                      )}>
+                        {formatTimeLabel(hour, minute)}
+                      </span>
+                    ) : (
+                      <span className="invisible pt-1 text-sm font-semibold">
+                        {formatTimeLabel(hour, minute)}
+                      </span>
+                    )}
                   </div>
 
                   {/* Time slot container */}
