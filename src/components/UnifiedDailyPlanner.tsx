@@ -229,12 +229,6 @@ const UnifiedDailyPlanner = ({ projects, onUpdateTask, onCreateTask, onCreatePro
   const [undoAction, setUndoAction] = useState<UndoAction | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  useEffect(() => {
-    const today = format(new Date(), 'yyyy-MM-dd');
-    if (selectedDate !== today) {
-      setSelectedDate(today);
-    }
-  }, []);
 
   const [lastAISequence, setLastAISequence] = useState<Date | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
