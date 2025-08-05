@@ -422,33 +422,36 @@ const DayViewCalendar = ({
                     isCurrentHour && "border-l-4 border-l-[#4DA8DA] bg-transparent" // Light blue left border instead of background
                   )}
                 >
-                  {/* Time label */}
-                  <div className={cn(
-                    "w-28 flex-shrink-0 h-20 flex items-start justify-center pt-1 text-sm font-semibold text-gray-800 border-r border-border border-b border-border",
-                    isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30",
-                    isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold" // Light blue border and text
-                  )}>
-                    {formatTimeLabel(hour)}
-                  </div>
-                  
-                  {/* Time slots container */}
-                  <div className="flex-1">
-                    {/* 30-minute slots for this hour */}
-                    {Array.from({ length: 2 }, (_, halfIndex) => {
-                      const minute = halfIndex * 30;
-                      const hasTask = hasTaskAtTime(hour, minute);
-                      
-                      return (
-                        <TimeSlot
-                          key={`${hour}-${minute}`}
-                          hour={hour}
-                          minute={minute}
-                          isCurrentTime={isCurrentTimeSlot(hour, minute)}
-                          hasTask={hasTask}
-                          onClick={() => onQuickTaskCreate?.(hour, minute)}
-                        />
-                      );
-                    })}
+                   {/* Time label */}
+                   <div className={cn(
+                     "w-28 flex-shrink-0 flex items-start justify-center pt-1 text-sm font-semibold text-gray-800 border-r border-border",
+                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30",
+                     isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold" // Light blue border and text
+                   )}>
+                     <div className="h-10 flex items-center border-b border-border">
+                       {formatTimeLabel(hour)}
+                     </div>
+                     <div className="h-10 border-b border-border/20"></div>
+                   </div>
+                   
+                   {/* Time slots container */}
+                   <div className="flex-1">
+                     {/* 30-minute slots for this hour */}
+                     {Array.from({ length: 2 }, (_, halfIndex) => {
+                       const minute = halfIndex * 30;
+                       const hasTask = hasTaskAtTime(hour, minute);
+                       
+                       return (
+                         <TimeSlot
+                           key={`${hour}-${minute}`}
+                           hour={hour}
+                           minute={minute}
+                           isCurrentTime={isCurrentTimeSlot(hour, minute)}
+                           hasTask={hasTask}
+                           onClick={() => onQuickTaskCreate?.(hour, minute)}
+                         />
+                       );
+                     })}
                   </div>
                 </div>
               );
