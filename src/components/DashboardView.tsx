@@ -118,10 +118,13 @@ const DashboardView = ({
     
     if (!over) return;
 
+    const activeId = active.id.toString();
+    const overId = over.id.toString();
+
     // Handle dropping tasks onto time slots
-    if (typeof over.id === 'string' && over.id.includes(':')) {
-      const taskId = active.id.toString().replace('task-', '').replace('scheduled-', '');
-      const timeSlot = over.id.toString();
+    if (overId.includes(':')) {
+      const taskId = activeId.replace('task-', '').replace('scheduled-', '');
+      const timeSlot = overId;
       const [hourStr, minuteStr] = timeSlot.split(':');
       
       const hour = parseInt(hourStr);
@@ -134,6 +137,11 @@ const DashboardView = ({
       const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}:00`;
       
       handleTaskScheduled(taskId, startTime, endTime);
+    }
+    // Handle dropping scheduled tasks back to the sidebar
+    else if (overId === 'task-sidebar') {
+      const taskId = activeId.replace('scheduled-', '');
+      handleTaskUnscheduled(taskId);
     }
   };
 
