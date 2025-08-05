@@ -119,6 +119,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
 
   // Handle task click for editing
   const handleTaskClick = (task: Task) => {
+    console.log('🎯 Task clicked for editing:', task.title);
     setSelectedTask(task);
     setShowEditTaskDialog(true);
   };
@@ -260,10 +261,12 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       key={task.id}
                       className={cn(
                         "text-white font-medium rounded-md px-4 py-2 text-sm cursor-pointer transition-all duration-150",
+                        "hover:scale-[1.02] hover:shadow-md", // Enhanced hover effects
                         isOverdue 
                           ? "bg-[#4DA8DA] hover:brightness-110 border-2 border-red-500" // Light blue background with red border for overdue
                           : cn(projectColor.taskBg, projectColor.taskHover)
                       )}
+                      title="Click to edit or delete this task" // Tooltip to indicate clickability
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1 truncate">
