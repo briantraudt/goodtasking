@@ -290,6 +290,14 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
     checkConnection();
   }, [checkConnection]);
 
+  // Auto-sync current day's events when connected
+  useEffect(() => {
+    if (isConnected && user) {
+      const today = format(new Date(), 'yyyy-MM-dd');
+      syncCalendar(today);
+    }
+  }, [isConnected, user, syncCalendar]);
+
   return {
     events,
     isConnected,
