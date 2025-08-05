@@ -35,7 +35,7 @@ interface Project {
 interface DashboardViewProps {
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
-  onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
+  onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => Promise<any>;
   onCreateProject: (data: { name: string; description: string }) => void;
   onDeleteTask?: (taskId: string) => Promise<void>;
   onRefreshTasks?: () => void;
@@ -173,32 +173,27 @@ const DashboardView = ({
     
     console.log('🎯 Creating scheduled task directly:', { projectId, title, startTime, endTime, scheduledDate });
     
-    // Create the task with scheduling info upfront
-    const task = await onCreateTask(projectId, title, description, dueDate);
-    
-    // Get the task ID by finding the most recently created task for this project
-    // This is more reliable than the retry mechanism
-    setTimeout(async () => {
-      if (onRefreshTasks) {
-        await onRefreshTasks();
-      }
+    try {
+      // Create the task and get the returned task data
+      const newTask = await onCreateTask(projectId, title, description, dueDate);
       
-      // Find the newest task by title in the project
-      const project = projects.find(p => p.id === projectId);
-      if (project) {
-        const matchingTasks = project.tasks.filter(t => t.title === title);
-        // Take the most recent unscheduled task (assumes newer tasks are at the end)
-        const newestTask = matchingTasks.filter(t => !t.scheduled_date).pop();
-        
-        if (newestTask) {
-          console.log('🎉 Found newest task, scheduling:', newestTask.id);
-          handleTaskScheduled(newestTask.id, startTime, endTime);
-        }
+      console.log('✅ Task created successfully:', newTask);
+      
+      // If we got the task back, schedule it immediately
+      if (newTask && newTask.id) {
+        console.log('🎉 Scheduling task immediately:', newTask.id);
+        handleTaskScheduled(newTask.id, startTime, endTime);
+      } else {
+        console.error('❌ No task returned from creation');
       }
       
       setShowQuickTaskDialog(false);
       setQuickTaskTime(null);
-    }, 500);
+    } catch (error) {
+      console.error('❌ Error creating quick task:', error);
+      setShowQuickTaskDialog(false);
+      setQuickTaskTime(null);
+    }
   };
 
   // Sync calendar when date changes
