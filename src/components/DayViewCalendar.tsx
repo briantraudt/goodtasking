@@ -270,7 +270,15 @@ const DayViewCalendar = ({
     if (!isToday(selectedDateObj)) return false;
     const currentHour = currentTime.getHours();
     const currentMinutes = currentTime.getMinutes();
-    return hour === currentHour && Math.abs(currentMinutes - minute) < 15;
+    
+    // Only highlight the specific 30-minute slot that contains the current time
+    if (hour !== currentHour) return false;
+    
+    // For the correct hour, highlight the appropriate 30-minute slot
+    if (minute === 0 && currentMinutes < 30) return true;
+    if (minute === 30 && currentMinutes >= 30) return true;
+    
+    return false;
   };
 
   // Get scheduled tasks for this date
