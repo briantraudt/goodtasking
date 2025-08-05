@@ -95,9 +95,12 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
         const checkClosed = setInterval(() => {
           if (popup?.closed) {
             clearInterval(checkClosed);
-            // Check connection status after popup closes
-            setTimeout(() => {
-              checkConnection();
+            // Check connection status after popup closes and sync today's events
+            setTimeout(async () => {
+              await checkConnection();
+              // Auto-sync today's events after successful connection
+              const today = format(new Date(), 'yyyy-MM-dd');
+              await syncCalendar(today);
             }, 1000);
           }
         }, 1000);
