@@ -30,10 +30,10 @@ Enhanced with vibrant gradients and modern design tokens.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 209 100% 58%; /* Bright blue */
+    --primary: 200 80% 55%; /* Sky blue - matching UI elements */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 162 56% 46%; /* Teal green */
+    --secondary: 209 100% 58%; /* Bright blue */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%; /* Light gray */
