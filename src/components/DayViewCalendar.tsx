@@ -136,7 +136,7 @@ const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps)
       <div 
         {...listeners}
         {...attributes}
-        className="w-6 h-full bg-primary/20 rounded-r-lg cursor-grab active:cursor-grabbing flex items-center justify-center border-l border-white/20 hover:bg-white/10 transition-colors"
+        className="w-6 h-full bg-primary/20 rounded-r-lg cursor-grab active:cursor-grabbing flex items-center justify-center hover:bg-white/10 transition-colors"
         title="Drag to move task"
       >
         <GripVertical className="h-4 w-4 text-white/80" />
