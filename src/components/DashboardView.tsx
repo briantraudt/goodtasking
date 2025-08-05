@@ -100,18 +100,29 @@ const DashboardView = ({
   );
 
   const handleTaskScheduled = async (taskId: string, startTime: string, endTime: string) => {
+    console.log('📅 Scheduling task:', { taskId, startTime, endTime, selectedDate });
+    
     // Update task with schedule
-    onUpdateTask(taskId, {
+    await onUpdateTask(taskId, {
       scheduled_date: selectedDate,
       start_time: startTime,
       end_time: endTime
     });
+
+    console.log('✅ Task updated in database, refreshing UI...');
+    
+    // Refresh the tasks to update the UI immediately
+    if (onRefreshTasks) {
+      await onRefreshTasks();
+    }
 
     // Create Google Calendar event if connected
     const task = allTasks.find(t => t.id === taskId);
     if (task && isConnected) {
       await createEventFromTask(taskId, task.title, startTime, endTime, selectedDate);
     }
+    
+    console.log('🎉 Task scheduling complete!');
   };
 
   const handleTaskUnscheduled = (taskId: string) => {

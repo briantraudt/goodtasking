@@ -446,8 +446,8 @@ const DayViewCalendar = ({
                   key={task.id}
                   style={{
                     position: 'absolute',
-                    top: position.top,
-                    height: position.height,
+                    top: position.top + 2, // Add 2px top margin for spacing
+                    height: Math.max(position.height - 4, 16), // Reduce height by 4px (2px top + 2px bottom), minimum 16px
                     left: 84, // Space for time labels + padding
                     right: 16,
                     zIndex: 10
