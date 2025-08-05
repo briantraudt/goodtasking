@@ -71,7 +71,6 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: T
           ? "cursor-default" 
           : "hover:bg-primary/10 cursor-pointer",
         isOver && "bg-primary/20 border-primary/40",
-        isCurrentTime && "border-2 border-[#4DA8DA] bg-transparent",
         minute === 0 ? "border-border" : "border-border/20"
       )}
       onClick={() => !hasTask && onClick?.()}
@@ -461,7 +460,7 @@ const DayViewCalendar = ({
                            key={`${hour}-${minute}`}
                            hour={hour}
                            minute={minute}
-                           isCurrentTime={isCurrentTimeSlot(hour, minute)}
+                           isCurrentTime={false}
                            hasTask={hasTask}
                            onClick={() => onQuickTaskCreate?.(hour, minute)}
                          />
