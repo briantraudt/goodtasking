@@ -1,260 +1,272 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { format, startOfDay, endOfDay } from 'date-fns';
 
 interface CalendarEvent {
   id: string;
   title: string;
   start: string;
   end: string;
-  location?: string;
+  type: 'task' | 'google_event';
+  color?: string;
   description?: string;
-  isAllDay: boolean;
+  isAllDay?: boolean;
 }
 
-interface CalendarData {
-  isConnected: boolean;
+interface UseGoogleCalendarReturn {
   events: CalendarEvent[];
-  loading: boolean;
+  isConnected: boolean;
+  isLoading: boolean;
+  connectGoogleCalendar: () => Promise<void>;
+  disconnectGoogleCalendar: () => Promise<void>;
+  syncCalendar: (date: string) => Promise<void>;
+  createEventFromTask: (taskId: string, title: string, startTime: string, endTime: string, date: string) => Promise<void>;
+  deleteEvent: (eventId: string) => Promise<void>;
 }
 
-export const useGoogleCalendar = () => {
-  const { user, session } = useAuth();
+export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
   const { toast } = useToast();
-  const [calendarData, setCalendarData] = useState<CalendarData>({
-    isConnected: false,
-    events: [],
-    loading: true,
-  });
 
-  const checkConnection = async () => {
+  // Check if Google Calendar is connected
+  const checkConnection = useCallback(async () => {
     if (!user) return;
 
     try {
       const { data, error } = await supabase
-        .from('user_preferences')
-        .select('google_calendar_enabled, calendar_last_sync')
+        .from('google_calendar_tokens')
+        .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (!error && data) {
-        setCalendarData(prev => ({
-          ...prev,
-          isConnected: data.google_calendar_enabled || false,
-          loading: false,
-        }));
-
-        // If connected, fetch events from local database
-        if (data.google_calendar_enabled) {
-          await fetchEventsFromDatabase();
-          
-          // Check if we need to sync (if never synced or last sync was more than 1 hour ago)
-          const lastSync = data.calendar_last_sync ? new Date(data.calendar_last_sync) : null;
-          const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-          
-          if (!lastSync || lastSync < oneHourAgo) {
-            console.log('Calendar data is stale, triggering background sync...');
-            syncCalendarData();
-          }
-        }
-      } else {
-        setCalendarData(prev => ({ ...prev, loading: false }));
+      if (error) {
+        console.error('Error checking Google Calendar connection:', error);
+        return;
       }
-    } catch (error) {
-      console.error('Error checking calendar connection:', error);
-      setCalendarData(prev => ({ ...prev, loading: false }));
-    }
-  };
 
-  const fetchEventsFromDatabase = async (date?: string) => {
+      setIsConnected(!!data && new Date(data.expires_at) > new Date());
+    } catch (error) {
+      console.error('Error checking connection:', error);
+    }
+  }, [user]);
+
+  // Connect to Google Calendar
+  const connectGoogleCalendar = useCallback(async () => {
     if (!user) return;
 
     try {
-      // Always fetch all events to maintain consistency
-      const { data: allEvents, error: allEventsError } = await supabase
-        .from('calendar_events')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('start_time');
-
-      if (allEventsError) {
-        console.error('Error fetching events from database:', allEventsError);
-        return;
-      }
-
-      // Transform database events to match the interface
-      const transformedEvents: CalendarEvent[] = (allEvents || []).map(event => ({
-        id: event.google_event_id,
-        title: event.title,
-        start: event.start_time,
-        end: event.end_time,
-        location: event.location,
-        description: event.description,
-        isAllDay: event.is_all_day,
-      }));
-
-      // Always store all events to prevent disappearing events issue
-      // Components that need date filtering should do it themselves
-      setCalendarData(prev => ({
-        ...prev,
-        events: transformedEvents,
-        loading: false,
-      }));
-
-    } catch (error) {
-      console.error('Error fetching events from database:', error);
-      setCalendarData(prev => ({ ...prev, loading: false }));
-    }
-  };
-
-  const syncCalendarData = async () => {
-    if (!user || !session) return;
-
-    try {
-      console.log('Starting calendar sync...');
+      setIsLoading(true);
       
-      const { data, error } = await supabase.functions.invoke('calendar-sync', {
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (error) {
-        console.error('Calendar sync error:', error);
-        return;
-      }
-
-      console.log('Calendar sync completed:', data);
-      
-      // Refresh events from database after sync
-      await fetchEventsFromDatabase();
-      
-    } catch (error) {
-      console.error('Error syncing calendar:', error);
-    }
-  };
-
-  const connectCalendar = async () => {
-    try {
-      // Get the Google Client ID from our edge function
-      const { data: clientData, error: clientError } = await supabase.functions.invoke('google-calendar-integration', {
-        body: { action: 'client-id' },
-      });
-
-      if (clientError || !clientData?.clientId) {
-        throw new Error('Failed to get Google Client ID');
-      }
-
-      // Generate Google OAuth URL
-      const redirectUri = `https://ychheamigqjpxtnzqina.supabase.co/functions/v1/google-calendar-callback`;
-      const scope = 'https://www.googleapis.com/auth/calendar.readonly';
-      
-      const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-        `client_id=${clientData.clientId}&` +
-        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-        `scope=${encodeURIComponent(scope)}&` +
-        `response_type=code&` +
-        `access_type=offline&` +
-        `prompt=consent&` +
-        `state=${user?.id}`; // Include user ID for security
-
-      // Open OAuth popup
-      const popup = window.open(authUrl, 'google-calendar-auth', 'width=500,height=600');
-      
-      // Listen for popup completion message
-      const messageHandler = (event: MessageEvent) => {
-        if (event.data === 'google-calendar-connected') {
-          window.removeEventListener('message', messageHandler);
-          toast({
-            title: "Calendar Connected",
-            description: "Google Calendar has been connected successfully! Syncing your events...",
-          });
-          // Add a small delay to ensure tokens are fully saved
-          setTimeout(() => {
-            checkConnection();
-            syncCalendarData();
-          }, 1000);
-        }
-      };
-
-      window.addEventListener('message', messageHandler);
-
-      // Fallback: check if popup is closed manually
-      const checkClosed = setInterval(() => {
-        if (popup?.closed) {
-          clearInterval(checkClosed);
-          window.removeEventListener('message', messageHandler);
-          // Give a moment for the message to arrive before checking connection
-          setTimeout(() => {
-            checkConnection();
-            // Try syncing after connection check
-            setTimeout(() => syncCalendarData(), 500);
-          }, 1000);
-        }
-      }, 1000);
-    } catch (error) {
-      console.error('Error connecting calendar:', error);
-      toast({
-        title: "Connection Error",
-        description: "Failed to connect Google Calendar. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const disconnectCalendar = async () => {
-    if (!user || !session) return;
-
-    try {
-      const { error } = await supabase.functions.invoke('google-calendar-integration', {
-        body: { action: 'disconnect' },
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-        },
+      const { data, error } = await supabase.functions.invoke('google-calendar-integration', {
+        body: { action: 'connect' }
       });
 
       if (error) {
         throw error;
       }
 
-      // Clear local calendar events
-      await supabase
-        .from('calendar_events')
+      if (data?.authUrl) {
+        // Redirect to Google OAuth
+        window.location.href = data.authUrl;
+      }
+    } catch (error) {
+      console.error('Error connecting Google Calendar:', error);
+      toast({
+        title: 'Connection Failed',
+        description: 'Failed to connect to Google Calendar. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, toast]);
+
+  // Disconnect from Google Calendar
+  const disconnectGoogleCalendar = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      setIsLoading(true);
+      
+      const { error } = await supabase
+        .from('google_calendar_tokens')
         .delete()
         .eq('user_id', user.id);
 
-      setCalendarData({
-        isConnected: false,
-        events: [],
-        loading: false,
-      });
+      if (error) {
+        throw error;
+      }
 
+      setIsConnected(false);
+      setEvents([]);
+      
       toast({
-        title: "Calendar Disconnected",
-        description: "Google Calendar has been disconnected successfully.",
+        title: 'Disconnected',
+        description: 'Google Calendar has been disconnected.',
       });
     } catch (error) {
-      console.error('Error disconnecting calendar:', error);
+      console.error('Error disconnecting Google Calendar:', error);
       toast({
-        title: "Error",
-        description: "Failed to disconnect calendar. Please try again.",
-        variant: "destructive",
+        title: 'Disconnection Failed',
+        description: 'Failed to disconnect Google Calendar. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, toast]);
+
+  // Sync calendar events for a specific date
+  const syncCalendar = useCallback(async (date: string) => {
+    if (!user || !isConnected) return;
+
+    try {
+      setIsLoading(true);
+
+      const startDate = startOfDay(new Date(date)).toISOString();
+      const endDate = endOfDay(new Date(date)).toISOString();
+
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: {
+          action: 'sync',
+          timeMin: startDate,
+          timeMax: endDate
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.events) {
+        const formattedEvents: CalendarEvent[] = data.events.map((event: any) => ({
+          id: event.id || event.google_event_id,
+          title: event.title || event.summary || 'Untitled Event',
+          start: event.start_time || event.start?.dateTime || event.start?.date,
+          end: event.end_time || event.end?.dateTime || event.end?.date,
+          type: 'google_event' as const,
+          description: event.description,
+          isAllDay: !!(event.start?.date) // All-day if no time specified
+        }));
+
+        setEvents(formattedEvents);
+      }
+    } catch (error) {
+      console.error('Error syncing calendar:', error);
+      toast({
+        title: 'Sync Failed',
+        description: 'Failed to sync Google Calendar events.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user, isConnected, toast]);
+
+  // Create Google Calendar event from task
+  const createEventFromTask = useCallback(async (
+    taskId: string,
+    title: string,
+    startTime: string,
+    endTime: string,
+    date: string
+  ) => {
+    if (!user || !isConnected) return;
+
+    try {
+      const startDateTime = `${date}T${startTime}`;
+      const endDateTime = `${date}T${endTime}`;
+
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: {
+          action: 'create',
+          event: {
+            summary: title,
+            start: {
+              dateTime: startDateTime,
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            },
+            end: {
+              dateTime: endDateTime,
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            },
+            description: `Task scheduled from productivity app (Task ID: ${taskId})`
+          }
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // Refresh events for the current date
+      await syncCalendar(date);
+      
+      toast({
+        title: 'Event Created',
+        description: 'Task has been added to your Google Calendar.',
+      });
+    } catch (error) {
+      console.error('Error creating calendar event:', error);
+      toast({
+        title: 'Event Creation Failed',
+        description: 'Failed to create Google Calendar event.',
+        variant: 'destructive',
       });
     }
-  };
+  }, [user, isConnected, syncCalendar, toast]);
 
-  useEffect(() => {
-    if (user) {
-      checkConnection();
+  // Delete Google Calendar event
+  const deleteEvent = useCallback(async (eventId: string) => {
+    if (!user || !isConnected) return;
+
+    try {
+      const { error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: {
+          action: 'delete',
+          eventId
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // Remove event from local state
+      setEvents(prev => prev.filter(event => event.id !== eventId));
+      
+      toast({
+        title: 'Event Deleted',
+        description: 'Event has been removed from your Google Calendar.',
+      });
+    } catch (error) {
+      console.error('Error deleting calendar event:', error);
+      toast({
+        title: 'Deletion Failed',
+        description: 'Failed to delete Google Calendar event.',
+        variant: 'destructive',
+      });
     }
-  }, [user]);
+  }, [user, isConnected, toast]);
+
+  // Check connection on mount and user change
+  useEffect(() => {
+    checkConnection();
+  }, [checkConnection]);
 
   return {
-    ...calendarData,
-    connectCalendar,
-    disconnectCalendar,
-    refreshEvents: fetchEventsFromDatabase, // This now queries local DB instantly
-    syncCalendar: syncCalendarData, // Manual sync function if needed
+    events,
+    isConnected,
+    isLoading,
+    connectGoogleCalendar,
+    disconnectGoogleCalendar,
+    syncCalendar,
+    createEventFromTask,
+    deleteEvent
   };
 };

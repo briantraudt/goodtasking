@@ -3,7 +3,7 @@ import { useProjects } from '@/hooks/useProjects';
 import Header from '@/components/Header';
 import DashboardView from '@/components/DashboardView';
 import EnableAIAssistant from '@/components/EnableAIAssistant';
-import StatsFooter from '@/components/StatsFooter';
+
 
 const Index = () => {
   const { user } = useAuth();
@@ -56,13 +56,6 @@ const Index = () => {
           />
         </div>
       </main>
-      
-      {/* Fixed Footer */}
-      <footer className="border-t bg-muted/30 fixed bottom-0 left-0 w-full z-10">
-        <div className="max-w-app mx-auto px-6 py-3">
-          <StatsFooter projects={projects} />
-        </div>
-      </footer>
     </div>
   );
 };
