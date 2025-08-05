@@ -41,18 +41,22 @@ const DraggableTaskItem = ({ task, onTaskClick }: DraggableTaskItemProps) => {
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
-      {...attributes}
-      onClick={handleClick}
       className={cn(
-        "flex items-center gap-2 w-full cursor-pointer",
+        "flex items-center gap-2 w-full",
         isDragging && "opacity-50"
       )}
     >
-      <div className="flex-1 truncate">
+      <div 
+        className="flex-1 truncate cursor-pointer"
+        onClick={handleClick}
+      >
         <span className="text-sm font-medium">{task.title}</span>
       </div>
-      <div className="flex items-center gap-1 opacity-60">
+      <div 
+        className="flex items-center gap-1 opacity-60 cursor-grab"
+        {...listeners}
+        {...attributes}
+      >
         <GripVertical className="h-3 w-3" />
       </div>
     </div>
