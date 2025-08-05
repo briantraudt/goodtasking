@@ -424,7 +424,7 @@ const DayViewCalendar = ({
                 >
                   {/* Time label */}
                   <div className={cn(
-                    "w-28 flex-shrink-0 py-2 pl-4 pr-3 text-sm font-semibold text-gray-800 border-r border-border",
+                    "w-28 flex-shrink-0 h-20 flex items-start justify-center pt-1 text-sm font-semibold text-gray-800 border-r border-border border-b border-border",
                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30",
                     isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold" // Light blue border and text
                   )}>
