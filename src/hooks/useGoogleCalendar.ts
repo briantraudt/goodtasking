@@ -159,8 +159,10 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
     try {
       setIsLoading(true);
 
-      const startDate = startOfDay(new Date(date)).toISOString();
-      const endDate = endOfDay(new Date(date)).toISOString();
+      // Expand date range to handle timezone differences
+      const dateObj = new Date(date);
+      const startDate = new Date(dateObj.getTime() - 12 * 60 * 60 * 1000).toISOString(); // Start 12 hours before
+      const endDate = new Date(dateObj.getTime() + 36 * 60 * 60 * 1000).toISOString(); // End 36 hours after
 
       console.log('🔄 Syncing calendar for date:', date, 'Range:', startDate, 'to', endDate);
 
@@ -179,15 +181,25 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
       console.log('📅 Sync response:', data);
 
       if (data?.events) {
-        const formattedEvents: CalendarEvent[] = data.events.map((event: any) => ({
-          id: event.id || event.google_event_id,
-          title: event.title || event.summary || 'Untitled Event',
-          start: event.start_time || event.start?.dateTime || event.start?.date,
-          end: event.end_time || event.end?.dateTime || event.end?.date,
-          type: 'google_event' as const,
-          description: event.description,
-          isAllDay: !!(event.start?.date) // All-day if no time specified
-        }));
+        const formattedEvents: CalendarEvent[] = data.events
+          .map((event: any) => ({
+            id: event.google_event_id || event.id,
+            title: event.title || event.summary || 'Untitled Event',
+            start: event.start_time || event.start?.dateTime || event.start?.date,
+            end: event.end_time || event.end?.dateTime || event.end?.date,
+            type: 'google_event' as const,
+            description: event.description,
+            isAllDay: !!(event.start?.date)
+          }))
+          .filter((event: CalendarEvent) => {
+            // Filter events to only show those that overlap with the requested date
+            const eventStart = new Date(event.start);
+            const requestedDate = new Date(date);
+            const requestedDateStart = new Date(requestedDate.getFullYear(), requestedDate.getMonth(), requestedDate.getDate());
+            const requestedDateEnd = new Date(requestedDate.getFullYear(), requestedDate.getMonth(), requestedDate.getDate() + 1);
+            
+            return eventStart >= requestedDateStart && eventStart < requestedDateEnd;
+          });
 
         console.log('📅 Formatted events:', formattedEvents);
         setEvents(formattedEvents);
