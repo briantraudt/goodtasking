@@ -422,16 +422,23 @@ const DayViewCalendar = ({
                     isCurrentHour && "border-l-4 border-l-[#4DA8DA] bg-transparent" // Light blue left border instead of background
                   )}
                 >
-                   {/* Time label */}
+                   {/* Time column - matches exact structure of calendar grid */}
                    <div className={cn(
-                     "w-28 flex-shrink-0 flex items-start justify-center pt-1 text-sm font-semibold text-gray-800 border-r border-border",
-                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30",
-                     isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold" // Light blue border and text
+                     "w-28 flex-shrink-0 border-r border-border",
+                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
                    )}>
-                     <div className="h-10 flex items-center border-b border-border">
+                     {/* First 30-min slot with time label */}
+                     <div className={cn(
+                       "h-10 border-b border-border/30 flex items-center justify-center text-sm font-semibold text-gray-800",
+                       isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold"
+                     )}>
                        {formatTimeLabel(hour)}
                      </div>
-                     <div className="h-10 border-b border-border/20"></div>
+                     {/* Second 30-min slot */}
+                     <div className={cn(
+                       "h-10 border-b border-border/20",
+                       isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent"
+                     )} />
                    </div>
                    
                    {/* Time slots container */}
