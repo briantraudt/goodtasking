@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { CheckSquare, Calendar, Brain, Clock, ChevronDown, ChevronUp } from 'lucide-react';
-import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
+import { CheckSquare, Brain, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import { format, isToday } from 'date-fns';
 
 interface Project {
@@ -28,7 +27,6 @@ const FooterMetrics: React.FC<FooterMetricsProps> = ({
   selectedDate,
   lastAISequence 
 }) => {
-  const { events } = useGoogleCalendar();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Calculate metrics for selected date
@@ -41,12 +39,6 @@ const FooterMetrics: React.FC<FooterMetricsProps> = ({
       task.scheduled_date?.split('T')[0] === targetDate
     )
   );
-
-  // Calendar events for the selected date
-  const dayEvents = events.filter(event => {
-    const eventDate = new Date(event.start).toLocaleDateString('en-CA');
-    return eventDate === targetDate;
-  });
 
   // Scheduled tasks for the selected date
   const scheduledTasks = projects.flatMap(project => 
@@ -118,10 +110,6 @@ const FooterMetrics: React.FC<FooterMetricsProps> = ({
                 <span>{completedTasks.length}</span>
               </div>
               <div className="flex items-center gap-1">
-                <Calendar className="h-3 w-3 text-footer-accent-blue" />
-                <span>{dayEvents.length}</span>
-              </div>
-              <div className="flex items-center gap-1">
                 <Clock className="h-3 w-3 text-footer-accent-yellow" />
                 <span>{formatFocusTime(totalFocusTime)}</span>
               </div>
@@ -160,21 +148,6 @@ const FooterMetrics: React.FC<FooterMetricsProps> = ({
                 </div>
                 <div className="text-xs text-gray-300">
                   Tasks Completed
-                </div>
-              </div>
-            </div>
-
-            {/* Calendar Events - Sky Blue */}
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-sky-blue/20">
-                <Calendar className="h-4 w-4 text-footer-accent-blue" />
-              </div>
-              <div>
-                <div className="text-lg font-semibold text-white">
-                  {dayEvents.length}
-                </div>
-                <div className="text-xs text-gray-300">
-                  Calendar Events
                 </div>
               </div>
             </div>
