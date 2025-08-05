@@ -192,16 +192,13 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
             isAllDay: !!(event.start?.date)
           }))
           .filter((event: CalendarEvent) => {
-            // Filter events to only show those that overlap with the requested date
-            const eventStart = new Date(event.start);
-            const requestedDate = new Date(date);
-            const requestedDateStart = new Date(requestedDate.getFullYear(), requestedDate.getMonth(), requestedDate.getDate());
-            const requestedDateEnd = new Date(requestedDate.getFullYear(), requestedDate.getMonth(), requestedDate.getDate() + 1);
-            
-            return eventStart >= requestedDateStart && eventStart < requestedDateEnd;
+            // Convert event start time to local date and compare with requested date
+            const eventStartLocal = new Date(event.start);
+            const eventDateLocal = format(eventStartLocal, 'yyyy-MM-dd');
+            return eventDateLocal === date;
           });
 
-        console.log('📅 Formatted events:', formattedEvents);
+        console.log('📅 Filtered events for date', date, ':', formattedEvents);
         setEvents(formattedEvents);
       } else {
         console.log('📅 No events returned from sync');
