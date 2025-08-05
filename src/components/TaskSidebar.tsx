@@ -143,77 +143,18 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Good Business Refined Color System
-  const getProjectColor = (projectName: string) => {
-    // Assign specific colors to known projects, fallback to hash-based assignment
-    const projectColorMap: { [key: string]: any } = {
-      'Good Tasking': {
-        hex: '#2563EB',
-        border: 'border-[#2563EB]',
-        text: 'text-[#2563EB]', 
-        accent: 'text-[#2563EB]',
-        taskBg: 'bg-[#2563EB]',
-        taskHover: 'hover:brightness-110',
-        name: 'brand-blue'
-      },
-      'DGTL Dental': {
-        hex: '#059669',
-        border: 'border-[#059669]',
-        text: 'text-[#059669]',
-        accent: 'text-[#059669]', 
-        taskBg: 'bg-[#059669]',
-        taskHover: 'hover:brightness-110',
-        name: 'brand-green'
-      },
-      'Ryco Roofing': {
-        hex: '#DC2626',
-        border: 'border-[#DC2626]',
-        text: 'text-[#DC2626]',
-        accent: 'text-[#DC2626]',
-        taskBg: 'bg-[#DC2626]',
-        taskHover: 'hover:brightness-110',
-        name: 'brand-red'
-      },
-      'Personal': {
-        hex: '#7C3AED',
-        border: 'border-[#7C3AED]',
-        text: 'text-[#7C3AED]',
-        accent: 'text-[#7C3AED]',
-        taskBg: 'bg-[#7C3AED]',
-        taskHover: 'hover:brightness-110',
-        name: 'brand-purple'
-      }
+  // Unified Blue Color System - Same blue for all projects
+  const getProjectColor = () => {
+    // All projects use the same blue color for consistency
+    return {
+      hex: '#2563EB',
+      border: 'border-[#2563EB]',
+      text: 'text-[#2563EB]', 
+      accent: 'text-[#2563EB]',
+      taskBg: 'bg-[#2563EB]',
+      taskHover: 'hover:brightness-110',
+      name: 'brand-blue'
     };
-
-    // Check if we have a specific mapping
-    if (projectColorMap[projectName]) {
-      return projectColorMap[projectName];
-    }
-
-    // Fallback colors for unknown projects
-    const fallbackColors = [
-      {
-        hex: '#F59E0B',
-        border: 'border-[#F59E0B]',
-        text: 'text-[#F59E0B]',
-        accent: 'text-[#F59E0B]',
-        taskBg: 'bg-[#F59E0B]',
-        taskHover: 'hover:brightness-110',
-        name: 'brand-gold'
-      },
-      {
-        hex: '#2563EB',
-        border: 'border-[#2563EB]',
-        text: 'text-[#2563EB]',
-        accent: 'text-[#2563EB]',
-        taskBg: 'bg-[#2563EB]',
-        taskHover: 'hover:brightness-110',
-        name: 'brand-blue'
-      }
-    ];
-    
-    const hash = projectName.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-    return fallbackColors[hash % fallbackColors.length];
   };
 
   return (
@@ -279,7 +220,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
 
           if (projectTasks.length === 0) return null;
 
-          const projectColor = getProjectColor(project.name);
+          const projectColor = getProjectColor();
 
           return (
             <div 
