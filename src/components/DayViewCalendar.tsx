@@ -39,6 +39,7 @@ interface DayViewCalendarProps {
   calendarEvents?: CalendarEvent[];
   onTaskScheduled?: (taskId: string, startTime: string, endTime: string) => void;
   onTaskUnscheduled?: (taskId: string) => void;
+  onTaskEdit?: (task: Task) => void;
   onEventClick?: (event: CalendarEvent) => void;
   isGoogleConnected?: boolean;
   onConnectGoogle?: () => void;
@@ -84,9 +85,10 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: T
 interface ScheduledTaskBlockProps {
   task: Task;
   onRemove: (taskId: string) => void;
+  onEdit?: (task: Task) => void;
 }
 
-const ScheduledTaskBlock = ({ task, onRemove }: ScheduledTaskBlockProps) => {
+const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps) => {
   const {
     attributes,
     listeners,
@@ -111,8 +113,15 @@ const ScheduledTaskBlock = ({ task, onRemove }: ScheduledTaskBlockProps) => {
         "absolute inset-0 rounded-lg border border-[#4DA8DA] bg-[#4DA8DA] cursor-grab z-10 shadow-sm text-white",
         isDragging && "opacity-50"
       )}
-      onDoubleClick={() => onRemove(task.id)}
-      title="Double-click to remove from schedule"
+      onClick={(e) => {
+        e.stopPropagation();
+        onEdit?.(task);
+      }}
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        onRemove(task.id);
+      }}
+      title="Click to edit • Double-click to remove from schedule"
     >
       <div className="p-2 h-full flex flex-col justify-center">
         <div className="text-sm truncate">
@@ -155,6 +164,7 @@ const DayViewCalendar = ({
   calendarEvents = [],
   onTaskScheduled,
   onTaskUnscheduled,
+  onTaskEdit,
   onEventClick,
   isGoogleConnected = false,
   onConnectGoogle,
@@ -456,6 +466,7 @@ const DayViewCalendar = ({
                   <ScheduledTaskBlock
                     task={task}
                     onRemove={onTaskUnscheduled}
+                    onEdit={onTaskEdit}
                   />
                 </div>
               );

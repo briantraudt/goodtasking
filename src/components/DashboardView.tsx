@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Sun, Sparkles, RefreshCw } from 'lucide-react';
 import QuickTaskDialog from '@/components/QuickTaskDialog';
+import TaskEditDialog from '@/components/TaskEditDialog';
 import { Button } from '@/components/ui/button';
 import TodayView from './TodayView';
 import WeeklySchedule from './WeeklySchedule';
@@ -57,6 +58,8 @@ const DashboardView = ({
   const [viewMode, setViewMode] = useState<ViewMode>('planner');
   const [showQuickTaskDialog, setShowQuickTaskDialog] = useState(false);
   const [quickTaskTime, setQuickTaskTime] = useState<{ hour: number; minute: number } | null>(null);
+  const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
+  const [selectedTaskForEdit, setSelectedTaskForEdit] = useState<Task | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => {
     // ALWAYS start with today's date using local timezone
     const now = new Date();
@@ -213,6 +216,32 @@ const DashboardView = ({
     }
   };
 
+  // Handle task editing
+  const handleTaskEdit = (task: Task) => {
+    setSelectedTaskForEdit(task);
+    setShowEditTaskDialog(true);
+  };
+
+  const handleTaskSave = async (taskId: string, updates: Partial<Task>) => {
+    await onUpdateTask(taskId, updates);
+    if (onRefreshTasks) {
+      await onRefreshTasks();
+    }
+    setShowEditTaskDialog(false);
+    setSelectedTaskForEdit(null);
+  };
+
+  const handleTaskDelete = async (taskId: string) => {
+    if (onDeleteTask) {
+      await onDeleteTask(taskId);
+    }
+    if (onRefreshTasks) {
+      await onRefreshTasks();
+    }
+    setShowEditTaskDialog(false);
+    setSelectedTaskForEdit(null);
+  };
+
   // Sync calendar when date changes
   useEffect(() => {
     if (isConnected && viewMode === 'planner') {
@@ -243,6 +272,7 @@ const DashboardView = ({
                       calendarEvents={events}
                       onTaskScheduled={handleTaskScheduled}
                       onTaskUnscheduled={handleTaskUnscheduled}
+                      onTaskEdit={handleTaskEdit}
                       onEventClick={(event) => {
                         console.log('Event clicked:', event);
                         // TODO: Implement event edit/delete modal
@@ -321,6 +351,18 @@ const DashboardView = ({
         startTime={quickTaskTime ? `${quickTaskTime.hour.toString().padStart(2, '0')}:${quickTaskTime.minute.toString().padStart(2, '0')}` : ''}
         projects={projects}
         onCreateTask={createQuickTask}
+      />
+      
+      {/* Task Edit Dialog */}
+      <TaskEditDialog
+        task={selectedTaskForEdit}
+        isOpen={showEditTaskDialog}
+        onClose={() => {
+          setShowEditTaskDialog(false);
+          setSelectedTaskForEdit(null);
+        }}
+        onSave={handleTaskSave}
+        onDelete={handleTaskDelete}
       />
     </DndContext>
   );
