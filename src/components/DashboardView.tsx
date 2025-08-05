@@ -54,11 +54,14 @@ const DashboardView = ({
 }: DashboardViewProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>('planner');
   const [selectedDate, setSelectedDate] = useState(() => {
+    // ALWAYS start with today's date using local timezone
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const today = `${year}-${month}-${day}`;
+    console.log('Initializing DashboardView with today:', today);
+    return today;
   });
   
   const {

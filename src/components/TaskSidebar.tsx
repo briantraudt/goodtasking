@@ -239,23 +239,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       
       {/* No header section needed - Add button is now in parent component */}
 
-      {/* Filter Section - Moved to right */}
-      <div className="mb-6 flex justify-end">
-        <TaskFilters
-          projects={projectsWithTasks}
-          projectFilter={projectFilter}
-          priorityFilter={priorityFilter}
-          dueDateFilter={dueDateFilter}
-          onProjectFilterChange={setProjectFilter}
-          onPriorityFilterChange={setPriorityFilter}
-          onDueDateFilterChange={setDueDateFilter}
-          onClearAllFilters={() => {
-            setProjectFilter('all');
-            setPriorityFilter('all');
-            setDueDateFilter('all');
-          }}
-        />
-      </div>
+      {/* Removed filter section as requested */}
 
       {/* Projects Grid - 2 Columns for Wider Tasks */}
       <div className="grid grid-cols-2 gap-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>

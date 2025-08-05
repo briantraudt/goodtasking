@@ -175,7 +175,7 @@ const DayViewCalendar = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-scroll to current time and ensure today's date on initial load only
+  // Auto-scroll to current time and FORCE today's date on initial load
   useEffect(() => {
     if (!hasAutoScrolled.current) {
       const now = new Date();
@@ -186,12 +186,10 @@ const DayViewCalendar = ({
       const day = String(now.getDate()).padStart(2, '0');
       const today = `${year}-${month}-${day}`;
       
-      console.log('Setting calendar to today:', today, 'Current selectedDate:', selectedDate);
+      console.log('FORCING calendar to today:', today, 'Current selectedDate:', selectedDate);
       
-      // Set calendar to today's date if it's not already
-      if (selectedDate !== today) {
-        onDateChange(today);
-      }
+      // ALWAYS set to today's date on initial load, regardless of current selectedDate
+      onDateChange(today);
       
       // Auto-scroll to current hour with smooth animation
       setTimeout(() => {
@@ -207,12 +205,19 @@ const DayViewCalendar = ({
       
       hasAutoScrolled.current = true;
     }
-  }, []); // Only run once on mount
+  }, [onDateChange]); // Only depend on onDateChange function
 
   const navigateDate = (direction: 'prev' | 'next') => {
     const currentDateObj = new Date(selectedDate);
     const newDate = direction === 'prev' ? subDays(currentDateObj, 1) : addDays(currentDateObj, 1);
-    onDateChange(newDate.toISOString().split('T')[0]);
+    
+    // Use local timezone for consistency
+    const year = newDate.getFullYear();
+    const month = String(newDate.getMonth() + 1).padStart(2, '0');
+    const day = String(newDate.getDate()).padStart(2, '0');
+    const newDateString = `${year}-${month}-${day}`;
+    
+    onDateChange(newDateString);
   };
 
   const goToToday = () => {
