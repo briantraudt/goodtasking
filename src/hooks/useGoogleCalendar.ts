@@ -216,7 +216,7 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
     }
   }, [user, isConnected, toast]);
 
-  // Create Google Calendar event from task
+  // Create Google Calendar event from task - DISABLED FOR ONE-WAY SYNC
   const createEventFromTask = useCallback(async (
     taskId: string,
     title: string,
@@ -224,50 +224,10 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
     endTime: string,
     date: string
   ) => {
-    if (!user || !isConnected) return;
-
-    try {
-      const startDateTime = `${date}T${startTime}`;
-      const endDateTime = `${date}T${endTime}`;
-
-      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
-        body: {
-          action: 'create',
-          event: {
-            summary: title,
-            start: {
-              dateTime: startDateTime,
-              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-            },
-            end: {
-              dateTime: endDateTime,
-              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-            },
-            description: `Task scheduled from productivity app (Task ID: ${taskId})`
-          }
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      // Refresh events for the current date
-      await syncCalendar(date);
-      
-      toast({
-        title: 'Event Created',
-        description: 'Task has been added to your Google Calendar.',
-      });
-    } catch (error) {
-      console.error('Error creating calendar event:', error);
-      toast({
-        title: 'Event Creation Failed',
-        description: 'Failed to create Google Calendar event.',
-        variant: 'destructive',
-      });
-    }
-  }, [user, isConnected, syncCalendar, toast]);
+    // One-way sync only - do not create tasks as events in Google Calendar
+    console.log('Two-way sync disabled - not creating task as event in Google Calendar:', title);
+    return;
+  }, []);
 
   // Delete Google Calendar event
   const deleteEvent = useCallback(async (eventId: string) => {
