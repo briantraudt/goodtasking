@@ -164,6 +164,7 @@ const DayViewCalendar = ({
 }: DayViewCalendarProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const hasAutoScrolled = useRef(false);
   const { toast } = useToast();
 
   // Update current time every minute
@@ -174,22 +175,32 @@ const DayViewCalendar = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-scroll to current time on mount if viewing today
+  // Auto-scroll to current time and set today's date on initial load only
   useEffect(() => {
-    if (isToday(new Date(selectedDate)) && scrollContainerRef.current) {
-      const currentHour = new Date().getHours();
-      const scrollPosition = Math.max(0, (currentHour - 2) * 80);
-      scrollContainerRef.current.scrollTop = scrollPosition;
+    if (!hasAutoScrolled.current) {
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      
+      // Set calendar to today's date
+      if (selectedDate !== today) {
+        onDateChange(today);
+      }
+      
+      // Auto-scroll to current hour with smooth animation
+      setTimeout(() => {
+        const currentHour = now.getHours();
+        const hourBlock = document.querySelector(`[data-hour='${currentHour}']`);
+        if (hourBlock && scrollContainerRef.current) {
+          hourBlock.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }
+      }, 100); // Small delay to ensure DOM is ready
+      
+      hasAutoScrolled.current = true;
     }
-  }, [selectedDate]);
-
-  // Set to current date on initial load
-  useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
-    if (selectedDate !== today) {
-      onDateChange(today);
-    }
-  }, []); // Only run on mount
+  }, []); // Only run once on mount
 
   const navigateDate = (direction: 'prev' | 'next') => {
     const currentDateObj = new Date(selectedDate);
@@ -327,33 +338,46 @@ const DayViewCalendar = ({
         >
           <div className="relative">
             {/* Time labels and slots */}
-            {Array.from({ length: 24 }, (_, hour) => (
-              <div key={hour} className="relative flex">
-                {/* Time label */}
-                <div className={cn(
-                  "w-20 flex-shrink-0 py-2 pl-4 pr-3 text-sm font-semibold text-gray-800 border-r border-border",
-                  isToday(new Date(selectedDate)) ? "bg-primary/5" : "bg-muted/30"
-                )}>
-                  {formatTimeLabel(hour)}
+            {Array.from({ length: 24 }, (_, hour) => {
+              const isCurrentHour = isToday(new Date(selectedDate)) && 
+                                  hour === currentTime.getHours();
+              
+              return (
+                <div 
+                  key={hour} 
+                  data-hour={hour}
+                  className={cn(
+                    "relative flex",
+                    isCurrentHour && "bg-primary/10"
+                  )}
+                >
+                  {/* Time label */}
+                  <div className={cn(
+                    "w-20 flex-shrink-0 py-2 pl-4 pr-3 text-sm font-semibold text-gray-800 border-r border-border",
+                    isToday(new Date(selectedDate)) ? "bg-primary/5" : "bg-muted/30",
+                    isCurrentHour && "bg-primary/20 text-primary font-bold"
+                  )}>
+                    {formatTimeLabel(hour)}
+                  </div>
+                  
+                  {/* Time slots container */}
+                  <div className="flex-1">
+                    {/* 30-minute slots for this hour */}
+                    {Array.from({ length: 2 }, (_, halfIndex) => {
+                      const minute = halfIndex * 30;
+                      return (
+                        <TimeSlot
+                          key={`${hour}-${minute}`}
+                          hour={hour}
+                          minute={minute}
+                          isCurrentTime={isCurrentTimeSlot(hour, minute)}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
-                
-                {/* Time slots container */}
-                <div className="flex-1">
-                  {/* 30-minute slots for this hour */}
-                  {Array.from({ length: 2 }, (_, halfIndex) => {
-                    const minute = halfIndex * 30;
-                    return (
-                      <TimeSlot
-                        key={`${hour}-${minute}`}
-                        hour={hour}
-                        minute={minute}
-                        isCurrentTime={isCurrentTimeSlot(hour, minute)}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
+              );
+            })}
             
             {/* Scheduled tasks */}
             {scheduledTasks.map(task => {
