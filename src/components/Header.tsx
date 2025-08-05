@@ -20,10 +20,12 @@ const Header = () => {
     <header className="flex items-center justify-between">
       {/* Left side - Good Tasking Logo */}
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+        <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
           <CalendarCheck className="h-5 w-5 text-white" />
         </div>
-        <span className="text-xl font-bold text-navy-blue">Good Tasking</span>
+        <span className="text-2xl font-bold text-gray-800">
+          G<span className="text-orange-500">o</span><span className="text-orange-500">o</span>d Tasking
+        </span>
       </div>
 
       {/* Right side - Action buttons */}
