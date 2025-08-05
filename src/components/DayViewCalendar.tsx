@@ -107,7 +107,7 @@ const ScheduledTaskBlock = ({ task, onRemove }: ScheduledTaskBlockProps) => {
       title="Double-click to remove from schedule"
     >
       <div className="p-2 h-full flex flex-col justify-center">
-        <div className="text-xs truncate">
+        <div className="text-sm truncate">
           <span className="font-bold">{task.title}</span>
           {task.vibe_projects?.name && (
             <span className="font-normal"> - {task.vibe_projects.name}</span>
