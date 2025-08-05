@@ -357,7 +357,10 @@ const DayViewCalendar = ({
           <div className="relative">
             {/* Time labels and slots */}
             {Array.from({ length: 24 }, (_, hour) => {
-              const isCurrentHour = isToday(new Date(selectedDate)) && 
+              // Parse selectedDate using local timezone for consistent comparison
+              const [year, month, day] = selectedDate.split('-').map(Number);
+              const selectedDateObj = new Date(year, month - 1, day);
+              const isCurrentHour = isToday(selectedDateObj) && 
                                   hour === currentTime.getHours();
               
               return (
@@ -372,7 +375,7 @@ const DayViewCalendar = ({
                   {/* Time label */}
                   <div className={cn(
                     "w-20 flex-shrink-0 py-2 pl-4 pr-3 text-sm font-semibold text-gray-800 border-r border-border",
-                    isToday(new Date(selectedDate)) ? "bg-primary/5" : "bg-muted/30",
+                    isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30",
                     isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold" // Light blue border and text
                   )}>
                     {formatTimeLabel(hour)}
@@ -447,7 +450,12 @@ const DayViewCalendar = ({
             })}
             
             {/* Current time indicator */}
-            {isToday(new Date(selectedDate)) && (
+            {(() => {
+              // Parse selectedDate using local timezone for consistent comparison
+              const [year, month, day] = selectedDate.split('-').map(Number);
+              const selectedDateObj = new Date(year, month - 1, day);
+              return isToday(selectedDateObj);
+            })() && (
               <div
                 className="absolute right-0 h-0.5 bg-[#4DA8DA] z-30" // Changed from red to light blue
                 style={{
