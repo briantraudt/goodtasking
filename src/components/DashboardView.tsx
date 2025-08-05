@@ -171,15 +171,28 @@ const DashboardView = ({
   const createQuickTask = async (projectId: string, title: string, description?: string, dueDate?: Date, startTime?: string, endTime?: string, scheduledDate?: string) => {
     if (!quickTaskTime || !startTime || !endTime || !scheduledDate) return;
     
+    console.log('🎯 Creating quick task:', { projectId, title, startTime, endTime, scheduledDate });
+    
     // Create the task first
     await onCreateTask(projectId, title, description, dueDate);
     
-    // Force a longer delay and multiple attempts to find the task
+    console.log('✅ Task created, current projects count:', projects.length);
+    console.log('📋 Current allTasks count:', allTasks.length);
+    
+    // Instead of trying to find the task, let's use a different approach
+    // We'll call the parent's refresh function if available, then schedule
+    if (onRefreshTasks) {
+      await onRefreshTasks();
+      console.log('🔄 Refreshed tasks, new count:', projects.flatMap(p => p.tasks).length);
+    }
+    
+    // Try to find and schedule the task with better timing
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = 15;
     
     const scheduleTask = () => {
       attempts++;
+      console.log(`🔍 Attempt ${attempts}: Looking for task "${title}" in project ${projectId}`);
       
       // Get fresh task list from projects
       const currentAllTasks = projects.flatMap(project => 
@@ -189,24 +202,29 @@ const DashboardView = ({
         }))
       );
       
+      console.log('📊 Current tasks in search:', currentAllTasks.map(t => ({ id: t.id, title: t.title, scheduled: !!t.scheduled_date })));
+      
       const newTask = currentAllTasks
         .filter(task => task.title === title && task.project_id === projectId)
         .find(task => !task.scheduled_date);
       
       if (newTask) {
+        console.log('🎉 Found new task, scheduling:', newTask.id);
         handleTaskScheduled(newTask.id, startTime, endTime);
         setShowQuickTaskDialog(false);
         setQuickTaskTime(null);
       } else if (attempts < maxAttempts) {
-        setTimeout(scheduleTask, 100);
+        console.log(`⏳ Task not found yet, retrying in 200ms (attempt ${attempts}/${maxAttempts})`);
+        setTimeout(scheduleTask, 200);
       } else {
-        console.warn('Failed to find and schedule new task after', maxAttempts, 'attempts');
+        console.warn('❌ Failed to find and schedule new task after', maxAttempts, 'attempts');
         setShowQuickTaskDialog(false);
         setQuickTaskTime(null);
       }
     };
     
-    setTimeout(scheduleTask, 100);
+    // Start the scheduling process after a short delay
+    setTimeout(scheduleTask, 300);
   };
 
   // Sync calendar when date changes
