@@ -202,11 +202,15 @@ const DashboardView = ({
         }))
       );
       
-      console.log('📊 Current tasks in search:', currentAllTasks.map(t => ({ id: t.id, title: t.title, scheduled: !!t.scheduled_date })));
+      console.log('📊 Current tasks in search:', currentAllTasks.map(t => ({ id: t.id, title: t.title, projectId: t.project_id, scheduled: !!t.scheduled_date })));
+      console.log('🔍 Looking for task with title:', title, 'and projectId:', projectId);
       
-      const newTask = currentAllTasks
-        .filter(task => task.title === title && task.project_id === projectId)
-        .find(task => !task.scheduled_date);
+      // Filter by title and project first
+      const matchingTasks = currentAllTasks.filter(task => task.title === title && task.project_id === projectId);
+      console.log('🎯 Tasks matching title and project:', matchingTasks.map(t => ({ id: t.id, title: t.title, scheduled: !!t.scheduled_date })));
+      
+      const newTask = matchingTasks.find(task => !task.scheduled_date);
+      console.log('📍 Final newTask found:', newTask ? { id: newTask.id, title: newTask.title } : 'NONE');
       
       if (newTask) {
         console.log('🎉 Found new task, scheduling:', newTask.id);
