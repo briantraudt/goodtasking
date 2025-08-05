@@ -429,14 +429,14 @@ const DayViewCalendar = ({
                    )}>
                       {/* First 30-min slot with time label at top */}
                       <div className={cn(
-                        "h-6 border-b border-border/30 flex items-start justify-end pr-2 pt-1 text-sm font-semibold text-gray-700",
+                        "h-12 border-b border-border/30 flex justify-end pr-2 pt-1 text-sm font-semibold text-gray-700",
                         isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold"
                       )}>
                         {formatTimeLabel(hour)}
                       </div>
-                     {/* Second 30-min slot - larger to maintain 80px total height */}
+                     {/* Second 30-min slot - empty for half-hour tasks */}
                      <div className={cn(
-                       "h-14 border-b border-border/20",
+                       "h-12 border-b border-border/20",
                        isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent"
                      )} />
                    </div>
