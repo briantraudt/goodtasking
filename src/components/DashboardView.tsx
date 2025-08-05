@@ -187,26 +187,28 @@ const DashboardView = ({
         <div className="flex-1 overflow-hidden">
           {viewMode === 'planner' ? (
             <div className="h-full p-6">
-              <div className="h-full flex gap-6">
-                {/* Calendar - 66% width */}
-                <div className="flex-[2] min-h-0">
-                  <DayViewCalendar
-                    selectedDate={selectedDate}
-                    onDateChange={setSelectedDate}
-                    tasks={allTasks}
-                    calendarEvents={events}
-                    onTaskScheduled={handleTaskScheduled}
-                    onTaskUnscheduled={handleTaskUnscheduled}
-                    onEventClick={(event) => {
-                      console.log('Event clicked:', event);
-                      // TODO: Implement event edit/delete modal
-                    }}
-                  />
+              <div className="h-full flex flex-col lg:flex-row gap-6">
+                {/* Calendar - 50% width */}
+                <div className="flex-1 min-h-0">
+                  <div className="h-full bg-card rounded-xl shadow-sm border p-6">
+                    <DayViewCalendar
+                      selectedDate={selectedDate}
+                      onDateChange={setSelectedDate}
+                      tasks={allTasks}
+                      calendarEvents={events}
+                      onTaskScheduled={handleTaskScheduled}
+                      onTaskUnscheduled={handleTaskUnscheduled}
+                      onEventClick={(event) => {
+                        console.log('Event clicked:', event);
+                        // TODO: Implement event edit/delete modal
+                      }}
+                    />
+                  </div>
                 </div>
                 
-                {/* Task Sidebar - 33% width */}
+                {/* Task Sidebar - 50% width */}
                 <div className="flex-1 min-h-0">
-                  <div className="h-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                     <TaskSidebar
                       projects={projects}
                       selectedDate={selectedDate}

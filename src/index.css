@@ -33,7 +33,7 @@ Enhanced with vibrant gradients and modern design tokens.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
 
-    --primary: 142 71% 40%; /* Forest green #219653 */
+    --primary: 200 80% 55%; /* Light blue #4DA8DA - matching logo */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 54% 24%; /* Navy blue #1E3A5F */
@@ -42,7 +42,7 @@ Enhanced with vibrant gradients and modern design tokens.
     --muted: 0 0% 95%; /* Light gray #F2F2F2 */
     --muted-foreground: 0 0% 45%;
 
-    --accent: 200 80% 55%; /* Sky blue */
+    --accent: 200 80% 55%; /* Light blue */
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;

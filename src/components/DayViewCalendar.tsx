@@ -58,10 +58,10 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime }: TimeSlotProps) => {
     <div
       ref={setNodeRef}
       className={cn(
-        "h-10 border-b border-gray-100 relative transition-colors hover:bg-blue-50/30",
-        isOver && "bg-blue-100 border-blue-200",
+        "h-10 border-b border-border/30 relative transition-colors hover:bg-primary/10",
+        isOver && "bg-primary/20 border-primary/40",
         isCurrentTime && "bg-yellow-50/50",
-        minute === 0 ? "border-gray-200" : "border-gray-50"
+        minute === 0 ? "border-border" : "border-border/20"
       )}
     >
       {children}
@@ -94,7 +94,7 @@ const ScheduledTaskBlock = ({ task, onRemove }: ScheduledTaskBlockProps) => {
       case 'high': return 'bg-red-50 border-red-200 text-red-800';
       case 'medium': return 'bg-yellow-50 border-yellow-200 text-yellow-800';
       case 'low': return 'bg-green-50 border-green-200 text-green-800';
-      default: return 'bg-blue-50 border-blue-200 text-blue-800';
+      default: return 'bg-primary/10 border-primary/30 text-primary';
     }
   };
 
@@ -133,14 +133,14 @@ interface EventBlockProps {
 const EventBlock = ({ event, onClick }: EventBlockProps) => {
   return (
     <div
-      className="absolute left-2 right-2 bg-blue-50 border border-blue-200 rounded-lg p-2 cursor-pointer z-10 shadow-sm"
+      className="absolute left-2 right-2 bg-green-50 border border-green-200 rounded-lg p-2 cursor-pointer z-10 shadow-sm"
       onClick={() => onClick?.(event)}
       title={event.description || event.title}
     >
-      <div className="text-xs font-medium text-[#1B365D] truncate">
+      <div className="text-xs font-medium text-secondary truncate">
         {event.title}
       </div>
-      <div className="text-xs text-[#1B365D]/70 mt-1">
+      <div className="text-xs text-secondary/70 mt-1">
         {format(parseISO(event.start), 'h:mm a')} - {format(parseISO(event.end), 'h:mm a')}
       </div>
     </div>
@@ -262,52 +262,50 @@ const DayViewCalendar = ({
   };
 
   return (
-    <Card className="h-full flex flex-col bg-white shadow-sm border border-gray-200 rounded-xl">
+    <div className="h-full flex flex-col">
       {/* Header */}
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-4 mb-4 border-b">
+        <div className="flex items-center gap-3">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={() => navigateDate('prev')}
-            className="text-[#1B365D] hover:bg-blue-50 p-2 rounded-lg"
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4" />
           </Button>
           
-          <h2 className="text-xl font-semibold text-[#1B365D] min-w-[250px] text-center">
+          <h2 className="text-xl font-semibold text-secondary">
             {formatDateHeader()}
           </h2>
           
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigateDate('next')}
-              className="text-[#1B365D] hover:bg-blue-50 p-2 rounded-lg"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-            
-            {!isToday(new Date(selectedDate)) && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToToday}
-                className="ml-2 border-[#1B365D] text-[#1B365D] hover:bg-blue-50"
-              >
-                Today
-              </Button>
-            )}
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigateDate('next')}
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
-      </CardHeader>
+        
+        {!isToday(new Date(selectedDate)) && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={goToToday}
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+          >
+            Today
+          </Button>
+        )}
+      </div>
 
       {/* Calendar Grid */}
-      <CardContent className="flex-1 overflow-hidden p-0">
+      <div className="flex-1 overflow-hidden">
         <div 
           ref={scrollContainerRef}
-          className="h-full overflow-y-auto"
+          className="h-full overflow-y-auto border rounded-lg"
           style={{ scrollBehavior: 'smooth' }}
         >
           <div className="relative">
@@ -315,7 +313,7 @@ const DayViewCalendar = ({
             {Array.from({ length: 24 }, (_, hour) => (
               <div key={hour} className="relative flex">
                 {/* Time label */}
-                <div className="w-20 flex-shrink-0 py-2 px-3 text-sm font-medium text-[#1B365D] border-r border-gray-100 bg-gray-50/30">
+                <div className="w-20 flex-shrink-0 py-2 px-3 text-sm font-medium text-secondary border-r border-border bg-muted/30">
                   {formatTimeLabel(hour)}
                 </div>
                 
@@ -400,8 +398,8 @@ const DayViewCalendar = ({
             )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
