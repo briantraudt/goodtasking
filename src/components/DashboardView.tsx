@@ -87,8 +87,13 @@ const DashboardView = ({
     deleteEvent
   } = useGoogleCalendar();
 
-  // Get all tasks for the calendar
-  const allTasks = projects.flatMap(project => project.tasks);
+  // Get all tasks for the calendar with project information
+  const allTasks = projects.flatMap(project => 
+    project.tasks.map(task => ({
+      ...task,
+      vibe_projects: { name: project.name }
+    }))
+  );
 
   const handleTaskScheduled = async (taskId: string, startTime: string, endTime: string) => {
     // Update task with schedule
