@@ -98,10 +98,6 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
       }
 
       await onSave(task.id, updates);
-      toast({
-        title: "Task updated",
-        description: "Your task has been successfully updated.",
-      });
       onClose();
     } catch (error) {
       toast({
