@@ -152,17 +152,28 @@ interface EventBlockProps {
 }
 
 const EventBlock = ({ event, onClick }: EventBlockProps) => {
+  const handleCalendarEventClick = () => {
+    // Open Google Calendar main page
+    const calendarUrl = 'https://calendar.google.com/calendar/u/0/r';
+    window.open(calendarUrl, '_blank');
+  };
+
   return (
     <div
-      className="absolute left-2 right-2 bg-green-50 border border-green-200 rounded-lg p-2 cursor-pointer z-10 shadow-sm"
-      onClick={() => onClick?.(event)}
-      title={event.description || event.title}
+      className="absolute left-2 right-2 bg-blue-50 border border-blue-400 rounded-lg p-2 cursor-pointer z-10 shadow-sm hover:bg-blue-100 transition-colors"
+      onClick={handleCalendarEventClick}
+      title={`Google Calendar: ${event.description || event.title}`}
     >
-      <div className="text-xs font-medium text-secondary truncate">
-        {event.title}
-      </div>
-      <div className="text-xs text-secondary/70 mt-1">
-        {format(parseISO(event.start), 'h:mm a')} - {format(parseISO(event.end), 'h:mm a')}
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <div className="text-xs font-medium text-blue-900 truncate">
+            {event.title}
+          </div>
+          <div className="text-xs text-blue-700 mt-1">
+            {format(parseISO(event.start), 'h:mm a')} - {format(parseISO(event.end), 'h:mm a')}
+          </div>
+        </div>
+        <Calendar className="w-3 h-3 text-blue-500 ml-2 flex-shrink-0" />
       </div>
     </div>
   );
