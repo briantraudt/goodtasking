@@ -162,7 +162,7 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
       const startDate = startOfDay(new Date(date)).toISOString();
       const endDate = endOfDay(new Date(date)).toISOString();
 
-      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+      const { data, error } = await supabase.functions.invoke('calendar-sync', {
         body: {
           action: 'sync',
           timeMin: startDate,
