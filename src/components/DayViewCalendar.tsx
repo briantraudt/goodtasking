@@ -424,7 +424,7 @@ const DayViewCalendar = ({
                 >
                   {/* Time label */}
                   <div className={cn(
-                    "w-20 flex-shrink-0 py-2 pl-4 pr-3 text-sm font-semibold text-gray-800 border-r border-border",
+                    "w-24 flex-shrink-0 py-2 pl-4 pr-3 text-sm font-semibold text-gray-800 border-r border-border",
                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30",
                     isCurrentHour && "border-2 border-[#4DA8DA] bg-transparent text-[#4DA8DA] font-bold" // Light blue border and text
                   )}>
@@ -466,7 +466,7 @@ const DayViewCalendar = ({
                     position: 'absolute',
                     top: position.top + 2, // Add 2px top margin for spacing
                     height: Math.max(position.height - 4, 16), // Reduce height by 4px (2px top + 2px bottom), minimum 16px
-                    left: 84, // Space for time labels + padding
+                    left: 100, // Space for time labels + padding (w-24 = 96px + 4px padding)
                     right: 16,
                     zIndex: 10
                   }}
@@ -491,7 +491,7 @@ const DayViewCalendar = ({
                     position: 'absolute',
                     top: position.top,
                     height: position.height,
-                    left: 84, // Space for time labels + padding
+                    left: 100, // Space for time labels + padding (w-24 = 96px + 4px padding)
                     right: 16,
                     zIndex: 10
                   }}
@@ -515,7 +515,7 @@ const DayViewCalendar = ({
                 className="absolute right-0 h-0.5 bg-[#4DA8DA] z-30" // Changed from red to light blue
                 style={{
                   top: (currentTime.getHours() * 80) + (currentTime.getMinutes() / 60 * 80),
-                  left: 84,
+                  left: 100, // Updated to match widened time column (w-24 = 96px + 4px padding)
                 }}
               >
                 <div className="absolute -left-2 -top-2 w-4 h-4 bg-red-500 rounded-full"></div>
