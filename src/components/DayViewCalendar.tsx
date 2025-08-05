@@ -532,7 +532,7 @@ const DayViewCalendar = ({
               <div
                 className="absolute right-0 h-0.5 bg-[#4DA8DA] z-30" // Changed from red to light blue
                 style={{
-                  top: (currentTime.getHours() * 80) + (currentTime.getMinutes() / 60 * 80),
+                  top: (currentTime.getHours() * 96) + (currentTime.getMinutes() / 60 * 96),
                   left: 116, // Updated to match widened time column (w-28 = 112px + 4px padding)
                 }}
               >
