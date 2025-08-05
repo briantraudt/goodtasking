@@ -85,8 +85,8 @@ const WeeklySchedule = ({
     onUpdateTask(taskId, { completed });
   };
 
-  const handleCreateTaskForProject = async (projectId: string, title: string, scheduledDate: Date) => {
-    await onCreateTask(projectId, title, undefined, scheduledDate);
+  const handleCreateTaskForProject = async (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => {
+    await onCreateTask(projectId, title, description, dueDate);
   };
 
   const navigateWeek = (direction: 'prev' | 'next') => {
@@ -276,8 +276,8 @@ const WeeklySchedule = ({
                   {projects.length > 0 && (
                     <AddTaskDialog 
                       projects={projects} 
-                      onCreateTask={(projectId, title) => 
-                        handleCreateTaskForProject(projectId, title, day)
+                      onCreateTask={(projectId, title, description, dueDate) => 
+                        handleCreateTaskForProject(projectId, title, description, day)
                       }
                       triggerButton={
                         <Button 

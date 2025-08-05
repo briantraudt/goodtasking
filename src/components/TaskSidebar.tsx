@@ -114,8 +114,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   }, [projects, selectedDate]);
 
   // Wrapper to handle type compatibility with SmartAddButton
-  const handleCreateTask = (projectId: string, title: string, scheduledDate: Date) => {
-    onCreateTask?.(projectId, title, undefined, scheduledDate);
+  const handleCreateTask = (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => {
+    onCreateTask?.(projectId, title, description, dueDate);
   };
 
   // Handle task click for editing
