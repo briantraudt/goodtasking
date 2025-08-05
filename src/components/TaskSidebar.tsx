@@ -169,11 +169,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     switch (category) {
       case 'personal':
         return {
-          hex: 'hsl(120, 61%, 50%)', // Green
-          border: 'border-[hsl(120,61%,50%)]',
-          text: 'text-[hsl(120,61%,50%)]', 
-          accent: 'text-[hsl(120,61%,50%)]',
-          taskBg: 'bg-[hsl(120,61%,50%)]',
+          hex: 'hsl(150, 40%, 55%)', // Softer professional green
+          border: 'border-[hsl(150,40%,55%)]',
+          text: 'text-[hsl(150,40%,55%)]', 
+          accent: 'text-[hsl(150,40%,55%)]',
+          taskBg: 'bg-[hsl(150,40%,55%)]',
           taskHover: 'hover:brightness-110',
           name: 'personal-green',
           cssVar: 'hsl(var(--personal))'
