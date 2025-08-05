@@ -32,14 +32,20 @@ interface DraggableTimelineTaskProps {
 }
 
 const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
-  const isDraggableTask = block.type === 'task' && task;
+  // Ensure proper type determination - if we have a task object, it should be a task type
+  // Only use 'event' type if we have a googleEventId and no task object
+  const isActualEvent = block.type === 'event' && block.googleEventId && !task;
+  const isActualTask = task || block.taskId || block.type === 'task';
+  const actualBlockType = isActualEvent ? 'event' : 'task';
+  
+  const isDraggableTask = actualBlockType === 'task' && task;
   
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `timeline-${block.id}`,
     data: {
       type: 'timeline-task',
       task: task,
-      block: block
+      block: { ...block, type: actualBlockType }
     },
     disabled: !isDraggableTask,
   });
@@ -82,7 +88,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
   };
 
   const handleCalendarEventClick = () => {
-    if (block.type === 'event' && block.googleEventId) {
+    if (actualBlockType === 'event' && block.googleEventId) {
       // Open Google Calendar main page
       const calendarUrl = 'https://calendar.google.com/calendar/u/0/r';
       window.open(calendarUrl, '_blank');
@@ -95,13 +101,13 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       style={style}
       {...(isDraggableTask ? listeners : {})}
       {...(isDraggableTask ? attributes : {})}
-      onClick={block.type === 'event' ? handleCalendarEventClick : undefined}
-      aria-label={block.type === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
+      onClick={actualBlockType === 'event' ? handleCalendarEventClick : undefined}
+      aria-label={actualBlockType === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
         "transition-all duration-200 w-full m-0 border-0 box-border flex flex-col justify-center group relative",
         "h-full min-h-full overflow-hidden",
         // Modern styling for events and tasks
-        block.type === 'event' 
+        actualBlockType === 'event' 
           ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg cursor-pointer hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
           : cn("bg-white border-l-4 rounded-lg px-3 py-1.5", block.color || "border-green-400"),
         isDraggableTask && "cursor-grab active:cursor-grabbing hover:shadow-md",
@@ -114,7 +120,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
         {/* Event/Task Title - Enhanced Typography */}
         <div className={cn(
           "text-sm leading-tight text-left font-bold",
-          block.type === 'event' ? "text-gray-900" : "text-gray-900"
+          actualBlockType === 'event' ? "text-gray-900" : "text-gray-900"
         )}>
           {block.title}
         </div>
@@ -123,7 +129,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       {/* Header with badge - positioned in top-right for events */}
       <div className={cn(
         "absolute flex items-center gap-2",
-        block.type === 'event' ? "top-2 right-2" : "top-2 right-2"
+        actualBlockType === 'event' ? "top-2 right-2" : "top-2 right-2"
       )}>
         {isDraggableTask && (
           <div className="flex items-center gap-1 text-xs opacity-70">
@@ -131,7 +137,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
             {getDisplayDurationInMinutes()}m
           </div>
         )}
-        {block.type === 'event' ? (
+        {actualBlockType === 'event' ? (
           <Calendar className="w-3.5 h-3.5 text-blue-400" />
         ) : (
           <span className="px-2 py-1 text-xs rounded-full border bg-background/50 border-current">
@@ -141,7 +147,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
       </div>
       
       {/* Show time only for tasks at bottom */}
-      {block.type === 'task' && (
+      {actualBlockType === 'task' && (
         <div className="absolute bottom-2 left-3 text-xs font-medium opacity-75">
           {block.start.includes('T') ? 
             format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
