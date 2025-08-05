@@ -3,9 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import SmartAddButton from '@/components/SmartAddButton';
 import TaskFilters from '@/components/TaskFilters';
+import AddTaskDialog from '@/components/AddTaskDialog';
 import { Plus, CheckSquare } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
@@ -40,6 +42,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
+  const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
 
   // Set up droppable for the sidebar
   const { isOver, setNodeRef } = useDroppable({
@@ -111,10 +115,10 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Good Business Brand Colors - Bold and High Contrast
+  // Light Blue Theme Colors - Consistent with the new logo
   const getProjectColor = (projectName: string, index: number) => {
     const colors = [
-      { border: 'border-[#1E3A5F]', bg: 'bg-white', text: 'text-[#1E3A5F]', name: 'navy', hex: '#1E3A5F' },
+      { border: 'border-primary', bg: 'bg-white', text: 'text-primary', name: 'primary', hex: '#4DA8DA' },
       { border: 'border-[#15803D]', bg: 'bg-white', text: 'text-[#15803D]', name: 'green', hex: '#15803D' },
       { border: 'border-[#7C3AED]', bg: 'bg-white', text: 'text-[#7C3AED]', name: 'purple', hex: '#7C3AED' },
       { border: 'border-[#F59E0B]', bg: 'bg-white', text: 'text-[#F59E0B]', name: 'gold', hex: '#F59E0B' },
@@ -204,14 +208,29 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                 projectColor.border
               )}
             >
-              {/* Elegant Project Title */}
-              <div className="border-b border-gray-200 pb-3">
+              {/* Elegant Project Title with Add Button */}
+              <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
                 <h3 className={cn(
                   "font-bold text-lg",
                   projectColor.text
                 )}>
                   {project.name}
                 </h3>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setSelectedProjectId(project.id);
+                    setShowAddTaskDialog(true);
+                  }}
+                  className={cn(
+                    "h-6 w-6 p-0 hover:scale-110 transition-all duration-200",
+                    `hover:bg-[${projectColor.hex}]/10`
+                  )}
+                  style={{ color: projectColor.hex }}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
 
               {/* Clean Task List - Pill Style */}
@@ -222,14 +241,14 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                   const leftBorderColor = isOverdue ? '#DC2626' : projectColor.hex;
 
                   return (
-                    <div
+                     <div
                       key={task.id}
-                      className="group cursor-pointer"
+                      className="group cursor-pointer transform hover:scale-105 transition-all duration-200"
                     >
                       <div
                         className={cn(
                           "bg-white font-medium text-sm px-4 py-2 rounded-xl shadow-sm border transition-all duration-200",
-                          "hover:shadow-md relative overflow-hidden"
+                          "hover:shadow-lg hover:shadow-primary/25 relative overflow-hidden"
                         )}
                         style={{
                           borderColor: projectColor.hex,

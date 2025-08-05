@@ -177,6 +177,14 @@ const DayViewCalendar = ({
     }
   }, [selectedDate]);
 
+  // Set to current date on initial load
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0];
+    if (selectedDate !== today) {
+      onDateChange(today);
+    }
+  }, []); // Only run on mount
+
   const navigateDate = (direction: 'prev' | 'next') => {
     const currentDateObj = new Date(selectedDate);
     const newDate = direction === 'prev' ? subDays(currentDateObj, 1) : addDays(currentDateObj, 1);
@@ -270,12 +278,12 @@ const DayViewCalendar = ({
             variant="outline"
             size="sm"
             onClick={() => navigateDate('prev')}
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           
-          <h2 className="text-xl font-semibold text-secondary">
+          <h2 className="text-xl font-semibold text-primary">
             {formatDateHeader()}
           </h2>
           
@@ -283,7 +291,7 @@ const DayViewCalendar = ({
             variant="outline"
             size="sm"
             onClick={() => navigateDate('next')}
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -294,7 +302,7 @@ const DayViewCalendar = ({
             variant="outline"
             size="sm"
             onClick={goToToday}
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
           >
             Today
           </Button>
@@ -313,7 +321,10 @@ const DayViewCalendar = ({
             {Array.from({ length: 24 }, (_, hour) => (
               <div key={hour} className="relative flex">
                 {/* Time label */}
-                <div className="w-20 flex-shrink-0 py-2 px-3 text-sm font-medium text-secondary border-r border-border bg-muted/30">
+                <div className={cn(
+                  "w-20 flex-shrink-0 py-2 pl-4 pr-3 text-sm font-semibold text-gray-800 border-r border-border",
+                  isToday(new Date(selectedDate)) ? "bg-primary/5" : "bg-muted/30"
+                )}>
                   {formatTimeLabel(hour)}
                 </div>
                 

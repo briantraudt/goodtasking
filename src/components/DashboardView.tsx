@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Sun, Sparkles } from 'lucide-react';
+import { Calendar, Sun, Sparkles, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import TodayView from './TodayView';
@@ -165,20 +165,39 @@ const DashboardView = ({
               <div className="flex items-center gap-3">
                 <div className={cn(
                   "w-2 h-2 rounded-full",
-                  isConnected ? "bg-green-500" : "bg-gray-400"
+                  isConnected ? "bg-green-500" : "bg-red-500"
                 )} />
                 <span className="text-sm font-medium">
                   Google Calendar: {isConnected ? 'Connected' : 'Not Connected'}
                 </span>
+                {!isConnected && (
+                  <span className="text-xs text-muted-foreground">
+                    Connect to sync tasks to Google Calendar
+                  </span>
+                )}
+                {isConnected && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => syncCalendar(selectedDate)}
+                    disabled={isLoading}
+                    className="h-6 w-6 p-0 hover:bg-primary/10"
+                  >
+                    <RefreshCw className={cn("h-3 w-3", isLoading && "animate-spin")} />
+                  </Button>
+                )}
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={isConnected ? disconnectGoogleCalendar : connectGoogleCalendar}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Loading...' : isConnected ? 'Disconnect' : 'Connect'}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={isConnected ? disconnectGoogleCalendar : connectGoogleCalendar}
+                  disabled={isLoading}
+                  className="hover:bg-primary/10 hover:border-primary"
+                >
+                  {isLoading ? 'Loading...' : isConnected ? 'Disconnect' : 'Connect'}
+                </Button>
+              </div>
             </div>
           </div>
         )}
@@ -189,7 +208,7 @@ const DashboardView = ({
             <div className="h-full p-6">
               <div className="h-full flex flex-col lg:flex-row gap-6">
                 {/* Calendar - 50% width */}
-                <div className="flex-1 min-h-0">
+                <div className="flex-1 min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                     <DayViewCalendar
                       selectedDate={selectedDate}
@@ -207,7 +226,7 @@ const DashboardView = ({
                 </div>
                 
                 {/* Task Sidebar - 50% width */}
-                <div className="flex-1 min-h-0">
+                <div className="flex-1 min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                     <TaskSidebar
                       projects={projects}
