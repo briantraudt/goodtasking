@@ -19,6 +19,8 @@ interface Task {
   estimated_duration?: number;
   due_date?: string | null;
   scheduled_date?: string | null;
+  start_time?: string;
+  end_time?: string;
   completed: boolean;
   vibe_projects?: { name: string };
 }
@@ -63,6 +65,37 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
         estimated_duration: estimatedDuration ? parseInt(estimatedDuration) : undefined,
         due_date: dueDate || null,
       };
+
+      // If this is a scheduled task and duration changed, recalculate end_time
+      if (task.start_time && task.scheduled_date && estimatedDuration) {
+        const newDurationMinutes = parseInt(estimatedDuration);
+        const currentDurationMinutes = task.estimated_duration || 30;
+        
+        // Only update end_time if duration actually changed
+        if (newDurationMinutes !== currentDurationMinutes) {
+          console.log('📅 Recalculating end time for scheduled task');
+          console.log('Start time:', task.start_time, 'New duration:', newDurationMinutes, 'minutes');
+          
+          // Parse start time
+          const [startHours, startMinutes] = task.start_time.split(':').map(Number);
+          const startTotalMinutes = startHours * 60 + startMinutes;
+          
+          // Calculate new end time
+          const endTotalMinutes = startTotalMinutes + newDurationMinutes;
+          const endHours = Math.floor(endTotalMinutes / 60);
+          const endMins = endTotalMinutes % 60;
+          
+          // Format end time (ensure it doesn't go past midnight)
+          if (endHours < 24) {
+            updates.end_time = `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}:00`;
+            console.log('New end time:', updates.end_time);
+          } else {
+            // If it goes past midnight, cap at 23:59
+            updates.end_time = '23:59:00';
+            console.log('Duration would exceed midnight, capped at 23:59:00');
+          }
+        }
+      }
 
       await onSave(task.id, updates);
       toast({
