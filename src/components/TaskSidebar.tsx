@@ -268,9 +268,15 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       )}
                       title="Click to edit or delete this task" // Tooltip to indicate clickability
                     >
-                      <div className="flex items-center justify-between">
+                      <div 
+                        className="flex items-center justify-between"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTaskClick(task);
+                        }}
+                      >
                         <div className="flex-1 truncate">
-                          <DraggableTaskItem task={task} onTaskClick={handleTaskClick} />
+                          <DraggableTaskItem task={task} />
                         </div>
                       </div>
                     </div>
