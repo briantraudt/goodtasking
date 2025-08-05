@@ -301,11 +301,24 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                                 <div key={category} className="flex items-center space-x-2">
                                   <div 
                                     className={cn(
-                                      "w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-200 flex items-center justify-center",
-                                      isSelected 
-                                        ? `bg-[${categoryColor.hex}] border-[${categoryColor.hex}]`
-                                        : `border-gray-300 hover:border-[${categoryColor.hex}] hover:bg-[${categoryColor.hex}]/20`
+                                      "w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-200 flex items-center justify-center"
                                     )}
+                                    style={{
+                                      backgroundColor: isSelected ? categoryColor.hex : 'transparent',
+                                      borderColor: isSelected ? categoryColor.hex : '#d1d5db'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                      if (!isSelected) {
+                                        e.currentTarget.style.borderColor = categoryColor.hex;
+                                        e.currentTarget.style.backgroundColor = `${categoryColor.hex}20`;
+                                      }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      if (!isSelected) {
+                                        e.currentTarget.style.borderColor = '#d1d5db';
+                                        e.currentTarget.style.backgroundColor = 'transparent';
+                                      }
+                                    }}
                                     onClick={() => {
                                       if (onUpdateProject && project.category !== category) {
                                         onUpdateProject(project.id, { category });
