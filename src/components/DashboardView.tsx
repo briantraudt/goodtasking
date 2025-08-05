@@ -53,7 +53,13 @@ const DashboardView = ({
   userName = "there"
 }: DashboardViewProps) => {
   const [viewMode, setViewMode] = useState<ViewMode>('planner');
-  const [selectedDate, setSelectedDate] = useState(() => format(new Date(), 'yyyy-MM-dd'));
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
   
   const {
     events,

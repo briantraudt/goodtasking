@@ -175,13 +175,20 @@ const DayViewCalendar = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-scroll to current time and set today's date on initial load only
+  // Auto-scroll to current time and ensure today's date on initial load only
   useEffect(() => {
     if (!hasAutoScrolled.current) {
       const now = new Date();
-      const today = now.toISOString().split('T')[0];
       
-      // Set calendar to today's date
+      // Use local timezone to get today's date (not UTC)
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const today = `${year}-${month}-${day}`;
+      
+      console.log('Setting calendar to today:', today, 'Current selectedDate:', selectedDate);
+      
+      // Set calendar to today's date if it's not already
       if (selectedDate !== today) {
         onDateChange(today);
       }
@@ -209,7 +216,11 @@ const DayViewCalendar = ({
   };
 
   const goToToday = () => {
-    const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const today = `${year}-${month}-${day}`;
     onDateChange(today);
   };
 
