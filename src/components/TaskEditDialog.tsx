@@ -106,13 +106,13 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'bg-[#DC2626] text-white';
+        return 'bg-destructive text-destructive-foreground';
       case 'medium':
-        return 'bg-[#F59E0B] text-white';
+        return 'bg-[hsl(var(--priority-medium))] text-white';
       case 'low':
-        return 'bg-[#059669] text-white';
+        return 'bg-[hsl(var(--priority-low))] text-white';
       default:
-        return 'bg-[#64748B] text-white';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -122,7 +122,7 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-[#0F172A]">
+          <DialogTitle className="flex items-center gap-2 text-foreground">
             <CalendarDays className="h-5 w-5" />
             Edit Task
           </DialogTitle>
@@ -143,7 +143,7 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
 
           {/* Task Title */}
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-[#0F172A] font-medium">
+            <Label htmlFor="title" className="text-foreground font-medium">
               Task Title
             </Label>
             <Input
@@ -151,13 +151,13 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter task title..."
-              className="border-[#E2E8F0]"
+              className="border-border"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-[#0F172A] font-medium">
+            <Label htmlFor="description" className="text-foreground font-medium">
               Description
             </Label>
             <Textarea
@@ -165,18 +165,18 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add task description..."
-              className="border-[#E2E8F0] min-h-[80px]"
+              className="border-border min-h-[80px]"
             />
           </div>
 
           {/* Priority and Duration Row */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="priority" className="text-[#0F172A] font-medium">
+              <Label htmlFor="priority" className="text-foreground font-medium">
                 Priority
               </Label>
               <Select value={priority} onValueChange={(value: 'high' | 'medium' | 'low') => setPriority(value)}>
-                <SelectTrigger className="border-[#E2E8F0]">
+                <SelectTrigger className="border-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -188,7 +188,7 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="duration" className="text-[#0F172A] font-medium">
+              <Label htmlFor="duration" className="text-foreground font-medium">
                 Duration (mins)
               </Label>
               <Input
@@ -197,14 +197,14 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
                 value={estimatedDuration}
                 onChange={(e) => setEstimatedDuration(e.target.value)}
                 placeholder="60"
-                className="border-[#E2E8F0]"
+                className="border-border"
               />
             </div>
           </div>
 
           {/* Due Date */}
           <div className="space-y-2">
-            <Label htmlFor="dueDate" className="text-[#0F172A] font-medium">
+            <Label htmlFor="dueDate" className="text-foreground font-medium">
               Due Date
             </Label>
             <Input
@@ -212,16 +212,16 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
               type="date"
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
-              className="border-[#E2E8F0]"
+              className="border-border"
             />
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-4 border-t border-[#E2E8F0]">
+        <div className="flex items-center justify-between pt-4 border-t border-border">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" size="sm" className="text-[#DC2626] border-[#DC2626] hover:bg-[#DC2626] hover:text-white">
+              <Button variant="outline" size="sm" className="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete
               </Button>
@@ -249,7 +249,7 @@ const TaskEditDialog = ({ task, isOpen, onClose, onSave, onDelete }: TaskEditDia
             <Button 
               onClick={handleSave} 
               disabled={isLoading || !title.trim()}
-              className="bg-[#2563EB] hover:bg-[#1d4ed8]"
+              className="bg-primary hover:bg-primary/90"
             >
               <Save className="h-4 w-4 mr-2" />
               Save Changes
