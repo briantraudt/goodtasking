@@ -60,9 +60,21 @@ const DashboardView = ({
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     const today = `${year}-${month}-${day}`;
-    console.log('Initializing DashboardView with today:', today);
+    console.log('🔥 INITIAL DashboardView date set to TODAY:', today);
     return today;
   });
+
+  // Force today's date whenever the component mounts or user changes
+  useEffect(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const today = `${year}-${month}-${day}`;
+    
+    console.log('🔥 FORCING selectedDate to TODAY on mount:', today);
+    setSelectedDate(today);
+  }, []); // Run once on mount
   
   const {
     events,

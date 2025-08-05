@@ -230,7 +230,12 @@ const DayViewCalendar = ({
   };
 
   const formatDateHeader = () => {
-    const date = new Date(selectedDate);
+    // Force local timezone parsing to avoid UTC issues
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const date = new Date(year, month - 1, day); // month is 0-indexed
+    
+    console.log('📅 Formatting date header - selectedDate:', selectedDate, 'parsed as:', date);
+    
     if (isToday(date)) {
       return `Today, ${format(date, 'MMMM d')}`;
     }
@@ -238,7 +243,11 @@ const DayViewCalendar = ({
   };
 
   const isCurrentTimeSlot = (hour: number, minute: number) => {
-    if (!isToday(new Date(selectedDate))) return false;
+    // Parse selectedDate using local timezone
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const selectedDateObj = new Date(year, month - 1, day);
+    
+    if (!isToday(selectedDateObj)) return false;
     const currentHour = currentTime.getHours();
     const currentMinutes = currentTime.getMinutes();
     return hour === currentHour && Math.abs(currentMinutes - minute) < 15;
