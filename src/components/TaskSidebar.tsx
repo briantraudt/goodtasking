@@ -304,7 +304,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                                       "w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-200 flex items-center justify-center",
                                       isSelected 
                                         ? `bg-[${categoryColor.hex}] border-[${categoryColor.hex}]`
-                                        : `border-gray-300 hover:border-[${categoryColor.hex}] hover:bg-[${categoryColor.hex}]/10`
+                                        : `border-gray-300 hover:border-[${categoryColor.hex}] hover:bg-[${categoryColor.hex}]/20`
                                     )}
                                     onClick={() => {
                                       if (onUpdateProject && project.category !== category) {
@@ -319,10 +319,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                                   </div>
                                   <Label 
                                     htmlFor={`${project.id}-${category}`} 
-                                    className={cn(
-                                      "text-sm font-normal capitalize cursor-pointer transition-colors",
-                                      isSelected ? categoryColor.text : "text-gray-700 hover:text-gray-900"
-                                    )}
+                                    className="text-sm font-normal capitalize cursor-pointer text-gray-700"
                                     onClick={() => {
                                       if (onUpdateProject && project.category !== category) {
                                         onUpdateProject(project.id, { category });
