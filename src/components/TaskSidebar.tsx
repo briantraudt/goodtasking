@@ -118,62 +118,77 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Bold, Solid Primary Color Theme
-  const getProjectColor = (projectName: string, index: number) => {
-    const colors = [
-      { 
-        border: 'border-blue-600', 
-        text: 'text-blue-600', 
-        accent: 'text-blue-600',
-        taskBg: 'bg-blue-600',
-        taskHover: 'hover:bg-blue-700',
-        name: 'blue'
+  // Good Business Refined Color System
+  const getProjectColor = (projectName: string) => {
+    // Assign specific colors to known projects, fallback to hash-based assignment
+    const projectColorMap: { [key: string]: any } = {
+      'Good Tasking': {
+        hex: '#2563EB',
+        border: 'border-[#2563EB]',
+        text: 'text-[#2563EB]', 
+        accent: 'text-[#2563EB]',
+        taskBg: 'bg-[#2563EB]',
+        taskHover: 'hover:brightness-110',
+        name: 'brand-blue'
       },
-      { 
-        border: 'border-green-600', 
-        text: 'text-green-600', 
-        accent: 'text-green-600',
-        taskBg: 'bg-green-600',
-        taskHover: 'hover:bg-green-700',
-        name: 'green'
+      'DGTL Dental': {
+        hex: '#059669',
+        border: 'border-[#059669]',
+        text: 'text-[#059669]',
+        accent: 'text-[#059669]', 
+        taskBg: 'bg-[#059669]',
+        taskHover: 'hover:brightness-110',
+        name: 'brand-green'
       },
-      { 
-        border: 'border-purple-600', 
-        text: 'text-purple-600', 
-        accent: 'text-purple-600',
-        taskBg: 'bg-purple-600',
-        taskHover: 'hover:bg-purple-700',
-        name: 'purple'
+      'Ryco Roofing': {
+        hex: '#DC2626',
+        border: 'border-[#DC2626]',
+        text: 'text-[#DC2626]',
+        accent: 'text-[#DC2626]',
+        taskBg: 'bg-[#DC2626]',
+        taskHover: 'hover:brightness-110',
+        name: 'brand-red'
       },
-      { 
-        border: 'border-red-600', 
-        text: 'text-red-600', 
-        accent: 'text-red-600',
-        taskBg: 'bg-red-600',
-        taskHover: 'hover:bg-red-700',
-        name: 'red'
+      'Personal': {
+        hex: '#7C3AED',
+        border: 'border-[#7C3AED]',
+        text: 'text-[#7C3AED]',
+        accent: 'text-[#7C3AED]',
+        taskBg: 'bg-[#7C3AED]',
+        taskHover: 'hover:brightness-110',
+        name: 'brand-purple'
+      }
+    };
+
+    // Check if we have a specific mapping
+    if (projectColorMap[projectName]) {
+      return projectColorMap[projectName];
+    }
+
+    // Fallback colors for unknown projects
+    const fallbackColors = [
+      {
+        hex: '#F59E0B',
+        border: 'border-[#F59E0B]',
+        text: 'text-[#F59E0B]',
+        accent: 'text-[#F59E0B]',
+        taskBg: 'bg-[#F59E0B]',
+        taskHover: 'hover:brightness-110',
+        name: 'brand-gold'
       },
-      { 
-        border: 'border-amber-600', 
-        text: 'text-amber-600', 
-        accent: 'text-amber-600',
-        taskBg: 'bg-amber-600',
-        taskHover: 'hover:bg-amber-700',
-        name: 'amber'
-      },
-      { 
-        border: 'border-pink-600', 
-        text: 'text-pink-600', 
-        accent: 'text-pink-600',
-        taskBg: 'bg-pink-600',
-        taskHover: 'hover:bg-pink-700',
-        name: 'pink'
+      {
+        hex: '#2563EB',
+        border: 'border-[#2563EB]',
+        text: 'text-[#2563EB]',
+        accent: 'text-[#2563EB]',
+        taskBg: 'bg-[#2563EB]',
+        taskHover: 'hover:brightness-110',
+        name: 'brand-blue'
       }
     ];
     
-    // Use consistent color assignment based on project name hash
     const hash = projectName.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
-    return colors[hash % colors.length];
+    return fallbackColors[hash % fallbackColors.length];
   };
 
   return (
@@ -255,20 +270,20 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
 
           if (projectTasks.length === 0) return null;
 
-          const projectColor = getProjectColor(project.name, index);
+          const projectColor = getProjectColor(project.name);
 
           return (
             <div 
               key={project.id} 
               className={cn(
-                "rounded-2xl p-4 shadow-sm w-full transition-all duration-200 border-2",
+                "bg-white rounded-xl p-4 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card",
                 projectColor.border
               )}
             >
-              {/* Enhanced Project Header with Color Theme */}
-              <div className="flex justify-between items-center mb-3">
+              {/* Good Business Project Header */}
+              <div className="flex justify-between items-center mb-2">
                 <h3 className={cn(
-                  "font-bold text-lg",
+                  "font-semibold",
                   projectColor.text
                 )}>
                   {project.name}
@@ -279,7 +294,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                     setShowAddTaskDialog(true);
                   }}
                   className={cn(
-                    "text-sm hover:underline transition-all duration-200 font-medium",
+                    "text-sm hover:underline font-medium",
                     projectColor.accent
                   )}
                 >
@@ -287,7 +302,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                 </button>
               </div>
 
-              {/* Enhanced Task List */}
+              {/* Good Business Task Pills */}
               <div className="flex flex-col gap-2">
                 {projectTasks.map(task => {
                   // Determine if task is overdue for red styling
@@ -297,9 +312,9 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
                     <div
                       key={task.id}
                       className={cn(
-                        "text-white font-semibold rounded-xl px-4 py-2 text-sm shadow cursor-pointer transition-all duration-200",
+                        "text-white font-medium rounded-md px-4 py-2 text-sm cursor-pointer transition-all duration-150",
                         isOverdue 
-                          ? "bg-red-600 hover:bg-red-700" 
+                          ? "bg-[#DC2626] hover:brightness-110" 
                           : cn(projectColor.taskBg, projectColor.taskHover)
                       )}
                     >
@@ -319,18 +334,18 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
         {/* Show message if no projects have tasks */}
         {projectsWithTasks.length === 0 && (
           <div className="col-span-full text-center py-12">
-            <div className="rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-8 border-2 border-dashed border-gray-300">
+            <div className="rounded-xl bg-white p-8 border-2 border-dashed border-[#E2E8F0] shadow-sm">
               {allTasks.length === 0 ? (
                 <div>
                   <div className="text-4xl mb-4">🎉</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">All tasks complete!</h3>
-                  <p className="text-gray-600">Great job staying on top of everything.</p>
+                  <h3 className="text-lg font-semibold text-[#0F172A] mb-2">All tasks complete!</h3>
+                  <p className="text-[#64748B]">Great job staying on top of everything.</p>
                 </div>
               ) : (
                 <div>
                   <div className="text-4xl mb-4">🔍</div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No matching tasks</h3>
-                  <p className="text-gray-600">Try adjusting your filters to see more tasks.</p>
+                  <h3 className="text-lg font-semibold text-[#0F172A] mb-2">No matching tasks</h3>
+                  <p className="text-[#64748B]">Try adjusting your filters to see more tasks.</p>
                 </div>
               )}
             </div>

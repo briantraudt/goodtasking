@@ -66,7 +66,17 @@ export default {
 					DEFAULT: 'hsl(var(--success))',
 					foreground: 'hsl(var(--success-foreground))'
 				},
-				// Good Business Brand Colors
+				// Good Business Brand Colors (Refined)
+				'brand-blue': '#2563EB',
+				'brand-green': '#059669', 
+				'brand-red': '#DC2626',
+				'brand-purple': '#7C3AED',
+				'brand-gold': '#F59E0B',
+				'brand-navy': '#0F172A',
+				'text-muted': '#64748B',
+				'border-muted': '#E2E8F0',
+				'bg-subtle': '#F8FAFC',
+				// Legacy Good Business Brand Colors
 				'forest-green': 'hsl(var(--forest-green))',
 				'navy-blue': 'hsl(var(--navy-blue))',
 				'navy-blue-light': 'hsl(var(--navy-blue-light))',
@@ -139,7 +149,8 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				xl2: '1.25rem'
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
@@ -151,6 +162,7 @@ export default {
 				'soft': 'var(--shadow-soft)',
 				'elevated': 'var(--shadow-elevated)',
 				'card': 'var(--shadow-card)',
+				'gb-card': '0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06)',
 			},
 			keyframes: {
 				"accordion-down": {
