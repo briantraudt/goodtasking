@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Sun, Sparkles, RefreshCw } from 'lucide-react';
+import QuickTaskDialog from '@/components/QuickTaskDialog';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 import TodayView from './TodayView';
 import WeeklySchedule from './WeeklySchedule';
 import WeeklyAIReview from './WeeklyAIReview';
@@ -55,6 +55,8 @@ const DashboardView = ({
 }: DashboardViewProps) => {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('planner');
+  const [showQuickTaskDialog, setShowQuickTaskDialog] = useState(false);
+  const [quickTaskTime, setQuickTaskTime] = useState<{ hour: number; minute: number } | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => {
     // ALWAYS start with today's date using local timezone
     const now = new Date();
@@ -161,6 +163,35 @@ const DashboardView = ({
     setActiveTask(null);
   };
 
+  const handleQuickTaskCreate = (hour: number, minute: number) => {
+    setQuickTaskTime({ hour, minute });
+    setShowQuickTaskDialog(true);
+  };
+
+  const createQuickTask = async (projectId: string, title: string, description?: string, startTime?: string, endTime?: string) => {
+    if (!quickTaskTime || !startTime || !endTime) return;
+    
+    // Create the task first
+    await onCreateTask(projectId, title, description);
+    
+    // Since we don't have access to the created task ID immediately,
+    // we'll need to use a different approach - schedule after a short delay
+    // to allow the task to be created and the state to update
+    setTimeout(async () => {
+      const newTask = allTasks
+        .filter(task => task.title === title && task.project_id === projectId)
+        .find(task => !task.scheduled_date); // Find unscheduled task
+      
+      if (newTask) {
+        // Schedule the task immediately
+        await handleTaskScheduled(newTask.id, startTime, endTime);
+      }
+    }, 500);
+    
+    setShowQuickTaskDialog(false);
+    setQuickTaskTime(null);
+  };
+
   // Sync calendar when date changes
   useEffect(() => {
     if (isConnected && viewMode === 'planner') {
@@ -198,6 +229,7 @@ const DashboardView = ({
                       isGoogleConnected={isConnected}
                       onConnectGoogle={connectGoogleCalendar}
                       onViewModeChange={(mode) => setViewMode(mode)}
+                      onQuickTaskCreate={handleQuickTaskCreate}
                     />
                   </div>
                 </div>
@@ -256,6 +288,19 @@ const DashboardView = ({
           </div>
         ) : null}
       </DragOverlay>
+      
+      {/* Quick Task Creation Dialog */}
+      <QuickTaskDialog
+        isOpen={showQuickTaskDialog}
+        onClose={() => {
+          setShowQuickTaskDialog(false);
+          setQuickTaskTime(null);
+        }}
+        selectedDate={selectedDate}
+        startTime={quickTaskTime ? `${quickTaskTime.hour.toString().padStart(2, '0')}:${quickTaskTime.minute.toString().padStart(2, '0')}` : ''}
+        projects={projects}
+        onCreateTask={createQuickTask}
+      />
     </DndContext>
   );
 };

@@ -43,6 +43,7 @@ interface DayViewCalendarProps {
   isGoogleConnected?: boolean;
   onConnectGoogle?: () => void;
   onViewModeChange?: (mode: 'week') => void;
+  onQuickTaskCreate?: (hour: number, minute: number) => void;
 }
 
 interface TimeSlotProps {
@@ -50,9 +51,11 @@ interface TimeSlotProps {
   minute: number;
   children?: React.ReactNode;
   isCurrentTime?: boolean;
+  hasTask?: boolean;
+  onClick?: () => void;
 }
 
-const TimeSlot = ({ hour, minute, children, isCurrentTime }: TimeSlotProps) => {
+const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: TimeSlotProps) => {
   const slotId = `${hour}:${minute.toString().padStart(2, '0')}`;
   const { isOver, setNodeRef } = useDroppable({
     id: slotId,
@@ -62,11 +65,16 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime }: TimeSlotProps) => {
     <div
       ref={setNodeRef}
       className={cn(
-        "h-10 border-b border-border/30 relative transition-colors hover:bg-primary/10",
+        "h-10 border-b border-border/30 relative transition-colors",
+        hasTask 
+          ? "cursor-default" 
+          : "hover:bg-primary/10 cursor-pointer",
         isOver && "bg-primary/20 border-primary/40",
-        isCurrentTime && "border-2 border-[#4DA8DA] bg-transparent", // Light blue outline instead of yellow fill
+        isCurrentTime && "border-2 border-[#4DA8DA] bg-transparent",
         minute === 0 ? "border-border" : "border-border/20"
       )}
+      onClick={() => !hasTask && onClick?.()}
+      title={hasTask ? undefined : "Click to create a task"}
     >
       {children}
     </div>
@@ -150,7 +158,8 @@ const DayViewCalendar = ({
   onEventClick,
   isGoogleConnected = false,
   onConnectGoogle,
-  onViewModeChange
+  onViewModeChange,
+  onQuickTaskCreate
 }: DayViewCalendarProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -304,6 +313,29 @@ const DayViewCalendar = ({
     return `${hour - 12}:00 PM`;
   };
 
+  // Check if a time slot has a task or event
+  const hasTaskAtTime = (hour: number, minute: number) => {
+    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    
+    // Check for scheduled tasks
+    const hasTask = scheduledTasks.some(task => {
+      if (!task.start_time || !task.end_time) return false;
+      const startTime = task.start_time.split(':').slice(0, 2).join(':');
+      const endTime = task.end_time.split(':').slice(0, 2).join(':');
+      return timeStr >= startTime && timeStr < endTime;
+    });
+    
+    // Check for calendar events
+    const hasEvent = dayEvents.some(event => {
+      const eventStart = parseISO(event.start);
+      const eventEnd = parseISO(event.end);
+      const slotTime = parseISO(`${selectedDate}T${timeStr}:00`);
+      return slotTime >= eventStart && slotTime < eventEnd;
+    });
+    
+    return hasTask || hasEvent;
+  };
+
   return (
     <div className="h-full flex flex-col">
       {/* Calendar Header with Icon, Centered Date and Week Button */}
@@ -386,12 +418,16 @@ const DayViewCalendar = ({
                     {/* 30-minute slots for this hour */}
                     {Array.from({ length: 2 }, (_, halfIndex) => {
                       const minute = halfIndex * 30;
+                      const hasTask = hasTaskAtTime(hour, minute);
+                      
                       return (
                         <TimeSlot
                           key={`${hour}-${minute}`}
                           hour={hour}
                           minute={minute}
                           isCurrentTime={isCurrentTimeSlot(hour, minute)}
+                          hasTask={hasTask}
+                          onClick={() => onQuickTaskCreate?.(hour, minute)}
                         />
                       );
                     })}
