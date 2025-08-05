@@ -118,15 +118,81 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Light Blue Theme Colors - Consistent with the new logo
+  // Enhanced Theme Colors - Matching requested design with gradients
   const getProjectColor = (projectName: string, index: number) => {
     const colors = [
-      { border: 'border-primary', bg: 'bg-white', text: 'text-primary', name: 'primary', hex: '#4DA8DA' },
-      { border: 'border-[#15803D]', bg: 'bg-white', text: 'text-[#15803D]', name: 'green', hex: '#15803D' },
-      { border: 'border-[#7C3AED]', bg: 'bg-white', text: 'text-[#7C3AED]', name: 'purple', hex: '#7C3AED' },
-      { border: 'border-[#F59E0B]', bg: 'bg-white', text: 'text-[#F59E0B]', name: 'gold', hex: '#F59E0B' },
-      { border: 'border-[#DC2626]', bg: 'bg-white', text: 'text-[#DC2626]', name: 'red', hex: '#DC2626' },
-      { border: 'border-[#0891B2]', bg: 'bg-white', text: 'text-[#0891B2]', name: 'cyan', hex: '#0891B2' }
+      { 
+        border: 'border-blue-500', 
+        gradient: 'from-white to-blue-50',
+        text: 'text-blue-700', 
+        accent: 'text-blue-500',
+        taskBg: 'bg-blue-50',
+        taskBorder: 'border-blue-300',
+        taskText: 'text-blue-600',
+        hover: 'hover:bg-blue-50',
+        name: 'blue', 
+        hex: '#3B82F6' 
+      },
+      { 
+        border: 'border-green-600', 
+        gradient: 'from-white to-green-50',
+        text: 'text-green-700', 
+        accent: 'text-green-500',
+        taskBg: 'bg-green-50',
+        taskBorder: 'border-green-300',
+        taskText: 'text-green-600',
+        hover: 'hover:bg-green-50',
+        name: 'green', 
+        hex: '#059669' 
+      },
+      { 
+        border: 'border-purple-500', 
+        gradient: 'from-white to-purple-50',
+        text: 'text-purple-700', 
+        accent: 'text-purple-500',
+        taskBg: 'bg-purple-50',
+        taskBorder: 'border-purple-300',
+        taskText: 'text-purple-600',
+        hover: 'hover:bg-purple-50',
+        name: 'purple', 
+        hex: '#8B5CF6' 
+      },
+      { 
+        border: 'border-cyan-600', 
+        gradient: 'from-white to-cyan-50',
+        text: 'text-cyan-700', 
+        accent: 'text-cyan-500',
+        taskBg: 'bg-cyan-50',
+        taskBorder: 'border-cyan-300',
+        taskText: 'text-cyan-600',
+        hover: 'hover:bg-cyan-50',
+        name: 'cyan', 
+        hex: '#0891B2' 
+      },
+      { 
+        border: 'border-amber-500', 
+        gradient: 'from-white to-amber-50',
+        text: 'text-amber-700', 
+        accent: 'text-amber-500',
+        taskBg: 'bg-amber-50',
+        taskBorder: 'border-amber-300',
+        taskText: 'text-amber-600',
+        hover: 'hover:bg-amber-50',
+        name: 'amber', 
+        hex: '#F59E0B' 
+      },
+      { 
+        border: 'border-rose-500', 
+        gradient: 'from-white to-rose-50',
+        text: 'text-rose-700', 
+        accent: 'text-rose-500',
+        taskBg: 'bg-rose-50',
+        taskBorder: 'border-rose-300',
+        taskText: 'text-rose-600',
+        hover: 'hover:bg-rose-50',
+        name: 'rose', 
+        hex: '#F43F5E' 
+      }
     ];
     
     // Use consistent color assignment based on project name hash
@@ -219,68 +285,52 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, cl
             <div 
               key={project.id} 
               className={cn(
-                "rounded-2xl border-4 p-5 shadow-inner bg-gradient-to-b from-white to-gray-50",
-                "transition-all duration-200 hover:shadow-elevated flex flex-col gap-3",
-                projectColor.border
+                "rounded-2xl p-4 shadow-md w-full bg-gradient-to-br transition-all duration-200 hover:shadow-lg border-2",
+                projectColor.border,
+                projectColor.gradient
               )}
             >
-              {/* Elegant Project Title with Add Button */}
-              <div className="border-b border-gray-200 pb-3 flex items-center justify-between">
+              {/* Enhanced Project Header with Color Theme */}
+              <div className="flex justify-between items-center mb-3">
                 <h3 className={cn(
                   "font-bold text-lg",
                   projectColor.text
                 )}>
                   {project.name}
                 </h3>
-                <Button
-                  size="sm"
-                  variant="ghost"
+                <button
                   onClick={() => {
                     setSelectedProjectId(project.id);
                     setShowAddTaskDialog(true);
                   }}
                   className={cn(
-                    "h-6 w-6 p-0 hover:scale-110 transition-all duration-200",
-                    `hover:bg-[${projectColor.hex}]/10`
+                    "text-sm hover:underline transition-all duration-200 font-medium",
+                    projectColor.accent
                   )}
-                  style={{ color: projectColor.hex }}
                 >
-                  <Plus className="h-4 w-4" />
-                </Button>
+                  + Add
+                </button>
               </div>
 
-              {/* Clean Task List - Pill Style */}
-              <div className="flex flex-col gap-3">
+              {/* Enhanced Task List */}
+              <div className="flex flex-col gap-2">
                 {projectTasks.map(task => {
-                  // Determine if task is overdue for red border
+                  // Determine if task is overdue for red styling
                   const isOverdue = task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date));
-                  const leftBorderColor = isOverdue ? '#DC2626' : projectColor.hex;
-
+                  
                   return (
-                     <div
+                    <div
                       key={task.id}
-                      className="group cursor-pointer transform hover:scale-105 transition-all duration-200"
+                      className={cn(
+                        "bg-white rounded-xl px-3 py-2 text-sm font-medium shadow-inner border cursor-pointer transition-all duration-200",
+                        isOverdue 
+                          ? "border-red-300 text-red-600 hover:bg-red-50" 
+                          : cn(projectColor.taskBorder, projectColor.taskText, projectColor.hover),
+                        "hover:shadow-sm animate-fade-in"
+                      )}
                     >
-                      <div
-                        className={cn(
-                          "bg-white font-medium text-sm px-4 py-2 rounded-xl shadow-sm border transition-all duration-200",
-                          "hover:shadow-lg hover:shadow-primary/25 relative overflow-hidden"
-                        )}
-                        style={{
-                          borderColor: projectColor.hex,
-                          borderLeftColor: leftBorderColor,
-                          borderLeftWidth: '4px',
-                          color: projectColor.hex
-                        }}
-                      >
-                        {/* Hover overlay effect */}
-                        <div 
-                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                          style={{ backgroundColor: projectColor.hex }}
-                        />
-                        
-                        {/* Task content */}
-                        <div className="relative z-10 group-hover:text-white transition-colors duration-200">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 truncate">
                           <DraggableTaskItem task={task} />
                         </div>
                       </div>
