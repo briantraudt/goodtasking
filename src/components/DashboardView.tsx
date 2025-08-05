@@ -124,36 +124,7 @@ const DashboardView = ({
   return (
     <DndContext onDragEnd={handleDragEnd}>
       <div className="h-full flex flex-col overflow-hidden">
-        {/* View Mode Tabs */}
-        <div className="flex items-center gap-1 p-4 border-b bg-background">
-          <Button
-            variant={viewMode === 'planner' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setViewMode('planner')}
-            className="flex items-center gap-2"
-          >
-            <Calendar className="h-4 w-4" />
-            Calendar
-          </Button>
-          <Button
-            variant={viewMode === 'today' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setViewMode('today')}
-            className="flex items-center gap-2"
-          >
-            <Sun className="h-4 w-4" />
-            Today
-          </Button>
-          <Button
-            variant={viewMode === 'week' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setViewMode('week')}
-            className="flex items-center gap-2"
-          >
-            <Sparkles className="h-4 w-4" />
-            Week
-          </Button>
-        </div>
+        {/* Navigation - Start in planner view by default */}
 
         {/* Weekly AI Review - only show in week view */}
         {viewMode === 'week' && <WeeklyAIReview />}
@@ -179,6 +150,7 @@ const DashboardView = ({
                       }}
                       isGoogleConnected={isConnected}
                       onConnectGoogle={connectGoogleCalendar}
+                      onViewModeChange={(mode) => setViewMode(mode)}
                     />
                   </div>
                 </div>

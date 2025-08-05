@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { format, addDays, subDays, isToday, parseISO, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
@@ -41,6 +41,7 @@ interface DayViewCalendarProps {
   onEventClick?: (event: CalendarEvent) => void;
   isGoogleConnected?: boolean;
   onConnectGoogle?: () => void;
+  onViewModeChange?: (mode: 'week') => void;
 }
 
 interface TimeSlotProps {
@@ -158,7 +159,8 @@ const DayViewCalendar = ({
   onTaskUnscheduled,
   onEventClick,
   isGoogleConnected = false,
-  onConnectGoogle
+  onConnectGoogle,
+  onViewModeChange
 }: DayViewCalendarProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -275,46 +277,41 @@ const DayViewCalendar = ({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Calendar Section Header with Google Connection */}
+      {/* Calendar Header with Centered Date and Week Button */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
-        <div className="flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-primary" />
-          <button
-            onClick={onConnectGoogle}
-            disabled={!onConnectGoogle}
-            className={cn(
-              "text-lg font-semibold transition-colors hover:opacity-80 disabled:cursor-default",
-              isGoogleConnected ? "text-green-600" : "text-foreground"
-            )}
-            title={isGoogleConnected ? "Connected to Google Calendar" : "Click to connect Google Calendar"}
-          >
-            Calendar
-          </button>
-        </div>
+        <div></div> {/* Empty left side for spacing */}
         
+        {/* Centered Date Navigation */}
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => navigateDate('prev')}
-            className="h-8 w-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
+            className="text-primary hover:opacity-80 transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
-          </Button>
+          </button>
           
           <h2 className="text-base font-semibold text-primary">
             {formatDateHeader()}
           </h2>
           
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => navigateDate('next')}
-            className="h-8 w-8 border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
+            className="text-primary hover:opacity-80 transition-colors"
           >
             <ChevronRight className="h-4 w-4" />
-          </Button>
+          </button>
         </div>
+        
+        {/* Week Button on Right */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onViewModeChange?.('week')}
+          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+        >
+          <Star className="h-4 w-4 mr-2" />
+          Week
+        </Button>
       </div>
 
       {/* Calendar Grid */}
