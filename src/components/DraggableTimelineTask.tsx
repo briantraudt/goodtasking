@@ -67,22 +67,22 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
     disabled: !isDraggableTask,
   });
 
-  console.log('Timeline task debug:', { blockType: actualBlockType, color: block.color, task: task?.title });
-  
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     backgroundColor: actualBlockType === 'task' ? (block.color || '#6b7280') : undefined,
     borderLeftColor: actualBlockType === 'task' ? (block.color || '#6b7280') : undefined,
     borderLeftWidth: '4px',
-    color: actualBlockType === 'task' ? 'white' : undefined,
-    opacity: task?.completed ? 0.75 : 1
-  } : {
+    color: actualBlockType === 'task' ? 'white !important' : undefined,
+    opacity: task?.completed ? 0.75 : 1,
+    '--bg-color': actualBlockType === 'task' ? (block.color || '#6b7280') : undefined
+  } as React.CSSProperties & { '--bg-color'?: string } : {
     backgroundColor: actualBlockType === 'task' ? (block.color || '#6b7280') : undefined,
     borderLeftColor: actualBlockType === 'task' ? (block.color || '#6b7280') : undefined,
     borderLeftWidth: '4px',
-    color: actualBlockType === 'task' ? 'white' : undefined,
-    opacity: task?.completed ? 0.75 : 1
-  };
+    color: actualBlockType === 'task' ? 'white !important' : undefined,
+    opacity: task?.completed ? 0.75 : 1,
+    '--bg-color': actualBlockType === 'task' ? (block.color || '#6b7280') : undefined
+  } as React.CSSProperties & { '--bg-color'?: string };
 
   const getDurationInMinutes = () => {
     if (!block.start || !block.end) return 30;
@@ -205,7 +205,7 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
         // Modern styling for events and tasks
         actualBlockType === 'event' 
           ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
-          : "border-l-4 rounded-lg px-3 py-1.5",
+          : "border-l-4 rounded-lg px-3 py-1.5 !bg-[var(--bg-color)] text-white",
         isDraggableTask && "hover:shadow-md",
         isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
         isDraggableTask && "hover:scale-[1.01]"
