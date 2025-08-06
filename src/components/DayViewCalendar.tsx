@@ -168,36 +168,15 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={{
-        ...style,
-        '--task-bg-color': projectColor,
-        backgroundColor: projectColor,
-        borderColor: projectColor,
-        borderLeftWidth: '4px',
-        color: 'white'
-      } as React.CSSProperties & { '--task-bg-color': string }}
-      className={cn(
-        "border-l-4 rounded-lg p-3 transition-all duration-200 h-full min-h-full flex flex-col justify-center cursor-grab active:cursor-grabbing hover:shadow-md group relative text-white",
-        isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
-        task.completed && "opacity-60"
-      )}
-      {...listeners}
-      {...attributes}
-    >
-      {/* Checkbox for task completion */}
+    <div className="relative">
+      {/* Checkbox OUTSIDE the draggable area */}
       <div 
-        className="absolute top-1/2 -translate-y-1/2 right-0 z-50 p-2"
+        className="absolute top-1/2 -translate-y-1/2 right-2 z-50 p-2 bg-red-500"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          console.log('📋 Checkbox container clicked');
+          console.log('📋 EXTERNAL Checkbox clicked - this should work!');
           handleCheckboxChange(!task.completed);
-        }}
-        onMouseDown={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
         }}
         style={{ pointerEvents: 'auto' }}
       >
@@ -214,49 +193,61 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
           )}
         </div>
       </div>
-
-      {/* Task content */}
-      <div className={cn(
-        "flex items-center justify-start gap-2 min-h-0 ml-2 mr-8 relative transition-all duration-300",
-        task.completed && "opacity-50"
-      )}>
-        {/* White strikethrough line when completed */}
-        {task.completed && (
-          <div className="absolute inset-0 flex items-center justify-center z-10">
-            <div className="w-full h-0.5 bg-white/80"></div>
-          </div>
-        )}
-        
-        {/* Category Icon */}
-        {(() => {
-          const category = project?.category || 'work';
-          const CategoryIcon = getCategoryIcon(category);
-          return <CategoryIcon className="w-4 h-4 flex-shrink-0 text-white" />;
-        })()}
-        
-        {/* Task Title */}
-        <span 
-          className={cn(
-            "text-sm font-bold text-white truncate cursor-pointer hover:bg-white/20 px-1 py-0.5 rounded transition-colors text-left"
-          )}
-          onClick={handleClick}
-          title="Click to edit task"
-        >
-          {task.title}
-        </span>
-        
-        {/* Project name */}
-        {task.vibe_projects?.name && (
-          <span className="text-xs text-white/80 truncate"> - {task.vibe_projects.name}</span>
-        )}
-      </div>
       
-      {/* Drag area indicator */}
       <div
-        className="absolute inset-0 cursor-grab active:cursor-grabbing"
+        ref={setNodeRef}
+        style={{
+          ...style,
+          '--task-bg-color': projectColor,
+          backgroundColor: projectColor,
+          borderColor: projectColor,
+          borderLeftWidth: '4px',
+          color: 'white'
+        } as React.CSSProperties & { '--task-bg-color': string }}
+        className={cn(
+          "border-l-4 rounded-lg p-3 transition-all duration-200 h-full min-h-full flex flex-col justify-center cursor-grab active:cursor-grabbing hover:shadow-md group relative text-white",
+          isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
+          task.completed && "opacity-60"
+        )}
         {...listeners}
         {...attributes}
-      />
+      >
+        {/* Task content */}
+        <div className={cn(
+          "flex items-center justify-start gap-2 min-h-0 ml-2 mr-8 relative transition-all duration-300",
+          task.completed && "opacity-50"
+        )}>
+          {/* White strikethrough line when completed */}
+          {task.completed && (
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <div className="w-full h-0.5 bg-white/80"></div>
+            </div>
+          )}
+          
+          {/* Category Icon */}
+          {(() => {
+            const category = project?.category || 'work';
+            const CategoryIcon = getCategoryIcon(category);
+            return <CategoryIcon className="w-4 h-4 flex-shrink-0 text-white" />;
+          })()}
+          
+          {/* Task Title */}
+          <span 
+            className={cn(
+              "text-sm font-bold text-white truncate cursor-pointer hover:bg-white/20 px-1 py-0.5 rounded transition-colors text-left"
+            )}
+            onClick={handleClick}
+            title="Click to edit task"
+          >
+            {task.title}
+          </span>
+          
+          {/* Project name */}
+          {task.vibe_projects?.name && (
+            <span className="text-xs text-white/80 truncate"> - {task.vibe_projects.name}</span>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
