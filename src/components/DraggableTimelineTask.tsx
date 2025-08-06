@@ -70,10 +70,12 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     backgroundColor: actualBlockType === 'task' ? block.color : undefined,
-    borderLeftColor: actualBlockType === 'task' ? block.color : undefined
+    borderLeftColor: actualBlockType === 'task' ? block.color : undefined,
+    borderLeftWidth: '4px'
   } : {
     backgroundColor: actualBlockType === 'task' ? block.color : undefined,
-    borderLeftColor: actualBlockType === 'task' ? block.color : undefined
+    borderLeftColor: actualBlockType === 'task' ? block.color : undefined,
+    borderLeftWidth: '4px'
   };
 
   const getDurationInMinutes = () => {
