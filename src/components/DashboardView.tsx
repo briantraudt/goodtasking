@@ -169,7 +169,7 @@ const DashboardView = ({
     if (activeId.startsWith('project-') && overId === 'task-sidebar') {
       const projectId = activeId.replace('project-', '');
       // Project is "moved" to tasks column by adding a dummy task to activate it
-      onCreateTask(projectId, 'Getting started...', 'Add your first task to this project');
+      onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
       return;
     }
 
