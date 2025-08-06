@@ -274,6 +274,7 @@ const DashboardView = ({
                       selectedDate={selectedDate}
                       onDateChange={setSelectedDate}
                       tasks={allTasks}
+                      projects={projects}
                       calendarEvents={events}
                       onTaskScheduled={handleTaskScheduled}
                       onTaskUnscheduled={handleTaskUnscheduled}

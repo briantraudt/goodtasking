@@ -32,10 +32,18 @@ interface CalendarEvent {
   isAllDay?: boolean;
 }
 
+interface Project {
+  id: string;
+  name: string;
+  color?: string;
+  category: 'work' | 'home' | 'personal';
+}
+
 interface DayViewCalendarProps {
   selectedDate: string;
   onDateChange: (date: string) => void;
   tasks: Task[];
+  projects: Project[];
   calendarEvents?: CalendarEvent[];
   onTaskScheduled?: (taskId: string, startTime: string, endTime: string) => void;
   onTaskUnscheduled?: (taskId: string) => void;
@@ -84,11 +92,12 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: T
 
 interface ScheduledTaskBlockProps {
   task: Task;
+  projects: Project[];
   onRemove: (taskId: string) => void;
   onEdit?: (task: Task) => void;
 }
 
-const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps) => {
+const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskBlockProps) => {
   const {
     attributes,
     listeners,
@@ -103,6 +112,21 @@ const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps)
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
 
+  // Get project color
+  const project = projects.find(p => p.id === task.project_id);
+  const getProjectColor = (category: string = 'work', customColor?: string) => {
+    if (customColor) return customColor;
+    
+    switch (category) {
+      case 'personal': return 'hsl(150, 45%, 45%)';
+      case 'home': return 'hsl(25, 95%, 53%)';
+      case 'work':
+      default: return '#4DA8DA';
+    }
+  };
+  
+  const projectColor = getProjectColor(project?.category, project?.color);
+
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -113,9 +137,13 @@ const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps)
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{
+        ...style,
+        backgroundColor: projectColor,
+        borderColor: projectColor
+      }}
       className={cn(
-        "absolute inset-0 rounded-lg border border-primary bg-primary z-10 shadow-sm text-white flex items-center",
+        "absolute inset-0 rounded-lg border z-10 shadow-sm text-white flex items-center",
         isDragging && "opacity-50"
       )}
       title="Click to edit • Drag handle on right to move"
@@ -137,7 +165,8 @@ const ScheduledTaskBlock = ({ task, onRemove, onEdit }: ScheduledTaskBlockProps)
       <div 
         {...listeners}
         {...attributes}
-        className="w-6 h-full bg-primary/20 rounded-r-lg cursor-grab active:cursor-grabbing flex items-center justify-center hover:bg-white/10 transition-colors"
+        className="w-6 h-full rounded-r-lg cursor-grab active:cursor-grabbing flex items-center justify-center hover:bg-white/10 transition-colors"
+        style={{ backgroundColor: `color-mix(in srgb, ${projectColor} 80%, black 20%)` }}
         title="Drag to move task"
       >
         <GripVertical className="h-4 w-4 text-white/80" />
@@ -183,6 +212,7 @@ const DayViewCalendar = ({
   selectedDate,
   onDateChange,
   tasks,
+  projects,
   calendarEvents = [],
   onTaskScheduled,
   onTaskUnscheduled,
@@ -541,6 +571,7 @@ const DayViewCalendar = ({
                 >
                   <ScheduledTaskBlock
                     task={task}
+                    projects={projects}
                     onRemove={onTaskUnscheduled}
                     onEdit={onTaskEdit}
                   />
