@@ -510,12 +510,33 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
         {projectsWithTasks.length === 0 && (
           <div className="col-span-full text-center py-12">
             <div className="rounded-xl bg-white p-8 border-2 border-dashed border-[#E2E8F0] shadow-sm">
-              {allTasks.length === 0 ? (
+              {allTasks.length === 0 && projects.length === 0 ? (
+                // No projects at all - first time user
+                <div>
+                  <h3 className="text-lg font-semibold text-[#0F172A] mb-2">Let's Get Started</h3>
+                  <p className="text-[#64748B] mb-6">You haven't added any tasks yet.</p>
+                  <Button
+                    className="bg-[#172B4D] hover:bg-[#172B4D]/90 text-white flex items-center gap-2"
+                    onClick={() => {
+                      // Show add task dialog if there are projects
+                      if (projects.length > 0) {
+                        setSelectedProjectId(projects[0].id);
+                        setShowAddTaskDialog(true);
+                      }
+                    }}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Task
+                  </Button>
+                </div>
+              ) : allTasks.length === 0 ? (
+                // No tasks but have projects
                 <div>
                   <h3 className="text-lg font-semibold text-[#0F172A] mb-2">All tasks complete!</h3>
                   <p className="text-[#64748B]">Great job staying on top of everything.</p>
                 </div>
               ) : (
+                // Have tasks but none match filters
                 <div>
                   <h3 className="text-lg font-semibold text-[#0F172A] mb-2">No matching tasks</h3>
                   <p className="text-[#64748B]">Try adjusting your filters to see more tasks.</p>
