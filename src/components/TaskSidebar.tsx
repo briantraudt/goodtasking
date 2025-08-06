@@ -401,10 +401,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                          className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5 flex items-center gap-2"
                          onClick={() => setEditingProject(project)}
                        >
-                         {(() => {
-                           const CategoryIcon = getCategoryIcon(project.category);
-                           return <CategoryIcon className="w-4 h-4 text-muted-foreground" />;
-                         })()}
+                          {(() => {
+                            const CategoryIcon = getCategoryIcon(project.category);
+                            const projectColor = getProjectColor(project.category, project.color);
+                            return <CategoryIcon className="w-4 h-4" style={{ color: project.color || '#6B7280' }} />;
+                          })()}
                          {project.name}
                        </h3>
                      </div>
