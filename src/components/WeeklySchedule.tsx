@@ -76,12 +76,12 @@ const WeeklySchedule = ({
     
     switch (category) {
       case 'personal':
-        return 'bg-[hsl(150,45%,45%)] text-white'; // Professional green
+        return 'bg-[hsl(150,45%,45%)] text-white'; // Professional green - matches TaskSidebar
       case 'home':
-        return 'bg-[hsl(25,95%,53%)] text-white'; // Orange
+        return 'bg-[hsl(25,95%,53%)] text-white'; // Orange - matches TaskSidebar exactly
       case 'work':
       default:
-        return 'bg-[#4DA8DA] text-white'; // Blue
+        return 'bg-[#4DA8DA] text-white'; // Blue - matches TaskSidebar
     }
   };
 
