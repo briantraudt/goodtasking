@@ -177,9 +177,9 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
           "text-sm leading-tight text-left font-bold flex items-center gap-2",
           actualBlockType === 'event' ? "text-gray-900" : "text-gray-900"
         )}>
-          {/* Category Icon for tasks */}
-          {actualBlockType === 'task' && task && (() => {
-            const taskCategory = getTaskCategory();
+          {/* Category Icon for tasks - Always show for tasks */}
+          {actualBlockType === 'task' && (() => {
+            const taskCategory = task ? getTaskCategory() : 'work';
             const CategoryIcon = getCategoryIcon(taskCategory);
             return <CategoryIcon className="w-4 h-4 flex-shrink-0" style={{ color: block.color || '#6B7280' }} />;
           })()}
