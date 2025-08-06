@@ -426,18 +426,21 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                           })()}
                          {project.name}
                        </h3>
-                       {/* Show minus button if project has no incomplete tasks */}
-                       {projectTasks.length === 0 && onMoveProjectBack && (
-                         <Button
-                           size="sm"
-                           variant="ghost"
-                           onClick={() => onMoveProjectBack(project.id)}
-                           className="h-6 w-6 p-0 hover:bg-gray-100 ml-2"
-                           title="Move back to Projects"
-                         >
-                           <Minus className="h-3 w-3" style={{ color: project.color || getProjectColor(project.category, project.color).hex }} />
-                         </Button>
-                       )}
+                        {/* Show minus button if project has no real tasks (only placeholder) */}
+                        {(() => {
+                          const realTasks = projectTasks.filter(task => task.title !== "Add First Task...");
+                          return realTasks.length === 0 && onMoveProjectBack && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => onMoveProjectBack(project.id)}
+                              className="h-6 w-6 p-0 hover:bg-gray-100 ml-2"
+                              title="Move back to Projects"
+                            >
+                              <Minus className="h-3 w-3 text-white" />
+                            </Button>
+                          );
+                        })()}
                      </div>
                   )}
                 </div>
