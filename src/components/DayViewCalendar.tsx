@@ -187,14 +187,20 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
       {...attributes}
     >
       {/* Checkbox for task completion */}
-      <div className="absolute top-1/2 -translate-y-1/2 right-2 z-20">
+      <div className="absolute top-1/2 -translate-y-1/2 right-2 z-50">
         <div
           onClick={(e) => {
+            e.preventDefault();
             e.stopPropagation();
+            console.log('📋 Checkbox clicked directly');
             handleCheckboxChange(!task.completed);
           }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           className={cn(
-            "h-3 w-3 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none",
+            "h-3 w-3 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none relative",
             task.completed && "bg-green-500 border-green-500"
           )}
         >
