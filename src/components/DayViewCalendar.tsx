@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
 import { Checkbox } from '@/components/ui/checkbox';
+import ResizableTaskBlock from '@/components/ResizableTaskBlock';
 
 interface Task {
   id: string;
@@ -57,6 +58,7 @@ interface DayViewCalendarProps {
   onViewModeChange?: (mode: 'week') => void;
   onQuickTaskCreate?: (hour: number, minute: number) => void;
   onTaskComplete?: (taskId: string, completed: boolean) => void;
+  onTaskResize?: (taskId: string, startTime: string, endTime: string) => void;
 }
 
 interface TimeSlotProps {
@@ -93,161 +95,7 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: T
   );
 };
 
-interface ScheduledTaskBlockProps {
-  task: Task;
-  projects: Project[];
-  onRemove: (taskId: string) => void;
-  onEdit?: (task: Task) => void;
-  onTaskComplete?: (taskId: string, completed: boolean) => void;
-}
-
-const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }: ScheduledTaskBlockProps) => {
-  const { categories } = useCategories();
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    isDragging,
-  } = useDraggable({
-    id: `scheduled-${task.id}`,
-  });
-
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : undefined;
-
-  // Get project color
-  const project = projects.find(p => p.id === task.project_id);
-  const getProjectColor = (category: string = 'work', customColor?: string) => {
-    if (customColor) return customColor;
-    
-    switch (category) {
-      case 'personal': return 'hsl(150, 45%, 45%)';
-      case 'home': return 'hsl(25, 95%, 53%)';
-      case 'work':
-      default: return '#4DA8DA';
-    }
-  };
-
-  const handleCheckboxChange = (checked: boolean) => {
-    console.log('📋 Checkbox clicked:', { taskId: task.id, checked, onTaskComplete: !!onTaskComplete });
-    if (onTaskComplete) {
-      onTaskComplete(task.id, checked);
-      console.log('✅ onTaskComplete called successfully');
-    } else {
-      console.log('❌ onTaskComplete is not available');
-    }
-  };
-  
-  const projectColor = getProjectColor(project?.category, project?.color);
-
-  // Get category icon function
-  const getCategoryIcon = (category: string) => {
-    const categoryLower = category.toLowerCase();
-    const categoryData = categories.find(cat => cat.name.toLowerCase() === categoryLower);
-    
-    // Fallback to direct icon mapping if category not found
-    if (!categoryData) {
-      switch (categoryLower) {
-        case 'home': return Home;
-        case 'personal': return User;
-        case 'work': return Briefcase;
-        default: return Briefcase;
-      }
-    }
-    
-    return categoryData.icon || Briefcase;
-  };
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log('✏️ Task clicked for editing:', task.title);
-    onEdit?.(task);
-  };
-
-  return (
-    <div className="relative">
-      {/* Checkbox OUTSIDE the draggable area */}
-      <div 
-        className="absolute top-1/2 -translate-y-1/2 right-2 z-50 p-2"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('📋 EXTERNAL Checkbox clicked - this should work!');
-          handleCheckboxChange(!task.completed);
-        }}
-        style={{ pointerEvents: 'auto' }}
-      >
-        <div
-          className="h-3 w-3 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none relative"
-        >
-          {task.completed && (
-            <div className="h-full w-full flex items-center justify-center">
-              <Check className="w-2.5 h-2.5 text-black stroke-[3]" />
-            </div>
-          )}
-        </div>
-      </div>
-      
-      <div
-        ref={setNodeRef}
-        style={{
-          ...style,
-          '--task-bg-color': projectColor,
-          backgroundColor: projectColor,
-          borderColor: projectColor,
-          borderLeftWidth: '4px',
-          color: 'white'
-        } as React.CSSProperties & { '--task-bg-color': string }}
-        className={cn(
-          "border-l-4 rounded-lg p-3 transition-all duration-200 h-full min-h-full flex flex-col justify-center cursor-grab active:cursor-grabbing hover:shadow-md group relative text-white",
-          isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
-          task.completed && "opacity-70"
-        )}
-        {...listeners}
-        {...attributes}
-      >
-        {/* Task content */}
-        <div className={cn(
-          "flex items-center justify-start gap-2 min-h-0 ml-2 mr-8 relative transition-all duration-300",
-          task.completed && "opacity-50"
-        )}>
-          {/* White strikethrough line when completed */}
-          {task.completed && (
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="w-full h-0.5 bg-white/80"></div>
-            </div>
-          )}
-          
-          {/* Category Icon */}
-          {(() => {
-            const category = project?.category || 'work';
-            const CategoryIcon = getCategoryIcon(category);
-            return <CategoryIcon className="w-4 h-4 flex-shrink-0 text-white" />;
-          })()}
-          
-          {/* Task Title */}
-          <span 
-            className={cn(
-              "text-sm font-bold text-white truncate cursor-pointer hover:bg-white/20 px-1 py-0.5 rounded transition-colors text-left"
-            )}
-            onClick={handleClick}
-            title="Click to edit task"
-          >
-            {task.title}
-          </span>
-          
-          {/* Project name */}
-          {task.vibe_projects?.name && (
-            <span className="text-xs text-white/80 truncate"> - {task.vibe_projects.name}</span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+// ScheduledTaskBlock removed - now using ResizableTaskBlock
 
 interface EventBlockProps {
   event: CalendarEvent;
@@ -297,7 +145,8 @@ const DayViewCalendar = ({
   onDisconnectGoogle,
   onViewModeChange,
   onQuickTaskCreate,
-  onTaskComplete
+  onTaskComplete,
+  onTaskResize
 }: DayViewCalendarProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showUnsyncOption, setShowUnsyncOption] = useState(false);
@@ -646,12 +495,13 @@ const DayViewCalendar = ({
                     zIndex: 10
                   }}
                 >
-                  <ScheduledTaskBlock
+                  <ResizableTaskBlock
                     task={task}
                     projects={projects}
                     onRemove={onTaskUnscheduled}
                     onEdit={onTaskEdit}
                     onTaskComplete={onTaskComplete}
+                    onResize={onTaskResize}
                   />
                 </div>
               );

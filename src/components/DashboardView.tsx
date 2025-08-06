@@ -264,6 +264,20 @@ const DashboardView = ({
     setSelectedTaskForEdit(null);
   };
 
+  // Handle task resize
+  const handleTaskResize = async (taskId: string, startTime: string, endTime: string) => {
+    console.log('🎯 DashboardView handleTaskResize called:', { taskId, startTime, endTime });
+    try {
+      await onUpdateTask(taskId, { 
+        start_time: startTime, 
+        end_time: endTime 
+      });
+      console.log('✅ Task resize completed successfully');
+    } catch (error) {
+      console.error('❌ Error resizing task:', error);
+    }
+  };
+
   // Sync calendar when date changes
   useEffect(() => {
     if (isConnected && viewMode === 'planner') {
@@ -304,9 +318,10 @@ const DashboardView = ({
                       onConnectGoogle={connectGoogleCalendar}
                       onDisconnectGoogle={disconnectGoogleCalendar}
                       onViewModeChange={(mode) => setViewMode(mode)}
-                      onQuickTaskCreate={handleQuickTaskCreate}
-                      onTaskComplete={handleTaskComplete}
-                    />
+                       onQuickTaskCreate={handleQuickTaskCreate}
+                       onTaskComplete={handleTaskComplete}
+                       onTaskResize={handleTaskResize}
+                     />
                   </div>
                 </div>
                 
