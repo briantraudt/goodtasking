@@ -94,7 +94,23 @@ const WeeklySchedule = ({
 
   const getProjectBackgroundColor = (projectId: string) => {
     const project = projects.find(p => p.id === projectId);
-    return project?.color || '#4DA8DA'; // Default to blue if no color set
+    
+    // Use custom color if set
+    if (project?.color) {
+      return project.color;
+    }
+    
+    // Fallback to category-based colors for existing projects
+    const category = project?.category || 'work';
+    switch (category) {
+      case 'personal':
+        return 'hsl(150,45%,45%)'; // Professional green
+      case 'home':
+        return 'hsl(25,95%,53%)'; // Orange - this should fix your issue!
+      case 'work':
+      default:
+        return '#4DA8DA'; // Blue
+    }
   };
 
   const handleTaskToggle = (taskId: string, completed: boolean) => {
