@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FolderOpen, Edit2, Trash2 } from 'lucide-react';
+import { Plus, FolderOpen, Edit2, Trash2, Home, User, Briefcase } from 'lucide-react';
 import CreateProjectDialog from './CreateProjectDialog';
 import ProjectEditDialog from './ProjectEditDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
+import { useCategories } from '@/hooks/useCategories';
 
 interface Project {
   id: string;
@@ -26,6 +27,7 @@ interface ProjectsColumnProps {
 }
 
 const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject, onMoveProjectToTasks }: ProjectsColumnProps) => {
+  const { categories } = useCategories();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [deleteConfirmProject, setDeleteConfirmProject] = useState<Project | null>(null);
@@ -60,6 +62,24 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
       case 'work':
       default: return '#4DA8DA';
     }
+  };
+
+  // Get category icon function
+  const getCategoryIcon = (category: string) => {
+    const categoryLower = category.toLowerCase();
+    const categoryData = categories.find(cat => cat.name.toLowerCase() === categoryLower);
+    
+    // Fallback to direct icon mapping if category not found
+    if (!categoryData) {
+      switch (categoryLower) {
+        case 'home': return Home;
+        case 'personal': return User;
+        case 'work': return Briefcase;
+        default: return Briefcase;
+      }
+    }
+    
+    return categoryData.icon || Briefcase;
   };
 
   const handleDeleteProject = async (projectId: string) => {
@@ -120,9 +140,13 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
               <div className="flex justify-between items-center">
                 <div className="flex-1">
                   <h3 
-                    className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5"
+                    className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5 flex items-center gap-2"
                     onClick={() => setEditingProject(project)}
                   >
+                    {(() => {
+                      const CategoryIcon = getCategoryIcon(project.category);
+                      return <CategoryIcon className="w-4 h-4" style={{ color: project.color || '#6B7280' }} />;
+                    })()}
                     {project.name}
                   </h3>
                 </div>
