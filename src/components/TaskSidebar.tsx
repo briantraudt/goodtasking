@@ -367,9 +367,9 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
             <div 
               key={project.id} 
               className={cn(
-                "bg-white rounded-xl p-4 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card",
-                projectColor.border
+                "bg-white rounded-xl p-4 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card"
               )}
+              style={{ borderColor: project.color || (typeof projectColor === 'string' ? projectColor : projectColor.hex) }}
             >
               {/* Project Header with Edit/Delete Options */}
               <div className="flex justify-between items-center mb-2 group">
