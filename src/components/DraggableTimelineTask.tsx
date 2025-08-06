@@ -14,6 +14,10 @@ interface Task {
   start_time?: string;
   end_time?: string;
   project_id?: string;
+  vibe_projects?: {
+    name: string;
+    category?: string;
+  };
   project?: {
     id: string;
     name: string;
@@ -105,6 +109,29 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
     }
   };
 
+  // Get category from task data
+  const getTaskCategory = () => {
+    // Try to get category from project object first
+    if (task?.project?.category) {
+      return task.project.category;
+    }
+    
+    // Try to get category from vibe_projects
+    if (task?.vibe_projects?.category) {
+      return task.vibe_projects.category;
+    }
+    
+    // Fallback: try to infer category from project name
+    if (task?.vibe_projects?.name) {
+      const projectName = task.vibe_projects.name.toLowerCase();
+      if (projectName.includes('personal') || projectName.includes('food')) return 'personal';
+      if (projectName.includes('work') || projectName.includes('business')) return 'work';
+      if (projectName.includes('home') || projectName.includes('house')) return 'home';
+    }
+    
+    // Default fallback
+    return 'work';
+  };
   // Get category icon function
   const getCategoryIcon = (category: string) => {
     const categoryLower = category.toLowerCase();
@@ -151,8 +178,9 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
           actualBlockType === 'event' ? "text-gray-900" : "text-gray-900"
         )}>
           {/* Category Icon for tasks */}
-          {actualBlockType === 'task' && task?.project?.category && (() => {
-            const CategoryIcon = getCategoryIcon(task.project.category);
+          {actualBlockType === 'task' && task && (() => {
+            const taskCategory = getTaskCategory();
+            const CategoryIcon = getCategoryIcon(taskCategory);
             return <CategoryIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />;
           })()}
           <span className="truncate">{block.title}</span>
