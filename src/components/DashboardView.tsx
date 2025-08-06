@@ -8,6 +8,7 @@ import WeeklySchedule from './WeeklySchedule';
 import WeeklyAIReview from './WeeklyAIReview';
 import DayViewCalendar from './DayViewCalendar';
 import TaskSidebar from './TaskSidebar';
+import ProjectsColumn from './ProjectsColumn';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { format } from 'date-fns';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
@@ -41,7 +42,7 @@ interface DashboardViewProps {
   onUpdateProject?: (id: string, updates: Partial<Project>) => void;
   onDeleteProject?: (id: string) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => Promise<any>;
-  onCreateProject: (data: { name: string; description: string; category: 'work' | 'home' | 'personal' }) => void;
+  onCreateProject: (data: { name: string; description?: string; category: 'work' | 'home' | 'personal' }) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
   onRefreshTasks?: () => void;
   userName?: string;
@@ -268,7 +269,7 @@ const DashboardView = ({
           {viewMode === 'planner' ? (
             <div className="h-full p-6">
               <div className="h-full flex flex-col lg:flex-row gap-6">
-                {/* Calendar - 50% width */}
+                {/* Calendar - 33% width */}
                 <div className="flex-1 min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                     <DayViewCalendar
@@ -293,7 +294,7 @@ const DashboardView = ({
                   </div>
                 </div>
                 
-                {/* Task Sidebar - 50% width */}
+                {/* Task Sidebar - 33% width */}
                 <div className="flex-1 min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                     <TaskSidebar
@@ -315,6 +316,26 @@ const DashboardView = ({
                         onUpdateTask(taskId, updates);
                       }}
                       onDeleteTask={onDeleteTask}
+                    />
+                  </div>
+                </div>
+
+                {/* Projects Column - 33% width */}
+                <div className="flex-1 min-h-0 lg:min-h-[600px]">
+                  <div className="h-full bg-card rounded-xl shadow-sm border p-6">
+                    <ProjectsColumn
+                      projects={projects}
+                      onCreateProject={onCreateProject}
+                      onUpdateProject={async (id: string, updates: any) => {
+                        if (onUpdateProject) {
+                          await onUpdateProject(id, updates);
+                        }
+                      }}
+                      onDeleteProject={async (id: string) => {
+                        if (onDeleteProject) {
+                          await onDeleteProject(id);
+                        }
+                      }}
                     />
                   </div>
                 </div>

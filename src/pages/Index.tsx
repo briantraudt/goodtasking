@@ -51,7 +51,9 @@ const Index = () => {
         <div className="max-w-app mx-auto px-6 py-6 h-[calc(100vh-140px)] overflow-hidden">
           <DashboardView
             projects={projects}
-            onCreateProject={(data) => createProject(data.name, data.description, data.category)}
+            onCreateProject={async (data) => {
+              await createProject(data.name, data.description, data.category);
+            }}
             onUpdateProject={updateProject}
             onDeleteProject={deleteProject}
             onCreateTask={createTask}
