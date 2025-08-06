@@ -23,18 +23,18 @@ interface CreateProjectDialogProps {
   children?: React.ReactNode;
 }
 
-// 10 beautiful colors that match the design palette
+// Brand color palette
 const PROJECT_COLORS = [
-  { name: 'Ocean Blue', value: '#4DA8DA' },
-  { name: 'Sunset Orange', value: '#FF7B47' },
-  { name: 'Forest Green', value: '#10B981' },
-  { name: 'Royal Purple', value: '#8B5CF6' },
-  { name: 'Cherry Red', value: '#EF4444' },
-  { name: 'Golden Yellow', value: '#F59E0B' },
-  { name: 'Rose Pink', value: '#F472B6' },
-  { name: 'Slate Gray', value: '#64748B' },
-  { name: 'Mint Green', value: '#14B8A6' },
-  { name: 'Lavender', value: '#A78BFA' }
+  { name: 'Brand Green', value: '#36B37E' },
+  { name: 'Brand Blue', value: '#2684FF' },
+  { name: 'Brand Purple', value: '#6554C0' },
+  { name: 'Brand Yellow', value: '#FFAB00' },
+  { name: 'Brand Red', value: '#FF5630' },
+  { name: 'Brand Orange', value: '#FF8B00' },
+  { name: 'Brand Dark Navy', value: '#172B4D' },
+  { name: 'Light Gray', value: '#F4F5F7' },
+  { name: 'Teal Green', value: '#2BB673' },
+  { name: 'Bright Blue', value: '#339CFF' }
 ];
 
 export default function CreateProjectDialog({ onCreateProject, existingProjects = [], children }: CreateProjectDialogProps) {
