@@ -421,7 +421,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     projectColor.accent
                   )}
                 >
-                  + Add
+                  +
                 </button>
               </div>
 

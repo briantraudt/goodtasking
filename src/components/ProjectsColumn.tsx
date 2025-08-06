@@ -159,7 +159,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                     "text-black hover:opacity-70"
                   )}
                 >
-                  + Add
+                  +
                 </button>
               </div>
             </div>
