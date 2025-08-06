@@ -415,7 +415,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                   ) : (
                      <div className="flex-1">
                        <h3 
-                         className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5 flex items-center gap-2"
+                         className="font-semibold text-primary cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5 flex items-center gap-2"
                          onClick={() => setEditingProject(project)}
                        >
                           {(() => {
