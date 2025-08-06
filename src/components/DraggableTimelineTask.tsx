@@ -71,11 +71,15 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     backgroundColor: actualBlockType === 'task' ? block.color : undefined,
     borderLeftColor: actualBlockType === 'task' ? block.color : undefined,
-    borderLeftWidth: '4px'
+    borderLeftWidth: '4px',
+    color: actualBlockType === 'task' ? 'white' : undefined,
+    opacity: task?.completed ? 0.75 : 1
   } : {
     backgroundColor: actualBlockType === 'task' ? block.color : undefined,
     borderLeftColor: actualBlockType === 'task' ? block.color : undefined,
-    borderLeftWidth: '4px'
+    borderLeftWidth: '4px',
+    color: actualBlockType === 'task' ? 'white' : undefined,
+    opacity: task?.completed ? 0.75 : 1
   };
 
   const getDurationInMinutes = () => {
@@ -199,10 +203,7 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
         // Modern styling for events and tasks
         actualBlockType === 'event' 
           ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
-          : cn(
-              "border-l-4 rounded-lg px-3 py-1.5 text-white", 
-              task?.completed ? "opacity-75" : ""
-            ),
+          : "border-l-4 rounded-lg px-3 py-1.5",
         isDraggableTask && "hover:shadow-md",
         isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
         isDraggableTask && "hover:scale-[1.01]"
