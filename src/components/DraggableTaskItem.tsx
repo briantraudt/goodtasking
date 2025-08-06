@@ -81,7 +81,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       <div className="flex-1 relative">
         <span 
           className={cn(
-            "text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded cursor-pointer",
+            "text-sm font-medium text-primary hover:bg-white/10 transition-colors px-1 py-0.5 rounded cursor-pointer",
             task.completed && "line-through opacity-60"
           )}
           onClick={handleEditClick}
