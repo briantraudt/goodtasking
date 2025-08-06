@@ -322,6 +322,7 @@ export type Database = {
       vibe_projects: {
         Row: {
           category: string | null
+          color: string | null
           created_at: string
           description: string | null
           id: string
@@ -332,6 +333,7 @@ export type Database = {
         }
         Insert: {
           category?: string | null
+          color?: string | null
           created_at?: string
           description?: string | null
           id?: string
@@ -342,6 +344,7 @@ export type Database = {
         }
         Update: {
           category?: string | null
+          color?: string | null
           created_at?: string
           description?: string | null
           id?: string

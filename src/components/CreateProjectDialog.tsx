@@ -12,6 +12,7 @@ interface Project {
   name: string;
   description: string;
   category: 'work' | 'home' | 'personal';
+  color: string;
   tasks: any[];
 }
 
@@ -20,11 +21,26 @@ interface CreateProjectDialogProps {
   children?: React.ReactNode;
 }
 
+// 10 beautiful colors that match the design palette
+const PROJECT_COLORS = [
+  { name: 'Ocean Blue', value: '#4DA8DA' },
+  { name: 'Sunset Orange', value: '#FF7B47' },
+  { name: 'Forest Green', value: '#10B981' },
+  { name: 'Royal Purple', value: '#8B5CF6' },
+  { name: 'Cherry Red', value: '#EF4444' },
+  { name: 'Golden Yellow', value: '#F59E0B' },
+  { name: 'Rose Pink', value: '#F472B6' },
+  { name: 'Slate Gray', value: '#64748B' },
+  { name: 'Mint Green', value: '#14B8A6' },
+  { name: 'Lavender', value: '#A78BFA' }
+];
+
 export default function CreateProjectDialog({ onCreateProject, children }: CreateProjectDialogProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<'work' | 'home' | 'personal'>('work');
+  const [selectedColor, setSelectedColor] = useState(PROJECT_COLORS[0].value);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,11 +49,13 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
         name: name.trim(),
         description: description.trim(),
         category,
+        color: selectedColor,
         tasks: []
       });
       setName('');
       setDescription('');
       setCategory('work');
+      setSelectedColor(PROJECT_COLORS[0].value);
       setOpen(false);
     }
   };
@@ -106,6 +124,28 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
               </div>
             </div>
           </div>
+          
+          {/* Color Picker */}
+          <div>
+            <Label>Project Color</Label>
+            <div className="grid grid-cols-5 gap-2 mt-2">
+              {PROJECT_COLORS.map((color) => (
+                <button
+                  key={color.value}
+                  type="button"
+                  className={`w-10 h-10 rounded-lg border-2 transition-all hover:scale-105 ${
+                    selectedColor === color.value 
+                      ? 'border-gray-800 ring-2 ring-gray-300' 
+                      : 'border-gray-200 hover:border-gray-400'
+                  }`}
+                  style={{ backgroundColor: color.value }}
+                  onClick={() => setSelectedColor(color.value)}
+                  title={color.name}
+                />
+              ))}
+            </div>
+          </div>
+          
           <div className="flex gap-2 pt-2">
             <Button 
               type="button" 

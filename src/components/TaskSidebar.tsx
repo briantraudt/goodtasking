@@ -37,6 +37,7 @@ interface Project {
   id: string;
   name: string;
   category: 'work' | 'home' | 'personal';
+  color?: string;
   tasks: Task[];
 }
 
@@ -164,8 +165,23 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Dynamic Color System Based on Project Category
-  const getProjectColor = (category: string = 'work') => {
+  // Dynamic Color System Based on Project Category or Custom Color
+  const getProjectColor = (category: string = 'work', customColor?: string) => {
+    // Use custom color if provided
+    if (customColor) {
+      return {
+        hex: customColor,
+        border: `border-[${customColor}]`,
+        text: `text-[${customColor}]`, 
+        accent: `text-[${customColor}]`,
+        taskBg: `bg-[${customColor}]`,
+        taskHover: 'hover:brightness-110',
+        name: 'custom',
+        cssVar: customColor
+      };
+    }
+    
+    // Fallback to category-based colors
     switch (category) {
       case 'personal':
         return {
@@ -267,7 +283,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
 
           if (projectTasks.length === 0) return null;
 
-          const projectColor = getProjectColor(project.category);
+          const projectColor = getProjectColor(project.category, project.color);
 
           return (
             <div 
@@ -293,55 +309,56 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                         <div className="space-y-2">
                           <Label className="text-sm font-medium">Change Category</Label>
                           <div className="space-y-2">
-                            {(['work', 'personal', 'home'] as const).map((category) => {
-                              const categoryColor = getProjectColor(category);
-                              const isSelected = project.category === category;
-                              
-                              return (
-                                <div key={category} className="flex items-center space-x-2">
-                                  <div 
-                                    className={cn(
-                                      "w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-200 flex items-center justify-center"
-                                    )}
-                                    style={{
-                                      backgroundColor: isSelected ? categoryColor.hex : 'transparent',
-                                      borderColor: isSelected ? categoryColor.hex : '#d1d5db'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                      if (!isSelected) {
-                                        e.currentTarget.style.borderColor = categoryColor.hex;
-                                        e.currentTarget.style.backgroundColor = categoryColor.hex;
-                                      }
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      if (!isSelected) {
-                                        e.currentTarget.style.borderColor = '#d1d5db';
-                                        e.currentTarget.style.backgroundColor = 'transparent';
-                                      }
-                                    }}
-                                    onClick={() => {
-                                      if (onUpdateProject && project.category !== category) {
-                                        onUpdateProject(project.id, { category });
-                                      }
-                                      setEditingProjectId(null);
-                                    }}
-                                  >
-                                  </div>
-                                  <Label 
-                                    htmlFor={`${project.id}-${category}`} 
-                                    className="text-sm font-normal capitalize cursor-pointer text-gray-700"
-                                    onClick={() => {
-                                      if (onUpdateProject && project.category !== category) {
-                                        onUpdateProject(project.id, { category });
-                                      }
-                                      setEditingProjectId(null);
-                                    }}
-                                  >
-                                    {category}
-                                  </Label>
-                                </div>
-                              );
-                            })}
+                             {(['work', 'personal', 'home'] as const).map((category) => {
+                               const categoryColor = getProjectColor(category);
+                               const isSelected = project.category === category;
+                               
+                               return (
+                                 <div key={category} className="flex items-center space-x-2">
+                                   <div 
+                                     className={cn(
+                                       "w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-200 flex items-center justify-center"
+                                     )}
+                                     style={{
+                                       backgroundColor: isSelected ? (project.color || categoryColor.hex) : 'transparent',
+                                       borderColor: isSelected ? (project.color || categoryColor.hex) : '#d1d5db'
+                                     }}
+                                     onMouseEnter={(e) => {
+                                       if (!isSelected) {
+                                         const hoverColor = project.color || categoryColor.hex;
+                                         e.currentTarget.style.borderColor = hoverColor;
+                                         e.currentTarget.style.backgroundColor = hoverColor;
+                                       }
+                                     }}
+                                     onMouseLeave={(e) => {
+                                       if (!isSelected) {
+                                         e.currentTarget.style.borderColor = '#d1d5db';
+                                         e.currentTarget.style.backgroundColor = 'transparent';
+                                       }
+                                     }}
+                                     onClick={() => {
+                                       if (onUpdateProject && project.category !== category) {
+                                         onUpdateProject(project.id, { category });
+                                       }
+                                       setEditingProjectId(null);
+                                     }}
+                                   >
+                                   </div>
+                                   <Label 
+                                     htmlFor={`${project.id}-${category}`} 
+                                     className="text-sm font-normal capitalize cursor-pointer text-gray-700"
+                                     onClick={() => {
+                                       if (onUpdateProject && project.category !== category) {
+                                         onUpdateProject(project.id, { category });
+                                       }
+                                       setEditingProjectId(null);
+                                     }}
+                                   >
+                                     {category}
+                                   </Label>
+                                 </div>
+                               );
+                             })}
                           </div>
                         </div>
                       </PopoverContent>
@@ -384,8 +401,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                         "hover:scale-[1.02] hover:shadow-md", // Enhanced hover effects
                         isOverdue 
                           ? "bg-[#4DA8DA] hover:brightness-110 border-2 border-red-500" // Light blue background with red border for overdue
-                          : cn(projectColor.taskBg, projectColor.taskHover)
+                          : "hover:brightness-110"
                       )}
+                      style={{
+                        backgroundColor: project.color || (projectColor.taskBg.includes('[') ? projectColor.hex : projectColor.taskBg)
+                      }}
                       title="Click to edit or delete this task" // Tooltip to indicate clickability
                     >
                       <div className="flex items-center justify-between">

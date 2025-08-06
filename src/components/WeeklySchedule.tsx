@@ -25,6 +25,7 @@ interface Project {
   name: string;
   description?: string;
   category?: 'work' | 'personal' | 'home';
+  color?: string;
   tasks: Task[];
 }
 
@@ -70,19 +71,30 @@ const WeeklySchedule = ({
   };
 
   const getProjectColor = (projectId: string) => {
-    // Find the project to get its category
+    // Find the project to get its color
     const project = projects.find(p => p.id === projectId);
-    const category = project?.category || 'work';
     
+    // Use custom color if set, otherwise fall back to category-based colors
+    if (project?.color) {
+      return `text-white`;
+    }
+    
+    // Fallback to category-based colors for existing projects
+    const category = project?.category || 'work';
     switch (category) {
       case 'personal':
-        return 'bg-[hsl(150,45%,45%)] text-white'; // Professional green - matches TaskSidebar
+        return 'bg-[hsl(150,45%,45%)] text-white';
       case 'home':
-        return 'bg-[hsl(25,95%,53%)] text-white'; // Orange - matches TaskSidebar exactly
+        return 'bg-[hsl(25,95%,53%)] text-white';
       case 'work':
       default:
-        return 'bg-[#4DA8DA] text-white'; // Blue - matches TaskSidebar
+        return 'bg-[#4DA8DA] text-white';
     }
+  };
+
+  const getProjectBackgroundColor = (projectId: string) => {
+    const project = projects.find(p => p.id === projectId);
+    return project?.color || '#4DA8DA'; // Default to blue if no color set
   };
 
   const handleTaskToggle = (taskId: string, completed: boolean) => {
@@ -245,10 +257,12 @@ const WeeklySchedule = ({
                             <div
                               key={task.id}
                               className={cn(
-                                "px-2 py-1 rounded text-xs font-medium cursor-pointer shadow-sm",
-                                getProjectColor(task.project_id),
+                                "px-2 py-1 rounded text-xs font-medium cursor-pointer shadow-sm text-white",
                                 task.completed && "opacity-60 line-through"
                               )}
+                              style={{ 
+                                backgroundColor: getProjectBackgroundColor(task.project_id)
+                              }}
                               onClick={() => handleTaskToggle(task.id, !task.completed)}
                             >
                               {task.title}
