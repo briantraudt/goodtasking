@@ -31,7 +31,7 @@ const Header = () => {
       {/* Right side - Action buttons */}
       <div className="flex items-center gap-3">
         <Link to="/settings">
-          <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border hover:shadow-soft transition-all">
+          <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border hover:bg-navy-blue hover:text-white hover:border-navy-blue hover:shadow-soft transition-all">
             <Settings className="h-4 w-4 mr-2" />
             Settings
           </Button>
