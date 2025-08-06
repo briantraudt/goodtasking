@@ -185,10 +185,9 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                     setActiveInlineAdd(null);
                   }}
                   placeholder="Type task name and press Enter..."
-                  className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none focus:ring-2 focus:ring-opacity-50 mt-3"
+                  className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none mt-3 text-foreground"
                   style={{ 
                     borderColor: projectColor,
-                    color: projectColor,
                     backgroundColor: 'transparent'
                   }}
                   autoFocus

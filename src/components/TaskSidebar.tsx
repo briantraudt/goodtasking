@@ -471,10 +471,9 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       setActiveInlineAdd(null);
                     }}
                     placeholder="Type task name and press Enter..."
-                    className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none focus:ring-2 focus:ring-opacity-50"
+                    className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none text-foreground"
                     style={{ 
                       borderColor: project.color || projectColor.hex,
-                      color: project.color || projectColor.hex,
                       backgroundColor: 'transparent'
                     }}
                     autoFocus
