@@ -111,12 +111,6 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                 {/* Project Header with Edit/Delete Options */}
                 <div className="flex justify-between items-start mb-3 group">
                   <div className="flex items-start gap-3 flex-1">
-                    {/* Project Color Indicator */}
-                    <div 
-                      className="w-4 h-4 rounded-full border border-border mt-1 flex-shrink-0"
-                      style={{ backgroundColor: projectColor }}
-                    />
-                    
                     <div className="flex-1">
                       <h3 
                         className="font-semibold text-foreground cursor-pointer transition-colors hover:text-primary"
