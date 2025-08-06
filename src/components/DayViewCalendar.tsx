@@ -183,20 +183,20 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
       {...attributes}
     >
       {/* Checkbox for task completion */}
-      <div className="absolute top-2 right-2 z-20">
+      <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20">
         <div
           onClick={(e) => {
             e.stopPropagation();
             handleCheckboxChange(!task.completed);
           }}
           className={cn(
-            "h-4 w-4 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none",
+            "h-3 w-3 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none",
             task.completed && "bg-green-500 border-green-500"
           )}
         >
           {task.completed && (
             <div className="h-full w-full flex items-center justify-center">
-              <div className="w-2 h-2 bg-white"></div>
+              <div className="w-1.5 h-1.5 bg-white"></div>
             </div>
           )}
         </div>
