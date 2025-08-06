@@ -505,104 +505,113 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="h-screen grid grid-rows-[auto_1fr] overflow-hidden bg-background">
+        <header className="border-b bg-card shadow-sm">
+          <div className="max-w-app mx-auto px-6 py-4">
+            <Header />
           </div>
-        </div>
+        </header>
+        <main className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="h-screen grid grid-rows-[auto_1fr] overflow-hidden bg-background">
+      {/* Fixed Header - matches dashboard layout */}
+      <header className="border-b bg-card shadow-sm">
+        <div className="max-w-app mx-auto px-6 py-4">
+          <Header />
+        </div>
+      </header>
       
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex items-center gap-4">
-            <Link to="/dashboard">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Settings</h1>
-              <p className="text-muted-foreground">Manage your account and preferences</p>
+      {/* Main Content with Fixed Height and Scrolling */}
+      <main className="overflow-hidden">
+        <div className="max-w-app mx-auto px-6 py-6 h-full overflow-y-auto">
+          <div className="space-y-6 pb-6">
+            {/* Page Header */}
+            <div className="flex items-center gap-4">
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Dashboard
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Settings</h1>
+                <p className="text-muted-foreground">Manage your account and preferences</p>
+              </div>
             </div>
-          </div>
 
-          {/* Dashboard Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground">Tasks Completed</p>
-                    <p className="text-2xl font-bold">{stats.completedTasks}/{stats.totalTasks}</p>
-                    <div className="flex items-center gap-2">
-                      <Progress value={stats.completionRate} className="h-2 flex-1" />
-                      <span className="text-xs text-muted-foreground">{stats.completionRate}%</span>
+            {/* Dashboard Stats - More compact layout */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <CheckCircle className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-muted-foreground">Tasks</p>
+                      <p className="text-xl font-bold">{stats.completedTasks}/{stats.totalTasks}</p>
+                      <div className="flex items-center gap-2">
+                        <Progress value={stats.completionRate} className="h-1.5 flex-1" />
+                        <span className="text-xs text-muted-foreground">{stats.completionRate}%</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-success/10 rounded-lg">
-                    <FolderOpen className="h-5 w-5 text-success" />
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-success/10 rounded-lg">
+                      <FolderOpen className="h-5 w-5 text-success" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-muted-foreground">Projects</p>
+                      <p className="text-xl font-bold">{stats.totalProjects}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {stats.completedProjects} completed
+                      </p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground">Active Projects</p>
-                    <p className="text-2xl font-bold">{stats.totalProjects}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {stats.completedProjects} completed
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-accent/10 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-accent" />
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-accent/10 rounded-lg">
+                      <TrendingUp className="h-5 w-5 text-accent" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-muted-foreground">Streak</p>
+                      <p className="text-xl font-bold">{stats.currentStreak}</p>
+                      <p className="text-xs text-muted-foreground">days</p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground">Current Streak</p>
-                    <p className="text-2xl font-bold">{stats.currentStreak}</p>
-                    <p className="text-xs text-muted-foreground">days</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-secondary/10 rounded-lg">
-                    <BarChart3 className="h-5 w-5 text-secondary" />
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-secondary/10 rounded-lg">
+                      <BarChart3 className="h-5 w-5 text-secondary" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-muted-foreground">Rate</p>
+                      <p className="text-xl font-bold">{stats.completionRate}%</p>
+                      <p className="text-xs text-muted-foreground">completion</p>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-muted-foreground">Productivity</p>
-                    <p className="text-2xl font-bold">{stats.completionRate}%</p>
-                    <p className="text-xs text-muted-foreground">completion rate</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
+            </div>
 
           {/* Projects Overview */}
           <Card>
@@ -1034,9 +1043,10 @@ const Settings = () => {
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
-          </AlertDialog>
+            </AlertDialog>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
