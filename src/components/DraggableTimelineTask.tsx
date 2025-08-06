@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Calendar, Home, User, Briefcase } from 'lucide-react';
+import { Clock, Calendar, Home, User, Briefcase, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { parseISO, format } from 'date-fns';
 import { useCategories } from '@/hooks/useCategories';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface Task {
   id: string;
@@ -14,6 +15,7 @@ interface Task {
   start_time?: string;
   end_time?: string;
   project_id?: string;
+  completed?: boolean;
   vibe_projects?: {
     name: string;
     category?: string;
@@ -40,9 +42,10 @@ interface TimeBlock {
 interface DraggableTimelineTaskProps {
   block: TimeBlock;
   task?: Task;
+  onTaskComplete?: (taskId: string, completed: boolean) => void;
 }
 
-const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
+const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelineTaskProps) => {
   const { categories } = useCategories();
   // More robust type determination: 
   // If we have a googleEventId and NO task object, it's definitely an event
@@ -109,6 +112,12 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
     }
   };
 
+  const handleCheckboxChange = (checked: boolean) => {
+    if (onTaskComplete && task) {
+      onTaskComplete(task.id, checked);
+    }
+  };
+
   // Get category from task data
   const getTaskCategory = () => {
     // Try to get category from project object first
@@ -164,7 +173,11 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
         // Modern styling for events and tasks
         actualBlockType === 'event' 
           ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg cursor-pointer hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
-          : cn("bg-white border-l-4 rounded-lg px-3 py-1.5", block.color || "border-green-400"),
+          : cn(
+              "bg-white border-l-4 rounded-lg px-3 py-1.5", 
+              block.color || "border-green-400",
+              task?.completed && "opacity-60"
+            ),
         isDraggableTask && "cursor-grab active:cursor-grabbing hover:shadow-md",
         isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
         isDraggableTask && "hover:scale-[1.01]"
@@ -172,10 +185,22 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
     >
       {/* Content container with modern spacing */}
       <div className="h-full flex flex-col justify-center">
+        {/* Checkbox for task completion - only for tasks */}
+        {actualBlockType === 'task' && task && (
+          <div className="absolute top-2 left-2 z-20">
+            <Checkbox
+              checked={task.completed || false}
+              onCheckedChange={handleCheckboxChange}
+              className="rounded-sm bg-white/80 hover:bg-white h-4 w-4"
+            />
+          </div>
+        )}
+
         {/* Event/Task Title - Enhanced Typography with Category Icon */}
         <div className={cn(
           "text-sm leading-tight text-left font-bold flex items-center gap-2",
-          actualBlockType === 'event' ? "text-gray-900" : "text-gray-900"
+          actualBlockType === 'event' ? "text-gray-900" : "text-gray-900",
+          task?.completed && "line-through"
         )}>
           {/* Category Icon for tasks - Always show for tasks */}
           {actualBlockType === 'task' && (() => {

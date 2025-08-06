@@ -7,6 +7,7 @@ import { useDroppable, useDraggable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface Task {
   id: string;
@@ -55,6 +56,7 @@ interface DayViewCalendarProps {
   onDisconnectGoogle?: () => void;
   onViewModeChange?: (mode: 'week') => void;
   onQuickTaskCreate?: (hour: number, minute: number) => void;
+  onTaskComplete?: (taskId: string, completed: boolean) => void;
 }
 
 interface TimeSlotProps {
@@ -96,9 +98,10 @@ interface ScheduledTaskBlockProps {
   projects: Project[];
   onRemove: (taskId: string) => void;
   onEdit?: (task: Task) => void;
+  onTaskComplete?: (taskId: string, completed: boolean) => void;
 }
 
-const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskBlockProps) => {
+const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }: ScheduledTaskBlockProps) => {
   const { categories } = useCategories();
   const {
     attributes,
@@ -124,6 +127,12 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
       case 'home': return 'hsl(25, 95%, 53%)';
       case 'work':
       default: return '#4DA8DA';
+    }
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    if (onTaskComplete) {
+      onTaskComplete(task.id, checked);
     }
   };
   
@@ -157,49 +166,59 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
   return (
     <div
       ref={setNodeRef}
-      style={{
+      style={{ 
         ...style,
-        backgroundColor: projectColor,
-        borderColor: projectColor
+        borderColor: projectColor,
+        borderLeftWidth: '4px'
       }}
       className={cn(
-        "absolute inset-0 rounded-lg border z-10 shadow-sm text-white flex items-center relative",
-        isDragging && "opacity-50"
+        "bg-white border-l-4 rounded-lg p-3 transition-all duration-200 h-full min-h-full flex flex-col justify-center cursor-grab active:cursor-grabbing hover:shadow-md group relative",
+        isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
+        task.completed && "opacity-60"
       )}
-      title="Drag anywhere to move • Click task name to edit"
     >
-      {/* Extended drag area - covers everything except the task title for editing */}
+      {/* Checkbox for task completion */}
+      <div className="absolute top-2 left-2 z-20">
+        <Checkbox
+          checked={task.completed || false}
+          onCheckedChange={handleCheckboxChange}
+          className="rounded-sm bg-white/80 hover:bg-white h-4 w-4"
+        />
+      </div>
+
+      {/* Task content */}
+      <div className="flex items-center gap-2 min-h-0 ml-6">
+        {/* Category Icon */}
+        {(() => {
+          const category = project?.category || 'work';
+          const CategoryIcon = getCategoryIcon(category);
+          return <CategoryIcon className="w-4 h-4 flex-shrink-0" style={{ color: projectColor }} />;
+        })()}
+        
+        {/* Task Title */}
+        <span 
+          className={cn(
+            "text-sm font-bold text-gray-900 truncate cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors",
+            task.completed && "line-through"
+          )}
+          onClick={handleClick}
+          title="Click to edit task"
+        >
+          {task.title}
+        </span>
+        
+        {/* Project name */}
+        {task.vibe_projects?.name && (
+          <span className="text-xs text-gray-600 truncate"> - {task.vibe_projects.name}</span>
+        )}
+      </div>
+      
+      {/* Drag area indicator */}
       <div
-        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
+        className="absolute inset-0 cursor-grab active:cursor-grabbing"
         {...listeners}
         {...attributes}
       />
-      
-      {/* Task content area - positioned above drag area */}
-      <div className="px-3 py-2 h-full flex flex-col justify-center relative z-10">
-        <div className="text-sm truncate flex items-center gap-2">
-          {/* Category Icon - draggable */}
-          {(() => {
-            const category = project?.category || 'work';
-            const CategoryIcon = getCategoryIcon(category);
-            return <CategoryIcon className="w-4 h-4 flex-shrink-0 text-white" />;
-          })()}
-          
-          {/* Task title - clickable for editing */}
-          <span 
-            className="font-bold cursor-pointer hover:bg-white/10 px-1 py-0.5 rounded transition-colors relative z-20"
-            onClick={handleClick}
-            title="Click to edit task"
-          >
-            {task.title}
-          </span>
-          
-          {/* Project name - draggable */}
-          {task.vibe_projects?.name && (
-            <span className="font-normal cursor-grab active:cursor-grabbing"> - {task.vibe_projects.name}</span>
-          )}
-        </div>
-      </div>
     </div>
   );
 };
@@ -251,7 +270,8 @@ const DayViewCalendar = ({
   onConnectGoogle,
   onDisconnectGoogle,
   onViewModeChange,
-  onQuickTaskCreate
+  onQuickTaskCreate,
+  onTaskComplete
 }: DayViewCalendarProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showUnsyncOption, setShowUnsyncOption] = useState(false);
@@ -605,6 +625,7 @@ const DayViewCalendar = ({
                     projects={projects}
                     onRemove={onTaskUnscheduled}
                     onEdit={onTaskEdit}
+                    onTaskComplete={onTaskComplete}
                   />
                 </div>
               );

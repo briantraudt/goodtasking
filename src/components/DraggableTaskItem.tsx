@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface Task {
   id: string;
@@ -17,9 +18,10 @@ interface Task {
 interface DraggableTaskItemProps {
   task: Task;
   onTaskClick?: (task: Task) => void;
+  onTaskComplete?: (taskId: string, completed: boolean) => void;
 }
 
-const DraggableTaskItem = ({ task, onTaskClick }: DraggableTaskItemProps) => {
+const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskItemProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: task.id,
     data: task,
@@ -30,6 +32,12 @@ const DraggableTaskItem = ({ task, onTaskClick }: DraggableTaskItemProps) => {
     if (!isDragging && onTaskClick) {
       e.stopPropagation();
       onTaskClick(task);
+    }
+  };
+
+  const handleCheckboxChange = (checked: boolean) => {
+    if (onTaskComplete) {
+      onTaskComplete(task.id, checked);
     }
   };
 
@@ -46,9 +54,21 @@ const DraggableTaskItem = ({ task, onTaskClick }: DraggableTaskItemProps) => {
         isDragging && "opacity-50"
       )}
     >
+      {/* Checkbox for task completion */}
+      <div className="flex-shrink-0 mr-3 z-10">
+        <Checkbox
+          checked={task.completed}
+          onCheckedChange={handleCheckboxChange}
+          className="rounded-sm"
+        />
+      </div>
+
       {/* Task name - clickable for editing */}
       <div 
-        className="truncate cursor-pointer relative z-10 py-1"
+        className={cn(
+          "truncate cursor-pointer relative z-10 py-1 flex-1",
+          task.completed && "line-through opacity-60"
+        )}
         onClick={handleClick}
         title="Click to edit task"
       >
@@ -59,11 +79,13 @@ const DraggableTaskItem = ({ task, onTaskClick }: DraggableTaskItemProps) => {
       
       {/* Extended drag area - starts right after text, covers remaining space */}
       <div
-        className="flex-1 h-full cursor-grab active:cursor-grabbing min-h-[32px]"
+        className="flex-shrink-0 h-full cursor-grab active:cursor-grabbing min-h-[32px] w-8 flex items-center justify-center"
         {...listeners}
         {...attributes}
         title="Drag to schedule this task"
-      />
+      >
+        <GripVertical className="h-4 w-4 text-muted-foreground" />
+      </div>
     </div>
   );
 };

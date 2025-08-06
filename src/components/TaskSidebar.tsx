@@ -88,17 +88,24 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     },
   });
 
-  // Get all incomplete tasks that are not scheduled for the selected date
+  // Get all tasks that are not scheduled for the selected date
   const allTasks = useMemo(() => {
-    return projects.flatMap(project => 
+    const tasks = projects.flatMap(project => 
       project.tasks
-        .filter(task => !task.completed) // Only filter out completed tasks
         .filter(task => task.scheduled_date !== selectedDate) // Filter out tasks scheduled for the selected date
         .map(task => ({
           ...task,
           vibe_projects: { name: project.name }
         }))
     );
+    
+    // Sort tasks: incomplete tasks first, then completed tasks (both sorted by creation date)
+    return tasks.sort((a, b) => {
+      if (a.completed !== b.completed) {
+        return a.completed ? 1 : -1; // Completed tasks go to bottom
+      }
+      return 0; // Keep relative order for same completion status
+    });
   }, [projects, selectedDate]);
 
   // Apply filters
@@ -139,10 +146,10 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     });
   }, [allTasks, projectFilter, priorityFilter, dueDateFilter, projects]);
 
-  // Get unique projects that have unscheduled tasks
+  // Get unique projects that have unscheduled tasks (including completed ones for display)
   const projectsWithTasks = useMemo(() => {
     return projects.filter(project => 
-      project.tasks.some(task => !task.completed && task.scheduled_date !== selectedDate)
+      project.tasks.some(task => task.scheduled_date !== selectedDate)
     );
   }, [projects, selectedDate]);
 
@@ -162,6 +169,13 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const handleTaskEdit = async (taskId: string, updates: Partial<Task>) => {
     if (onUpdateTask) {
       await onUpdateTask(taskId, updates);
+    }
+  };
+
+  // Handle task completion
+  const handleTaskComplete = (taskId: string, completed: boolean) => {
+    if (onUpdateTask) {
+      onUpdateTask(taskId, { completed });
     }
   };
 
@@ -439,7 +453,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1 truncate">
-                          <DraggableTaskItem task={task} onTaskClick={handleTaskClick} />
+                          <DraggableTaskItem task={task} onTaskClick={handleTaskClick} onTaskComplete={handleTaskComplete} />
                         </div>
                       </div>
                     </div>
