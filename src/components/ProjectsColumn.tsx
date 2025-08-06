@@ -104,7 +104,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
         <div className="flex items-center gap-2">
           <FolderOpen className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-semibold text-foreground">Projects</h1>
+          <h1 className="text-lg font-medium text-primary">Projects</h1>
         </div>
         {/* Only show Add button when there are projects */}
         {projectsWithoutTasks.length > 0 && (
