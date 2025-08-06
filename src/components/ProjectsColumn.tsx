@@ -20,7 +20,7 @@ interface Project {
 
 interface ProjectsColumnProps {
   projects: Project[];
-  onCreateProject: (data: { name: string; description?: string; category: string }) => Promise<void>;
+  onCreateProject: (data: { name: string; description?: string; category: string; color?: string }) => Promise<void>;
   onUpdateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   onDeleteProject: (id: string) => Promise<void>;
   onMoveProjectToTasks?: (projectId: string) => void;
@@ -108,7 +108,8 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
             await onCreateProject({
               name: project.name,
               description: project.description,
-              category: project.category
+              category: project.category,
+              color: project.color
             });
           }}
         >
@@ -180,7 +181,8 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                     await onCreateProject({
                       name: project.name,
                       description: project.description,
-                      category: project.category
+                      category: project.category,
+                      color: project.color
                     });
                   }}
                 >
