@@ -131,8 +131,12 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
   };
 
   const handleCheckboxChange = (checked: boolean) => {
+    console.log('📋 Checkbox clicked:', { taskId: task.id, checked, onTaskComplete: !!onTaskComplete });
     if (onTaskComplete) {
       onTaskComplete(task.id, checked);
+      console.log('✅ onTaskComplete called successfully');
+    } else {
+      console.log('❌ onTaskComplete is not available');
     }
   };
   

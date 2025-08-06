@@ -248,7 +248,9 @@ const DashboardView = ({
 
   // Handle task completion
   const handleTaskComplete = (taskId: string, completed: boolean) => {
+    console.log('🎯 DashboardView handleTaskComplete called:', { taskId, completed });
     onUpdateTask(taskId, { completed });
+    console.log('✅ DashboardView onUpdateTask called');
   };
 
   const handleTaskDelete = async (taskId: string) => {
