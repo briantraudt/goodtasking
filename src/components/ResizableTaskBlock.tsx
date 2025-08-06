@@ -127,22 +127,32 @@ export const ResizableTaskBlock = ({
   const handleResizeStart = useCallback((e: React.MouseEvent, direction: 'top' | 'bottom') => {
     e.preventDefault();
     e.stopPropagation();
-    setIsResizing(direction);
-    setStartY(e.clientY);
-    if (task.start_time && task.end_time) {
-      setOriginalTimes({ start: task.start_time, end: task.end_time });
+    
+    console.log('🎯 Resize start:', direction, 'Task:', task.id);
+    
+    if (!task.start_time || !task.end_time) {
+      console.error('❌ Task missing start_time or end_time:', task);
+      return;
     }
+    
+    setIsResizing(direction);
+    const mouseStartY = e.clientY;
+    setStartY(mouseStartY);
+    const origTimes = { start: task.start_time, end: task.end_time };
+    setOriginalTimes(origTimes);
+    
+    console.log('✅ Resize initialized:', { direction, mouseStartY, origTimes });
     
     // Add global mouse event listeners
     const handleMouseMove = (e: MouseEvent) => {
-      if (!originalTimes) return;
-      
-      const deltaY = e.clientY - startY;
+      const deltaY = e.clientY - mouseStartY;
       const deltaSlots = Math.round(deltaY / 48); // Each slot is 48px
       const deltaMinutes = deltaSlots * 30; // Each slot is 30 minutes
       
-      const originalStartMinutes = timeToMinutes(originalTimes.start);
-      const originalEndMinutes = timeToMinutes(originalTimes.end);
+      console.log('📏 Mouse move:', { deltaY, deltaSlots, deltaMinutes });
+      
+      const originalStartMinutes = timeToMinutes(origTimes.start);
+      const originalEndMinutes = timeToMinutes(origTimes.end);
       
       let newStartMinutes = originalStartMinutes;
       let newEndMinutes = originalEndMinutes;
@@ -172,11 +182,16 @@ export const ResizableTaskBlock = ({
       const newStartTime = minutesToTime(newStartMinutes);
       const newEndTime = minutesToTime(newEndMinutes);
       
+      console.log('🔄 Resize update:', { newStartTime, newEndTime });
+      
       // Call onResize immediately for live preview
-      onResize?.(task.id, newStartTime, newEndTime);
+      if (onResize) {
+        onResize(task.id, newStartTime, newEndTime);
+      }
     };
     
     const handleMouseUp = () => {
+      console.log('✅ Resize complete');
       setIsResizing(null);
       setOriginalTimes(null);
       document.removeEventListener('mousemove', handleMouseMove);
@@ -185,7 +200,7 @@ export const ResizableTaskBlock = ({
     
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [task.id, task.start_time, task.end_time, startY, originalTimes, onResize]);
+  }, [task.id, task.start_time, task.end_time, onResize]);
 
   return (
     <div className="relative h-full group">
