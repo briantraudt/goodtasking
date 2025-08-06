@@ -376,36 +376,14 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       </Button>
                     </div>
                   ) : (
-                    <>
-                      <div className="flex-1">
-                        <h3 
-                          className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5"
-                          onClick={() => setEditingProject(project)}
-                        >
-                          {project.name}
-                        </h3>
-                      </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => setEditingProject(project)}
-                          className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
-                        >
-                          <Edit2 className="h-3 w-3" />
-                        </Button>
-                        {onDeleteProject && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setShowDeleteProjectDialog(project.id)}
-                            className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        )}
-                      </div>
-                    </>
+                    <div className="flex-1">
+                      <h3 
+                        className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5"
+                        onClick={() => setEditingProject(project)}
+                      >
+                        {project.name}
+                      </h3>
+                    </div>
                   )}
                 </div>
                 <button
