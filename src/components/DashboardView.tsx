@@ -146,9 +146,15 @@ const DashboardView = ({
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const activeId = active.id.toString();
-    const taskId = activeId.replace('task-', '').replace('scheduled-', '');
-    const task = allTasks.find(t => t.id === taskId);
-    setActiveTask(task || null);
+    
+    if (activeId.startsWith('project-')) {
+      // Dragging a project - don't set activeTask
+      setActiveTask(null);
+    } else {
+      const taskId = activeId.replace('task-', '').replace('scheduled-', '');
+      const task = allTasks.find(t => t.id === taskId);
+      setActiveTask(task || null);
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -158,6 +164,14 @@ const DashboardView = ({
 
     const activeId = active.id.toString();
     const overId = over.id.toString();
+
+    // Handle dropping projects onto task sidebar
+    if (activeId.startsWith('project-') && overId === 'task-sidebar') {
+      const projectId = activeId.replace('project-', '');
+      // Project is "moved" to tasks column by adding a dummy task to activate it
+      onCreateTask(projectId, 'Getting started...', 'Add your first task to this project');
+      return;
+    }
 
     // Handle dropping tasks onto time slots
     if (overId.includes(':')) {

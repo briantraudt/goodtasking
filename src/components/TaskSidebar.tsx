@@ -76,9 +76,12 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const [taskDuration, setTaskDuration] = useState('30');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Set up droppable for the sidebar
+  // Set up droppable for the sidebar to accept projects and tasks
   const { isOver, setNodeRef } = useDroppable({
     id: 'task-sidebar',
+    data: {
+      accepts: ['task', 'project'],
+    },
   });
 
   // Get all incomplete tasks that are not scheduled for the selected date
@@ -271,7 +274,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       ref={setNodeRef}
       className={cn(
         "h-full",
-        isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5"
+        isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5 transition-all duration-200"
       )}
     >
       {/* Tasks Section Header */}

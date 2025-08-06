@@ -7,6 +7,7 @@ import CreateProjectDialog from './CreateProjectDialog';
 import ProjectEditDialog from './ProjectEditDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
+import { useDraggable } from '@dnd-kit/core';
 
 interface Project {
   id: string;
@@ -22,9 +23,10 @@ interface ProjectsColumnProps {
   onCreateProject: (data: { name: string; description?: string; category: 'work' | 'home' | 'personal' }) => Promise<void>;
   onUpdateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   onDeleteProject: (id: string) => Promise<void>;
+  onMoveProjectToTasks?: (projectId: string) => void;
 }
 
-const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject }: ProjectsColumnProps) => {
+const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject, onMoveProjectToTasks }: ProjectsColumnProps) => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [deleteConfirmProject, setDeleteConfirmProject] = useState<Project | null>(null);
@@ -57,6 +59,56 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
       case 'work':
       default: return '#4DA8DA';
     }
+  };
+
+  // Draggable Project Chip Component
+  const DraggableProjectChip = ({ project }: { project: Project }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      isDragging,
+    } = useDraggable({
+      id: `project-${project.id}`,
+      data: {
+        type: 'project',
+        project,
+      },
+    });
+
+    const style = transform ? {
+      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+      zIndex: isDragging ? 1000 : 'auto',
+      opacity: isDragging ? 0.8 : 1,
+    } : undefined;
+
+    const projectColor = getProjectColor(project.category, project.color);
+
+    return (
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        className={cn(
+          "inline-flex items-center gap-2 px-4 py-2 rounded-full text-white font-medium cursor-grab select-none transition-transform",
+          "hover:scale-105 active:scale-95",
+          isDragging && "cursor-grabbing shadow-lg"
+        )}
+        style={{
+          backgroundColor: projectColor,
+          ...style
+        }}
+        onClick={(e) => {
+          if (!isDragging) {
+            e.stopPropagation();
+            setEditingProject(project);
+          }
+        }}
+      >
+        <span className="text-sm font-medium">{project.name}</span>
+      </div>
+    );
   };
 
   const handleDeleteProject = async (projectId: string) => {
@@ -94,44 +146,11 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
         </CreateProjectDialog>
       </div>
 
-      {/* Projects Grid */}
-      <div className="space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
-        {projectsWithoutTasks.map((project) => {
-          const projectColor = getProjectColor(project.category, project.color);
-          
-          return (
-            <Card 
-              key={project.id} 
-              className={cn(
-                "bg-white rounded-xl shadow-sm border-2 hover:shadow-md transition-all duration-150 group cursor-pointer"
-              )}
-              style={{ borderColor: projectColor }}
-            >
-              <CardContent className="p-4">
-                {/* Project Header with Edit/Delete Options */}
-                <div className="flex justify-between items-start mb-3 group">
-                  <div className="flex items-start gap-3 flex-1">
-                    <div className="flex-1">
-                      <h3 
-                        className="font-semibold text-foreground cursor-pointer transition-colors hover:text-primary"
-                        onClick={() => setEditingProject(project)}
-                        title="Click to edit project"
-                      >
-                        {project.name}
-                      </h3>
-                      {project.description && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {project.description}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-              </CardContent>
-            </Card>
-          );
-        })}
+      {/* Projects Chips */}
+      <div className="space-y-3 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+        {projectsWithoutTasks.map((project) => (
+          <DraggableProjectChip key={project.id} project={project} />
+        ))}
 
         {/* Empty State */}
         {projectsWithoutTasks.length === 0 && (
