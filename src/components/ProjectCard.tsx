@@ -25,6 +25,7 @@ interface Project {
   name: string;
   description?: string;
   category: 'work' | 'home' | 'personal';
+  color?: string;
   tasks: Task[];
 }
 
@@ -158,7 +159,7 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
               >
                 {(() => {
                   const CategoryIcon = getCategoryIcon(project.category);
-                  return <CategoryIcon className="w-5 h-5 text-muted-foreground" />;
+                  return <CategoryIcon className="w-5 h-5" style={{ color: project.color || '#6B7280' }} />;
                 })()}
                 {project.name}
               </h3>
