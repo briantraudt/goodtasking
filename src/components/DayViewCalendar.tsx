@@ -203,7 +203,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
       </div>
 
       {/* Task content */}
-      <div className="flex items-center gap-2 min-h-0 ml-6">
+      <div className="flex items-center justify-start gap-2 min-h-0 ml-2 mr-8">
         {/* Category Icon */}
         {(() => {
           const category = project?.category || 'work';
@@ -214,7 +214,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
         {/* Task Title */}
         <span 
           className={cn(
-            "text-sm font-bold text-white truncate cursor-pointer hover:bg-white/20 px-1 py-0.5 rounded transition-colors",
+            "text-sm font-bold text-white truncate cursor-pointer hover:bg-white/20 px-1 py-0.5 rounded transition-colors text-left",
             task.completed && "line-through"
           )}
           onClick={handleClick}
