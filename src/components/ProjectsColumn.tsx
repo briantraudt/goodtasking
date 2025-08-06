@@ -138,17 +138,6 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                       }}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEditingProject(project);
-                      }}
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-destructive hover:text-destructive"
-                      onClick={(e) => {
-                        e.stopPropagation();
                         setDeleteConfirmProject(project);
                       }}
                     >
