@@ -299,8 +299,16 @@ const DashboardView = ({
                       selectedDate={selectedDate}
                       onCreateTask={onCreateTask}
                       onCreateProject={onCreateProject}
-                      onUpdateProject={(id: string, updates: { name?: string; category?: 'work' | 'home' | 'personal' }) => onUpdateProject?.(id, updates)}
-                      onDeleteProject={onDeleteProject}
+                      onUpdateProject={async (id: string, updates: any) => {
+                        if (onUpdateProject) {
+                          await onUpdateProject(id, updates);
+                        }
+                      }}
+                      onDeleteProject={async (id: string) => {
+                        if (onDeleteProject) {
+                          await onDeleteProject(id);
+                        }
+                      }}
                       onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
                         onUpdateTask(taskId, updates);
                       }}

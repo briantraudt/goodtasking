@@ -18,6 +18,7 @@ import SmartAddButton from '@/components/SmartAddButton';
 import TaskFilters from '@/components/TaskFilters';
 import AddTaskDialog from '@/components/AddTaskDialog';
 import TaskEditDialog from '@/components/TaskEditDialog';
+import ProjectEditDialog from '@/components/ProjectEditDialog';
 import { Plus, CheckSquare } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
@@ -37,6 +38,7 @@ interface Task {
 interface Project {
   id: string;
   name: string;
+  description?: string;
   category: 'work' | 'home' | 'personal';
   color?: string;
   tasks: Task[];
@@ -47,8 +49,8 @@ interface TaskSidebarProps {
   selectedDate: string;
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => void;
   onCreateProject?: (project: { name: string; description: string; category: 'work' | 'home' | 'personal'; tasks: any[] }) => void;
-  onUpdateProject?: (id: string, updates: { name?: string; category?: 'work' | 'home' | 'personal' }) => void;
-  onDeleteProject?: (id: string) => void;
+  onUpdateProject?: (id: string, updates: Partial<Project>) => Promise<void>;
+  onDeleteProject?: (id: string) => Promise<void>;
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
   className?: string;
@@ -65,6 +67,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [editingProjectName, setEditingProjectName] = useState('');
   const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState<string | null>(null);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
   
   // Add Task Form State
   const [taskTitle, setTaskTitle] = useState('');
@@ -185,9 +188,23 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     setEditingProjectName('');
   };
 
-  const handleDeleteProject = (projectId: string) => {
-    onDeleteProject?.(projectId);
+  const handleDeleteProject = async (projectId: string) => {
+    if (onDeleteProject) {
+      await onDeleteProject(projectId);
+    }
     setShowDeleteProjectDialog(null);
+  };
+
+  const handleProjectEdit = async (projectId: string, updates: Partial<Project>) => {
+    if (onUpdateProject) {
+      await onUpdateProject(projectId, updates);
+    }
+  };
+
+  const handleProjectDelete = async (projectId: string) => {
+    if (onDeleteProject) {
+      await onDeleteProject(projectId);
+    }
   };
   
   
@@ -352,7 +369,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       <div className="flex-1">
                         <h3 
                           className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5"
-                          onClick={() => handleEditProjectName(project.id)}
+                          onClick={() => setEditingProject(project)}
                         >
                           {project.name}
                         </h3>
@@ -361,7 +378,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleEditProjectName(project.id)}
+                          onClick={() => setEditingProject(project)}
                           className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
                         >
                           <Edit2 className="h-3 w-3" />
@@ -606,6 +623,15 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
         }}
         onSave={handleTaskEdit}
         onDelete={handleTaskDelete}
+      />
+
+      {/* Edit Project Dialog */}
+      <ProjectEditDialog
+        project={editingProject}
+        isOpen={!!editingProject}
+        onClose={() => setEditingProject(null)}
+        onSave={handleProjectEdit}
+        onDelete={handleProjectDelete}
       />
 
       {/* Delete Project Dialog */}
