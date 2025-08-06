@@ -22,7 +22,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { Plus, CheckSquare } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
-import { cn } from '@/lib/utils';
+import { cn, getProjectColor } from '@/lib/utils';
 
 interface Task {
   id: string;
@@ -232,61 +232,6 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     return allTasks.filter(task => task.priority === priority).length;
   };
 
-  // Dynamic Color System Based on Project Category or Custom Color
-  const getProjectColor = (category: string = 'work', customColor?: string) => {
-    // Use custom color if provided
-    if (customColor) {
-      return {
-        hex: customColor,
-        border: `border-[${customColor}]`,
-        text: `text-[${customColor}]`, 
-        accent: `text-[${customColor}]`,
-        taskBg: `bg-[${customColor}]`,
-        taskHover: 'hover:brightness-110',
-        name: 'custom',
-        cssVar: customColor
-      };
-    }
-    
-    // Fallback to category-based colors
-    switch (category) {
-      case 'personal':
-        return {
-          hex: 'hsl(150, 45%, 45%)', // Darker professional green
-          border: 'border-[hsl(150,45%,45%)]',
-          text: 'text-[hsl(150,45%,45%)]', 
-          accent: 'text-[hsl(150,45%,45%)]',
-          taskBg: 'bg-[hsl(150,45%,45%)]',
-          taskHover: 'hover:brightness-110',
-          name: 'personal-green',
-          cssVar: 'hsl(var(--personal))'
-        };
-      case 'home':
-        return {
-          hex: 'hsl(25, 95%, 53%)', // Orange
-          border: 'border-[hsl(25,95%,53%)]',
-          text: 'text-[hsl(25,95%,53%)]', 
-          accent: 'text-[hsl(25,95%,53%)]',
-          taskBg: 'bg-[hsl(25,95%,53%)]',
-          taskHover: 'hover:brightness-110',
-          name: 'home-orange',
-          cssVar: 'hsl(var(--home))'
-        };
-      case 'work':
-      default:
-        return {
-          hex: '#4DA8DA', // Blue - keep existing work color
-          border: 'border-[#4DA8DA]',
-          text: 'text-[#4DA8DA]', 
-          accent: 'text-[#4DA8DA]',
-          taskBg: 'bg-[#4DA8DA]',
-          taskHover: 'hover:brightness-110',
-          name: 'work-blue',
-          cssVar: 'hsl(var(--work))'
-        };
-    }
-  };
-
   // Get category icon function
   const getCategoryIcon = (category: string) => {
     const categoryLower = category.toLowerCase();
@@ -386,7 +331,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
               className={cn(
                 "bg-white rounded-xl p-4 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card"
               )}
-              style={{ borderColor: project.color || (typeof projectColor === 'string' ? projectColor : projectColor.hex) }}
+              style={{ borderColor: projectColor }}
             >
               {/* Project Header with Edit/Delete Options */}
               <div className="flex justify-between items-center mb-2 group">
@@ -420,7 +365,6 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                        >
                           {(() => {
                             const CategoryIcon = getCategoryIcon(project.category);
-                            const projectColor = getProjectColor(project.category, project.color);
                             return <CategoryIcon className="w-4 h-4" style={{ color: project.color || '#6B7280' }} />;
                           })()}
                          {project.name}
@@ -452,7 +396,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                             task={task} 
                             onTaskClick={handleTaskClick} 
                             onTaskComplete={handleTaskComplete}
-                            projectColor={project.color || projectColor.hex}
+                            projectColor={projectColor}
                           />
                         </div>
                       </div>
@@ -487,7 +431,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     placeholder="Type task name and press Enter..."
                     className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none text-foreground"
                     style={{ 
-                      borderColor: project.color || projectColor.hex,
+                      borderColor: projectColor,
                       backgroundColor: 'transparent'
                     }}
                     autoFocus
@@ -506,8 +450,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       "flex items-center justify-center gap-2"
                     )}
                     style={{ 
-                      borderColor: project.color || projectColor.hex,
-                      color: project.color || projectColor.hex
+                      borderColor: projectColor,
+                      color: projectColor
                     }}
                     title="Click to quick add, double-click for detailed add"
                   >

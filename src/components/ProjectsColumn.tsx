@@ -6,7 +6,7 @@ import { Plus, FolderOpen, Edit2, Trash2, Home, User, Briefcase } from 'lucide-r
 import CreateProjectDialog from './CreateProjectDialog';
 import ProjectEditDialog from './ProjectEditDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { cn } from '@/lib/utils';
+import { cn, getProjectColor } from '@/lib/utils';
 import { useCategories } from '@/hooks/useCategories';
 
 interface Project {
@@ -41,31 +41,6 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
     project.tasks.length === 0 || 
     project.tasks.every(task => task.completed || task.scheduled_date)
   );
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'work':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      case 'home':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'personal':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
-  };
-
-  const getProjectColor = (category: string = 'work', customColor?: string) => {
-    // Always use custom color if provided
-    if (customColor) return customColor;
-    
-    switch (category) {
-      case 'personal': return 'hsl(150, 45%, 45%)';
-      case 'home': return 'hsl(25, 95%, 53%)';
-      case 'work':
-      default: return '#4DA8DA';
-    }
-  };
 
   // Get category icon function
   const getCategoryIcon = (category: string) => {

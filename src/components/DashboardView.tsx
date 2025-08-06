@@ -12,6 +12,7 @@ import ProjectsColumn from './ProjectsColumn';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { format } from 'date-fns';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
+import { getProjectColor } from '@/lib/utils';
 
 interface Task {
   id: string;
@@ -384,19 +385,7 @@ const DashboardView = ({
       {/* Drag Overlay */}
       <DragOverlay>
         {activeTask ? (() => {
-          // Get the project for this task to use its color
           const project = projects.find(p => p.id === activeTask.project_id);
-          const getProjectColor = (category: string = 'work', customColor?: string) => {
-            if (customColor) return customColor;
-            
-            switch (category) {
-              case 'personal': return 'hsl(150, 45%, 45%)';
-              case 'home': return 'hsl(25, 95%, 53%)';
-              case 'work':
-              default: return '#4DA8DA';
-            }
-          };
-          
           const projectColor = getProjectColor(project?.category, project?.color);
           
           return (

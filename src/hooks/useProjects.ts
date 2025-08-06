@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useEffect } from 'react';
 
 export interface Task {
   id: string;
@@ -27,60 +28,30 @@ export interface Project {
 }
 
 export const useProjects = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const fetchProjects = async () => {
-    if (!user) return;
+    if (!user) return [];
 
-    try {
-      // Fetch projects
-      const { data: projectsData, error: projectsError } = await supabase
-        .from('vibe_projects')
-        .select('*')
-        .order('created_at', { ascending: false });
+    const { data, error } = await supabase.rpc('get_projects_with_tasks');
 
-      if (projectsError) throw projectsError;
-
-      // Fetch tasks for all projects
-      const { data: tasksData, error: tasksError } = await supabase
-        .from('vibe_tasks')
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (tasksError) throw tasksError;
-
-      // Combine projects with their tasks and convert scheduled_day to scheduledDay
-      const projectsWithTasks = projectsData.map(project => ({
-        ...project,
-        category: project.category || 'work',
-        scheduledDay: project.scheduled_day,
-        tasks: tasksData.filter(task => task.project_id === project.id)
-      }));
-
-      setProjects(projectsWithTasks);
-    } catch (error: any) {
-      console.error('Error loading projects:', error);
-    } finally {
-      setLoading(false);
-    }
+    if (error) throw error;
+    return data as Project[];
   };
 
-  const createProject = async (name: string, description?: string, category: string = 'work', color?: string) => {
-    if (!user) return;
+  const { data: projects = [], isLoading, isError, error, refetch } = useQuery<Project[]>({
+    queryKey: ['projects', user?.id],
+    queryFn: fetchProjects,
+    enabled: !!user,
+  });
 
-    try {
-      const projectData: any = { 
-        name, 
-        description, 
-        category, 
-        user_id: user.id 
-      };
-      
-      if (color) {
-        projectData.color = color;
-      }
+  const createProjectMutation = useMutation({
+    mutationFn: async ({ name, description, category = 'work', color }: { name: string, description?: string, category?: string, color?: string }) => {
+      if (!user) throw new Error("User not authenticated");
+
+      const projectData: any = { name, description, category, user_id: user.id };
+      if (color) projectData.color = color;
 
       const { data, error } = await supabase
         .from('vibe_projects')
@@ -89,25 +60,26 @@ export const useProjects = () => {
         .single();
 
       if (error) throw error;
+      return { ...data, category: data.category || 'work', tasks: [] };
+    },
+    onMutate: async (newProject) => {
+      await queryClient.cancelQueries({ queryKey: ['projects', user?.id] });
+      const previousProjects = queryClient.getQueryData(['projects', user?.id]);
+      queryClient.setQueryData(['projects', user?.id], (old: Project[] | undefined) => [...(old || []), { id: 'temp-id', ...newProject, tasks: [] } as Project]);
+      return { previousProjects };
+    },
+    onError: (err, newProject, context) => {
+      queryClient.setQueryData(['projects', user?.id], context?.previousProjects);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', user?.id] });
+    },
+  });
 
-      const newProject = { 
-        ...data, 
-        category: data.category || 'work',
-        tasks: [] 
-      };
-      setProjects([newProject, ...projects]);
+  const updateProjectMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: string, updates: Partial<Project> }) => {
+      if (!user) throw new Error("User not authenticated");
 
-      return newProject;
-    } catch (error: any) {
-      console.error('Error creating project:', error);
-    }
-  };
-
-  const updateProject = async (id: string, updates: Partial<Project>) => {
-    if (!user) return;
-
-    try {
-      // Convert scheduledDay to scheduled_day for database
       const dbUpdates: any = { ...updates };
       if ('scheduledDay' in updates) {
         dbUpdates.scheduled_day = updates.scheduledDay;
@@ -120,50 +92,61 @@ export const useProjects = () => {
         .eq('id', id);
 
       if (error) throw error;
+    },
+    onMutate: async ({ id, updates }) => {
+      await queryClient.cancelQueries({ queryKey: ['projects', user?.id] });
+      const previousProjects = queryClient.getQueryData(['projects', user?.id]);
+      queryClient.setQueryData(['projects', user?.id], (old: Project[] | undefined) =>
+        old?.map(p => p.id === id ? { ...p, ...updates } : p)
+      );
+      return { previousProjects };
+    },
+    onError: (err, newProject, context) => {
+      queryClient.setQueryData(['projects', user?.id], context?.previousProjects);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', user?.id] });
+    },
+  });
 
-      setProjects(projects.map(project => 
-        project.id === id ? { ...project, ...updates } : project
-      ));
-    } catch (error: any) {
-      console.error('Error updating project:', error);
-    }
-  };
+  const deleteProjectMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!user) throw new Error("User not authenticated");
 
-  const deleteProject = async (id: string) => {
-    if (!user) return;
-
-    try {
       const { error } = await supabase
         .from('vibe_projects')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
+    },
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['projects', user?.id] });
+      const previousProjects = queryClient.getQueryData(['projects', user?.id]);
+      queryClient.setQueryData(['projects', user?.id], (old: Project[] | undefined) =>
+        old?.filter(p => p.id !== id)
+      );
+      return { previousProjects };
+    },
+    onError: (err, newProject, context) => {
+      queryClient.setQueryData(['projects', user?.id], context?.previousProjects);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', user?.id] });
+    },
+  });
 
-      setProjects(projects.filter(project => project.id !== id));
-    } catch (error: any) {
-      console.error('Error deleting project:', error);
-    }
-  };
+  const createTaskMutation = useMutation({
+    mutationFn: async ({ projectId, title, description, dueDate }: { projectId: string, title: string, description?: string, dueDate?: Date }) => {
+      if (!user) throw new Error("User not authenticated");
 
-  const createTask = async (projectId: string, title: string, description?: string, dueDate?: Date) => {
-    if (!user) return;
-
-    try {
-      const taskData: any = { 
-        title, 
-        project_id: projectId, 
-        user_id: user.id 
-      };
-      
+      const taskData: any = { title, project_id: projectId, user_id: user.id };
       if (description) taskData.description = description;
       if (dueDate) {
-        // Format date in local timezone to avoid timezone conversion issues
         const year = dueDate.getFullYear();
         const month = String(dueDate.getMonth() + 1).padStart(2, '0');
         const day = String(dueDate.getDate()).padStart(2, '0');
         const localDateString = `${year}-${month}-${day}`;
-        
         taskData.due_date = localDateString;
         taskData.scheduled_date = localDateString;
       }
@@ -175,93 +158,108 @@ export const useProjects = () => {
         .single();
 
       if (error) throw error;
-
-      setProjects(projects.map(project => 
-        project.id === projectId 
-          ? { ...project, tasks: [...project.tasks, data] }
-          : project
-      ));
-
       return data;
-    } catch (error: any) {
-      console.error('Error creating task:', error);
-    }
-  };
+    },
+    onMutate: async (newTask) => {
+      await queryClient.cancelQueries({ queryKey: ['projects', user?.id] });
+      const previousProjects = queryClient.getQueryData(['projects', user?.id]);
+      queryClient.setQueryData(['projects', user?.id], (old: Project[] | undefined) =>
+        old?.map(p => p.id === newTask.projectId ? { ...p, tasks: [...p.tasks, {id: 'temp-id', ...newTask} as Task] } : p)
+      );
+      return { previousProjects };
+    },
+    onError: (err, newTask, context) => {
+      queryClient.setQueryData(['projects', user?.id], context?.previousProjects);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', user?.id] });
+    },
+  });
 
-  const updateTask = async (id: string, updates: Partial<Task>) => {
-    if (!user) return;
+  const updateTaskMutation = useMutation({
+    mutationFn: async ({ id, updates }: { id: string, updates: Partial<Task> }) => {
+      if (!user) throw new Error("User not authenticated");
 
-    try {
       const { error } = await supabase
         .from('vibe_tasks')
         .update(updates)
         .eq('id', id);
 
       if (error) throw error;
+    },
+    onMutate: async ({ id, updates }) => {
+      await queryClient.cancelQueries({ queryKey: ['projects', user?.id] });
+      const previousProjects = queryClient.getQueryData(['projects', user?.id]);
+      queryClient.setQueryData(['projects', user?.id], (old: Project[] | undefined) =>
+        old?.map(p => ({ ...p, tasks: p.tasks.map(t => t.id === id ? { ...t, ...updates } : t) }))
+      );
+      return { previousProjects };
+    },
+    onError: (err, newProject, context) => {
+      queryClient.setQueryData(['projects', user?.id], context?.previousProjects);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', user?.id] });
+    },
+  });
 
-      setProjects(projects.map(project => ({
-        ...project,
-        tasks: project.tasks.map(task => 
-          task.id === id ? { ...task, ...updates } : task
-        )
-      })));
-    } catch (error: any) {
-      console.error('Error updating task:', error);
-    }
-  };
+  const deleteTaskMutation = useMutation({
+    mutationFn: async (id: string) => {
+      if (!user) throw new Error("User not authenticated");
 
-  const deleteTask = async (id: string) => {
-    if (!user) return;
-
-    try {
       const { error } = await supabase
         .from('vibe_tasks')
         .delete()
         .eq('id', id);
 
       if (error) throw error;
-
-      setProjects(projects.map(project => ({
-        ...project,
-        tasks: project.tasks.filter(task => task.id !== id)
-      })));
-    } catch (error: any) {
-      console.error('Error deleting task:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchProjects();
-      // Update last login date when user logs in
-      updateLastLogin();
-    }
-  }, [user]);
+    },
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['projects', user?.id] });
+      const previousProjects = queryClient.getQueryData(['projects', user?.id]);
+      queryClient.setQueryData(['projects', user?.id], (old: Project[] | undefined) =>
+        old?.map(p => ({ ...p, tasks: p.tasks.filter(t => t.id !== id) }))
+      );
+      return { previousProjects };
+    },
+    onError: (err, newProject, context) => {
+      queryClient.setQueryData(['projects', user?.id], context?.previousProjects);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', user?.id] });
+    },
+  });
 
   const updateLastLogin = async () => {
     if (!user) return;
-    
     try {
       await supabase
         .from('user_preferences')
         .upsert({ 
           user_id: user.id,
-          last_login_date: new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+          last_login_date: new Date().toISOString().split('T')[0]
         });
     } catch (error) {
       console.error('Error updating last login:', error);
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      updateLastLogin();
+    }
+  }, [user]);
+
   return {
     projects,
-    loading,
-    createProject,
-    updateProject,
-    deleteProject,
-    createTask,
-    updateTask,
-    deleteTask,
-    refetch: fetchProjects,
+    loading: isLoading,
+    error: isError ? error : null,
+    createProject: createProjectMutation.mutateAsync,
+    updateProject: updateProjectMutation.mutateAsync,
+    deleteProject: deleteProjectMutation.mutateAsync,
+    createTask: createTaskMutation.mutateAsync,
+    updateTask: updateTaskMutation.mutateAsync,
+    deleteTask: deleteTaskMutation.mutateAsync,
+    refetch,
   };
 };
