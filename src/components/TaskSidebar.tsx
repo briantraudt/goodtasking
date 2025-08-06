@@ -135,12 +135,12 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     });
   }, [allTasks, projectFilter, priorityFilter, dueDateFilter, projects]);
 
-  // Get unique projects that have unscheduled tasks
+  // Get unique projects that have any tasks (scheduled or unscheduled)
   const projectsWithTasks = useMemo(() => {
     return projects.filter(project => 
-      project.tasks.some(task => !task.completed && task.scheduled_date !== selectedDate)
+      project.tasks.some(task => !task.completed) // Only filter out completed tasks, keep all others
     );
-  }, [projects, selectedDate]);
+  }, [projects]);
 
   // Wrapper to handle type compatibility with SmartAddButton
   const handleCreateTask = (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => {
