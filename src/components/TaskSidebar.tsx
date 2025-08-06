@@ -11,13 +11,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { CalendarIcon, Edit2, Check, Trash2 } from 'lucide-react';
+import { CalendarIcon, Edit2, Check, Trash2, Home, User, Briefcase } from 'lucide-react';
 import { format } from 'date-fns';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import TaskFilters from '@/components/TaskFilters';
 import AddTaskDialog from '@/components/AddTaskDialog';
 import TaskEditDialog from '@/components/TaskEditDialog';
 import ProjectEditDialog from '@/components/ProjectEditDialog';
+import { useCategories } from '@/hooks/useCategories';
 import { Plus, CheckSquare } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
@@ -56,6 +57,7 @@ interface TaskSidebarProps {
 }
 
 const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, className }: TaskSidebarProps) => {
+  const { categories } = useCategories();
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
@@ -269,6 +271,24 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     }
   };
 
+  // Get category icon function
+  const getCategoryIcon = (category: string) => {
+    const categoryLower = category.toLowerCase();
+    const categoryData = categories.find(cat => cat.name.toLowerCase() === categoryLower);
+    
+    // Fallback to direct icon mapping if category not found
+    if (!categoryData) {
+      switch (categoryLower) {
+        case 'home': return Home;
+        case 'personal': return User;
+        case 'work': return Briefcase;
+        default: return Briefcase;
+      }
+    }
+    
+    return categoryData.icon || Briefcase;
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -376,14 +396,18 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       </Button>
                     </div>
                   ) : (
-                    <div className="flex-1">
-                      <h3 
-                        className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5"
-                        onClick={() => setEditingProject(project)}
-                      >
-                        {project.name}
-                      </h3>
-                    </div>
+                     <div className="flex-1">
+                       <h3 
+                         className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5 flex items-center gap-2"
+                         onClick={() => setEditingProject(project)}
+                       >
+                         {(() => {
+                           const CategoryIcon = getCategoryIcon(project.category);
+                           return <CategoryIcon className="w-4 h-4 text-muted-foreground" />;
+                         })()}
+                         {project.name}
+                       </h3>
+                     </div>
                   )}
                 </div>
                 <button
