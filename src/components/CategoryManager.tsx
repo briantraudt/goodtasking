@@ -98,7 +98,7 @@ const CategoryManager = ({ children }: CategoryManagerProps) => {
             {/* Add New Category Button */}
             <Button
               onClick={() => setIsCreateDialogOpen(true)}
-              className="w-full flex items-center gap-2"
+              className="w-full flex items-center gap-2 hover:bg-primary hover:text-white hover:border-primary"
               variant="outline"
             >
               <Plus className="h-4 w-4" />
