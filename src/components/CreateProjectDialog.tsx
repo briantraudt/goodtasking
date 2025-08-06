@@ -31,10 +31,10 @@ const PROJECT_COLORS = [
   { name: 'Brand Yellow', value: '#FFAB00' },
   { name: 'Brand Red', value: '#FF5630' },
   { name: 'Brand Orange', value: '#FF8B00' },
-  { name: 'Brand Dark Navy', value: '#172B4D' },
+  { name: 'Brand Dark', value: '#172B4D' },
   { name: 'Light Gray', value: '#F4F5F7' },
-  { name: 'Teal Green', value: '#2BB673' },
-  { name: 'Bright Blue', value: '#339CFF' }
+  { name: 'Soft Muted Gray', value: '#EDEFF2' },
+  { name: 'Teal', value: '#2BB673' }
 ];
 
 export default function CreateProjectDialog({ onCreateProject, existingProjects = [], children }: CreateProjectDialogProps) {
