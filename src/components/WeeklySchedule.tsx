@@ -76,12 +76,12 @@ const WeeklySchedule = ({
     
     switch (category) {
       case 'personal':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-500 text-white';
       case 'home':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-orange-500 text-white';
       case 'work':
       default:
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-blue-500 text-white';
     }
   };
 
@@ -197,108 +197,90 @@ const WeeklySchedule = ({
           </div>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
-          {weekDays.map((day, index) => {
-            const tasksForDay = getTasksForDay(day);
-            const isToday = isSameDay(day, new Date());
-            
-            return (
-              <Card 
-                key={index} 
-                className={cn(
-                  "min-h-[200px] transition-all duration-200",
-                  isToday && "ring-2 ring-primary ring-offset-2"
-                )}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className={cn(
-                        "font-semibold text-sm",
-                        isToday && "text-primary"
-                      )}>
-                        {format(day, 'EEE')}
-                      </h3>
-                      <p className={cn(
-                        "text-2xl font-bold",
-                        isToday && "text-primary"
-                      )}>
-                        {format(day, 'd')}
-                      </p>
-                    </div>
-                    {isToday && (
-                      <Badge variant="default" className="text-xs">
-                        Today
-                      </Badge>
-                    )}
+        <div className="bg-white border rounded-lg overflow-hidden">
+          {/* Header Row */}
+          <div className="grid grid-cols-8 border-b bg-gray-50">
+            <div className="p-4 text-sm font-medium text-gray-600">Tasks</div>
+            {weekDays.map((day, index) => {
+              const isToday = isSameDay(day, new Date());
+              return (
+                <div key={index} className={cn(
+                  "p-4 text-center text-sm font-medium border-l",
+                  isToday ? "bg-blue-50 text-blue-600" : "text-gray-600"
+                )}>
+                  <div className="uppercase font-semibold text-xs mb-1">{format(day, 'EEE')}</div>
+                  <div className={cn(
+                    "text-lg font-bold",
+                    isToday && "text-blue-600"
+                  )}>{format(day, 'd')}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Tasks Rows */}
+          <div className="divide-y">
+            {projects.map((project) => {
+              const projectTasks = project.tasks.filter(task => !task.completed);
+              if (projectTasks.length === 0) return null;
+
+              return (
+                <div key={project.id} className="grid grid-cols-8 hover:bg-gray-50/50">
+                  {/* Project Name Column */}
+                  <div className="p-4 border-r">
+                    <div className="text-sm font-medium text-gray-900">{project.name}</div>
+                    <div className="text-xs text-gray-500 capitalize">{project.category}</div>
                   </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-2">
-                  {tasksForDay.length === 0 ? (
-                    <div className="text-center py-4">
-                      <Clock className="h-6 w-6 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-muted-foreground">No tasks</p>
-                    </div>
-                  ) : (
-                    tasksForDay.map((task) => (
-                      <div
-                        key={task.id}
-                        className={cn(
-                          "p-3 rounded-lg border bg-card transition-all duration-200 hover:shadow-sm",
-                          task.completed && "opacity-60"
-                        )}
-                      >
-                        <div className="flex items-start gap-2">
-                          <Checkbox
-                            checked={task.completed}
-                            onCheckedChange={(checked) => 
-                              handleTaskToggle(task.id, checked as boolean)
-                            }
-                            className="mt-0.5"
-                          />
-                          <div className="flex-1 min-w-0">
-                            <p className={cn(
-                              "text-sm font-medium text-foreground",
-                              task.completed && "line-through text-muted-foreground"
-                            )}>
-                              {task.title}
-                            </p>
-                            <Badge 
-                              variant="outline" 
-                              className={cn("text-xs mt-1", task.projectColor)}
+
+                  {/* Day Columns */}
+                  {weekDays.map((day, dayIndex) => {
+                    const tasksForDay = getTasksForDay(day).filter(task => 
+                      project.tasks.some(pt => pt.id === task.id)
+                    );
+                    
+                    return (
+                      <div key={dayIndex} className="p-2 border-l min-h-[80px] relative">
+                        <div className="space-y-1">
+                          {tasksForDay.map((task) => (
+                            <div
+                              key={task.id}
+                              className={cn(
+                                "px-2 py-1 rounded text-xs font-medium cursor-pointer shadow-sm",
+                                getProjectColor(task.project_id),
+                                task.completed && "opacity-60 line-through"
+                              )}
+                              onClick={() => handleTaskToggle(task.id, !task.completed)}
                             >
-                              {task.projectName}
-                            </Badge>
-                          </div>
+                              {task.title}
+                            </div>
+                          ))}
                         </div>
+                        
+                        {/* Quick add button for this project/day */}
+                        {projects.length > 0 && (
+                          <AddTaskDialog 
+                            projects={[project]} 
+                            onCreateTask={(projectId, title, description, dueDate) => 
+                              handleCreateTaskForProject(projectId, title, description, day)
+                            }
+                            triggerButton={
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="absolute bottom-1 right-1 h-6 w-6 p-0 opacity-0 hover:opacity-100 text-gray-400 hover:text-gray-600"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </Button>
+                            }
+                          />
+                        )}
                       </div>
-                    ))
-                  )}
-                  
-                  {/* Quick add task for this day */}
-                  {projects.length > 0 && (
-                    <AddTaskDialog 
-                      projects={projects} 
-                      onCreateTask={(projectId, title, description, dueDate) => 
-                        handleCreateTaskForProject(projectId, title, description, day)
-                      }
-                      triggerButton={
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="w-full h-8 text-muted-foreground hover:text-foreground"
-                        >
-                          <Plus className="h-3 w-3 mr-1" />
-                          Add task
-                        </Button>
-                      }
-                    />
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
