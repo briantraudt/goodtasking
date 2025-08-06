@@ -270,8 +270,8 @@ const DashboardView = ({
             <div className="h-full p-6">
               <div className="h-full flex flex-col lg:flex-row gap-6">
                 {/* Calendar - 50% width */}
-                <div className="flex-[2] min-h-0 lg:min-h-[600px]">
-                  <div className="h-full bg-card rounded-xl shadow-sm border p-6">
+                <div className="flex-[2] min-h-0 lg:min-h-[600px] overflow-hidden">
+                  <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
                     <DayViewCalendar
                       selectedDate={selectedDate}
                       onDateChange={setSelectedDate}

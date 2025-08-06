@@ -526,7 +526,7 @@ const DayViewCalendar = ({
       <div className="flex-1 overflow-hidden">
         <div 
           ref={scrollContainerRef}
-          className="h-full overflow-y-auto border rounded-lg"
+          className="h-full overflow-y-auto overflow-x-hidden border rounded-lg"
           style={{ scrollBehavior: 'smooth' }}
         >
           <div className="relative">
