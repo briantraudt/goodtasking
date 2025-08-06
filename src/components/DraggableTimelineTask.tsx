@@ -69,10 +69,10 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    backgroundColor: actualBlockType === 'task' && !task?.completed ? block.color : undefined,
+    backgroundColor: actualBlockType === 'task' ? block.color : undefined,
     borderLeftColor: actualBlockType === 'task' ? block.color : undefined
   } : {
-    backgroundColor: actualBlockType === 'task' && !task?.completed ? block.color : undefined,
+    backgroundColor: actualBlockType === 'task' ? block.color : undefined,
     borderLeftColor: actualBlockType === 'task' ? block.color : undefined
   };
 
@@ -199,7 +199,7 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
           ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
           : cn(
               "border-l-4 rounded-lg px-3 py-1.5", 
-              task?.completed ? "bg-gray-50/60 opacity-75" : "hover:bg-gray-50/30"
+              task?.completed ? "opacity-75" : ""
             ),
         isDraggableTask && "hover:shadow-md",
         isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
