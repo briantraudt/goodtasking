@@ -219,7 +219,6 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
         {projectsWithoutTasks.length === 0 && (
           <div className="text-center py-12">
             <div className="rounded-xl bg-white p-8 border-2 border-dashed border-[#E2E8F0] shadow-sm flex flex-col items-center">
-              <div className="text-4xl mb-4">📁</div>
               <h3 className="text-lg font-semibold text-[#0F172A] mb-2">No Empty Projects</h3>
               <p className="text-[#64748B] mb-6">All your projects have tasks assigned to them.</p>
               <CreateProjectDialog

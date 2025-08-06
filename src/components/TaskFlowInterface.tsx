@@ -94,9 +94,6 @@ export default function TaskFlowInterface({ taskSequence, onComplete, onRestart 
         <div className="space-y-6 p-4">
           {/* Completion Celebration */}
           <div className="text-center space-y-4">
-            <div className="flex justify-center">
-              <Trophy className="h-16 w-16 text-yellow-500" />
-            </div>
             <div>
               <h3 className="text-2xl font-bold text-foreground">All Tasks Complete!</h3>
               <p className="text-muted-foreground mt-2">

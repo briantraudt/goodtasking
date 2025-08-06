@@ -512,13 +512,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
             <div className="rounded-xl bg-white p-8 border-2 border-dashed border-[#E2E8F0] shadow-sm">
               {allTasks.length === 0 ? (
                 <div>
-                  <div className="text-4xl mb-4">🎉</div>
                   <h3 className="text-lg font-semibold text-[#0F172A] mb-2">All tasks complete!</h3>
                   <p className="text-[#64748B]">Great job staying on top of everything.</p>
                 </div>
               ) : (
                 <div>
-                  <div className="text-4xl mb-4">🔍</div>
                   <h3 className="text-lg font-semibold text-[#0F172A] mb-2">No matching tasks</h3>
                   <p className="text-[#64748B]">Try adjusting your filters to see more tasks.</p>
                 </div>
