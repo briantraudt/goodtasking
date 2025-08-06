@@ -14,7 +14,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { CalendarIcon, Edit2, Check, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
-import SmartAddButton from '@/components/SmartAddButton';
 import TaskFilters from '@/components/TaskFilters';
 import AddTaskDialog from '@/components/AddTaskDialog';
 import TaskEditDialog from '@/components/TaskEditDialog';
@@ -281,11 +280,20 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
           <CheckSquare className="h-5 w-5 text-primary" />
           <h1 className="text-lg font-semibold text-foreground">Tasks</h1>
         </div>
-        <SmartAddButton
-          projects={projects}
-          onCreateTask={handleCreateTask}
-          onCreateProject={onCreateProject}
-        />
+        <Button
+          onClick={() => {
+            // If there are projects with tasks, select the first one by default
+            if (projectsWithTasks.length > 0) {
+              setSelectedProjectId(projectsWithTasks[0].id);
+            }
+            setShowAddTaskDialog(true);
+          }}
+          size="sm"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+        >
+          <Plus className="h-4 w-4 mr-1" />
+          Add
+        </Button>
       </div>
       
       {/* No header section needed - Add button is now in parent component */}
