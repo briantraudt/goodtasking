@@ -182,7 +182,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                     setActiveInlineAdd(null);
                   }}
                   placeholder="Type task name and press Enter..."
-                  className="text-sm px-3 py-1.5 rounded-md border-2 border-dashed w-full focus:outline-none focus:ring-2 focus:ring-opacity-50 mt-3"
+                  className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none focus:ring-2 focus:ring-opacity-50 mt-3"
                   style={{ 
                     borderColor: projectColor,
                     color: projectColor,
@@ -196,7 +196,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                     setActiveInlineAdd(project.id);
                   }}
                   className={cn(
-                    "text-sm font-medium px-3 py-1.5 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50 mt-3",
+                    "text-sm font-medium px-3 py-1 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50 mt-3",
                     "flex items-center justify-center gap-2 w-full"
                   )}
                   style={{ 

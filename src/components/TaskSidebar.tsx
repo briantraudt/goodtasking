@@ -425,7 +425,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     <div
                       key={task.id}
                       className={cn(
-                        "text-white font-medium rounded-md px-3 py-1.5 text-sm cursor-pointer transition-all duration-150",
+                        "text-white font-medium rounded-md px-3 py-1 text-sm cursor-pointer transition-all duration-150",
                         "hover:scale-[1.02] hover:shadow-md", // Enhanced hover effects
                         isOverdue 
                           ? "bg-[#4DA8DA] hover:brightness-110 border-2 border-red-500" // Light blue background with red border for overdue
@@ -470,7 +470,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       setActiveInlineAdd(null);
                     }}
                     placeholder="Type task name and press Enter..."
-                    className="text-sm px-3 py-1.5 rounded-md border-2 border-dashed w-full focus:outline-none focus:ring-2 focus:ring-opacity-50"
+                    className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none focus:ring-2 focus:ring-opacity-50"
                     style={{ 
                       borderColor: project.color || projectColor.hex,
                       color: project.color || projectColor.hex,
@@ -488,7 +488,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       setShowAddTaskDialog(true);
                     }}
                     className={cn(
-                      "text-sm font-medium px-3 py-1.5 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
+                      "text-sm font-medium px-3 py-1 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
                       "flex items-center justify-center gap-2"
                     )}
                     style={{ 
