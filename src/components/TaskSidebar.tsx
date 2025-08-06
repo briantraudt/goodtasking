@@ -440,20 +440,20 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     <div
                       key={task.id}
                       className={cn(
-                        "text-white font-medium rounded-lg px-3 py-1 text-sm cursor-pointer transition-all duration-150",
-                        "hover:scale-[1.02] hover:shadow-md", // Enhanced hover effects
-                        isOverdue 
-                          ? "bg-[#4DA8DA] hover:brightness-110 border-2 border-red-500" // Light blue background with red border for overdue
-                          : "hover:brightness-110"
+                        "rounded-lg transition-all duration-150 cursor-pointer",
+                        "hover:scale-[1.02] hover:shadow-md",
+                        isOverdue && "border-2 border-red-500"
                       )}
-                      style={{
-                        backgroundColor: project.color || projectColor.hex
-                      }}
-                      title="Click to edit or delete this task" // Tooltip to indicate clickability
+                      title="Click to edit or delete this task"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1 truncate">
-                          <DraggableTaskItem task={task} onTaskClick={handleTaskClick} onTaskComplete={handleTaskComplete} />
+                          <DraggableTaskItem 
+                            task={task} 
+                            onTaskClick={handleTaskClick} 
+                            onTaskComplete={handleTaskComplete}
+                            projectColor={project.color || projectColor.hex}
+                          />
                         </div>
                       </div>
                     </div>

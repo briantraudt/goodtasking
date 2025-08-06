@@ -19,29 +19,14 @@ interface DraggableTaskItemProps {
   task: Task;
   onTaskClick?: (task: Task) => void;
   onTaskComplete?: (taskId: string, completed: boolean) => void;
+  projectColor?: string;
 }
 
-const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskItemProps) => {
+const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: DraggableTaskItemProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: task.id,
     data: task,
   });
-
-  const getProjectColor = () => {
-    // Get category from task's project, defaulting to work
-    const category = task.vibe_projects?.name?.toLowerCase() || 'work';
-    
-    // Map category to colors that match the project card colors
-    switch (category) {
-      case 'personal':
-        return 'bg-[hsl(var(--personal))] hover:bg-[hsl(var(--personal))]/90';
-      case 'home':
-        return 'bg-[hsl(var(--home))] hover:bg-[hsl(var(--home))]/90';
-      case 'work':
-      default:
-        return 'bg-primary hover:bg-primary/90';
-    }
-  };
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't trigger completion if clicking on drag handle or checkbox
@@ -73,7 +58,12 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : undefined;
+    backgroundColor: task.completed ? '#6b7280' : (projectColor || '#6b7280'),
+    opacity: isDragging ? 0.5 : (task.completed ? 0.75 : 1)
+  } : {
+    backgroundColor: task.completed ? '#6b7280' : (projectColor || '#6b7280'),
+    opacity: task.completed ? 0.75 : 1
+  };
 
   return (
     <div
@@ -81,9 +71,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
       style={style}
       className={cn(
         "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 cursor-pointer min-h-[22px] text-white border-0",
-        getProjectColor(),
-        task.completed && "opacity-75 bg-gray-500 hover:bg-gray-600",
-        isDragging && "opacity-50 shadow-lg z-50"
+        isDragging && "shadow-lg z-50"
       )}
       onClick={handleCardClick}
     >
