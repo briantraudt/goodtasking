@@ -19,6 +19,7 @@ export interface Project {
   name: string;
   description?: string;
   category: string;
+  color?: string;
   created_at: string;
   updated_at: string;
   scheduledDay?: string;
@@ -66,13 +67,24 @@ export const useProjects = () => {
     }
   };
 
-  const createProject = async (name: string, description?: string, category: string = 'work') => {
+  const createProject = async (name: string, description?: string, category: string = 'work', color?: string) => {
     if (!user) return;
 
     try {
+      const projectData: any = { 
+        name, 
+        description, 
+        category, 
+        user_id: user.id 
+      };
+      
+      if (color) {
+        projectData.color = color;
+      }
+
       const { data, error } = await supabase
         .from('vibe_projects')
-        .insert([{ name, description, category, user_id: user.id }])
+        .insert([projectData])
         .select()
         .single();
 

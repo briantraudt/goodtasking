@@ -52,7 +52,7 @@ const Index = () => {
           <DashboardView
             projects={projects}
             onCreateProject={async (data) => {
-              await createProject(data.name, data.description, data.category);
+              await createProject(data.name, data.description, data.category, data.color);
             }}
             onUpdateProject={updateProject}
             onDeleteProject={deleteProject}
