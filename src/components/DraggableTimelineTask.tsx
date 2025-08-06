@@ -1,9 +1,10 @@
 import React from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Calendar } from 'lucide-react';
+import { Clock, Calendar, Home, User, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { parseISO, format } from 'date-fns';
+import { useCategories } from '@/hooks/useCategories';
 
 interface Task {
   id: string;
@@ -12,6 +13,12 @@ interface Task {
   estimated_duration?: number;
   start_time?: string;
   end_time?: string;
+  project_id?: string;
+  project?: {
+    id: string;
+    name: string;
+    category: string;
+  };
 }
 
 interface TimeBlock {
@@ -32,6 +39,7 @@ interface DraggableTimelineTaskProps {
 }
 
 const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
+  const { categories } = useCategories();
   // More robust type determination: 
   // If we have a googleEventId and NO task object, it's definitely an event
   // If we have a task object OR taskId, it's definitely a task
@@ -97,6 +105,24 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
     }
   };
 
+  // Get category icon function
+  const getCategoryIcon = (category: string) => {
+    const categoryLower = category.toLowerCase();
+    const categoryData = categories.find(cat => cat.name.toLowerCase() === categoryLower);
+    
+    // Fallback to direct icon mapping if category not found
+    if (!categoryData) {
+      switch (categoryLower) {
+        case 'home': return Home;
+        case 'personal': return User;
+        case 'work': return Briefcase;
+        default: return Briefcase;
+      }
+    }
+    
+    return categoryData.icon || Briefcase;
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -119,12 +145,17 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
     >
       {/* Content container with modern spacing */}
       <div className="h-full flex flex-col justify-center">
-        {/* Event/Task Title - Enhanced Typography */}
+        {/* Event/Task Title - Enhanced Typography with Category Icon */}
         <div className={cn(
-          "text-sm leading-tight text-left font-bold",
+          "text-sm leading-tight text-left font-bold flex items-center gap-2",
           actualBlockType === 'event' ? "text-gray-900" : "text-gray-900"
         )}>
-          {block.title}
+          {/* Category Icon for tasks */}
+          {actualBlockType === 'task' && task?.project?.category && (() => {
+            const CategoryIcon = getCategoryIcon(task.project.category);
+            return <CategoryIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />;
+          })()}
+          <span className="truncate">{block.title}</span>
         </div>
       </div>
       
