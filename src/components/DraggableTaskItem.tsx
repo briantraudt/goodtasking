@@ -89,7 +89,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
         onClick={handleEditClick}
         title="Click to edit task"
       >
-        <span className="text-sm font-medium hover:bg-black/5 transition-colors px-1 py-0.5 rounded">
+        <span className="text-sm font-medium text-gray-900 hover:bg-black/5 transition-colors px-1 py-0.5 rounded">
           {task.title}
         </span>
       </div>
