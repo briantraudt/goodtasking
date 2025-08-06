@@ -101,7 +101,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
           checked={task.completed}
           onCheckedChange={handleCheckboxChange}
           onClick={(e) => e.stopPropagation()}
-          className="h-3 w-3"
+          className="h-3 w-3 data-[state=checked]:bg-white data-[state=checked]:border-white data-[state=checked]:text-black"
         />
       </div>
     </div>
