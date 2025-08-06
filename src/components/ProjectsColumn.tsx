@@ -148,7 +148,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
               <div className="flex justify-between items-center">
                 <div className="flex-1">
                   <h3 
-                    className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5 flex items-center gap-2"
+                    className="font-medium text-primary cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5 flex items-center gap-2"
                     onClick={() => setEditingProject(project)}
                   >
                     {(() => {

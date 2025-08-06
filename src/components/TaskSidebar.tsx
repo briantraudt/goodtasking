@@ -317,7 +317,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
         <div className="flex items-center gap-2">
           <CheckSquare className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-semibold text-foreground">Tasks</h1>
+          <h1 className="text-lg font-medium text-primary">Tasks</h1>
         </div>
         {/* Only show Add Task button if there are projects with tasks available */}
         {projectsWithTasks.length > 0 && (
