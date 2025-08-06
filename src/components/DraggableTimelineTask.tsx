@@ -207,7 +207,7 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
       className={cn(
         "transition-all duration-200 w-full m-0 border-0 box-border flex flex-col justify-center group relative min-h-[44px]",
         "h-full min-h-full overflow-hidden cursor-pointer",
-        // Modern styling for events and tasks
+        // Modern styling for events and tasks - NO background classes for tasks
         actualBlockType === 'event' 
           ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
           : "border-l-4 rounded-lg px-3 py-1.5 text-white",
