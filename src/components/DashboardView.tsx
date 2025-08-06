@@ -246,6 +246,11 @@ const DashboardView = ({
     setSelectedTaskForEdit(null);
   };
 
+  // Handle task completion
+  const handleTaskComplete = (taskId: string, completed: boolean) => {
+    onUpdateTask(taskId, { completed });
+  };
+
   const handleTaskDelete = async (taskId: string) => {
     if (onDeleteTask) {
       await onDeleteTask(taskId);
@@ -298,6 +303,7 @@ const DashboardView = ({
                       onDisconnectGoogle={disconnectGoogleCalendar}
                       onViewModeChange={(mode) => setViewMode(mode)}
                       onQuickTaskCreate={handleQuickTaskCreate}
+                      onTaskComplete={handleTaskComplete}
                     />
                   </div>
                 </div>
