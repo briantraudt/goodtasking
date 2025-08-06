@@ -50,7 +50,7 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
       onCreateProject({
         name: name.trim(),
         description: description.trim(),
-        category: category || categories[0]?.name || 'Work',
+        category: (category || categories[0]?.name || 'Work').toLowerCase(),
         color: selectedColor,
         tasks: []
       });
