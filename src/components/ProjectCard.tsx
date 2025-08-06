@@ -141,9 +141,13 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
               </div>
             ) : (
               <h3 
-                className="text-xl font-semibold text-foreground cursor-pointer hover:text-primary transition-colors"
+                className="text-xl font-semibold text-foreground cursor-pointer hover:text-primary transition-colors flex items-center gap-2"
                 onClick={() => setIsEditingName(true)}
               >
+                {(() => {
+                  const CategoryIcon = getCategoryIcon(project.category);
+                  return <CategoryIcon className="w-5 h-5 text-muted-foreground" />;
+                })()}
                 {project.name}
               </h3>
             )}
