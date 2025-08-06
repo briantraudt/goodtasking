@@ -183,7 +183,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
       {...attributes}
     >
       {/* Checkbox for task completion */}
-      <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20">
+      <div className="absolute top-1/2 -translate-y-1/2 right-2 z-20">
         <div
           onClick={(e) => {
             e.stopPropagation();
