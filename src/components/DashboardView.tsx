@@ -31,7 +31,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
-  category: 'work' | 'home' | 'personal';
+  category: string;
   color?: string;
   tasks: Task[];
 }
@@ -42,7 +42,7 @@ interface DashboardViewProps {
   onUpdateProject?: (id: string, updates: Partial<Project>) => void;
   onDeleteProject?: (id: string) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => Promise<any>;
-  onCreateProject: (data: { name: string; description?: string; category: 'work' | 'home' | 'personal' }) => Promise<void>;
+  onCreateProject: (data: { name: string; description?: string; category: string }) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
   onRefreshTasks?: () => void;
   userName?: string;

@@ -18,7 +18,7 @@ export interface Project {
   id: string;
   name: string;
   description?: string;
-  category: 'work' | 'home' | 'personal';
+  category: string;
   created_at: string;
   updated_at: string;
   scheduledDay?: string;
@@ -53,7 +53,7 @@ export const useProjects = () => {
       // Combine projects with their tasks and convert scheduled_day to scheduledDay
       const projectsWithTasks = projectsData.map(project => ({
         ...project,
-        category: (project.category || 'work') as 'work' | 'home' | 'personal',
+        category: project.category || 'work',
         scheduledDay: project.scheduled_day,
         tasks: tasksData.filter(task => task.project_id === project.id)
       }));
@@ -66,7 +66,7 @@ export const useProjects = () => {
     }
   };
 
-  const createProject = async (name: string, description?: string, category: 'work' | 'home' | 'personal' = 'work') => {
+  const createProject = async (name: string, description?: string, category: string = 'work') => {
     if (!user) return;
 
     try {
@@ -80,7 +80,7 @@ export const useProjects = () => {
 
       const newProject = { 
         ...data, 
-        category: (data.category || 'work') as 'work' | 'home' | 'personal',
+        category: data.category || 'work',
         tasks: [] 
       };
       setProjects([newProject, ...projects]);

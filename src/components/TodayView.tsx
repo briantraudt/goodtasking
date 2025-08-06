@@ -27,7 +27,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
-  category?: 'work' | 'personal' | 'home';
+  category?: string;
   tasks: Task[];
 }
 
@@ -35,7 +35,7 @@ interface TodayViewProps {
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
-  onCreateProject: (data: { name: string; description: string; category: 'work' | 'home' | 'personal' }) => void;
+  onCreateProject: (data: { name: string; description: string; category: string }) => void;
   onRefreshTasks?: () => void;
   userName?: string;
 }

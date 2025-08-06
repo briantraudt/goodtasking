@@ -14,7 +14,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
-  category: 'work' | 'home' | 'personal';
+  category: string;
   color?: string;
   tasks: any[];
 }
@@ -31,7 +31,7 @@ const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: Proje
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<'work' | 'home' | 'personal'>('work');
+  const [category, setCategory] = useState<string>('work');
   const [color, setColor] = useState('#4DA8DA');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -173,7 +173,7 @@ const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: Proje
               <Label htmlFor="category" className="text-foreground font-medium">
                 Category
               </Label>
-              <Select value={category} onValueChange={(value: 'work' | 'home' | 'personal') => setCategory(value)}>
+              <Select value={category} onValueChange={(value: string) => setCategory(value)}>
                 <SelectTrigger className="border-border">
                   <SelectValue />
                 </SelectTrigger>

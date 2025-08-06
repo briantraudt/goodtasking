@@ -26,7 +26,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
-  category?: 'work' | 'personal' | 'home';
+  category?: string;
   color?: string;
   tasks: Task[];
 }
@@ -35,8 +35,8 @@ interface WeeklyScheduleProps {
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
-  onCreateProject: (data: { name: string; description: string; category: 'work' | 'home' | 'personal' }) => void;
-  onUpdateProject?: (id: string, updates: { name?: string; category?: 'work' | 'home' | 'personal' }) => void;
+  onCreateProject: (data: { name: string; description: string; category: string }) => void;
+  onUpdateProject?: (id: string, updates: { name?: string; category?: string }) => void;
   onDeleteProject?: (id: string) => void;
   onRefreshTasks?: () => void;
   userName?: string;

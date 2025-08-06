@@ -12,14 +12,14 @@ interface Project {
   id: string;
   name: string;
   description?: string;
-  category: 'work' | 'home' | 'personal';
+  category: string;
   color?: string;
   tasks: any[];
 }
 
 interface ProjectsColumnProps {
   projects: Project[];
-  onCreateProject: (data: { name: string; description?: string; category: 'work' | 'home' | 'personal' }) => Promise<void>;
+  onCreateProject: (data: { name: string; description?: string; category: string }) => Promise<void>;
   onUpdateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   onDeleteProject: (id: string) => Promise<void>;
   onMoveProjectToTasks?: (projectId: string) => void;

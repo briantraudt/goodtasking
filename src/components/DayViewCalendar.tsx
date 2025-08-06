@@ -36,7 +36,7 @@ interface Project {
   id: string;
   name: string;
   color?: string;
-  category: 'work' | 'home' | 'personal';
+  category: string;
 }
 
 interface DayViewCalendarProps {

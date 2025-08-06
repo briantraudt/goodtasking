@@ -38,7 +38,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
-  category: 'work' | 'home' | 'personal';
+  category: string;
   color?: string;
   tasks: Task[];
 }
@@ -47,7 +47,7 @@ interface TaskSidebarProps {
   projects: Project[];
   selectedDate: string;
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => void;
-  onCreateProject?: (project: { name: string; description: string; category: 'work' | 'home' | 'personal'; tasks: any[] }) => void;
+  onCreateProject?: (project: { name: string; description: string; category: string; tasks: any[] }) => void;
   onUpdateProject?: (id: string, updates: Partial<Project>) => Promise<void>;
   onDeleteProject?: (id: string) => Promise<void>;
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;

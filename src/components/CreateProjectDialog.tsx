@@ -4,14 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Plus } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Settings } from 'lucide-react';
+import { useCategories } from '@/hooks/useCategories';
+import CategoryManager from './CategoryManager';
 
 interface Project {
   id: string;
   name: string;
   description: string;
-  category: 'work' | 'home' | 'personal';
+  category: string;
   color: string;
   tasks: any[];
 }
@@ -36,10 +38,11 @@ const PROJECT_COLORS = [
 ];
 
 export default function CreateProjectDialog({ onCreateProject, children }: CreateProjectDialogProps) {
+  const { categories } = useCategories();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<'work' | 'home' | 'personal'>('work');
+  const [category, setCategory] = useState<string>('');
   const [selectedColor, setSelectedColor] = useState(PROJECT_COLORS[0].value);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -48,13 +51,13 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
       onCreateProject({
         name: name.trim(),
         description: description.trim(),
-        category,
+        category: category || categories[0]?.name || 'Work',
         color: selectedColor,
         tasks: []
       });
       setName('');
       setDescription('');
-      setCategory('work');
+      setCategory('');
       setSelectedColor(PROJECT_COLORS[0].value);
       setOpen(false);
     }
@@ -96,33 +99,32 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
             />
           </div>
           <div>
-            <Label>Category</Label>
-            <div className="flex gap-4 mt-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="work"
-                  checked={category === 'work'}
-                  onCheckedChange={() => setCategory('work')}
-                />
-                <Label htmlFor="work" className="text-sm font-normal">Work</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="personal"
-                  checked={category === 'personal'}
-                  onCheckedChange={() => setCategory('personal')}
-                />
-                <Label htmlFor="personal" className="text-sm font-normal">Personal</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="home"
-                  checked={category === 'home'}
-                  onCheckedChange={() => setCategory('home')}
-                />
-                <Label htmlFor="home" className="text-sm font-normal">Home</Label>
-              </div>
+            <div className="flex items-center justify-between mb-2">
+              <Label>Category</Label>
+              <CategoryManager>
+                <Button variant="ghost" size="sm" className="h-8 px-2">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </CategoryManager>
             </div>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.name}>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: cat.color }}
+                      />
+                      {cat.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
           {/* Color Picker */}
