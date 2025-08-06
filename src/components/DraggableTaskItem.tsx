@@ -27,6 +27,22 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
     data: task,
   });
 
+  const getProjectColor = () => {
+    // Get category from task's project, defaulting to work
+    const category = task.vibe_projects?.name?.toLowerCase() || 'work';
+    
+    // Map category to colors that match the project card colors
+    switch (category) {
+      case 'personal':
+        return 'bg-[hsl(var(--personal))] hover:bg-[hsl(var(--personal))]/90';
+      case 'home':
+        return 'bg-[hsl(var(--home))] hover:bg-[hsl(var(--home))]/90';
+      case 'work':
+      default:
+        return 'bg-primary hover:bg-primary/90';
+    }
+  };
+
   const handleCardClick = (e: React.MouseEvent) => {
     // Don't trigger completion if clicking on drag handle or checkbox
     const target = e.target as HTMLElement;
@@ -64,8 +80,8 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 cursor-pointer min-h-[22px]",
-        "bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white border-0",
+        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 cursor-pointer min-h-[22px] text-white border-0",
+        getProjectColor(),
         task.completed && "opacity-75 bg-gray-500 hover:bg-gray-600",
         isDragging && "opacity-50 shadow-lg z-50"
       )}
