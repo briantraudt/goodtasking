@@ -357,7 +357,7 @@ const DayViewCalendar = ({
           <div 
             className={cn(
               "cursor-pointer select-none relative transition-colors duration-200",
-              isGoogleConnected ? "text-green-600 hover:text-green-700" : "text-foreground hover:text-primary"
+              isGoogleConnected ? "text-[hsl(150,45%,45%)] hover:text-[hsl(150,45%,35%)]" : "text-foreground hover:text-primary"
             )}
             onClick={handleCalendarClick}
           >
