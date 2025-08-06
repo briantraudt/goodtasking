@@ -30,8 +30,7 @@ const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddBut
           className="btn-gradient-hover rounded-xl font-semibold shadow-soft hover:shadow-card transition-all duration-200"
           size="sm"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Add
+          <Plus className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48 rounded-xl shadow-elevated bg-white z-50 p-1">
