@@ -106,8 +106,20 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
   };
 
   const getCategoryIcon = (category: 'work' | 'home' | 'personal') => {
-    const categoryData = categories.find(cat => cat.name.toLowerCase() === category);
-    return categoryData?.icon || Briefcase;
+    const categoryLower = category.toLowerCase();
+    const categoryData = categories.find(cat => cat.name.toLowerCase() === categoryLower);
+    
+    // Fallback to direct icon mapping if category not found
+    if (!categoryData) {
+      switch (categoryLower) {
+        case 'home': return Home;
+        case 'personal': return User;
+        case 'work': return Briefcase;
+        default: return Briefcase;
+      }
+    }
+    
+    return categoryData.icon || Briefcase;
   };
 
   const getCategoryLabel = (category: 'work' | 'home' | 'personal') => {
