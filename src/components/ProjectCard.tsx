@@ -9,8 +9,9 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Plus, MoreVertical, Edit, Trash2, CalendarIcon } from 'lucide-react';
+import { Plus, MoreVertical, Edit, Trash2, CalendarIcon, Home, User, Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useCategories } from '@/hooks/useCategories';
 
 interface Task {
   id: string;
@@ -36,6 +37,7 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project, onUpdateProject, onDeleteProject, onCreateTask, onUpdateTask }: ProjectCardProps) {
+  const { categories } = useCategories();
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDueDate, setNewTaskDueDate] = useState<Date>();
   const [isAddingTask, setIsAddingTask] = useState(false);
@@ -103,6 +105,11 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
     }
   };
 
+  const getCategoryIcon = (category: 'work' | 'home' | 'personal') => {
+    const categoryData = categories.find(cat => cat.name.toLowerCase() === category);
+    return categoryData?.icon || Briefcase;
+  };
+
   const getCategoryLabel = (category: 'work' | 'home' | 'personal') => {
     return category.charAt(0).toUpperCase() + category.slice(1);
   };
@@ -142,7 +149,13 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
             )}
             {project.description && <p className="text-sm text-muted-foreground">{project.description}</p>}
             <Badge variant="outline" className="text-xs mt-1 w-fit">
-              {getCategoryLabel(project.category)}
+              <div className="flex items-center gap-1.5">
+                {(() => {
+                  const CategoryIcon = getCategoryIcon(project.category);
+                  return <CategoryIcon className="w-3 h-3" />;
+                })()}
+                {getCategoryLabel(project.category)}
+              </div>
             </Badge>
           </div>
           <DropdownMenu>

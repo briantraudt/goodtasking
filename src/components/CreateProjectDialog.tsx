@@ -5,9 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Settings } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
-import CategoryManager from './CategoryManager';
 
 interface Project {
   id: string;
@@ -99,14 +98,7 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
             />
           </div>
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <Label>Category</Label>
-              <CategoryManager>
-                <Button variant="ghost" size="sm" className="h-8 px-2">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </CategoryManager>
-            </div>
+            <Label>Category</Label>
             <Select value={category} onValueChange={setCategory}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a category" />
@@ -115,10 +107,7 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
                 {categories.map((cat) => (
                   <SelectItem key={cat.id} value={cat.name}>
                     <div className="flex items-center gap-2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: cat.color }}
-                      />
+                      <cat.icon className="w-4 h-4" style={{ color: cat.color }} />
                       {cat.name}
                     </div>
                   </SelectItem>

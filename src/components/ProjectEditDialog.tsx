@@ -7,8 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { FolderOpen, Trash2, Save } from 'lucide-react';
+import { FolderOpen, Trash2, Save, Home, User, Briefcase } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useCategories } from '@/hooks/useCategories';
 
 interface Project {
   id: string;
@@ -28,6 +29,7 @@ interface ProjectEditDialogProps {
 }
 
 const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: ProjectEditDialogProps) => {
+  const { categories } = useCategories();
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -102,17 +104,9 @@ const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: Proje
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'work':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      case 'home':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'personal':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
+  const getCategoryIcon = (category: string) => {
+    const categoryData = categories.find(cat => cat.name.toLowerCase() === category.toLowerCase());
+    return categoryData?.icon || Briefcase;
   };
 
   if (!project) return null;
@@ -130,8 +124,14 @@ const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: Proje
         <div className="space-y-4 py-4">
           {/* Category Badge */}
           <div className="flex items-center gap-2">
-            <Badge className={getCategoryColor(project.category)}>
-              {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+            <Badge variant="outline">
+              <div className="flex items-center gap-1.5">
+                {(() => {
+                  const CategoryIcon = getCategoryIcon(project.category);
+                  return <CategoryIcon className="w-3 h-3" />;
+                })()}
+                {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+              </div>
             </Badge>
             <div 
               className="w-4 h-4 rounded-full border border-border"
@@ -178,9 +178,14 @@ const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: Proje
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="work">Work</SelectItem>
-                  <SelectItem value="home">Home</SelectItem>
-                  <SelectItem value="personal">Personal</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.name.toLowerCase()}>
+                      <div className="flex items-center gap-2">
+                        <cat.icon className="w-4 h-4" />
+                        {cat.name}
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
