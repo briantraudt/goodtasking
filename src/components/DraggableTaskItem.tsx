@@ -76,11 +76,12 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       onClick={handleCardClick}
     >
       {/* Checkbox for task completion */}
-      <div className="flex-shrink-0 mr-2 z-10" data-checkbox onClick={(e) => e.stopPropagation()}>
+      <div className="flex-shrink-0 mr-2 z-10 flex items-center" data-checkbox onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={task.completed}
           onCheckedChange={handleCheckboxChange}
           className="h-3 w-3"
+          style={{ height: '12px', width: '12px' }}
         />
       </div>
 
