@@ -58,10 +58,10 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    backgroundColor: task.completed ? '#6b7280' : (projectColor || '#6b7280'),
+    backgroundColor: projectColor || '#6b7280',
     opacity: isDragging ? 0.5 : (task.completed ? 0.75 : 1)
   } : {
-    backgroundColor: task.completed ? '#6b7280' : (projectColor || '#6b7280'),
+    backgroundColor: projectColor || '#6b7280',
     opacity: task.completed ? 0.75 : 1
   };
 
