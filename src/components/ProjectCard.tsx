@@ -154,7 +154,7 @@ export default function ProjectCard({ project, onUpdateProject, onDeleteProject,
               </div>
             ) : (
               <h3 
-                className="text-xl font-semibold text-foreground cursor-pointer hover:text-primary transition-colors flex items-center gap-2"
+                className="text-xl font-semibold text-primary cursor-pointer transition-colors flex items-center gap-2"
                 onClick={() => setIsEditingName(true)}
               >
                 {(() => {
