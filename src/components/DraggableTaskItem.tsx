@@ -70,14 +70,19 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 cursor-pointer min-h-[22px] text-white border-0",
+        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 min-h-[22px] text-white border-0",
         isDragging && "shadow-lg z-50"
       )}
-      onClick={handleCardClick}
     >
-      {/* Draggable background area */}
+      {/* Draggable background areas - split around the text */}
       <div 
-        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
+        className="absolute left-0 top-0 bottom-0 w-4 cursor-grab active:cursor-grabbing z-0"
+        {...listeners}
+        {...attributes}
+        title="Drag to schedule this task"
+      />
+      <div 
+        className="absolute right-12 top-0 bottom-0 left-20 cursor-grab active:cursor-grabbing z-0"
         {...listeners}
         {...attributes}
         title="Drag to schedule this task"
@@ -87,7 +92,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       <div className="flex-1 relative z-10">
         <span 
           className={cn(
-            "text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded cursor-pointer",
+            "text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded cursor-pointer relative z-20",
             task.completed && "line-through opacity-60"
           )}
           onClick={handleEditClick}
