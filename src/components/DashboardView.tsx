@@ -10,6 +10,9 @@ import DayViewCalendar from './DayViewCalendar';
 import TaskSidebar from './TaskSidebar';
 import ProjectsColumn from './ProjectsColumn';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
+import { useToast } from '@/hooks/use-toast';
+import { useTaskReminders } from '@/hooks/useTaskReminders';
+import { useNotifications } from '@/hooks/useNotifications';
 import { format } from 'date-fns';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
 
@@ -108,6 +111,12 @@ const DashboardView = ({
       vibe_projects: { name: project.name }
     }))
   );
+
+  const { toast } = useToast();
+  const { notifyTaskCompleted, notifyProjectUpdate } = useNotifications();
+  
+  // Set up task reminders
+  useTaskReminders({ tasks: allTasks });
 
   const handleTaskScheduled = async (taskId: string, startTime: string, endTime: string) => {
     console.log('📅 Scheduling task:', { taskId, startTime, endTime, selectedDate });
@@ -249,6 +258,16 @@ const DashboardView = ({
   // Handle task completion
   const handleTaskComplete = (taskId: string, completed: boolean) => {
     console.log('🎯 DashboardView handleTaskComplete called:', { taskId, completed });
+    
+    // Find the task for notification
+    const task = allTasks.find(t => t.id === taskId);
+    const project = projects.find(p => p.id === task?.project_id);
+    
+    // Send notification if task is being completed
+    if (completed && task && project) {
+      notifyTaskCompleted(task.title, project.name);
+    }
+    
     onUpdateTask(taskId, { completed });
     console.log('✅ DashboardView onUpdateTask called');
   };

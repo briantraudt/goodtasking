@@ -4,6 +4,8 @@ import { LogOut, Settings, Calendar, CalendarCheck } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import NotificationCenter from '@/components/NotificationCenter';
+import NotificationPermissionButton from '@/components/NotificationPermissionButton';
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -30,6 +32,12 @@ const Header = () => {
 
       {/* Right side - Action buttons */}
       <div className="flex items-center gap-3">
+        {/* Notification Center */}
+        <NotificationCenter />
+        
+        {/* Permission Request Button */}
+        <NotificationPermissionButton />
+        
         <Link to="/settings">
           <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border hover:bg-primary hover:text-white hover:border-primary hover:shadow-soft transition-all">
             <Settings className="h-4 w-4 mr-2" />
