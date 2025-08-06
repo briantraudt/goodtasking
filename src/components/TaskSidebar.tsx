@@ -428,7 +428,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                           : "hover:brightness-110"
                       )}
                       style={{
-                        backgroundColor: project.color || (projectColor.taskBg.includes('[') ? projectColor.hex : projectColor.taskBg)
+                        backgroundColor: project.color || projectColor.hex
                       }}
                       title="Click to edit or delete this task" // Tooltip to indicate clickability
                     >
