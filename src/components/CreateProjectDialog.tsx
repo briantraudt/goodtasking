@@ -25,16 +25,16 @@ interface CreateProjectDialogProps {
 
 // Brand color palette
 const PROJECT_COLORS = [
-  { name: 'Green', value: '#36B37E' },
-  { name: 'Blue', value: '#2684FF' },
-  { name: 'Purple', value: '#6554C0' },
-  { name: 'Yellow', value: '#FFAB00' },
-  { name: 'Red', value: '#FF5630' },
-  { name: 'Orange', value: '#FF8B00' },
-  { name: 'Dark Navy', value: '#172B4D' },
-  { name: 'Light Gray', value: '#F4F5F7' },
-  { name: 'Teal', value: '#2BB673' },
-  { name: 'Deep Blue', value: '#004E89' }
+  { name: 'Emerald Green', value: '#36B37E' },
+  { name: 'Bright Blue', value: '#2684FF' },
+  { name: 'Medium Purple', value: '#6554C0' },
+  { name: 'Warm Yellow', value: '#FFAB00' },
+  { name: 'Vivid Red', value: '#FF5630' },
+  { name: 'Distinct Orange', value: '#FF7000' },
+  { name: 'Deep Navy', value: '#172B4D' },
+  { name: 'Darker Gray', value: '#C1C7D0' },
+  { name: 'Cyan Teal', value: '#00A3BF' },
+  { name: 'Rich Deep Blue', value: '#004E89' }
 ];
 
 export default function CreateProjectDialog({ onCreateProject, existingProjects = [], children }: CreateProjectDialogProps) {
