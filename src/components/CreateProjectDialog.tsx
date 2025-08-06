@@ -107,7 +107,7 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
                 {categories.map((cat) => (
                   <SelectItem key={cat.id} value={cat.name}>
                     <div className="flex items-center gap-2">
-                      <cat.icon className="w-4 h-4" style={{ color: cat.color }} />
+                      <cat.icon className="w-4 h-4 text-muted-foreground" />
                       {cat.name}
                     </div>
                   </SelectItem>
