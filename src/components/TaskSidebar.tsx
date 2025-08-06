@@ -62,6 +62,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
   const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
+  const [activeInlineAdd, setActiveInlineAdd] = useState<string | null>(null);
+  const [inlineTaskTitle, setInlineTaskTitle] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
@@ -443,23 +445,61 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                   );
                 })}
                 
-                {/* Inline Add Task Button */}
-                <button
-                  onClick={() => {
-                    setSelectedProjectId(project.id);
-                    setShowAddTaskDialog(true);
-                  }}
-                  className={cn(
-                    "text-sm font-medium px-3 py-1.5 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
-                    "flex items-center justify-center gap-2"
-                  )}
-                  style={{ 
-                    borderColor: project.color || projectColor.hex,
-                    color: project.color || projectColor.hex
-                  }}
-                >
-                  + Add
-                </button>
+                {/* Inline Add Task Button/Input */}
+                {activeInlineAdd === project.id ? (
+                  <input
+                    type="text"
+                    value={inlineTaskTitle}
+                    onChange={(e) => setInlineTaskTitle(e.target.value)}
+                    onKeyDown={async (e) => {
+                      if (e.key === 'Enter' && inlineTaskTitle.trim()) {
+                        try {
+                          await onCreateTask?.(project.id, inlineTaskTitle.trim());
+                          setInlineTaskTitle("");
+                          setActiveInlineAdd(null);
+                        } catch (error) {
+                          console.error('Error creating task:', error);
+                        }
+                      } else if (e.key === 'Escape') {
+                        setInlineTaskTitle("");
+                        setActiveInlineAdd(null);
+                      }
+                    }}
+                    onBlur={() => {
+                      setInlineTaskTitle("");
+                      setActiveInlineAdd(null);
+                    }}
+                    placeholder="Type task name and press Enter..."
+                    className="text-sm px-3 py-1.5 rounded-md border-2 border-dashed w-full focus:outline-none focus:ring-2 focus:ring-opacity-50"
+                    style={{ 
+                      borderColor: project.color || projectColor.hex,
+                      color: project.color || projectColor.hex,
+                      backgroundColor: 'transparent'
+                    }}
+                    autoFocus
+                  />
+                ) : (
+                  <button
+                    onClick={() => {
+                      setActiveInlineAdd(project.id);
+                    }}
+                    onDoubleClick={() => {
+                      setSelectedProjectId(project.id);
+                      setShowAddTaskDialog(true);
+                    }}
+                    className={cn(
+                      "text-sm font-medium px-3 py-1.5 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
+                      "flex items-center justify-center gap-2"
+                    )}
+                    style={{ 
+                      borderColor: project.color || projectColor.hex,
+                      color: project.color || projectColor.hex
+                    }}
+                    title="Click to quick add, double-click for detailed add"
+                  >
+                    + Add
+                  </button>
+                )}
               </div>
             </div>
           );

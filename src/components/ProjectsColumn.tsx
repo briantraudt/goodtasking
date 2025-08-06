@@ -29,6 +29,8 @@ interface ProjectsColumnProps {
 const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject, onMoveProjectToTasks }: ProjectsColumnProps) => {
   const { categories } = useCategories();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [activeInlineAdd, setActiveInlineAdd] = useState<string | null>(null);
+  const [inlineTaskTitle, setInlineTaskTitle] = useState("");
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [deleteConfirmProject, setDeleteConfirmProject] = useState<Project | null>(null);
 
@@ -154,20 +156,58 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                 </div>
               </div>
               
-              {/* Inline Add Task Button */}
-              <button
-                onClick={() => handleMoveToTasks(project.id)}
-                className={cn(
-                  "text-sm font-medium px-3 py-1.5 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50 mt-3",
-                  "flex items-center justify-center gap-2 w-full"
-                )}
-                style={{ 
-                  borderColor: projectColor,
-                  color: projectColor
-                }}
-              >
-                + Add
-              </button>
+              {/* Inline Add Task Button/Input */}
+              {activeInlineAdd === project.id ? (
+                <input
+                  type="text"
+                  value={inlineTaskTitle}
+                  onChange={(e) => setInlineTaskTitle(e.target.value)}
+                  onKeyDown={async (e) => {
+                    if (e.key === 'Enter' && inlineTaskTitle.trim()) {
+                      try {
+                        // Move project to tasks when first task is added
+                        await handleMoveToTasks(project.id);
+                        setInlineTaskTitle("");
+                        setActiveInlineAdd(null);
+                      } catch (error) {
+                        console.error('Error creating task:', error);
+                      }
+                    } else if (e.key === 'Escape') {
+                      setInlineTaskTitle("");
+                      setActiveInlineAdd(null);
+                    }
+                  }}
+                  onBlur={() => {
+                    setInlineTaskTitle("");
+                    setActiveInlineAdd(null);
+                  }}
+                  placeholder="Type task name and press Enter..."
+                  className="text-sm px-3 py-1.5 rounded-md border-2 border-dashed w-full focus:outline-none focus:ring-2 focus:ring-opacity-50 mt-3"
+                  style={{ 
+                    borderColor: projectColor,
+                    color: projectColor,
+                    backgroundColor: 'transparent'
+                  }}
+                  autoFocus
+                />
+              ) : (
+                <button
+                  onClick={() => {
+                    setActiveInlineAdd(project.id);
+                  }}
+                  className={cn(
+                    "text-sm font-medium px-3 py-1.5 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50 mt-3",
+                    "flex items-center justify-center gap-2 w-full"
+                  )}
+                  style={{ 
+                    borderColor: projectColor,
+                    color: projectColor
+                  }}
+                  title="Click to quick add task"
+                >
+                  + Add
+                </button>
+              )}
             </div>
           );
         })}
