@@ -148,17 +148,8 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
       )}
       title="Drag anywhere to move • Click task name to edit"
     >
-      {/* Expanded drag area - covers the entire task except the text area */}
-      <div
-        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
-        {...listeners}
-        {...attributes}
-      />
-      
-      {/* Task content area - clickable for editing, positioned above drag area */}
-      <div 
-        className="flex-1 p-2 h-full flex flex-col justify-center relative z-10"
-      >
+      {/* Task content area - clickable for editing */}
+      <div className="p-2 h-full flex flex-col justify-center">
         <div className="text-sm truncate">
           <span 
             className="font-bold cursor-pointer hover:bg-white/10 px-1 py-0.5 rounded transition-colors"
@@ -173,15 +164,12 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
         </div>
       </div>
       
-      {/* Clean dots-only drag handle indicator */}
-      <div className="w-16 h-full rounded-r-lg flex items-center justify-center relative z-10 pointer-events-none">
-        <div className="flex items-center">
-          <GripVertical className="h-5 w-5 text-white/90" />
-          <GripVertical className="h-5 w-5 text-white/90 -ml-2" />
-          <GripVertical className="h-5 w-5 text-white/90 -ml-2" />
-          <GripVertical className="h-5 w-5 text-white/90 -ml-2" />
-        </div>
-      </div>
+      {/* Extended drag area - covers everything except the text content */}
+      <div
+        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
+        {...listeners}
+        {...attributes}
+      />
     </div>
   );
 };
