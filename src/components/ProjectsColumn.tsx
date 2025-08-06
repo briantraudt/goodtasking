@@ -105,26 +105,29 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
           <FolderOpen className="h-5 w-5 text-primary" />
           <h1 className="text-lg font-semibold text-foreground">Projects</h1>
         </div>
-        <CreateProjectDialog
-          existingProjects={projects}
-          onCreateProject={async (project) => {
-            await onCreateProject({
-              name: project.name,
-              description: project.description,
-              category: project.category,
-              color: project.color
-            });
-          }}
-        >
-          <Button
-            variant="default"
-            size="sm"
-            className="flex items-center gap-2"
+        {/* Only show Add button when there are projects */}
+        {projectsWithoutTasks.length > 0 && (
+          <CreateProjectDialog
+            existingProjects={projects}
+            onCreateProject={async (project) => {
+              await onCreateProject({
+                name: project.name,
+                description: project.description,
+                category: project.category,
+                color: project.color
+              });
+            }}
           >
-            <Plus className="h-4 w-4" />
-            Add
-          </Button>
-        </CreateProjectDialog>
+            <Button
+              variant="default"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Add
+            </Button>
+          </CreateProjectDialog>
+        )}
       </div>
 
       {/* Projects Cards */}
@@ -215,31 +218,28 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
         {/* Empty State */}
         {projectsWithoutTasks.length === 0 && (
           <div className="text-center py-12">
-            <div className="rounded-xl bg-white p-8 border-2 border-dashed border-[#E2E8F0] shadow-sm">
+            <div className="rounded-xl bg-white p-8 border-2 border-dashed border-[#E2E8F0] shadow-sm flex flex-col items-center">
               <div className="text-4xl mb-4">📁</div>
               <h3 className="text-lg font-semibold text-[#0F172A] mb-2">No Empty Projects</h3>
-              <p className="text-[#64748B] mb-4">All your projects have tasks assigned to them.</p>
-              <Button
-                variant="outline"
-                className="flex items-center gap-2"
+              <p className="text-[#64748B] mb-6">All your projects have tasks assigned to them.</p>
+              <CreateProjectDialog
+                existingProjects={projects}
+                onCreateProject={async (project) => {
+                  await onCreateProject({
+                    name: project.name,
+                    description: project.description,
+                    category: project.category,
+                    color: project.color
+                  });
+                }}
               >
-                <CreateProjectDialog
-                  existingProjects={projects}
-                  onCreateProject={async (project) => {
-                    await onCreateProject({
-                      name: project.name,
-                      description: project.description,
-                      category: project.category,
-                      color: project.color
-                    });
-                  }}
+                <Button
+                  className="bg-[#172B4D] hover:bg-[#172B4D]/90 text-white flex items-center gap-2"
                 >
-                  <div className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    Create Project
-                  </div>
-                </CreateProjectDialog>
-              </Button>
+                  <Plus className="h-4 w-4" />
+                  Add Project
+                </Button>
+              </CreateProjectDialog>
             </div>
           </div>
         )}
