@@ -200,7 +200,7 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
         actualBlockType === 'event' 
           ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
           : cn(
-              "border-l-4 rounded-lg px-3 py-1.5", 
+              "border-l-4 rounded-lg px-3 py-1.5 text-white", 
               task?.completed ? "opacity-75" : ""
             ),
         isDraggableTask && "hover:shadow-md",
@@ -216,7 +216,7 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
             <Checkbox
               checked={task.completed || false}
               onCheckedChange={handleCheckboxChange}
-              className="rounded-sm bg-white/90 hover:bg-white"
+              className="h-3 w-3 border-0 bg-white rounded-none"
             />
           </div>
         )}
@@ -224,14 +224,14 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
         {/* Event/Task Title - Enhanced Typography with Category Icon */}
         <div className={cn(
           "text-sm leading-tight text-left font-bold flex items-center gap-2",
-          actualBlockType === 'event' ? "text-gray-900" : "text-gray-900",
+          actualBlockType === 'event' ? "text-gray-900" : "text-white",
           task?.completed && "line-through opacity-60"
         )}>
           {/* Category Icon for tasks - Always show for tasks */}
           {actualBlockType === 'task' && (() => {
             const taskCategory = task ? getTaskCategory() : 'work';
             const CategoryIcon = getCategoryIcon(taskCategory);
-            return <CategoryIcon className="w-4 h-4 flex-shrink-0" style={{ color: block.color || '#6B7280' }} />;
+            return <CategoryIcon className="w-4 h-4 flex-shrink-0 text-white" />;
           })()}
           <span className="truncate">{block.title}</span>
         </div>
@@ -259,7 +259,7 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
       
       {/* Show time only for tasks at bottom */}
       {actualBlockType === 'task' && (
-        <div className="absolute bottom-2 left-3 text-xs font-medium opacity-75">
+        <div className="absolute bottom-2 left-3 text-xs font-medium text-white opacity-75">
           {block.start.includes('T') ? 
             format(parseISO(block.start), 'h:mm a') + ' - ' + format(parseISO(block.end), 'h:mm a') :
             block.start + ' - ' + block.end
