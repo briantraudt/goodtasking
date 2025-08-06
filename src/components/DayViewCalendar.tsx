@@ -185,7 +185,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
         >
           {task.completed && (
             <div className="h-full w-full flex items-center justify-center">
-              <div className="w-1.5 h-1.5 bg-black rounded-none"></div>
+              <Check className="w-2 h-2 text-black" />
             </div>
           )}
         </div>
