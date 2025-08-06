@@ -31,7 +31,7 @@ const Header = () => {
       {/* Right side - Action buttons */}
       <div className="flex items-center gap-3">
         <Link to="/settings">
-          <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border hover:bg-navy-blue hover:text-white hover:border-navy-blue hover:shadow-soft transition-all">
+          <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border hover:bg-primary hover:text-white hover:border-primary hover:shadow-soft transition-all">
             <Settings className="h-4 w-4 mr-2" />
             Settings
           </Button>
@@ -41,7 +41,7 @@ const Header = () => {
           variant="outline" 
           size="sm" 
           onClick={signOut}
-          className="h-10 px-4 rounded-lg border-border hover:bg-navy-blue hover:text-white hover:border-navy-blue hover:shadow-soft transition-all"
+          className="h-10 px-4 rounded-lg border-border hover:bg-primary hover:text-white hover:border-primary hover:shadow-soft transition-all"
         >
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
