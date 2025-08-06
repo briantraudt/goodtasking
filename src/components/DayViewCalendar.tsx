@@ -166,18 +166,21 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
   return (
     <div
       ref={setNodeRef}
-      style={{ 
+      style={{
         ...style,
-        backgroundColor: projectColor + ' !important',
+        '--task-bg-color': projectColor,
+        backgroundColor: projectColor,
         borderColor: projectColor,
         borderLeftWidth: '4px',
-        color: 'white !important'
-      }}
+        color: 'white'
+      } as React.CSSProperties & { '--task-bg-color': string }}
       className={cn(
         "border-l-4 rounded-lg p-3 transition-all duration-200 h-full min-h-full flex flex-col justify-center cursor-grab active:cursor-grabbing hover:shadow-md group relative text-white",
         isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
         task.completed && "opacity-60"
       )}
+      {...listeners}
+      {...attributes}
     >
       {/* Checkbox for task completion */}
       <div className="absolute top-2 left-2 z-20">
