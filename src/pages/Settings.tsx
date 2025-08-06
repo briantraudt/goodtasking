@@ -308,20 +308,73 @@ const Settings = () => {
     try {
       setSaving(true);
       
-      // This would typically be handled by a backend service
-      // For now, we'll just sign out the user
+      // Step 1: Delete all user tasks
+      const { error: tasksError } = await supabase
+        .from('vibe_tasks')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (tasksError) {
+        console.error('Error deleting tasks:', tasksError);
+        toast({
+          title: "Error",
+          description: "Failed to delete tasks. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Step 2: Delete all user projects
+      const { error: projectsError } = await supabase
+        .from('vibe_projects')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (projectsError) {
+        console.error('Error deleting projects:', projectsError);
+        toast({
+          title: "Error",
+          description: "Failed to delete projects. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Step 3: Delete user preferences
+      const { error: preferencesError } = await supabase
+        .from('user_preferences')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (preferencesError) {
+        console.error('Error deleting preferences:', preferencesError);
+        // Don't return here as this is not critical
+      }
+
+      // Step 4: Delete user profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (profileError) {
+        console.error('Error deleting profile:', profileError);
+        // Don't return here as this is not critical
+      }
+
+      // Step 5: Sign out the user (account deletion from auth would need to be handled server-side)
       await signOut();
       
       toast({
-        title: "Account deletion requested",
-        description: "Please contact support to complete account deletion.",
+        title: "Account data deleted",
+        description: "All your projects and tasks have been permanently deleted. You have been signed out.",
         variant: "destructive",
       });
     } catch (error) {
-      console.error('Error requesting account deletion:', error);
+      console.error('Error deleting account:', error);
       toast({
         title: "Error",
-        description: "Failed to process account deletion request.",
+        description: "Failed to delete account. Please try again or contact support.",
         variant: "destructive",
       });
     } finally {
