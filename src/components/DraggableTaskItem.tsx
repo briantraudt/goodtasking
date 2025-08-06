@@ -76,13 +76,13 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
     >
       {/* Draggable background areas - split around the text */}
       <div 
-        className="absolute left-0 top-0 bottom-0 w-4 cursor-grab active:cursor-grabbing z-0"
+        className="absolute left-0 top-0 bottom-0 w-8 cursor-grab active:cursor-grabbing z-0"
         {...listeners}
         {...attributes}
         title="Drag to schedule this task"
       />
       <div 
-        className="absolute right-12 top-0 bottom-0 left-20 cursor-grab active:cursor-grabbing z-0"
+        className="absolute right-12 top-0 bottom-0 left-16 cursor-grab active:cursor-grabbing z-0"
         {...listeners}
         {...attributes}
         title="Drag to schedule this task"
