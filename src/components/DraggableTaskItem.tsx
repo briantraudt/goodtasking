@@ -97,22 +97,12 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
         className="flex-shrink-0 ml-2 mr-2 flex items-center justify-center" 
         onPointerDown={(e) => e.stopPropagation()}
       >
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCheckboxChange(!task.completed);
-          }}
-          className={cn(
-            "h-2.5 w-2.5 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none",
-            task.completed && "bg-white border-white"
-          )}
-        >
-          {task.completed && (
-            <div className="h-full w-full flex items-center justify-center">
-              <div className="w-1 h-1 bg-black rounded-none"></div>
-            </div>
-          )}
-        </div>
+        <Checkbox
+          checked={task.completed}
+          onCheckedChange={handleCheckboxChange}
+          onClick={(e) => e.stopPropagation()}
+          className="h-3 w-3"
+        />
       </div>
     </div>
   );
