@@ -203,7 +203,17 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
       </div>
 
       {/* Task content */}
-      <div className="flex items-center justify-start gap-2 min-h-0 ml-2 mr-8">
+      <div className={cn(
+        "flex items-center justify-start gap-2 min-h-0 ml-2 mr-8 relative transition-all duration-300",
+        task.completed && "opacity-50"
+      )}>
+        {/* White strikethrough line when completed */}
+        {task.completed && (
+          <div className="absolute inset-0 flex items-center justify-center z-10">
+            <div className="w-full h-0.5 bg-white/80"></div>
+          </div>
+        )}
+        
         {/* Category Icon */}
         {(() => {
           const category = project?.category || 'work';
@@ -214,8 +224,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
         {/* Task Title */}
         <span 
           className={cn(
-            "text-sm font-bold text-white truncate cursor-pointer hover:bg-white/20 px-1 py-0.5 rounded transition-colors text-left",
-            task.completed && "line-through"
+            "text-sm font-bold text-white truncate cursor-pointer hover:bg-white/20 px-1 py-0.5 rounded transition-colors text-left"
           )}
           onClick={handleClick}
           title="Click to edit task"
