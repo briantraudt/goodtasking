@@ -67,6 +67,13 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
     disabled: !isDraggableTask,
   });
 
+  console.log('DEBUG: Task styling', {
+    taskId: task?.id,
+    blockType: actualBlockType,
+    blockColor: block.color,
+    taskTitle: task?.title || block.title
+  });
+
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
     backgroundColor: actualBlockType === 'task' ? `${block.color || '#6b7280'} !important` : undefined,
