@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { CalendarIcon, Edit2, Check, Trash2, Home, User, Briefcase } from 'lucide-react';
+import { CalendarIcon, Edit2, Check, Trash2, Home, User, Briefcase, Minus } from 'lucide-react';
 import { format } from 'date-fns';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import TaskFilters from '@/components/TaskFilters';
@@ -53,10 +53,11 @@ interface TaskSidebarProps {
   onDeleteProject?: (id: string) => Promise<void>;
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
+  onMoveProjectBack?: (projectId: string) => void;
   className?: string;
 }
 
-const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, onMoveProjectBack, className }: TaskSidebarProps) => {
   const { categories } = useCategories();
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
@@ -411,11 +412,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                       >
                         <Check className="h-3 w-3" />
                       </Button>
-                    </div>
+                     </div>
                   ) : (
-                     <div className="flex-1">
+                     <div className="flex items-center justify-between w-full">
                        <h3 
-                         className="text-base font-semibold text-primary cursor-pointer transition-colors flex items-center gap-2"
+                         className="text-base font-semibold text-primary cursor-pointer transition-colors flex items-center gap-2 flex-1"
                          onClick={() => setEditingProject(project)}
                        >
                           {(() => {
@@ -425,6 +426,18 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                           })()}
                          {project.name}
                        </h3>
+                       {/* Show minus button if project has no incomplete tasks */}
+                       {projectTasks.length === 0 && onMoveProjectBack && (
+                         <Button
+                           size="sm"
+                           variant="ghost"
+                           onClick={() => onMoveProjectBack(project.id)}
+                           className="h-6 w-6 p-0 hover:bg-gray-100 ml-2"
+                           title="Move back to Projects"
+                         >
+                           <Minus className="h-3 w-3" style={{ color: project.color || getProjectColor(project.category, project.color).hex }} />
+                         </Button>
+                       )}
                      </div>
                   )}
                 </div>

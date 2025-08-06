@@ -332,6 +332,16 @@ const DashboardView = ({
                         onUpdateTask(taskId, updates);
                       }}
                       onDeleteTask={onDeleteTask}
+                      onMoveProjectBack={(projectId) => {
+                        // Remove the placeholder task when moving back to projects
+                        const project = projects.find(p => p.id === projectId);
+                        if (project) {
+                          const placeholderTask = project.tasks.find(t => t.title === "Add First Task...");
+                          if (placeholderTask && onDeleteTask) {
+                            onDeleteTask(placeholderTask.id);
+                          }
+                        }
+                      }}
                     />
                   </div>
                 </div>

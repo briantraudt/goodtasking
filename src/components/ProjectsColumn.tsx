@@ -158,6 +158,15 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                     {project.name}
                   </h3>
                 </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleMoveToTasks(project.id)}
+                  className="h-6 w-6 p-0 hover:bg-gray-100"
+                  title="Move to Task Sidebar"
+                >
+                  <Plus className="h-4 w-4" style={{ color: projectColor }} />
+                </Button>
               </div>
               
               {/* Inline Add Task Button/Input */}
