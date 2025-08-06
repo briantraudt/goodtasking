@@ -137,7 +137,11 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8"
+                      className="h-8 w-8 hover:bg-transparent"
+                      style={{ 
+                        color: projectColor,
+                        backgroundColor: 'transparent'
+                      }}
                       onClick={(e) => {
                         e.stopPropagation();
                         setEditingProject(project);
