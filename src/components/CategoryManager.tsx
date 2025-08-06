@@ -158,6 +158,7 @@ const CategoryManager = ({ children }: CategoryManagerProps) => {
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 placeholder="Enter category name"
                 maxLength={50}
+                autoComplete="off"
               />
             </div>
 
