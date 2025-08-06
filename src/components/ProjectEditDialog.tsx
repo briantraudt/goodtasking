@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { FolderOpen, Trash2, Save, Home, User, Briefcase } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
 
 interface Project {
@@ -30,7 +29,6 @@ interface ProjectEditDialogProps {
 
 const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: ProjectEditDialogProps) => {
   const { categories } = useCategories();
-  const { toast } = useToast();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<string>('work');
@@ -66,17 +64,9 @@ const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: Proje
       };
 
       await onSave(project.id, updates);
-      toast({
-        title: "Project updated",
-        description: "Your project has been successfully updated.",
-      });
       onClose();
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update project. Please try again.",
-        variant: "destructive",
-      });
+      console.error('Error updating project:', error);
     } finally {
       setIsLoading(false);
     }
@@ -88,17 +78,9 @@ const ProjectEditDialog = ({ project, isOpen, onClose, onSave, onDelete }: Proje
     setIsLoading(true);
     try {
       await onDelete(project.id);
-      toast({
-        title: "Project deleted",
-        description: "Your project and all associated tasks have been successfully deleted.",
-      });
       onClose();
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete project. Please try again.",
-        variant: "destructive",
-      });
+      console.error('Error deleting project:', error);
     } finally {
       setIsLoading(false);
     }

@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Brain, Settings as SettingsIcon, User, AlertTriangle, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3, Edit2, Trash2, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -47,7 +46,6 @@ interface DashboardStats {
 
 const Settings = () => {
   const { user, signOut } = useAuth();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -173,11 +171,6 @@ const Settings = () => {
       }
     } catch (error) {
       console.error('Error loading user data:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load user settings. Please refresh the page.",
-        variant: "destructive",
-      });
     } finally {
       setLoading(false);
     }
@@ -202,26 +195,12 @@ const Settings = () => {
 
       if (error) {
         console.error('Error saving preferences:', error);
-        toast({
-          title: "Error",
-          description: "Failed to save preferences. Please try again.",
-          variant: "destructive",
-        });
         return;
       }
 
       setPreferences(newPreferences);
-      toast({
-        title: "Settings saved",
-        description: "Your preferences have been updated successfully.",
-      });
     } catch (error) {
       console.error('Error saving preferences:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save preferences. Please try again.",
-        variant: "destructive",
-      });
     } finally {
       setSaving(false);
     }
@@ -244,25 +223,11 @@ const Settings = () => {
 
       if (error) {
         console.error('Error saving profile:', error);
-        toast({
-          title: "Error",
-          description: "Failed to save profile. Please try again.",
-          variant: "destructive",
-        });
         return;
       }
 
-      toast({
-        title: "Profile updated",
-        description: "Your profile information has been saved.",
-      });
     } catch (error) {
       console.error('Error saving profile:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save profile. Please try again.",
-        variant: "destructive",
-      });
     } finally {
       setSaving(false);
     }
@@ -281,25 +246,11 @@ const Settings = () => {
 
       if (error) {
         console.error('Error clearing tasks:', error);
-        toast({
-          title: "Error",
-          description: "Failed to clear tasks. Please try again.",
-          variant: "destructive",
-        });
         return;
       }
 
-      toast({
-        title: "Tasks cleared",
-        description: "All your tasks have been deleted successfully.",
-      });
     } catch (error) {
       console.error('Error clearing tasks:', error);
-      toast({
-        title: "Error",
-        description: "Failed to clear tasks. Please try again.",
-        variant: "destructive",
-      });
     } finally {
       setSaving(false);
     }
@@ -319,11 +270,6 @@ const Settings = () => {
 
       if (tasksError) {
         console.error('Error deleting tasks:', tasksError);
-        toast({
-          title: "Error",
-          description: "Failed to delete tasks. Please try again.",
-          variant: "destructive",
-        });
         return;
       }
 
@@ -335,11 +281,6 @@ const Settings = () => {
 
       if (projectsError) {
         console.error('Error deleting projects:', projectsError);
-        toast({
-          title: "Error",
-          description: "Failed to delete projects. Please try again.",
-          variant: "destructive",
-        });
         return;
       }
 
@@ -368,18 +309,8 @@ const Settings = () => {
       // Step 5: Sign out the user (account deletion from auth would need to be handled server-side)
       await signOut();
       
-      toast({
-        title: "Account data deleted",
-        description: "All your projects and tasks have been permanently deleted. You have been signed out.",
-        variant: "destructive",
-      });
     } catch (error) {
       console.error('Error deleting account:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete account. Please try again or contact support.",
-        variant: "destructive",
-      });
     } finally {
       setSaving(false);
     }
@@ -399,11 +330,6 @@ const Settings = () => {
 
       if (tasksError) {
         console.error('Error deleting project tasks:', tasksError);
-        toast({
-          title: "Error",
-          description: "Failed to delete project tasks. Please try again.",
-          variant: "destructive",
-        });
         return;
       }
 
@@ -415,28 +341,14 @@ const Settings = () => {
 
       if (projectError) {
         console.error('Error deleting project:', projectError);
-        toast({
-          title: "Error",
-          description: "Failed to delete project. Please try again.",
-          variant: "destructive",
-        });
         return;
       }
 
       // Update local state
       setProjects(projects.filter(p => p.id !== projectId));
       
-      toast({
-        title: "Project deleted",
-        description: "The project and all its tasks have been deleted successfully.",
-      });
     } catch (error) {
       console.error('Error deleting project:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete project. Please try again.",
-        variant: "destructive",
-      });
     } finally {
       setSaving(false);
       setShowDeleteProjectDialog(null);
@@ -456,11 +368,6 @@ const Settings = () => {
 
       if (error) {
         console.error('Error updating project name:', error);
-        toast({
-          title: "Error",
-          description: "Failed to update project name. Please try again.",
-          variant: "destructive",
-        });
         return;
       }
 
@@ -469,17 +376,8 @@ const Settings = () => {
         p.id === projectId ? { ...p, name: newName.trim() } : p
       ));
       
-      toast({
-        title: "Project updated",
-        description: "Project name has been updated successfully.",
-      });
     } catch (error) {
       console.error('Error updating project name:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update project name. Please try again.",
-        variant: "destructive",
-      });
     } finally {
       setSaving(false);
       setEditingProjectId(null);
