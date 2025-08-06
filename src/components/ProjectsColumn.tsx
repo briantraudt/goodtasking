@@ -169,59 +169,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                 </Button>
               </div>
               
-              {/* Inline Add Task Button/Input */}
-              {activeInlineAdd === project.id ? (
-                <input
-                  type="text"
-                  value={inlineTaskTitle}
-                  onChange={(e) => setInlineTaskTitle(e.target.value)}
-                  onKeyDown={async (e) => {
-                    if (e.key === 'Enter' && inlineTaskTitle.trim()) {
-                      try {
-                        // Create the actual task with user's input
-                        if (onCreateTask) {
-                          await onCreateTask(project.id, inlineTaskTitle.trim());
-                        }
-                        setInlineTaskTitle("");
-                        setActiveInlineAdd(null);
-                      } catch (error) {
-                        console.error('Error creating task:', error);
-                      }
-                    } else if (e.key === 'Escape') {
-                      setInlineTaskTitle("");
-                      setActiveInlineAdd(null);
-                    }
-                  }}
-                  onBlur={() => {
-                    setInlineTaskTitle("");
-                    setActiveInlineAdd(null);
-                  }}
-                  placeholder="Type task name and press Enter..."
-                  className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none mt-3 text-foreground"
-                  style={{ 
-                    borderColor: projectColor,
-                    backgroundColor: 'transparent'
-                  }}
-                  autoFocus
-                />
-              ) : (
-                <button
-                  onClick={() => {
-                    setActiveInlineAdd(project.id);
-                  }}
-                  className={cn(
-                    "text-sm font-medium px-3 py-1 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50 mt-3",
-                    "flex items-center justify-center gap-2 w-full"
-                  )}
-                  style={{ 
-                    borderColor: projectColor,
-                    color: projectColor
-                  }}
-                  title="Click to quick add task"
-                >
-                  + Add
-                </button>
-              )}
+              {/* No inline add functionality needed since we have the + button */}
             </div>
           );
         })}
