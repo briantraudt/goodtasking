@@ -42,21 +42,31 @@ const DraggableTaskItem = ({ task, onTaskClick }: DraggableTaskItemProps) => {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center gap-2 w-full",
+        "flex items-center gap-2 w-full relative",
         isDragging && "opacity-50"
       )}
     >
-      <div 
-        className="flex-1 truncate cursor-pointer"
-        onClick={handleClick}
-      >
-        <span className="text-sm font-medium">{task.title}</span>
-      </div>
-      <div 
-        className="flex items-center gap-1 opacity-60 cursor-grab"
+      {/* Expanded drag area - covers everything except task name */}
+      <div
+        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
         {...listeners}
         {...attributes}
+        title="Drag to schedule this task"
+      />
+      
+      {/* Task name - clickable for editing, positioned above drag area */}
+      <div 
+        className="flex-1 truncate cursor-pointer relative z-10 py-1"
+        onClick={handleClick}
+        title="Click to edit task"
       >
+        <span className="text-sm font-medium bg-inherit px-1 py-0.5 rounded hover:bg-black/5 transition-colors">
+          {task.title}
+        </span>
+      </div>
+      
+      {/* Visual drag indicator */}
+      <div className="flex items-center gap-1 opacity-60 pointer-events-none relative z-10">
         <GripVertical className="h-3 w-3" />
       </div>
     </div>

@@ -143,32 +143,39 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
         borderColor: projectColor
       }}
       className={cn(
-        "absolute inset-0 rounded-lg border z-10 shadow-sm text-white flex items-center",
+        "absolute inset-0 rounded-lg border z-10 shadow-sm text-white flex items-center relative",
         isDragging && "opacity-50"
       )}
-      title="Click to edit • Drag handle on right to move"
+      title="Drag anywhere to move • Click task name to edit"
     >
-      {/* Clickable content area for editing */}
+      {/* Expanded drag area - covers the entire task except the text area */}
+      <div
+        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
+        {...listeners}
+        {...attributes}
+      />
+      
+      {/* Task content area - clickable for editing, positioned above drag area */}
       <div 
-        className="flex-1 p-2 h-full flex flex-col justify-center cursor-pointer"
-        onClick={handleClick}
+        className="flex-1 p-2 h-full flex flex-col justify-center relative z-10"
       >
         <div className="text-sm truncate">
-          <span className="font-bold">{task.title}</span>
+          <span 
+            className="font-bold cursor-pointer hover:bg-white/10 px-1 py-0.5 rounded transition-colors"
+            onClick={handleClick}
+            title="Click to edit task"
+          >
+            {task.title}
+          </span>
           {task.vibe_projects?.name && (
             <span className="font-normal"> - {task.vibe_projects.name}</span>
           )}
         </div>
       </div>
       
-      {/* Drag handle with dots */}
-      <div 
-        {...listeners}
-        {...attributes}
-        className="w-6 h-full rounded-r-lg cursor-grab active:cursor-grabbing flex items-center justify-center hover:bg-white/10 transition-colors"
-        style={{ backgroundColor: `color-mix(in srgb, ${projectColor} 80%, black 20%)` }}
-        title="Drag to move task"
-      >
+      {/* Visual drag handle indicator */}
+      <div className="w-6 h-full rounded-r-lg flex items-center justify-center relative z-10 pointer-events-none"
+           style={{ backgroundColor: `color-mix(in srgb, ${projectColor} 80%, black 20%)` }}>
         <GripVertical className="h-4 w-4 text-white/80" />
       </div>
     </div>
