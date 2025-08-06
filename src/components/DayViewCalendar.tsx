@@ -168,11 +168,13 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
       ref={setNodeRef}
       style={{ 
         ...style,
+        backgroundColor: projectColor + ' !important',
         borderColor: projectColor,
-        borderLeftWidth: '4px'
+        borderLeftWidth: '4px',
+        color: 'white !important'
       }}
       className={cn(
-        "bg-white border-l-4 rounded-lg p-3 transition-all duration-200 h-full min-h-full flex flex-col justify-center cursor-grab active:cursor-grabbing hover:shadow-md group relative",
+        "border-l-4 rounded-lg p-3 transition-all duration-200 h-full min-h-full flex flex-col justify-center cursor-grab active:cursor-grabbing hover:shadow-md group relative text-white",
         isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
         task.completed && "opacity-60"
       )}
@@ -192,13 +194,13 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
         {(() => {
           const category = project?.category || 'work';
           const CategoryIcon = getCategoryIcon(category);
-          return <CategoryIcon className="w-4 h-4 flex-shrink-0" style={{ color: projectColor }} />;
+          return <CategoryIcon className="w-4 h-4 flex-shrink-0 text-white" />;
         })()}
         
         {/* Task Title */}
         <span 
           className={cn(
-            "text-sm font-bold text-gray-900 truncate cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors",
+            "text-sm font-bold text-white truncate cursor-pointer hover:bg-white/20 px-1 py-0.5 rounded transition-colors",
             task.completed && "line-through"
           )}
           onClick={handleClick}
@@ -209,7 +211,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
         
         {/* Project name */}
         {task.vibe_projects?.name && (
-          <span className="text-xs text-gray-600 truncate"> - {task.vibe_projects.name}</span>
+          <span className="text-xs text-white/80 truncate"> - {task.vibe_projects.name}</span>
         )}
       </div>
       
