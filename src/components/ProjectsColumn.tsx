@@ -7,7 +7,6 @@ import CreateProjectDialog from './CreateProjectDialog';
 import ProjectEditDialog from './ProjectEditDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
-import { useDraggable } from '@dnd-kit/core';
 
 interface Project {
   id: string;
@@ -61,61 +60,17 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
     }
   };
 
-  // Draggable Project Chip Component
-  const DraggableProjectChip = ({ project }: { project: Project }) => {
-    const {
-      attributes,
-      listeners,
-      setNodeRef,
-      transform,
-      isDragging,
-    } = useDraggable({
-      id: `project-${project.id}`,
-      data: {
-        type: 'project',
-        project,
-      },
-    });
-
-    const style = transform ? {
-      transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      zIndex: isDragging ? 1000 : 'auto',
-      opacity: isDragging ? 0.8 : 1,
-    } : undefined;
-
-    const projectColor = getProjectColor(project.category, project.color);
-
-    return (
-      <div
-        ref={setNodeRef}
-        {...listeners}
-        {...attributes}
-        className={cn(
-          "inline-flex items-center gap-2 px-4 py-2 rounded-full text-white font-medium cursor-grab select-none transition-transform",
-          "hover:scale-105 active:scale-95",
-          isDragging && "cursor-grabbing shadow-lg"
-        )}
-        style={{
-          backgroundColor: projectColor,
-          ...style
-        }}
-        onClick={(e) => {
-          if (!isDragging) {
-            e.stopPropagation();
-            setEditingProject(project);
-          }
-        }}
-      >
-        <span className="text-sm font-medium">{project.name}</span>
-      </div>
-    );
-  };
-
   const handleDeleteProject = async (projectId: string) => {
     if (onDeleteProject) {
       await onDeleteProject(projectId);
     }
     setDeleteConfirmProject(null);
+  };
+
+  const handleMoveToTasks = (projectId: string) => {
+    if (onMoveProjectToTasks) {
+      onMoveProjectToTasks(projectId);
+    }
   };
 
   return (
@@ -146,11 +101,42 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
         </CreateProjectDialog>
       </div>
 
-      {/* Projects Chips */}
-      <div className="space-y-3 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
-        {projectsWithoutTasks.map((project) => (
-          <DraggableProjectChip key={project.id} project={project} />
-        ))}
+      {/* Projects Cards */}
+      <div className="space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+        {projectsWithoutTasks.map((project) => {
+          const projectColor = getProjectColor(project.category, project.color);
+          
+          return (
+            <div 
+              key={project.id} 
+              className={cn(
+                "bg-white rounded-xl p-4 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card"
+              )}
+              style={{ borderColor: projectColor }}
+            >
+              {/* Project Header with Move Button */}
+              <div className="flex justify-between items-center">
+                <div className="flex-1">
+                  <h3 
+                    className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5"
+                    onClick={() => setEditingProject(project)}
+                  >
+                    {project.name}
+                  </h3>
+                </div>
+                <button
+                  onClick={() => handleMoveToTasks(project.id)}
+                  className={cn(
+                    "text-sm hover:underline font-medium",
+                    "text-black hover:opacity-70"
+                  )}
+                >
+                  + Add
+                </button>
+              </div>
+            </div>
+          );
+        })}
 
         {/* Empty State */}
         {projectsWithoutTasks.length === 0 && (
