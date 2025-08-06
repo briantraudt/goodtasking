@@ -31,6 +31,7 @@ interface Project {
   name: string;
   description?: string;
   category: 'work' | 'home' | 'personal';
+  color?: string;
   tasks: Task[];
 }
 
@@ -345,18 +346,41 @@ const DashboardView = ({
       
       {/* Drag Overlay */}
       <DragOverlay>
-        {activeTask ? (
-          <div className="w-64 h-10 rounded-lg border border-[#4DA8DA] bg-[#4DA8DA] shadow-lg text-white">
-            <div className="p-2 h-full flex flex-col justify-center">
-              <div className="text-sm truncate">
-                <span className="font-bold">{activeTask.title}</span>
-                {activeTask.vibe_projects?.name && (
-                  <span className="font-normal"> - {activeTask.vibe_projects.name}</span>
-                )}
+        {activeTask ? (() => {
+          // Get the project for this task to use its color
+          const project = projects.find(p => p.id === activeTask.project_id);
+          const getProjectColor = (category: string = 'work', customColor?: string) => {
+            if (customColor) return customColor;
+            
+            switch (category) {
+              case 'personal': return 'hsl(150, 45%, 45%)';
+              case 'home': return 'hsl(25, 95%, 53%)';
+              case 'work':
+              default: return '#4DA8DA';
+            }
+          };
+          
+          const projectColor = getProjectColor(project?.category, project?.color);
+          
+          return (
+            <div 
+              className="w-64 h-10 rounded-lg border shadow-lg text-white"
+              style={{
+                backgroundColor: projectColor,
+                borderColor: projectColor
+              }}
+            >
+              <div className="p-2 h-full flex flex-col justify-center">
+                <div className="text-sm truncate">
+                  <span className="font-bold">{activeTask.title}</span>
+                  {activeTask.vibe_projects?.name && (
+                    <span className="font-normal"> - {activeTask.vibe_projects.name}</span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ) : null}
+          );
+        })() : null}
       </DragOverlay>
       
       {/* Quick Task Creation Dialog */}
