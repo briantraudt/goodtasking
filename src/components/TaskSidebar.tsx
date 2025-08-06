@@ -473,60 +473,65 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                   );
                 })}
                 
-                {/* Inline Add Task Button/Input */}
-                {activeInlineAdd === project.id ? (
-                  <input
-                    type="text"
-                    value={inlineTaskTitle}
-                    onChange={(e) => setInlineTaskTitle(e.target.value)}
-                    onKeyDown={async (e) => {
-                      if (e.key === 'Enter' && inlineTaskTitle.trim()) {
-                        try {
-                          await onCreateTask?.(project.id, inlineTaskTitle.trim());
+                {/* Inline Add Task Button/Input - only show if there are real tasks (not just placeholder) */}
+                {(() => {
+                  const realTasks = projectTasks.filter(task => task.title !== "Add First Task...");
+                  return realTasks.length > 0 ? (
+                    activeInlineAdd === project.id ? (
+                      <input
+                        type="text"
+                        value={inlineTaskTitle}
+                        onChange={(e) => setInlineTaskTitle(e.target.value)}
+                        onKeyDown={async (e) => {
+                          if (e.key === 'Enter' && inlineTaskTitle.trim()) {
+                            try {
+                              await onCreateTask?.(project.id, inlineTaskTitle.trim());
+                              setInlineTaskTitle("");
+                              setActiveInlineAdd(null);
+                            } catch (error) {
+                              console.error('Error creating task:', error);
+                            }
+                          } else if (e.key === 'Escape') {
+                            setInlineTaskTitle("");
+                            setActiveInlineAdd(null);
+                          }
+                        }}
+                        onBlur={() => {
                           setInlineTaskTitle("");
                           setActiveInlineAdd(null);
-                        } catch (error) {
-                          console.error('Error creating task:', error);
-                        }
-                      } else if (e.key === 'Escape') {
-                        setInlineTaskTitle("");
-                        setActiveInlineAdd(null);
-                      }
-                    }}
-                    onBlur={() => {
-                      setInlineTaskTitle("");
-                      setActiveInlineAdd(null);
-                    }}
-                    placeholder="Type task name and press Enter..."
-                    className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none text-foreground"
-                    style={{ 
-                      borderColor: project.color || projectColor.hex,
-                      backgroundColor: 'transparent'
-                    }}
-                    autoFocus
-                  />
-                ) : (
-                  <button
-                    onClick={() => {
-                      setActiveInlineAdd(project.id);
-                    }}
-                    onDoubleClick={() => {
-                      setSelectedProjectId(project.id);
-                      setShowAddTaskDialog(true);
-                    }}
-                    className={cn(
-                      "text-sm font-medium px-3 py-1 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
-                      "flex items-center justify-center gap-2"
-                    )}
-                    style={{ 
-                      borderColor: project.color || projectColor.hex,
-                      color: project.color || projectColor.hex
-                    }}
-                    title="Click to quick add, double-click for detailed add"
-                  >
-                    + Add
-                  </button>
-                )}
+                        }}
+                        placeholder="Type task name and press Enter..."
+                        className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none text-foreground"
+                        style={{ 
+                          borderColor: project.color || projectColor.hex,
+                          backgroundColor: 'transparent'
+                        }}
+                        autoFocus
+                      />
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setActiveInlineAdd(project.id);
+                        }}
+                        onDoubleClick={() => {
+                          setSelectedProjectId(project.id);
+                          setShowAddTaskDialog(true);
+                        }}
+                        className={cn(
+                          "text-sm font-medium px-3 py-1 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
+                          "flex items-center justify-center gap-2"
+                        )}
+                        style={{ 
+                          borderColor: project.color || projectColor.hex,
+                          color: project.color || projectColor.hex
+                        }}
+                        title="Click to quick add, double-click for detailed add"
+                      >
+                        + Add
+                      </button>
+                    )
+                  ) : null;
+                })()}
               </div>
             </div>
           );
