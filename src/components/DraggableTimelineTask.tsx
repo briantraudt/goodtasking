@@ -67,16 +67,18 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
     disabled: !isDraggableTask,
   });
 
+  console.log('Timeline task debug:', { blockType: actualBlockType, color: block.color, task: task?.title });
+  
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-    backgroundColor: actualBlockType === 'task' ? block.color : undefined,
-    borderLeftColor: actualBlockType === 'task' ? block.color : undefined,
+    backgroundColor: actualBlockType === 'task' ? (block.color || '#6b7280') : undefined,
+    borderLeftColor: actualBlockType === 'task' ? (block.color || '#6b7280') : undefined,
     borderLeftWidth: '4px',
     color: actualBlockType === 'task' ? 'white' : undefined,
     opacity: task?.completed ? 0.75 : 1
   } : {
-    backgroundColor: actualBlockType === 'task' ? block.color : undefined,
-    borderLeftColor: actualBlockType === 'task' ? block.color : undefined,
+    backgroundColor: actualBlockType === 'task' ? (block.color || '#6b7280') : undefined,
+    borderLeftColor: actualBlockType === 'task' ? (block.color || '#6b7280') : undefined,
     borderLeftWidth: '4px',
     color: actualBlockType === 'task' ? 'white' : undefined,
     opacity: task?.completed ? 0.75 : 1
