@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { format, addDays, subDays, isToday, parseISO, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar, Clock, Star, GripVertical, Check, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, Star, GripVertical, Check, X, Home, User, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useCategories } from '@/hooks/useCategories';
 
 interface Task {
   id: string;
@@ -98,6 +99,7 @@ interface ScheduledTaskBlockProps {
 }
 
 const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskBlockProps) => {
+  const { categories } = useCategories();
   const {
     attributes,
     listeners,
@@ -126,6 +128,24 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
   };
   
   const projectColor = getProjectColor(project?.category, project?.color);
+
+  // Get category icon function
+  const getCategoryIcon = (category: string) => {
+    const categoryLower = category.toLowerCase();
+    const categoryData = categories.find(cat => cat.name.toLowerCase() === categoryLower);
+    
+    // Fallback to direct icon mapping if category not found
+    if (!categoryData) {
+      switch (categoryLower) {
+        case 'home': return Home;
+        case 'personal': return User;
+        case 'work': return Briefcase;
+        default: return Briefcase;
+      }
+    }
+    
+    return categoryData.icon || Briefcase;
+  };
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -157,7 +177,13 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
       
       {/* Task content area - clickable for editing, positioned above drag area */}
       <div className="p-2 h-full flex flex-col justify-center relative z-10">
-        <div className="text-sm truncate">
+        <div className="text-sm truncate flex items-center gap-2">
+          {/* Category Icon */}
+          {(() => {
+            const category = project?.category || 'work';
+            const CategoryIcon = getCategoryIcon(category);
+            return <CategoryIcon className="w-4 h-4 flex-shrink-0 text-white" />;
+          })()}
           <span 
             className="font-bold cursor-pointer hover:bg-white/10 px-1 py-0.5 rounded transition-colors relative z-20"
             onClick={handleClick}
