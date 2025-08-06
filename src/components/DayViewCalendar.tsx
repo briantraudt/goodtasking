@@ -148,11 +148,18 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
       )}
       title="Drag anywhere to move • Click task name to edit"
     >
-      {/* Task content area - clickable for editing */}
-      <div className="p-2 h-full flex flex-col justify-center">
+      {/* Extended drag area - covers everything except the text content */}
+      <div
+        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
+        {...listeners}
+        {...attributes}
+      />
+      
+      {/* Task content area - clickable for editing, positioned above drag area */}
+      <div className="p-2 h-full flex flex-col justify-center relative z-10">
         <div className="text-sm truncate">
           <span 
-            className="font-bold cursor-pointer hover:bg-white/10 px-1 py-0.5 rounded transition-colors"
+            className="font-bold cursor-pointer hover:bg-white/10 px-1 py-0.5 rounded transition-colors relative z-20"
             onClick={handleClick}
             title="Click to edit task"
           >
@@ -163,13 +170,6 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
           )}
         </div>
       </div>
-      
-      {/* Extended drag area - covers everything except the text content */}
-      <div
-        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
-        {...listeners}
-        {...attributes}
-      />
     </div>
   );
 };
