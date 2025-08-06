@@ -64,19 +64,19 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center w-full relative rounded-lg p-2 transition-all duration-200 cursor-pointer min-h-[44px]",
-        "hover:bg-gray-50 active:bg-gray-100",
-        task.completed ? "bg-gray-50/60 opacity-75" : "bg-white",
+        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 cursor-pointer min-h-[22px]",
+        "bg-orange-400 hover:bg-orange-500 active:bg-orange-600 text-white",
+        task.completed && "opacity-75 bg-gray-400 hover:bg-gray-500",
         isDragging && "opacity-50 shadow-lg z-50"
       )}
       onClick={handleCardClick}
     >
       {/* Checkbox for task completion */}
-      <div className="flex-shrink-0 mr-3 z-10" data-checkbox onClick={(e) => e.stopPropagation()}>
+      <div className="flex-shrink-0 mr-2 z-10" data-checkbox onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={task.completed}
           onCheckedChange={handleCheckboxChange}
-          className="rounded-sm"
+          className="h-3.5 w-3.5 border-0 bg-white"
         />
       </div>
 
@@ -89,20 +89,20 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
         onClick={handleEditClick}
         title="Click to edit task"
       >
-        <span className="text-sm font-medium text-gray-900 hover:bg-black/5 transition-colors px-1 py-0.5 rounded">
+        <span className="text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded">
           {task.title}
         </span>
       </div>
       
       {/* Extended drag area - starts right after text, covers remaining space */}
       <div
-        className="flex-shrink-0 h-full cursor-grab active:cursor-grabbing min-h-[44px] w-8 flex items-center justify-center"
+        className="flex-shrink-0 h-full cursor-grab active:cursor-grabbing min-h-[22px] w-6 flex items-center justify-center"
         data-drag-handle
         {...listeners}
         {...attributes}
         title="Drag to schedule this task"
       >
-        <GripVertical className="h-4 w-4 text-muted-foreground" />
+        <GripVertical className="h-3 w-3 text-white" />
       </div>
     </div>
   );
