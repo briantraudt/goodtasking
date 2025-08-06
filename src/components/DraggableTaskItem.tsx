@@ -70,40 +70,33 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 min-h-[22px] text-white border-0",
+        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 min-h-[22px] text-white border-0 cursor-grab active:cursor-grabbing",
         isDragging && "shadow-lg z-50"
       )}
+      {...listeners}
+      {...attributes}
+      title="Drag to schedule this task"
     >
-      {/* Draggable background areas - split around the text */}
-      <div 
-        className="absolute left-0 top-0 bottom-0 w-8 cursor-grab active:cursor-grabbing z-0"
-        {...listeners}
-        {...attributes}
-        title="Drag to schedule this task"
-      />
-      <div 
-        className="absolute right-12 top-0 bottom-0 left-16 cursor-grab active:cursor-grabbing z-0"
-        {...listeners}
-        {...attributes}
-        title="Drag to schedule this task"
-      />
-
       {/* Task content */}
-      <div className="flex-1 relative z-10">
+      <div className="flex-1 relative">
         <span 
           className={cn(
-            "text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded cursor-pointer relative z-20",
+            "text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded cursor-pointer",
             task.completed && "line-through opacity-60"
           )}
           onClick={handleEditClick}
+          onPointerDown={(e) => e.stopPropagation()}
           title="Click to edit task"
         >
           {task.title}
         </span>
       </div>
 
-      {/* Checkbox for task completion - moved to right side */}
-      <div className="flex-shrink-0 ml-2 mr-2 z-10 flex items-center justify-center" data-checkbox onClick={(e) => e.stopPropagation()}>
+      {/* Checkbox for task completion */}
+      <div 
+        className="flex-shrink-0 ml-2 mr-2 flex items-center justify-center" 
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         <div
           onClick={(e) => {
             e.stopPropagation();
