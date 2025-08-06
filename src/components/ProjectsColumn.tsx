@@ -48,6 +48,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
   };
 
   const getProjectColor = (category: string = 'work', customColor?: string) => {
+    // Always use custom color if provided
     if (customColor) return customColor;
     
     switch (category) {
@@ -158,12 +159,6 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                   </div>
                 </div>
 
-                {/* Project Category Badge */}
-                <div className="flex items-center gap-2">
-                  <Badge className={getCategoryColor(project.category)}>
-                    {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
-                  </Badge>
-                </div>
               </CardContent>
             </Card>
           );
