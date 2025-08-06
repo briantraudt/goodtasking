@@ -176,7 +176,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
       />
       
       {/* Task content area - positioned above drag area */}
-      <div className="px-3 py-2 h-full flex flex-col justify-center relative z-10">
+      <div className="px-3 py-1 h-full flex flex-col justify-center relative z-10">
         <div className="text-sm truncate flex items-center gap-2">
           {/* Category Icon - draggable */}
           {(() => {

@@ -425,7 +425,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     <div
                       key={task.id}
                       className={cn(
-                        "text-white font-medium rounded-lg px-3 py-2 text-sm cursor-pointer transition-all duration-150",
+                        "text-white font-medium rounded-lg px-3 py-1 text-sm cursor-pointer transition-all duration-150",
                         "hover:scale-[1.02] hover:shadow-md", // Enhanced hover effects
                         isOverdue 
                           ? "bg-[#4DA8DA] hover:brightness-110 border-2 border-red-500" // Light blue background with red border for overdue
