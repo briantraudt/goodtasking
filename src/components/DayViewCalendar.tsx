@@ -171,7 +171,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
     <div className="relative">
       {/* Checkbox OUTSIDE the draggable area */}
       <div 
-        className="absolute top-1/2 -translate-y-1/2 right-2 z-50 p-2 bg-red-500"
+        className="absolute top-1/2 -translate-y-1/2 right-2 z-50 p-2"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -181,14 +181,11 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
         style={{ pointerEvents: 'auto' }}
       >
         <div
-          className={cn(
-            "h-3 w-3 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none relative",
-            task.completed && "bg-green-500 border-green-500"
-          )}
+          className="h-3 w-3 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none relative"
         >
           {task.completed && (
             <div className="h-full w-full flex items-center justify-center">
-              <div className="w-1.5 h-1.5 bg-white"></div>
+              <div className="w-1.5 h-1.5 bg-black rounded-none"></div>
             </div>
           )}
         </div>
@@ -207,7 +204,7 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit, onTaskComplete }
         className={cn(
           "border-l-4 rounded-lg p-3 transition-all duration-200 h-full min-h-full flex flex-col justify-center cursor-grab active:cursor-grabbing hover:shadow-md group relative text-white",
           isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
-          task.completed && "opacity-60"
+          task.completed && "opacity-70"
         )}
         {...listeners}
         {...attributes}
