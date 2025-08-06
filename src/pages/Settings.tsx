@@ -531,19 +531,7 @@ const Settings = () => {
       <main className="overflow-hidden">
         <div className="max-w-app mx-auto px-6 py-6 h-full overflow-y-auto">
           <div className="space-y-6 pb-6">
-            {/* Page Header */}
-            <div className="flex items-center gap-4">
-              <Link to="/dashboard">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Dashboard
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">Settings</h1>
-                <p className="text-muted-foreground">Manage your account and preferences</p>
-              </div>
-            </div>
+            {/* Page Header - Removed */}
 
             {/* Dashboard Stats - More compact layout */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
