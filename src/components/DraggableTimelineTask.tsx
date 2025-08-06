@@ -181,7 +181,7 @@ const DraggableTimelineTask = ({ block, task }: DraggableTimelineTaskProps) => {
           {actualBlockType === 'task' && task && (() => {
             const taskCategory = getTaskCategory();
             const CategoryIcon = getCategoryIcon(taskCategory);
-            return <CategoryIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />;
+            return <CategoryIcon className="w-4 h-4 flex-shrink-0" style={{ color: block.color || '#6B7280' }} />;
           })()}
           <span className="truncate">{block.title}</span>
         </div>
