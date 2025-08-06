@@ -89,11 +89,10 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     },
   });
 
-  // Get all tasks that are not scheduled for the selected date
+  // Get all tasks from all projects (no calendar date filtering)
   const allTasks = useMemo(() => {
     const tasks = projects.flatMap(project => 
       project.tasks
-        .filter(task => task.scheduled_date !== selectedDate) // Filter out tasks scheduled for the selected date
         .map(task => ({
           ...task,
           vibe_projects: { name: project.name }
@@ -107,7 +106,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       }
       return 0; // Keep relative order for same completion status
     });
-  }, [projects, selectedDate]);
+  }, [projects]);
 
   // Apply filters
   const filteredTasks = useMemo(() => {
@@ -147,12 +146,12 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     });
   }, [allTasks, projectFilter, priorityFilter, dueDateFilter, projects]);
 
-  // Get unique projects that have unscheduled tasks (including completed ones for display)
+  // Get unique projects that have tasks (no calendar date filtering)
   const projectsWithTasks = useMemo(() => {
     return projects.filter(project => 
-      project.tasks.some(task => task.scheduled_date !== selectedDate)
+      project.tasks.length > 0
     );
-  }, [projects, selectedDate]);
+  }, [projects]);
 
   // Wrapper to handle type compatibility with SmartAddButton
   const handleCreateTask = (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => {
