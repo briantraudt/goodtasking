@@ -142,14 +142,18 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
               type="button" 
               variant="outline" 
               onClick={() => setOpen(false)}
-              className="flex-1"
+              className="flex-1 hover:bg-slate-700 hover:text-white hover:border-slate-700"
             >
               Cancel
             </Button>
             <Button 
               type="submit" 
               disabled={!name.trim()}
-              className="flex-1"
+              className="flex-1 text-white hover:opacity-90"
+              style={{ 
+                backgroundColor: name.trim() ? selectedColor : undefined,
+                borderColor: name.trim() ? selectedColor : undefined
+              }}
             >
               Create Project
             </Button>
