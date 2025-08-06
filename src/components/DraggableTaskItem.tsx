@@ -64,7 +64,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center w-full relative rounded-lg p-3 transition-all duration-200 cursor-pointer min-h-[44px]",
+        "flex items-center w-full relative rounded-lg p-2 transition-all duration-200 cursor-pointer min-h-[44px]",
         "hover:bg-gray-50 active:bg-gray-100",
         task.completed ? "bg-gray-50/60 opacity-75" : "bg-white",
         isDragging && "opacity-50 shadow-lg z-50"
@@ -83,13 +83,13 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
       {/* Task name - clickable for editing */}
       <div 
         className={cn(
-          "truncate relative z-10 py-1 flex-1 cursor-text",
+          "flex-1 cursor-text z-10",
           task.completed && "line-through opacity-60"
         )}
         onClick={handleEditClick}
         title="Click to edit task"
       >
-        <span className="text-sm font-medium bg-inherit px-1 py-0.5 rounded hover:bg-black/5 transition-colors">
+        <span className="text-sm font-medium hover:bg-black/5 transition-colors px-1 py-0.5 rounded">
           {task.title}
         </span>
       </div>
