@@ -292,8 +292,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
 
       {/* Removed filter section as requested */}
 
-      {/* Projects Grid - 2 Columns for Wider Tasks */}
-      <div className="grid grid-cols-2 gap-6 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+      {/* Projects Grid - Single Column for Narrower Container */}
+      <div className="grid grid-cols-1 gap-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
         {projectsWithTasks.map((project, index) => {
           // Get filtered tasks for this project
           const projectTasks = allTasks.filter(task => {

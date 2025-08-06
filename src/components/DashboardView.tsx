@@ -269,8 +269,8 @@ const DashboardView = ({
           {viewMode === 'planner' ? (
             <div className="h-full p-6">
               <div className="h-full flex flex-col lg:flex-row gap-6">
-                {/* Calendar - 33% width */}
-                <div className="flex-1 min-h-0 lg:min-h-[600px]">
+                {/* Calendar - 50% width */}
+                <div className="flex-[2] min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                     <DayViewCalendar
                       selectedDate={selectedDate}
@@ -294,7 +294,7 @@ const DashboardView = ({
                   </div>
                 </div>
                 
-                {/* Task Sidebar - 33% width */}
+                {/* Task Sidebar - 25% width */}
                 <div className="flex-1 min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                     <TaskSidebar
@@ -320,7 +320,7 @@ const DashboardView = ({
                   </div>
                 </div>
 
-                {/* Projects Column - 33% width */}
+                {/* Projects Column - 25% width */}
                 <div className="flex-1 min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                     <ProjectsColumn
