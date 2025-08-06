@@ -146,8 +146,14 @@ export const useProjects = () => {
       
       if (description) taskData.description = description;
       if (dueDate) {
-        taskData.due_date = dueDate.toISOString();
-        taskData.scheduled_date = dueDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+        // Format date in local timezone to avoid timezone conversion issues
+        const year = dueDate.getFullYear();
+        const month = String(dueDate.getMonth() + 1).padStart(2, '0');
+        const day = String(dueDate.getDate()).padStart(2, '0');
+        const localDateString = `${year}-${month}-${day}`;
+        
+        taskData.due_date = localDateString;
+        taskData.scheduled_date = localDateString;
       }
 
       const { data, error } = await supabase
