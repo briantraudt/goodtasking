@@ -75,18 +75,24 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       )}
       onClick={handleCardClick}
     >
-      {/* Task content - draggable area */}
+      {/* Draggable background area */}
       <div 
-        className={cn(
-          "flex-1 cursor-grab active:cursor-grabbing",
-          task.completed && "line-through opacity-60"
-        )}
+        className="absolute inset-0 cursor-grab active:cursor-grabbing z-0"
         {...listeners}
         {...attributes}
-        onClick={handleEditClick}
-        title="Drag to schedule or click to edit task"
-      >
-        <span className="text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded">
+        title="Drag to schedule this task"
+      />
+
+      {/* Task content */}
+      <div className="flex-1 relative z-10">
+        <span 
+          className={cn(
+            "text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded cursor-pointer",
+            task.completed && "line-through opacity-60"
+          )}
+          onClick={handleEditClick}
+          title="Click to edit task"
+        >
           {task.title}
         </span>
       </div>
