@@ -30,9 +30,11 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [deleteConfirmProject, setDeleteConfirmProject] = useState<Project | null>(null);
 
-  // Filter projects that have no tasks
+  // Filter projects that have no tasks OR all tasks are scheduled/completed
   const projectsWithoutTasks = projects.filter(project => 
-    !project.tasks || project.tasks.length === 0
+    !project.tasks || 
+    project.tasks.length === 0 || 
+    project.tasks.every(task => task.completed || task.scheduled_date)
   );
 
   const getCategoryColor = (category: string) => {
