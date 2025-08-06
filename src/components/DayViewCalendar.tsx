@@ -173,11 +173,12 @@ const ScheduledTaskBlock = ({ task, projects, onRemove, onEdit }: ScheduledTaskB
         </div>
       </div>
       
-      {/* Much larger visual drag handle indicator */}
-      <div className="w-16 h-full rounded-r-lg flex items-center justify-center relative z-10 pointer-events-none"
-           style={{ backgroundColor: `color-mix(in srgb, ${projectColor} 60%, black 40%)` }}>
-        <div className="flex items-center gap-0.5">
+      {/* Clean dots-only drag handle indicator */}
+      <div className="w-16 h-full rounded-r-lg flex items-center justify-center relative z-10 pointer-events-none">
+        <div className="flex items-center">
           <GripVertical className="h-5 w-5 text-white/90" />
+          <GripVertical className="h-5 w-5 text-white/90 -ml-2" />
+          <GripVertical className="h-5 w-5 text-white/90 -ml-2" />
           <GripVertical className="h-5 w-5 text-white/90 -ml-2" />
         </div>
       </div>

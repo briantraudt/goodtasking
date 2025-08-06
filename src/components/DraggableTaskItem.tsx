@@ -65,9 +65,11 @@ const DraggableTaskItem = ({ task, onTaskClick }: DraggableTaskItemProps) => {
         </span>
       </div>
       
-      {/* Much larger visual drag indicator */}
-      <div className="flex items-center justify-center w-12 h-8 opacity-60 pointer-events-none relative z-10 bg-white/10 rounded">
+      {/* Clean dots-only drag indicator */}
+      <div className="flex items-center justify-center w-12 h-8 opacity-60 pointer-events-none relative z-10">
         <GripVertical className="h-4 w-4" />
+        <GripVertical className="h-4 w-4 -ml-2" />
+        <GripVertical className="h-4 w-4 -ml-2" />
         <GripVertical className="h-4 w-4 -ml-2" />
       </div>
     </div>
