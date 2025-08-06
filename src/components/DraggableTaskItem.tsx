@@ -80,7 +80,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
         <Checkbox
           checked={task.completed}
           onCheckedChange={handleCheckboxChange}
-          className="h-3.5 w-3.5 border-0 bg-white"
+          className="h-3 w-3"
         />
       </div>
 
