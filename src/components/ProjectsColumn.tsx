@@ -152,16 +152,22 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                     {project.name}
                   </h3>
                 </div>
-                <button
-                  onClick={() => handleMoveToTasks(project.id)}
-                  className={cn(
-                    "text-sm hover:underline font-medium",
-                    "text-black hover:opacity-70"
-                  )}
-                >
-                  +
-                </button>
               </div>
+              
+              {/* Inline Add Task Button */}
+              <button
+                onClick={() => handleMoveToTasks(project.id)}
+                className={cn(
+                  "text-sm font-medium px-3 py-1.5 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50 mt-3",
+                  "flex items-center justify-center gap-2 w-full"
+                )}
+                style={{ 
+                  borderColor: projectColor,
+                  color: projectColor
+                }}
+              >
+                + Add
+              </button>
             </div>
           );
         })}

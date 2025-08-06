@@ -411,18 +411,6 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                      </div>
                   )}
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedProjectId(project.id);
-                    setShowAddTaskDialog(true);
-                  }}
-                  className={cn(
-                    "text-sm hover:underline font-medium",
-                    projectColor.accent
-                  )}
-                >
-                  +
-                </button>
               </div>
 
               {/* Task Pills */}
@@ -454,6 +442,24 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                     </div>
                   );
                 })}
+                
+                {/* Inline Add Task Button */}
+                <button
+                  onClick={() => {
+                    setSelectedProjectId(project.id);
+                    setShowAddTaskDialog(true);
+                  }}
+                  className={cn(
+                    "text-sm font-medium px-3 py-1.5 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
+                    "flex items-center justify-center gap-2"
+                  )}
+                  style={{ 
+                    borderColor: project.color || projectColor.hex,
+                    color: project.color || projectColor.hex
+                  }}
+                >
+                  + Add
+                </button>
               </div>
             </div>
           );
