@@ -11,14 +11,15 @@ import { useCategories } from '@/hooks/useCategories';
 interface Project {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   category: string;
-  color: string;
+  color?: string;
   tasks: any[];
 }
 
 interface CreateProjectDialogProps {
   onCreateProject: (project: Omit<Project, 'id'>) => void;
+  existingProjects?: Project[];
   children?: React.ReactNode;
 }
 
@@ -36,13 +37,20 @@ const PROJECT_COLORS = [
   { name: 'Lavender', value: '#A78BFA' }
 ];
 
-export default function CreateProjectDialog({ onCreateProject, children }: CreateProjectDialogProps) {
+export default function CreateProjectDialog({ onCreateProject, existingProjects = [], children }: CreateProjectDialogProps) {
   const { categories } = useCategories();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<string>('');
-  const [selectedColor, setSelectedColor] = useState(PROJECT_COLORS[0].value);
+
+  // Filter out colors already used by existing projects
+  const usedColors = new Set(existingProjects.map(project => project.color));
+  const availableColors = PROJECT_COLORS.filter(color => !usedColors.has(color.value));
+  
+  const [selectedColor, setSelectedColor] = useState(
+    availableColors.length > 0 ? availableColors[0].value : PROJECT_COLORS[0].value
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +65,7 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
       setName('');
       setDescription('');
       setCategory('');
-      setSelectedColor(PROJECT_COLORS[0].value);
+      setSelectedColor(availableColors.length > 0 ? availableColors[0].value : PROJECT_COLORS[0].value);
       setOpen(false);
     }
   };
@@ -120,7 +128,7 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
           <div>
             <Label>Project Color</Label>
             <div className="grid grid-cols-5 gap-2 mt-2">
-              {PROJECT_COLORS.map((color) => (
+              {availableColors.length > 0 ? availableColors.map((color) => (
                 <button
                   key={color.value}
                   type="button"
@@ -133,7 +141,11 @@ export default function CreateProjectDialog({ onCreateProject, children }: Creat
                   onClick={() => setSelectedColor(color.value)}
                   title={color.name}
                 />
-              ))}
+              )) : (
+                <div className="col-span-5 text-center text-muted-foreground text-sm py-2">
+                  All colors are currently in use. You can still create a project with a duplicate color.
+                </div>
+              )}
             </div>
           </div>
           

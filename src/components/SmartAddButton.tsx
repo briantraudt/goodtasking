@@ -8,13 +8,16 @@ import CreateProjectDialog from '@/components/CreateProjectDialog';
 interface Project {
   id: string;
   name: string;
+  description?: string;
+  category: string;
+  color?: string;
   tasks: any[];
 }
 
 interface SmartAddButtonProps {
   projects: Project[];
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => void;
-  onCreateProject?: (project: { name: string; description: string; category: string; tasks: any[] }) => void;
+  onCreateProject?: (project: { name: string; description?: string; category: string; color?: string; tasks: any[] }) => void;
 }
 
 const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddButtonProps) => {
@@ -42,7 +45,7 @@ const SmartAddButton = ({ projects, onCreateTask, onCreateProject }: SmartAddBut
             </button>
           }
         />
-        <CreateProjectDialog onCreateProject={onCreateProject}>
+        <CreateProjectDialog existingProjects={projects} onCreateProject={onCreateProject}>
           <button className="w-full cursor-pointer rounded-lg hover:bg-primary hover:text-white transition-colors flex items-center gap-3 p-3 text-left">
             <FolderPlus className="h-4 w-4" />
             <span className="font-medium">Project</span>

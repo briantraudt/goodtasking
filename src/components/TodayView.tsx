@@ -27,7 +27,8 @@ interface Project {
   id: string;
   name: string;
   description?: string;
-  category?: string;
+  category: string;
+  color?: string;
   tasks: Task[];
 }
 
@@ -35,7 +36,7 @@ interface TodayViewProps {
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
-  onCreateProject: (data: { name: string; description: string; category: string }) => void;
+  onCreateProject: (data: { name: string; description?: string; category: string; color?: string }) => void;
   onRefreshTasks?: () => void;
   userName?: string;
 }
@@ -141,7 +142,7 @@ const TodayView = ({
             </div>
             
             <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-              <CreateProjectDialog onCreateProject={onCreateProject} />
+              <CreateProjectDialog existingProjects={projects} onCreateProject={onCreateProject} />
               <AddTaskDialog 
                 projects={projects} 
                 onCreateTask={(projectId, title) => onCreateTask(projectId, title, undefined, today)}

@@ -26,7 +26,7 @@ interface Project {
   id: string;
   name: string;
   description?: string;
-  category?: string;
+  category: string;
   color?: string;
   tasks: Task[];
 }
@@ -35,7 +35,7 @@ interface WeeklyScheduleProps {
   projects: Project[];
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
-  onCreateProject: (data: { name: string; description: string; category: string }) => void;
+  onCreateProject: (data: { name: string; description?: string; category: string; color?: string }) => void;
   onUpdateProject?: (id: string, updates: { name?: string; category?: string }) => void;
   onDeleteProject?: (id: string) => void;
   onRefreshTasks?: () => void;
@@ -189,7 +189,7 @@ const WeeklySchedule = ({
         </div>
         
         <div className="flex items-center gap-2">
-          <CreateProjectDialog onCreateProject={onCreateProject} />
+          <CreateProjectDialog existingProjects={projects} onCreateProject={onCreateProject} />
           <AddTaskDialog 
             projects={projects} 
             onCreateTask={handleCreateTaskForProject}
@@ -238,7 +238,7 @@ const WeeklySchedule = ({
               Start by creating a project and adding your first task to get organized and productive.
             </p>
             <div className="flex items-center justify-center gap-2 pt-2">
-              <CreateProjectDialog onCreateProject={onCreateProject}>
+              <CreateProjectDialog existingProjects={projects} onCreateProject={onCreateProject}>
                 <Button variant="outline" size="sm">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Project

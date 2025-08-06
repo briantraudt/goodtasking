@@ -104,6 +104,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
           <h1 className="text-lg font-semibold text-foreground">Projects</h1>
         </div>
         <CreateProjectDialog
+          existingProjects={projects}
           onCreateProject={async (project) => {
             await onCreateProject({
               name: project.name,
@@ -177,6 +178,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                 className="flex items-center gap-2"
               >
                 <CreateProjectDialog
+                  existingProjects={projects}
                   onCreateProject={async (project) => {
                     await onCreateProject({
                       name: project.name,
