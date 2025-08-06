@@ -415,7 +415,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                   ) : (
                      <div className="flex-1">
                        <h3 
-                         className="text-xl font-semibold text-primary cursor-pointer transition-colors flex items-center gap-2"
+                         className="text-lg font-semibold text-primary cursor-pointer transition-colors flex items-center gap-2"
                          onClick={() => setEditingProject(project)}
                        >
                           {(() => {
