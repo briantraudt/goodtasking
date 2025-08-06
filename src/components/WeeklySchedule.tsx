@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import AddTaskDialog from './AddTaskDialog';
 import CreateProjectDialog from './CreateProjectDialog';
@@ -34,6 +36,8 @@ interface WeeklyScheduleProps {
   onUpdateTask: (id: string, updates: Partial<Task>) => void;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => void;
   onCreateProject: (data: { name: string; description: string; category: 'work' | 'home' | 'personal' }) => void;
+  onUpdateProject?: (id: string, updates: { name?: string; category?: 'work' | 'home' | 'personal' }) => void;
+  onDeleteProject?: (id: string) => void;
   onRefreshTasks?: () => void;
   userName?: string;
 }
@@ -43,10 +47,15 @@ const WeeklySchedule = ({
   onUpdateTask, 
   onCreateTask, 
   onCreateProject,
+  onUpdateProject,
+  onDeleteProject,
   onRefreshTasks,
   userName = "there"
 }: WeeklyScheduleProps) => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [editedProjectName, setEditedProjectName] = useState('');
+  const [showDeleteDialog, setShowDeleteDialog] = useState<string | null>(null);
   
   // Start from today instead of Sunday
   const weekStart = startOfDay(currentWeek);
@@ -125,6 +134,32 @@ const WeeklySchedule = ({
     const newWeek = new Date(currentWeek);
     newWeek.setDate(newWeek.getDate() + (direction === 'next' ? 7 : -7));
     setCurrentWeek(newWeek);
+  };
+
+  const handleEditProject = (projectId: string) => {
+    const project = projects.find(p => p.id === projectId);
+    if (project) {
+      setEditingProjectId(projectId);
+      setEditedProjectName(project.name);
+    }
+  };
+
+  const handleSaveProjectName = (projectId: string) => {
+    if (editedProjectName.trim() && editedProjectName.trim() !== projects.find(p => p.id === projectId)?.name) {
+      onUpdateProject?.(projectId, { name: editedProjectName.trim() });
+    }
+    setEditingProjectId(null);
+    setEditedProjectName('');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProjectId(null);
+    setEditedProjectName('');
+  };
+
+  const handleDeleteProject = (projectId: string) => {
+    onDeleteProject?.(projectId);
+    setShowDeleteDialog(null);
   };
 
   const getTotalTasks = () => {
@@ -254,11 +289,63 @@ const WeeklySchedule = ({
 
               return (
                 <div key={project.id} className="grid grid-cols-8 hover:bg-gray-50/50">
-                  {/* Project Name Column */}
-                  <div className="p-4 border-r">
-                    <div className="text-sm font-medium text-gray-900">{project.name}</div>
-                    <div className="text-xs text-gray-500 capitalize">{project.category}</div>
-                  </div>
+                   {/* Project Name Column */}
+                   <div className="p-4 border-r">
+                     <div className="flex items-center justify-between group">
+                       {editingProjectId === project.id ? (
+                         <div className="flex items-center gap-2 flex-1">
+                           <Input
+                             value={editedProjectName}
+                             onChange={(e) => setEditedProjectName(e.target.value)}
+                             onKeyDown={(e) => {
+                               if (e.key === 'Enter') handleSaveProjectName(project.id);
+                               if (e.key === 'Escape') handleCancelEdit();
+                             }}
+                             className="text-sm font-medium h-6 px-2"
+                             autoFocus
+                           />
+                           <Button
+                             size="sm"
+                             variant="ghost"
+                             onClick={() => handleSaveProjectName(project.id)}
+                             className="h-6 w-6 p-0"
+                           >
+                             <Check className="h-3 w-3" />
+                           </Button>
+                         </div>
+                       ) : (
+                         <>
+                           <div 
+                             className="flex-1 cursor-pointer hover:bg-gray-100 rounded px-1 py-0.5 transition-colors"
+                             onClick={() => handleEditProject(project.id)}
+                           >
+                             <div className="text-sm font-medium text-gray-900">{project.name}</div>
+                             <div className="text-xs text-gray-500 capitalize">{project.category}</div>
+                           </div>
+                           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                             <Button
+                               size="sm"
+                               variant="ghost"
+                               onClick={() => handleEditProject(project.id)}
+                               className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
+                             >
+                               <Edit3 className="h-3 w-3" />
+                             </Button>
+                             {onDeleteProject && (
+                               <Button
+                                 size="sm"
+                                 variant="ghost"
+                                 onClick={() => setShowDeleteDialog(project.id)}
+                                 className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
+                               >
+                                 <Trash2 className="h-3 w-3" />
+                               </Button>
+                             )}
+                           </div>
+                         </>
+                       )}
+                     </div>
+                   </div>
 
                   {/* Day Columns */}
                   {weekDays.map((day, dayIndex) => {
@@ -313,6 +400,28 @@ const WeeklySchedule = ({
           </div>
         </div>
       )}
+      
+      {/* Delete Project Dialog */}
+      <AlertDialog open={showDeleteDialog !== null} onOpenChange={() => setShowDeleteDialog(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Project</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{projects.find(p => p.id === showDeleteDialog)?.name}"? 
+              This will permanently delete the project and all its tasks. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => showDeleteDialog && handleDeleteProject(showDeleteDialog)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete Project
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
