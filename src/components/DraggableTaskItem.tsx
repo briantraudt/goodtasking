@@ -27,8 +27,22 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
     data: task,
   });
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't trigger completion if clicking on drag handle or checkbox
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-drag-handle]') || target.closest('[data-checkbox]')) {
+      return;
+    }
+    
     // Only trigger click if we're not in the middle of a drag
+    if (!isDragging && onTaskComplete) {
+      e.stopPropagation();
+      onTaskComplete(task.id, !task.completed);
+    }
+  };
+
+  const handleEditClick = (e: React.MouseEvent) => {
+    // Only trigger edit if we're not in the middle of a drag and clicking specifically on text
     if (!isDragging && onTaskClick) {
       e.stopPropagation();
       onTaskClick(task);
@@ -50,12 +64,15 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center w-full relative",
-        isDragging && "opacity-50"
+        "flex items-center w-full relative rounded-lg p-3 transition-all duration-200 cursor-pointer min-h-[44px]",
+        "hover:bg-gray-50 active:bg-gray-100",
+        task.completed ? "bg-gray-50/60 opacity-75" : "bg-white",
+        isDragging && "opacity-50 shadow-lg z-50"
       )}
+      onClick={handleCardClick}
     >
       {/* Checkbox for task completion */}
-      <div className="flex-shrink-0 mr-3 z-10">
+      <div className="flex-shrink-0 mr-3 z-10" data-checkbox onClick={(e) => e.stopPropagation()}>
         <Checkbox
           checked={task.completed}
           onCheckedChange={handleCheckboxChange}
@@ -66,10 +83,10 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
       {/* Task name - clickable for editing */}
       <div 
         className={cn(
-          "truncate cursor-pointer relative z-10 py-1 flex-1",
+          "truncate relative z-10 py-1 flex-1 cursor-text",
           task.completed && "line-through opacity-60"
         )}
-        onClick={handleClick}
+        onClick={handleEditClick}
         title="Click to edit task"
       >
         <span className="text-sm font-medium bg-inherit px-1 py-0.5 rounded hover:bg-black/5 transition-colors">
@@ -79,7 +96,8 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete }: DraggableTaskI
       
       {/* Extended drag area - starts right after text, covers remaining space */}
       <div
-        className="flex-shrink-0 h-full cursor-grab active:cursor-grabbing min-h-[32px] w-8 flex items-center justify-center"
+        className="flex-shrink-0 h-full cursor-grab active:cursor-grabbing min-h-[44px] w-8 flex items-center justify-center"
+        data-drag-handle
         {...listeners}
         {...attributes}
         title="Drag to schedule this task"

@@ -112,6 +112,25 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
     }
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't trigger completion for events or if clicking on checkbox
+    if (actualBlockType === 'event') {
+      handleCalendarEventClick();
+      return;
+    }
+    
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-checkbox]')) {
+      return;
+    }
+    
+    // Toggle completion for tasks
+    if (onTaskComplete && task && !isDragging) {
+      e.stopPropagation();
+      onTaskComplete(task.id, !task.completed);
+    }
+  };
+
   const handleCheckboxChange = (checked: boolean) => {
     if (onTaskComplete && task) {
       onTaskComplete(task.id, checked);
@@ -165,20 +184,20 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
       style={style}
       {...(isDraggableTask ? listeners : {})}
       {...(isDraggableTask ? attributes : {})}
-      onClick={actualBlockType === 'event' ? handleCalendarEventClick : undefined}
+      onClick={handleCardClick}
       aria-label={actualBlockType === 'event' ? `Google Calendar event: ${block.title}` : `Task: ${block.title}`}
       className={cn(
-        "transition-all duration-200 w-full m-0 border-0 box-border flex flex-col justify-center group relative",
-        "h-full min-h-full overflow-hidden",
+        "transition-all duration-200 w-full m-0 border-0 box-border flex flex-col justify-center group relative min-h-[44px]",
+        "h-full min-h-full overflow-hidden cursor-pointer",
         // Modern styling for events and tasks
         actualBlockType === 'event' 
-          ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg cursor-pointer hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
+          ? "bg-blue-50 border-l-4 border-blue-400 rounded-lg hover:bg-blue-100 hover:shadow-md px-3 py-1.5" 
           : cn(
-              "bg-white border-l-4 rounded-lg px-3 py-1.5", 
+              "border-l-4 rounded-lg px-3 py-1.5", 
               block.color || "border-green-400",
-              task?.completed && "opacity-60"
+              task?.completed ? "bg-gray-50/60 opacity-75" : "bg-white hover:bg-gray-50/30"
             ),
-        isDraggableTask && "cursor-grab active:cursor-grabbing hover:shadow-md",
+        isDraggableTask && "hover:shadow-md",
         isDragging && "opacity-50 shadow-lg z-40 rotate-1 scale-105",
         isDraggableTask && "hover:scale-[1.01]"
       )}
@@ -187,11 +206,11 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
       <div className="h-full flex flex-col justify-center">
         {/* Checkbox for task completion - only for tasks */}
         {actualBlockType === 'task' && task && (
-          <div className="absolute top-2 left-2 z-20">
+          <div className="absolute top-2 left-2 z-20" data-checkbox onClick={(e) => e.stopPropagation()}>
             <Checkbox
               checked={task.completed || false}
               onCheckedChange={handleCheckboxChange}
-              className="rounded-sm bg-white/80 hover:bg-white h-4 w-4"
+              className="rounded-sm bg-white/90 hover:bg-white"
             />
           </div>
         )}
@@ -200,7 +219,7 @@ const DraggableTimelineTask = ({ block, task, onTaskComplete }: DraggableTimelin
         <div className={cn(
           "text-sm leading-tight text-left font-bold flex items-center gap-2",
           actualBlockType === 'event' ? "text-gray-900" : "text-gray-900",
-          task?.completed && "line-through"
+          task?.completed && "line-through opacity-60"
         )}>
           {/* Category Icon for tasks - Always show for tasks */}
           {actualBlockType === 'task' && (() => {
