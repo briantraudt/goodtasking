@@ -10,7 +10,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Edit2 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { CalendarIcon, Edit2, Check, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import SmartAddButton from '@/components/SmartAddButton';
@@ -46,13 +47,14 @@ interface TaskSidebarProps {
   selectedDate: string;
   onCreateTask?: (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => void;
   onCreateProject?: (project: { name: string; description: string; category: 'work' | 'home' | 'personal'; tasks: any[] }) => void;
-  onUpdateProject?: (id: string, updates: { category?: 'work' | 'home' | 'personal' }) => void;
+  onUpdateProject?: (id: string, updates: { name?: string; category?: 'work' | 'home' | 'personal' }) => void;
+  onDeleteProject?: (id: string) => void;
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
   className?: string;
 }
 
-const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onUpdateTask, onDeleteTask, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, className }: TaskSidebarProps) => {
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
@@ -61,6 +63,8 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [editingProjectName, setEditingProjectName] = useState('');
+  const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState<string | null>(null);
   
   // Add Task Form State
   const [taskTitle, setTaskTitle] = useState('');
@@ -159,6 +163,32 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     }
   };
 
+  // Handle project name editing
+  const handleEditProjectName = (projectId: string) => {
+    const project = projects.find(p => p.id === projectId);
+    if (project) {
+      setEditingProjectId(projectId);
+      setEditingProjectName(project.name);
+    }
+  };
+
+  const handleSaveProjectName = () => {
+    if (editingProjectName.trim() && editingProjectId) {
+      onUpdateProject?.(editingProjectId, { name: editingProjectName.trim() });
+      setEditingProjectId(null);
+      setEditingProjectName('');
+    }
+  };
+
+  const handleCancelEditProjectName = () => {
+    setEditingProjectId(null);
+    setEditingProjectName('');
+  };
+
+  const handleDeleteProject = (projectId: string) => {
+    onDeleteProject?.(projectId);
+    setShowDeleteProjectDialog(null);
+  };
   
   
   const getTaskCountByPriority = (priority: string) => {
@@ -293,84 +323,61 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                 projectColor.border
               )}
             >
-              {/* Project Header with Editable Category */}
-              <div className="flex justify-between items-center mb-2">
-                <div className="flex items-center gap-2">
+              {/* Project Header with Edit/Delete Options */}
+              <div className="flex justify-between items-center mb-2 group">
+                <div className="flex items-center gap-2 flex-1">
                   {editingProjectId === project.id ? (
-                    <Popover open={true} onOpenChange={(open) => !open && setEditingProjectId(null)}>
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-auto p-0">
-                          <h3 className="font-semibold text-black cursor-pointer transition-colors">
-                            {project.name}
-                          </h3>
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-48 p-3">
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">Change Category</Label>
-                          <div className="space-y-2">
-                             {(['work', 'personal', 'home'] as const).map((category) => {
-                               const categoryColor = getProjectColor(category);
-                               const isSelected = project.category === category;
-                               
-                               return (
-                                 <div key={category} className="flex items-center space-x-2">
-                                   <div 
-                                     className={cn(
-                                       "w-4 h-4 rounded-full border-2 cursor-pointer transition-all duration-200 flex items-center justify-center"
-                                     )}
-                                     style={{
-                                       backgroundColor: isSelected ? (project.color || categoryColor.hex) : 'transparent',
-                                       borderColor: isSelected ? (project.color || categoryColor.hex) : '#d1d5db'
-                                     }}
-                                     onMouseEnter={(e) => {
-                                       if (!isSelected) {
-                                         const hoverColor = project.color || categoryColor.hex;
-                                         e.currentTarget.style.borderColor = hoverColor;
-                                         e.currentTarget.style.backgroundColor = hoverColor;
-                                       }
-                                     }}
-                                     onMouseLeave={(e) => {
-                                       if (!isSelected) {
-                                         e.currentTarget.style.borderColor = '#d1d5db';
-                                         e.currentTarget.style.backgroundColor = 'transparent';
-                                       }
-                                     }}
-                                     onClick={() => {
-                                       if (onUpdateProject && project.category !== category) {
-                                         onUpdateProject(project.id, { category });
-                                       }
-                                       setEditingProjectId(null);
-                                     }}
-                                   >
-                                   </div>
-                                   <Label 
-                                     htmlFor={`${project.id}-${category}`} 
-                                     className="text-sm font-normal capitalize cursor-pointer text-gray-700"
-                                     onClick={() => {
-                                       if (onUpdateProject && project.category !== category) {
-                                         onUpdateProject(project.id, { category });
-                                       }
-                                       setEditingProjectId(null);
-                                     }}
-                                   >
-                                     {category}
-                                   </Label>
-                                 </div>
-                               );
-                             })}
-                          </div>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                    <div className="flex items-center gap-2 flex-1">
+                      <Input
+                        value={editingProjectName}
+                        onChange={(e) => setEditingProjectName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveProjectName();
+                          if (e.key === 'Escape') handleCancelEditProjectName();
+                        }}
+                        className="text-sm font-semibold h-7 px-2"
+                        autoFocus
+                      />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleSaveProjectName}
+                        className="h-7 w-7 p-0"
+                      >
+                        <Check className="h-3 w-3" />
+                      </Button>
+                    </div>
                   ) : (
-                    <h3 
-                      className="font-semibold text-black cursor-pointer transition-colors flex items-center gap-1"
-                      onClick={() => setEditingProjectId(project.id)}
-                    >
-                      {project.name}
-                      <Edit2 className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </h3>
+                    <>
+                      <div className="flex-1">
+                        <h3 
+                          className="font-semibold text-black cursor-pointer transition-colors hover:bg-gray-100 rounded px-1 py-0.5"
+                          onClick={() => handleEditProjectName(project.id)}
+                        >
+                          {project.name}
+                        </h3>
+                      </div>
+                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleEditProjectName(project.id)}
+                          className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600"
+                        >
+                          <Edit2 className="h-3 w-3" />
+                        </Button>
+                        {onDeleteProject && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setShowDeleteProjectDialog(project.id)}
+                            className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
+                    </>
                   )}
                 </div>
                 <button
@@ -387,7 +394,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                 </button>
               </div>
 
-              {/* Light Blue Task Pills */}
+              {/* Task Pills */}
               <div className="flex flex-col gap-2">
                 {projectTasks.map(task => {
                   // Determine if task is overdue for red border styling
@@ -601,6 +608,27 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
         onDelete={handleTaskDelete}
       />
 
+      {/* Delete Project Dialog */}
+      <AlertDialog open={showDeleteProjectDialog !== null} onOpenChange={() => setShowDeleteProjectDialog(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Project</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{projects.find(p => p.id === showDeleteProjectDialog)?.name}"? 
+              This will permanently delete the project and all its tasks. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => showDeleteProjectDialog && handleDeleteProject(showDeleteProjectDialog)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete Project
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
