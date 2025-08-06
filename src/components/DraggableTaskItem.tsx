@@ -75,38 +75,40 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       )}
       onClick={handleCardClick}
     >
-      {/* Checkbox for task completion */}
-      <div className="flex-shrink-0 mr-2 z-10" data-checkbox onClick={(e) => e.stopPropagation()}>
-        <Checkbox
-          checked={task.completed}
-          onCheckedChange={handleCheckboxChange}
-          className="h-3.5 w-3.5 border-0 bg-white"
-        />
-      </div>
-
-      {/* Task name - clickable for editing */}
+      {/* Task content - draggable area */}
       <div 
         className={cn(
-          "flex-1 cursor-text z-10",
+          "flex-1 cursor-grab active:cursor-grabbing",
           task.completed && "line-through opacity-60"
         )}
+        {...listeners}
+        {...attributes}
         onClick={handleEditClick}
-        title="Click to edit task"
+        title="Drag to schedule or click to edit task"
       >
         <span className="text-sm font-medium text-white hover:bg-white/10 transition-colors px-1 py-0.5 rounded">
           {task.title}
         </span>
       </div>
-      
-      {/* Extended drag area - starts right after text, covers remaining space */}
-      <div
-        className="flex-shrink-0 h-full cursor-grab active:cursor-grabbing min-h-[22px] w-6 flex items-center justify-center"
-        data-drag-handle
-        {...listeners}
-        {...attributes}
-        title="Drag to schedule this task"
-      >
-        <GripVertical className="h-3 w-3 text-white" />
+
+      {/* Checkbox for task completion - moved to right side */}
+      <div className="flex-shrink-0 ml-2 z-10 flex items-center justify-center" data-checkbox onClick={(e) => e.stopPropagation()}>
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCheckboxChange(!task.completed);
+          }}
+          className={cn(
+            "h-2.5 w-2.5 border-2 border-white bg-white cursor-pointer transition-all duration-200 hover:scale-110 rounded-none",
+            task.completed && "bg-white border-white"
+          )}
+        >
+          {task.completed && (
+            <div className="h-full w-full flex items-center justify-center">
+              <div className="w-1 h-1 bg-black rounded-none"></div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
