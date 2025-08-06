@@ -24,9 +24,10 @@ interface ProjectsColumnProps {
   onUpdateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   onDeleteProject: (id: string) => Promise<void>;
   onMoveProjectToTasks?: (projectId: string) => void;
+  onCreateTask?: (projectId: string, title: string, description?: string) => Promise<void>;
 }
 
-const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject, onMoveProjectToTasks }: ProjectsColumnProps) => {
+const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject, onMoveProjectToTasks, onCreateTask }: ProjectsColumnProps) => {
   const { categories } = useCategories();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [activeInlineAdd, setActiveInlineAdd] = useState<string | null>(null);
@@ -168,8 +169,10 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
                   onKeyDown={async (e) => {
                     if (e.key === 'Enter' && inlineTaskTitle.trim()) {
                       try {
-                        // Move project to tasks when first task is added
-                        await handleMoveToTasks(project.id);
+                        // Create the actual task with user's input
+                        if (onCreateTask) {
+                          await onCreateTask(project.id, inlineTaskTitle.trim());
+                        }
                         setInlineTaskTitle("");
                         setActiveInlineAdd(null);
                       } catch (error) {

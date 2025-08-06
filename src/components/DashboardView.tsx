@@ -336,6 +336,11 @@ const DashboardView = ({
                           await onDeleteProject(id);
                         }
                       }}
+                      onCreateTask={async (projectId: string, title: string, description?: string) => {
+                        if (onCreateTask) {
+                          await onCreateTask(projectId, title, description);
+                        }
+                      }}
                       onMoveProjectToTasks={(projectId) => {
                         onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
                       }}
