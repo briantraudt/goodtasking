@@ -149,6 +149,10 @@ const DashboardView = ({
     const taskId = activeId.replace('task-', '').replace('scheduled-', '');
     const task = allTasks.find(t => t.id === taskId);
     setActiveTask(task || null);
+    
+    // Prevent horizontal scrolling during drag
+    document.body.style.overflowX = 'hidden';
+    document.documentElement.style.overflowX = 'hidden';
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -182,6 +186,10 @@ const DashboardView = ({
       handleTaskUnscheduled(taskId);
     }
     setActiveTask(null);
+    
+    // Restore normal scrolling behavior after drag
+    document.body.style.overflowX = '';
+    document.documentElement.style.overflowX = '';
   };
 
   const handleQuickTaskCreate = (hour: number, minute: number) => {

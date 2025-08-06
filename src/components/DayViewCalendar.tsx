@@ -453,7 +453,7 @@ const DayViewCalendar = ({
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col overflow-hidden">
       {/* Calendar Header with Icon, Centered Date and Week Button */}
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
         {/* Calendar Icon and Clickable Text on Left */}
@@ -529,7 +529,7 @@ const DayViewCalendar = ({
           className="h-full overflow-y-auto overflow-x-hidden border rounded-lg"
           style={{ scrollBehavior: 'smooth' }}
         >
-          <div className="relative">
+          <div className="relative overflow-hidden">
             {/* Time labels and slots - 30-minute increments */}
             {Array.from({ length: 48 }, (_, index) => {
               const hour = Math.floor(index / 2);
@@ -546,13 +546,15 @@ const DayViewCalendar = ({
                   key={`${hour}-${minute}`} 
                   data-hour={hour}
                   data-minute={minute}
-                  className="flex w-full h-12 border-t border-gray-200"
+                   className="flex w-full h-12 border-t border-gray-200 min-w-0"
+                   style={{ maxWidth: '100%', overflow: 'hidden' }}
                 >
                   {/* Time column */}
                   <div className={cn(
-                    "w-28 h-full pr-2 flex items-start justify-end border-r border-border",
+                    "w-28 h-full pr-2 flex items-start justify-end border-r border-border flex-shrink-0",
                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
-                  )}>
+                  )}
+                  style={{ minWidth: '7rem', maxWidth: '7rem' }}>
                     {minute === 0 ? (
                       <span className={cn(
                         "pt-1 text-sm font-semibold text-gray-700",
@@ -568,7 +570,7 @@ const DayViewCalendar = ({
                   </div>
 
                   {/* Time slot container */}
-                  <div className="flex-1 h-full relative">
+                  <div className="flex-1 h-full relative min-w-0" style={{ overflow: 'hidden' }}>
                     <TimeSlot
                       hour={hour}
                       minute={minute}
