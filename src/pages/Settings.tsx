@@ -12,7 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Brain, Settings as SettingsIcon, User, AlertTriangle, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3 } from 'lucide-react';
+import { Brain, Settings as SettingsIcon, User, AlertTriangle, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3, Edit2, Trash2, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 
@@ -71,6 +71,9 @@ const Settings = () => {
     completionRate: 0,
   });
   const [fullName, setFullName] = useState('');
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [editingProjectName, setEditingProjectName] = useState('');
+  const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -382,6 +385,124 @@ const Settings = () => {
     }
   };
 
+  const deleteProject = async (projectId: string) => {
+    if (!user) return;
+
+    try {
+      setSaving(true);
+      
+      // Delete all tasks for this project first
+      const { error: tasksError } = await supabase
+        .from('vibe_tasks')
+        .delete()
+        .eq('project_id', projectId);
+
+      if (tasksError) {
+        console.error('Error deleting project tasks:', tasksError);
+        toast({
+          title: "Error",
+          description: "Failed to delete project tasks. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Delete the project
+      const { error: projectError } = await supabase
+        .from('vibe_projects')
+        .delete()
+        .eq('id', projectId);
+
+      if (projectError) {
+        console.error('Error deleting project:', projectError);
+        toast({
+          title: "Error",
+          description: "Failed to delete project. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update local state
+      setProjects(projects.filter(p => p.id !== projectId));
+      
+      toast({
+        title: "Project deleted",
+        description: "The project and all its tasks have been deleted successfully.",
+      });
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete project. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+      setShowDeleteProjectDialog(null);
+    }
+  };
+
+  const updateProjectName = async (projectId: string, newName: string) => {
+    if (!user || !newName.trim()) return;
+
+    try {
+      setSaving(true);
+      
+      const { error } = await supabase
+        .from('vibe_projects')
+        .update({ name: newName.trim() })
+        .eq('id', projectId);
+
+      if (error) {
+        console.error('Error updating project name:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update project name. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Update local state
+      setProjects(projects.map(p => 
+        p.id === projectId ? { ...p, name: newName.trim() } : p
+      ));
+      
+      toast({
+        title: "Project updated",
+        description: "Project name has been updated successfully.",
+      });
+    } catch (error) {
+      console.error('Error updating project name:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update project name. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+      setEditingProjectId(null);
+      setEditingProjectName('');
+    }
+  };
+
+  const handleEditProject = (project: Project) => {
+    setEditingProjectId(project.id);
+    setEditingProjectName(project.name);
+  };
+
+  const handleSaveProjectName = () => {
+    if (editingProjectId && editingProjectName.trim()) {
+      updateProjectName(editingProjectId, editingProjectName);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProjectId(null);
+    setEditingProjectName('');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -504,9 +625,65 @@ const Settings = () => {
               ) : (
                 <div className="grid gap-4">
                   {projects.map((project) => (
-                    <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="space-y-1">
-                        <h4 className="font-medium">{project.name}</h4>
+                    <div key={project.id} className="flex items-center justify-between p-4 border rounded-lg group">
+                      <div className="flex-1 space-y-1">
+                        {editingProjectId === project.id ? (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              value={editingProjectName}
+                              onChange={(e) => setEditingProjectName(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSaveProjectName();
+                                if (e.key === 'Escape') handleCancelEdit();
+                              }}
+                              className="font-medium h-8 max-w-xs"
+                              autoFocus
+                            />
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={handleSaveProjectName}
+                              className="h-8 w-8 p-0"
+                            >
+                              <Check className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={handleCancelEdit}
+                              className="h-8 w-8 p-0"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <h4 
+                              className="font-medium cursor-pointer hover:bg-gray-100 rounded px-2 py-1 transition-colors flex-1"
+                              onClick={() => handleEditProject(project)}
+                            >
+                              {project.name}
+                            </h4>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleEditProject(project)}
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600"
+                              >
+                                <Edit2 className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setShowDeleteProjectDialog(project.id)}
+                                className="h-8 w-8 p-0 text-gray-400 hover:text-red-600"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
                         {project.description && (
                           <p className="text-sm text-muted-foreground">{project.description}</p>
                         )}
@@ -515,7 +692,7 @@ const Settings = () => {
                           <span>{project.completed_tasks || 0} completed</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 ml-4">
                         {project.task_count && project.task_count > 0 ? (
                           <div className="flex items-center gap-2">
                             <Progress 
@@ -835,6 +1012,29 @@ const Settings = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Delete Project Dialog */}
+          <AlertDialog open={showDeleteProjectDialog !== null} onOpenChange={() => setShowDeleteProjectDialog(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete Project</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete "{projects.find(p => p.id === showDeleteProjectDialog)?.name}"? 
+                  This will permanently delete the project and all its tasks. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => showDeleteProjectDialog && deleteProject(showDeleteProjectDialog)}
+                  className="bg-red-600 hover:bg-red-700"
+                  disabled={saving}
+                >
+                  Delete Project
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
