@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus } from 'lucide-react';
+import { Plus, AlertCircle } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
 
 interface Project {
@@ -43,6 +43,7 @@ export default function CreateProjectDialog({ onCreateProject, existingProjects 
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<string>('');
+  const [error, setError] = useState('');
 
   // Filter out colors already used by existing projects
   const usedColors = new Set(existingProjects.map(project => project.color));
@@ -54,20 +55,39 @@ export default function CreateProjectDialog({ onCreateProject, existingProjects 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      onCreateProject({
-        name: name.trim(),
-        description: description.trim(),
-        category: (category || categories[0]?.name || 'Work').toLowerCase(),
-        color: selectedColor,
-        tasks: []
-      });
-      setName('');
-      setDescription('');
-      setCategory('');
-      setSelectedColor(availableColors.length > 0 ? availableColors[0].value : PROJECT_COLORS[0].value);
-      setOpen(false);
+    
+    // Clear any previous error
+    setError('');
+    
+    if (!name.trim()) {
+      return;
     }
+    
+    // Check for duplicate names (case-insensitive)
+    const duplicateProject = existingProjects.find(
+      project => project.name.toLowerCase() === name.trim().toLowerCase()
+    );
+    
+    if (duplicateProject) {
+      setError(`A project named "${duplicateProject.name}" already exists. Please choose a different name.`);
+      return;
+    }
+    
+    onCreateProject({
+      name: name.trim(),
+      description: description.trim(),
+      category: (category || categories[0]?.name || 'Work').toLowerCase(),
+      color: selectedColor,
+      tasks: []
+    });
+    
+    // Reset form
+    setName('');
+    setDescription('');
+    setCategory('');
+    setError('');
+    setSelectedColor(availableColors.length > 0 ? availableColors[0].value : PROJECT_COLORS[0].value);
+    setOpen(false);
   };
 
   return (
@@ -91,9 +111,20 @@ export default function CreateProjectDialog({ onCreateProject, existingProjects 
               id="project-name"
               placeholder="What's your project called?"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                // Clear error when user starts typing
+                if (error) setError('');
+              }}
               required
+              className={error ? 'border-red-500 focus:border-red-500' : ''}
             />
+            {error && (
+              <div className="flex items-center gap-2 mt-2 text-sm text-red-600">
+                <AlertCircle className="h-4 w-4" />
+                {error}
+              </div>
+            )}
           </div>
           <div>
             <Label htmlFor="project-description">Description</Label>
