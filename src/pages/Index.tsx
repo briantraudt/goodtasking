@@ -12,6 +12,7 @@ const Index = () => {
     loading, 
     createProject, 
     updateProject,
+    deleteProject,
     createTask,
     updateTask,
     deleteTask,
@@ -52,6 +53,7 @@ const Index = () => {
             projects={projects}
             onCreateProject={(data) => createProject(data.name, data.description, data.category)}
             onUpdateProject={updateProject}
+            onDeleteProject={deleteProject}
             onCreateTask={createTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
