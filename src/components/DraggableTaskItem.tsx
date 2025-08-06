@@ -92,7 +92,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       </div>
 
       {/* Checkbox for task completion - moved to right side */}
-      <div className="flex-shrink-0 ml-2 z-10 flex items-center justify-center" data-checkbox onClick={(e) => e.stopPropagation()}>
+      <div className="flex-shrink-0 ml-2 mr-2 z-10 flex items-center justify-center" data-checkbox onClick={(e) => e.stopPropagation()}>
         <div
           onClick={(e) => {
             e.stopPropagation();
