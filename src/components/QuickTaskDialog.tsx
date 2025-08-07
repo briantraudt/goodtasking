@@ -70,7 +70,7 @@ const QuickTaskDialog = ({
   }, [isOpen]);
 
   const handleSave = async () => {
-    if (!title.trim() || !selectedProject || !taskStartTime || !taskEndTime) {
+    if (!title.trim() || !taskStartTime || !taskEndTime) {
       toast({
         title: "Missing information",
         description: "Please fill in all required fields.",
@@ -97,7 +97,7 @@ const QuickTaskDialog = ({
     setIsLoading(true);
     try {
       await onCreateTask(
-        selectedProject,
+        '', // No project needed for events
         title.trim(),
         description.trim() || undefined,
         undefined, // dueDate
@@ -107,15 +107,15 @@ const QuickTaskDialog = ({
       );
       
       toast({
-        title: "Task created",
-        description: "Your task has been created and scheduled.",
+        title: "Event created",
+        description: "Your event has been created and scheduled.",
       });
       
       onClose();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to create task. Please try again.",
+        description: "Failed to create event. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -137,7 +137,7 @@ const QuickTaskDialog = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-foreground">
             <CalendarDays className="h-5 w-5" />
-            Create Task for {selectedDate}
+            Create Event for {selectedDate}
           </DialogTitle>
         </DialogHeader>
 
@@ -150,35 +150,17 @@ const QuickTaskDialog = ({
             </span>
           </div>
 
-          {/* Project Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="project" className="text-foreground font-medium">
-              Project *
-            </Label>
-            <Select value={selectedProject} onValueChange={setSelectedProject}>
-              <SelectTrigger className="border-border">
-                <SelectValue placeholder="Select a project" />
-              </SelectTrigger>
-              <SelectContent>
-                {projects.map(project => (
-                  <SelectItem key={project.id} value={project.id}>
-                    {project.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
 
-          {/* Task Title */}
+          {/* Event Title */}
           <div className="space-y-2">
             <Label htmlFor="title" className="text-foreground font-medium">
-              Task Title *
+              Event Title *
             </Label>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter task title..."
+              placeholder="Enter event title..."
               className="border-border"
             />
           </div>
@@ -192,7 +174,7 @@ const QuickTaskDialog = ({
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add task description..."
+              placeholder="Add event description..."
               className="border-border min-h-[60px]"
             />
           </div>
@@ -235,11 +217,11 @@ const QuickTaskDialog = ({
           </Button>
           <Button 
             onClick={handleSave} 
-            disabled={isLoading || !title.trim() || !selectedProject}
+            disabled={isLoading || !title.trim()}
             className="bg-primary hover:bg-primary/90"
           >
             <Save className="h-4 w-4 mr-2" />
-            Create Task
+            Create Event
           </Button>
         </div>
       </DialogContent>
