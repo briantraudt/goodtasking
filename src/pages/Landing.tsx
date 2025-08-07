@@ -159,7 +159,7 @@ const Landing = () => {
                   </div>
                 </div>
                 <img 
-                  src="/lovable-uploads/93962149-0d32-4111-bab6-5d7bde67de1a.png" 
+                  src="/lovable-uploads/4394b170-cd90-4d9c-8558-dc3d0b1f28d0.png" 
                   alt="Good Tasking dashboard showing calendar, tasks organized by project, and daily planning interface"
                   className="w-full h-auto"
                 />
