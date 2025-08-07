@@ -115,6 +115,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   // Apply filters
   const filteredTasks = useMemo(() => {
     return allTasks.filter(task => {
+      // Filter out scheduled tasks - they should only appear on the calendar
+      if (task.scheduled_date) {
+        return false;
+      }
+
       // Project filter
       if (projectFilter !== 'all') {
         const projectMatch = projects.find(p => 
