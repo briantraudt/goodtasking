@@ -75,19 +75,51 @@ const Landing = () => {
                 AI-Powered Task Management
               </Badge>
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-                Finally, a to-do app that{" "}
-                <span className="text-primary">thinks like you do</span>
+                The first to-do app that{" "}
+                <span className="text-primary">builds your perfect day — automatically</span>
               </h1>
               <p className="text-xl text-muted-foreground">
-                Stay focused all week by organizing tasks by project — and let AI tell you what to do next.
+                Organize by project, drag into your calendar, and let AI prioritize your tasks hour by hour.
               </p>
+              
+              {/* Quick Benefits Section */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-8 p-6 bg-muted/20 rounded-lg border border-border/20">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Zap className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">Plan Faster</h3>
+                    <p className="text-xs text-muted-foreground">Add tasks and let AI map your day instantly</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Target className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">Stay Focused</h3>
+                    <p className="text-xs text-muted-foreground">Stick to one project at a time</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Calendar className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-sm">Syncs with Google Calendar</h3>
+                    <p className="text-xs text-muted-foreground">Never miss a beat</p>
+                  </div>
+                </div>
+              </div>
+              
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <Button 
                   size="lg" 
                   className={`px-8 transition-all duration-300 hover:scale-105 active:scale-95 ${showPulse ? 'animate-pulse' : ''}`}
                   onClick={handleGetStarted}
                   disabled={isGetStartedLoading}
-                  aria-label="Get started with Good Tasking for free"
+                  aria-label="Try the AI for free"
                 >
                   {isGetStartedLoading ? (
                     <>
@@ -96,7 +128,7 @@ const Landing = () => {
                     </>
                   ) : (
                     <>
-                      Get Started Free
+                      Try the AI Free
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </>
                   )}
@@ -106,9 +138,9 @@ const Landing = () => {
                   size="lg" 
                   className="px-8 transition-all duration-300 hover:scale-105 hover:bg-accent hover:text-accent-foreground active:scale-95"
                   onClick={scrollToHowItWorks}
-                  aria-label="Learn how Good Tasking works"
+                  aria-label="Plan your day with AI"
                 >
-                  See How It Works
+                  Plan Your Day with AI
                 </Button>
               </div>
             </div>
