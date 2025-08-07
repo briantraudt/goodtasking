@@ -197,11 +197,8 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Wand2 className="h-5 w-5 text-primary" />
-          Smart Task Parser
+          Smart Tasking
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Type tasks naturally and I'll add them to your calendar
-        </p>
       </CardHeader>
       <CardContent className="space-y-4">
         
@@ -212,7 +209,7 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Try typing something like: 'Meeting with John tomorrow at 2pm' or 'Gym workout Monday 7am for 1 hour'"
+                placeholder=""
                 className="min-h-[100px] resize-none"
                 disabled={isProcessing}
               />
@@ -225,31 +222,12 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
                 {isProcessing ? (
                   <>
                     <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-                    Parsing...
+                    Processing...
                   </>
                 ) : (
-                  <>
-                    <Sparkles className="h-4 w-4" />
-                    Parse Tasks
-                  </>
+                  "Enter"
                 )}
               </Button>
-            </div>
-
-            {/* Examples */}
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Examples to try:</p>
-              <div className="space-y-1">
-                {examples.map((example, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setInput(example)}
-                    className="text-left text-sm text-primary hover:text-primary/80 hover:underline block w-full"
-                  >
-                    "{example}"
-                  </button>
-                ))}
-              </div>
             </div>
           </>
         ) : (
