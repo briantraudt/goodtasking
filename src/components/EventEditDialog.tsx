@@ -13,6 +13,7 @@ interface EventEditDialogProps {
   onClose: () => void;
   eventId: string | null;
   onEventUpdated: () => void;
+  onOptimisticUpdate?: (eventId: string, updates: Partial<EventData>) => void;
 }
 
 interface EventData {
@@ -27,7 +28,8 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
   isOpen,
   onClose,
   eventId,
-  onEventUpdated
+  onEventUpdated,
+  onOptimisticUpdate
 }) => {
   const { session } = useAuth();
   const { toast } = useToast();
@@ -60,22 +62,31 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
         .from('calendar_events')
         .select('*')
         .eq('id', eventId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) {
+        toast({
+          title: "Event Not Found",
+          description: "The event could not be found.",
+          variant: "destructive",
+        });
+        onClose();
+        return;
+      }
 
       setEventData(data);
       setTitle(data.title || '');
       setDescription(data.description || '');
       
-      // Parse start time
+      // Parse start time - convert UTC to local
       const startDateTime = new Date(data.start_time);
       const localStartDate = startDateTime.toISOString().split('T')[0];
       const localStartTime = startDateTime.toTimeString().slice(0, 5);
       setStartDate(localStartDate);
       setStartTime(localStartTime);
       
-      // Parse end time
+      // Parse end time - convert UTC to local
       const endDateTime = new Date(data.end_time);
       const localEndTime = endDateTime.toTimeString().slice(0, 5);
       setEndTime(localEndTime);
@@ -102,20 +113,49 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
 
     setLoading(true);
     try {
-      const startDateTime = `${startDate}T${startTime}:00`;
-      const endDateTime = `${startDate}T${endTime}:00`;
+      // Convert local time to proper UTC timestamp
+      const startDateTime = new Date(`${startDate}T${startTime}`);
+      const endDateTime = new Date(`${startDate}T${endTime}`);
+      
+      console.log('🔄 Updating event with times:', {
+        localStart: `${startDate}T${startTime}`,
+        localEnd: `${startDate}T${endTime}`,
+        utcStart: startDateTime.toISOString(),
+        utcEnd: endDateTime.toISOString()
+      });
+
+      // Optimistic update - immediately update UI
+      if (onOptimisticUpdate && eventId) {
+        onOptimisticUpdate(eventId, {
+          title: title.trim(),
+          description: description.trim() || undefined,
+          start_time: startDateTime.toISOString(),
+          end_time: endDateTime.toISOString(),
+        });
+      }
 
       const { error } = await supabase
         .from('calendar_events')
         .update({
           title: title.trim(),
           description: description.trim() || null,
-          start_time: startDateTime,
-          end_time: endDateTime,
+          start_time: startDateTime.toISOString(),
+          end_time: endDateTime.toISOString(),
         })
         .eq('id', eventId);
 
-      if (error) throw error;
+      if (error) {
+        // Revert optimistic update on error
+        if (eventData && onOptimisticUpdate && eventId) {
+          onOptimisticUpdate(eventId, {
+            title: eventData.title,
+            description: eventData.description,
+            start_time: eventData.start_time,
+            end_time: eventData.end_time,
+          });
+        }
+        throw error;
+      }
 
       toast({
         title: "Event Updated",

@@ -634,6 +634,16 @@ const DashboardView = ({
           await fetchCalendarEvents();
           await syncCalendar(selectedDate);
         }}
+        onOptimisticUpdate={(eventId, updates) => {
+          // Immediately update the event in the UI
+          setCalendarEvents(prev => 
+            prev.map(event => 
+              event.id === eventId 
+                ? { ...event, ...updates }
+                : event
+            )
+          );
+        }}
       />
     </DndContext>
   );
