@@ -202,7 +202,6 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
       </div>
       
       <div className="space-y-4">
-        
         {!showResults ? (
           <>
             {/* Input Section */}
@@ -218,7 +217,7 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
               <Button 
                 onClick={parseNaturalLanguage}
                 disabled={isProcessing || !input.trim()}
-                className="w-full flex items-center gap-2"
+                className="w-1/4 mx-auto flex items-center gap-2 bg-primary hover:bg-slate-800"
               >
                 {isProcessing ? (
                   <>
@@ -236,11 +235,7 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
             {/* Results Section */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-medium flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  Parsed {parsedTasks.length} task(s)
-                </h3>
-                <Button variant="outline" size="sm" onClick={clearResults}>
+                <Button variant="outline" onClick={clearResults} className="hover:bg-slate-800 hover:text-white">
                   Parse New Tasks
                 </Button>
               </div>
@@ -285,7 +280,7 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
                           <Button
                             size="sm"
                             onClick={() => createTaskFromParsed(task)}
-                            className="flex items-center gap-1"
+                            className="flex items-center gap-1 hover:bg-slate-800"
                           >
                             <Plus className="h-3 w-3" />
                             Add to Calendar
