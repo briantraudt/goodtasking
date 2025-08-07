@@ -104,7 +104,7 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
       <div className="flex items-center gap-2 flex-1 min-w-0">
         <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
         <h4 
-          className="font-medium text-foreground leading-tight truncate cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          className="text-sm font-medium text-foreground leading-tight truncate cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           onClick={(e) => {
             e.stopPropagation();
             onEdit?.(id);
