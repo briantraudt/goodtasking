@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Edit, Calendar, GripVertical } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useDraggable } from '@dnd-kit/core';
 
@@ -88,59 +88,30 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
     <div 
       ref={setNodeRef}
       style={style}
+      {...attributes}
+      {...listeners}
       className={cn(
         "group relative bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30",
         "border border-blue-200 dark:border-blue-800",
-        "rounded-lg p-3 cursor-pointer transition-all duration-200",
+        "rounded-lg p-3 cursor-grab active:cursor-grabbing transition-all duration-200",
         "hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700",
         "hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/50 dark:hover:to-indigo-900/50",
         isDragging ? "opacity-50 shadow-lg z-50" : "",
         className
       )}
-      onClick={onClick}
     >
-      {/* Drag Handle and Calendar Icon with Title */}
+      {/* Calendar Icon with Title */}
       <div className="flex items-center gap-2 flex-1 min-w-0">
-        {/* Drag Handle */}
-        <div 
-          {...attributes}
-          {...listeners}
-          className="cursor-grab active:cursor-grabbing text-blue-400 hover:text-blue-600 flex-shrink-0"
-        >
-          <GripVertical className="w-3 h-3" />
-        </div>
-        
         <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
         <h4 
           className="font-medium text-foreground leading-tight truncate cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          onClick={onEdit ? () => onEdit(id) : undefined}
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit?.(id);
+          }}
         >
           {title}
         </h4>
-        
-        {/* Action Buttons */}
-        <div className="flex gap-1 ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-          {onEdit && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-200"
-              onClick={handleEdit}
-            >
-              <Edit className="w-3 h-3" />
-            </Button>
-          )}
-          {onDelete && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-100"
-              onClick={handleDelete}
-            >
-              <Trash2 className="w-3 h-3" />
-            </Button>
-          )}
-        </div>
       </div>
 
       {/* Event Description */}
