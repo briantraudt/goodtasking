@@ -315,8 +315,19 @@ const DayViewCalendar = ({
 
   // Get events for this date
   const dayEvents = calendarEvents.filter(event => {
-    const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
-    return eventDate === selectedDate;
+    // Add safety check for undefined timestamps
+    if (!event.start || !event.end) {
+      console.warn('⚠️ Skipping event with missing timestamps in DayViewCalendar:', event);
+      return false;
+    }
+    
+    try {
+      const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
+      return eventDate === selectedDate;
+    } catch (error) {
+      console.warn('⚠️ Skipping event with invalid timestamp in DayViewCalendar:', event, error);
+      return false;
+    }
   });
 
   const calculateTaskPosition = (task: Task) => {
@@ -342,6 +353,8 @@ const DayViewCalendar = ({
   };
 
   const calculateEventPosition = (event: CalendarEvent) => {
+    if (!event.start || !event.end) return { top: 0, height: 48 };
+    
     const startTime = parseISO(event.start);
     const endTime = parseISO(event.end);
     
@@ -382,10 +395,17 @@ const DayViewCalendar = ({
     
     // Check for calendar events
     const hasEvent = dayEvents.some(event => {
-      const eventStart = parseISO(event.start);
-      const eventEnd = parseISO(event.end);
-      const slotTime = parseISO(`${selectedDate}T${timeStr}:00`);
-      return slotTime >= eventStart && slotTime < eventEnd;
+      if (!event.start || !event.end) return false;
+      
+      try {
+        const eventStart = parseISO(event.start);
+        const eventEnd = parseISO(event.end);
+        const slotTime = parseISO(`${selectedDate}T${timeStr}:00`);
+        return slotTime >= eventStart && slotTime < eventEnd;
+      } catch (error) {
+        console.warn('⚠️ Error checking event time slot:', event, error);
+        return false;
+      }
     });
     
     return hasTask || hasEvent;
@@ -554,8 +574,15 @@ const DayViewCalendar = ({
             {/* Google Calendar events */}
             {googleEvents
               .filter(event => {
-                const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
-                return eventDate === selectedDate;
+                if (!event.start || !event.end) return false;
+                
+                try {
+                  const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
+                  return eventDate === selectedDate;
+                } catch (error) {
+                  console.warn('⚠️ Error filtering Google event:', event, error);
+                  return false;
+                }
               })
               .map(event => {
                 const position = calculateEventPosition(event);
@@ -583,9 +610,16 @@ const DayViewCalendar = ({
             {/* Local Events */}
             {localEvents
               .filter(event => {
-                const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
-                return eventDate === selectedDate;
-              })
+                if (!event.start || !event.end) return false;
+                
+                try {
+                  const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
+                  return eventDate === selectedDate;
+                } catch (error) {
+                  console.warn('⚠️ Error filtering local event:', event, error);
+                  return false;
+                }
+               })
               .map(event => {
                 const position = calculateEventPosition(event);
                 const eventStart = parseISO(event.start);

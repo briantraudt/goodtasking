@@ -192,10 +192,21 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
             isAllDay: !!(event.start?.date)
           }))
           .filter((event: CalendarEvent) => {
-            // Convert event start time to local date and compare with requested date
-            const eventStartLocal = new Date(event.start);
-            const eventDateLocal = format(eventStartLocal, 'yyyy-MM-dd');
-            return eventDateLocal === date;
+            // Filter out events with invalid timestamps
+            if (!event.start || !event.end) {
+              console.warn('⚠️ Skipping event with missing timestamps:', event);
+              return false;
+            }
+            
+            try {
+              // Convert event start time to local date and compare with requested date
+              const eventStartLocal = new Date(event.start);
+              const eventDateLocal = format(eventStartLocal, 'yyyy-MM-dd');
+              return eventDateLocal === date;
+            } catch (error) {
+              console.warn('⚠️ Skipping event with invalid timestamp:', event, error);
+              return false;
+            }
           });
 
         console.log('📅 Filtered events for date', date, ':', formattedEvents);
