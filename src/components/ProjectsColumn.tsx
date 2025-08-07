@@ -211,15 +211,6 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
       {/* Action Buttons */}
       <div className="mt-6 pt-4 border-t space-y-2">
         <Button
-          onClick={() => setShowSmartParser(true)}
-          variant="outline"
-          className="w-full flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          Quick Add Tasks
-        </Button>
-        
-        <Button
           onClick={() => setShowAIPlannerDialog(true)}
           className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90"
         >
