@@ -286,19 +286,13 @@ const DashboardView = ({
       // Create optimistic UI update - add event immediately to state
       const optimisticEvent = {
         id: `temp-${Date.now()}`, // Temporary ID
-        user_id: session?.user?.id || '',
         title: title,
+        start: startDateTime.toISOString(), // Use 'start' instead of 'start_time'
+        end: endDateTime.toISOString(),     // Use 'end' instead of 'end_time'
+        type: 'calendar_event' as const,
         description: description || null,
-        start_time: startDateTime.toISOString(),
-        end_time: endDateTime.toISOString(),
-        source: 'local' as const,
-        is_all_day: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        google_event_id: null,
-        status: 'confirmed',
-        calendar_id: null,
-        location: null
+        isAllDay: false,
+        source: 'local' as const
       };
       
       // Add to UI immediately for instant feedback
@@ -331,7 +325,16 @@ const DashboardView = ({
       
       // Replace optimistic event with real database event
       setCalendarEvents(prev => 
-        prev.map(event => event.id === optimisticEvent.id ? eventData : event)
+        prev.map(event => event.id === optimisticEvent.id ? {
+          id: eventData.id,
+          title: eventData.title,
+          start: eventData.start_time,
+          end: eventData.end_time,
+          type: 'calendar_event' as const,
+          description: eventData.description,
+          isAllDay: eventData.is_all_day,
+          source: eventData.source || 'local'
+        } : event)
       );
 
       toast({
