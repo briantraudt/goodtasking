@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,7 +43,12 @@ interface PlannerResponse {
   planComplete?: boolean;
 }
 
-export const AIDailyPlannerAssistant = () => {
+interface AIDailyPlannerAssistantProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const AIDailyPlannerAssistant = ({ isOpen, onClose }: AIDailyPlannerAssistantProps) => {
   const { session } = useAuth();
   const { toast } = useToast();
   const { events, syncCalendar } = useGoogleCalendar();
@@ -55,12 +61,18 @@ export const AIDailyPlannerAssistant = () => {
   const [conversationState, setConversationState] = useState<'greeting' | 'collecting' | 'planning' | 'approval' | 'complete'>('greeting');
   const [targetDate] = useState(format(new Date(), 'yyyy-MM-dd'));
 
+  // Reset state when dialog opens
   useEffect(() => {
-    if (session) {
+    if (isOpen && session) {
+      setMessages([]);
+      setCurrentInput('');
+      setIsProcessing(false);
+      setCurrentPlan([]);
+      setConversationState('greeting');
       initializeConversation();
       syncCalendar(targetDate);
     }
-  }, [session, targetDate]);
+  }, [isOpen, session, targetDate]);
 
   const initializeConversation = () => {
     const hour = new Date().getHours();
@@ -204,124 +216,127 @@ export const AIDailyPlannerAssistant = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
-          AI Daily Planner Assistant
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <ScrollArea className="h-96 w-full rounded border p-4">
-          <div className="space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            AI Daily Planner Assistant
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="space-y-4 flex-1 overflow-hidden">
+          <ScrollArea className="h-80 w-full rounded border p-4">
+            <div className="space-y-4">
+              {messages.map((message) => (
                 <div
-                  className={`max-w-[80%] rounded-lg p-3 ${
-                    message.role === 'user'
-                      ? 'bg-primary text-primary-foreground ml-4'
-                      : 'bg-muted mr-4'
-                  }`}
+                  key={message.id}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className="flex items-start gap-2">
-                    {message.role === 'assistant' && (
-                      <MessageCircle className="h-4 w-4 mt-1 flex-shrink-0" />
-                    )}
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  </div>
-                  <p className="text-xs opacity-70 mt-1">
-                    {format(message.timestamp, 'HH:mm')}
-                  </p>
-                </div>
-              </div>
-            ))}
-            {isProcessing && (
-              <div className="flex justify-start">
-                <div className="bg-muted rounded-lg p-3 mr-4">
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
-                    <span className="text-sm">AI is thinking...</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-
-        {currentPlan.length > 0 && conversationState === 'approval' && (
-          <Card className="border-primary/20">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Proposed Schedule for {format(new Date(targetDate), 'MMMM d, yyyy')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {currentPlan.map((task, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">
-                        {formatTime(task.startTime)} - {formatTime(task.endTime)}
-                      </span>
-                      <Badge variant="outline" className="text-xs">
-                        {task.projectName}
-                      </Badge>
-                    </div>
-                    <h4 className="font-medium mt-1">{task.title}</h4>
-                    <p className="text-sm text-muted-foreground mt-1">{task.rationale}</p>
-                  </div>
-                  <Badge 
-                    variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
+                  <div
+                    className={`max-w-[80%] rounded-lg p-3 ${
+                      message.role === 'user'
+                        ? 'bg-primary text-primary-foreground ml-4'
+                        : 'bg-muted mr-4'
+                    }`}
                   >
-                    {task.priority}
-                  </Badge>
+                    <div className="flex items-start gap-2">
+                      {message.role === 'assistant' && (
+                        <MessageCircle className="h-4 w-4 mt-1 flex-shrink-0" />
+                      )}
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    </div>
+                    <p className="text-xs opacity-70 mt-1">
+                      {format(message.timestamp, 'HH:mm')}
+                    </p>
+                  </div>
                 </div>
               ))}
-              
-              <Separator />
-              
-              <div className="flex gap-2 justify-end">
-                <Button variant="outline" onClick={() => handleApproval(false)}>
-                  Revise Plan
-                </Button>
-                <Button onClick={() => handleApproval(true)} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Approve & Schedule
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              {isProcessing && (
+                <div className="flex justify-start">
+                  <div className="bg-muted rounded-lg p-3 mr-4">
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                      <span className="text-sm">AI is thinking...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
 
-        {conversationState !== 'complete' && (
-          <div className="flex gap-2">
-            <Input
-              value={currentInput}
-              onChange={(e) => setCurrentInput(e.target.value)}
-              placeholder="Type your message..."
-              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-              disabled={isProcessing}
-            />
-            <Button onClick={sendMessage} disabled={isProcessing || !currentInput.trim()}>
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+          {currentPlan.length > 0 && conversationState === 'approval' && (
+            <Card className="border-primary/20">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Proposed Schedule for {format(new Date(targetDate), 'MMMM d, yyyy')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {currentPlan.map((task, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">
+                          {formatTime(task.startTime)} - {formatTime(task.endTime)}
+                        </span>
+                        <Badge variant="outline" className="text-xs">
+                          {task.projectName}
+                        </Badge>
+                      </div>
+                      <h4 className="font-medium mt-1">{task.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">{task.rationale}</p>
+                    </div>
+                    <Badge 
+                      variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'}
+                    >
+                      {task.priority}
+                    </Badge>
+                  </div>
+                ))}
+                
+                <Separator />
+                
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" onClick={() => handleApproval(false)}>
+                    Revise Plan
+                  </Button>
+                  <Button onClick={() => handleApproval(true)} className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Approve & Schedule
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-        {conversationState === 'complete' && (
-          <div className="text-center py-4">
-            <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">
-              Your day is planned! Check your calendar and task list for the scheduled items.
-            </p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          {conversationState !== 'complete' && (
+            <div className="flex gap-2">
+              <Input
+                value={currentInput}
+                onChange={(e) => setCurrentInput(e.target.value)}
+                placeholder="Type your message..."
+                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                disabled={isProcessing}
+              />
+              <Button onClick={sendMessage} disabled={isProcessing || !currentInput.trim()}>
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+
+          {conversationState === 'complete' && (
+            <div className="text-center py-4">
+              <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                Your day is planned! Check your calendar and task list for the scheduled items.
+              </p>
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

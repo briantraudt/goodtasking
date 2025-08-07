@@ -15,8 +15,6 @@ import { useTaskReminders } from '@/hooks/useTaskReminders';
 import { useNotifications } from '@/hooks/useNotifications';
 import { format } from 'date-fns';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
-import { AIDailyPlannerAssistant } from './AIDailyPlannerAssistant';
-import { Card } from '@/components/ui/card';
 
 interface Task {
   id: string;
@@ -412,17 +410,14 @@ const DashboardView = ({
               </div>
             </div>
           ) : viewMode === 'today' ? (
-            <div className="p-6 space-y-6">
-              <AIDailyPlannerAssistant />
-              <TodayView
-                projects={projects}
-                onUpdateTask={onUpdateTask}
-                onCreateTask={onCreateTask}
-                onCreateProject={onCreateProject}
-                onRefreshTasks={onRefreshTasks}
-                userName={userName}
-              />
-            </div>
+            <TodayView
+              projects={projects}
+              onUpdateTask={onUpdateTask}
+              onCreateTask={onCreateTask}
+              onCreateProject={onCreateProject}
+              onRefreshTasks={onRefreshTasks}
+              userName={userName}
+            />
           ) : (
             <WeeklySchedule
               projects={projects}
