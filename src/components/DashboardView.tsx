@@ -132,7 +132,8 @@ const DashboardView = ({
         end: event.end_time,
         type: 'calendar_event',
         description: event.description,
-        isAllDay: event.is_all_day
+        isAllDay: event.is_all_day,
+        source: event.source || 'local'
       })) || [];
       
       setCalendarEvents(transformedEvents);
