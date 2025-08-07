@@ -60,15 +60,9 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
       )}
       onClick={onClick}
     >
-      {/* Event Badge */}
+      {/* Calendar Icon and Action Buttons */}
       <div className="flex items-center justify-between mb-2">
-        <Badge 
-          variant="secondary" 
-          className="bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 text-xs"
-        >
-          <Calendar className="w-3 h-3 mr-1" />
-          Event
-        </Badge>
+        <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
         
         {/* Action Buttons */}
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">

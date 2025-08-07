@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Sun, Sparkles, RefreshCw } from 'lucide-react';
 import QuickTaskDialog from '@/components/QuickTaskDialog';
 import TaskEditDialog from '@/components/TaskEditDialog';
+import { EventEditDialog } from '@/components/EventEditDialog';
 import { Button } from '@/components/ui/button';
 import TodayView from './TodayView';
 import WeeklySchedule from './WeeklySchedule';
@@ -72,6 +73,8 @@ const DashboardView = ({
   const [quickTaskTime, setQuickTaskTime] = useState<{ hour: number; minute: number } | null>(null);
   const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
   const [selectedTaskForEdit, setSelectedTaskForEdit] = useState<Task | null>(null);
+  const [showEventEditDialog, setShowEventEditDialog] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => {
     // ALWAYS start with today's date using local timezone
     const now = new Date();
@@ -380,20 +383,28 @@ const DashboardView = ({
                       tasks={allTasks}
                       projects={projects}
                       calendarEvents={[...events, ...calendarEvents]}
-                      onTaskScheduled={handleTaskScheduled}
-                      onTaskUnscheduled={handleTaskUnscheduled}
-                      onTaskEdit={handleTaskEdit}
-                      onEventClick={(event) => {
-                        console.log('Event clicked:', event);
-                        // TODO: Implement event edit/delete modal
-                      }}
-                      isGoogleConnected={isConnected}
-                      onConnectGoogle={connectGoogleCalendar}
-                      onDisconnectGoogle={disconnectGoogleCalendar}
-                      onViewModeChange={(mode) => setViewMode(mode)}
-                       onQuickEventCreate={handleQuickTaskCreate}
-                       onTaskComplete={handleTaskComplete}
-                       onTaskResize={handleTaskResize}
+                       onTaskScheduled={handleTaskScheduled}
+                       onTaskUnscheduled={handleTaskUnscheduled}
+                       onTaskEdit={handleTaskEdit}
+                       onEventClick={(event) => {
+                         console.log('Event clicked:', event);
+                         // TODO: Implement event edit/delete modal
+                       }}
+                       isGoogleConnected={isConnected}
+                       onConnectGoogle={connectGoogleCalendar}
+                       onDisconnectGoogle={disconnectGoogleCalendar}
+                       onViewModeChange={(mode) => setViewMode(mode)}
+                        onQuickEventCreate={handleQuickTaskCreate}
+                        onTaskComplete={handleTaskComplete}
+                        onTaskResize={handleTaskResize}
+                        onEventEdit={(eventId) => {
+                          setSelectedEventId(eventId);
+                          setShowEventEditDialog(true);
+                        }}
+                        onEventDelete={async (eventId) => {
+                          // Delete handled in DayViewCalendar already
+                          await syncCalendar(selectedDate);
+                        }}
                      />
                   </div>
                 </div>
@@ -552,6 +563,20 @@ const DashboardView = ({
         }}
         onSave={handleTaskSave}
         onDelete={handleTaskDelete}
+      />
+      
+      {/* Event Edit Dialog */}
+      <EventEditDialog
+        isOpen={showEventEditDialog}
+        onClose={() => {
+          setShowEventEditDialog(false);
+          setSelectedEventId(null);
+        }}
+        eventId={selectedEventId}
+        onEventUpdated={async () => {
+          await fetchCalendarEvents();
+          await syncCalendar(selectedDate);
+        }}
       />
     </DndContext>
   );
