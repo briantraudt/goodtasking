@@ -147,6 +147,32 @@ const DashboardView = ({
     fetchCalendarEvents();
   }, [session?.user?.id]);
 
+  // Set up real-time subscription for calendar events
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    const channel = supabase
+      .channel('calendar-events-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'calendar_events',
+          filter: `user_id=eq.${session.user.id}`
+        },
+        (payload) => {
+          console.log('📡 Real-time calendar event update:', payload);
+          fetchCalendarEvents();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [session?.user?.id]);
+
   // Get all tasks for the calendar with project information
   const allTasks = projects.flatMap(project => 
     project.tasks.map(task => ({
@@ -253,6 +279,10 @@ const DashboardView = ({
     console.log('🎯 Creating calendar event directly:', { title, startTime, endTime, scheduledDate });
     
     try {
+      // Convert local time to proper UTC timestamp
+      const startDateTime = new Date(`${scheduledDate}T${startTime}`);
+      const endDateTime = new Date(`${scheduledDate}T${endTime}`);
+      
       // Create local calendar event directly in the database
       const { data: eventData, error: eventError } = await supabase
         .from('calendar_events')
@@ -260,8 +290,8 @@ const DashboardView = ({
           user_id: session?.user?.id,
           title: title,
           description: description || null,
-          start_time: `${scheduledDate}T${startTime}`,
-          end_time: `${scheduledDate}T${endTime}`,
+          start_time: startDateTime.toISOString(),
+          end_time: endDateTime.toISOString(),
           source: 'local',
           is_all_day: false
         })
@@ -274,9 +304,6 @@ const DashboardView = ({
       }
 
       console.log('✅ Calendar event created successfully:', eventData);
-
-      // Refresh calendar events to show the new event
-      await fetchCalendarEvents();
 
       toast({
         title: "Event Created! 📅",

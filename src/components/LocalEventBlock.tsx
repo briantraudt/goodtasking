@@ -34,11 +34,13 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
       // Handle both ISO timestamp and time-only formats
       let time: Date;
       if (timeString.includes('T')) {
-        // ISO timestamp - parse as UTC and convert to local
+        // ISO timestamp - convert UTC to local time
         time = new Date(timeString);
       } else {
         // Time only format - treat as local time today
-        time = new Date(`2000-01-01T${timeString}`);
+        const today = new Date();
+        const [hours, minutes] = timeString.split(':');
+        time = new Date(today.getFullYear(), today.getMonth(), today.getDate(), parseInt(hours), parseInt(minutes));
       }
       
       return time.toLocaleTimeString('en-US', {
