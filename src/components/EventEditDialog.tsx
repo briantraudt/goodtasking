@@ -119,6 +119,37 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
     }
   };
 
+  const handleDelete = async () => {
+    if (!eventId) return;
+
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('calendar_events')
+        .delete()
+        .eq('id', eventId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Event Deleted",
+        description: "Your event has been successfully deleted.",
+      });
+
+      onEventUpdated();
+      onClose();
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete event. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleClose = () => {
     setTitle('');
     setDescription('');
@@ -193,6 +224,13 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
         <DialogFooter>
           <Button variant="outline" onClick={handleClose}>
             Cancel
+          </Button>
+          <Button 
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={loading}
+          >
+            {loading ? "Deleting..." : "Delete Event"}
           </Button>
           <Button 
             onClick={handleSave} 
