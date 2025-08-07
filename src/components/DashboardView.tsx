@@ -248,32 +248,59 @@ const DashboardView = ({
   const createQuickTask = async (projectId: string, title: string, description?: string, dueDate?: Date, startTime?: string, endTime?: string, scheduledDate?: string) => {
     if (!quickTaskTime || !startTime || !endTime || !scheduledDate) return;
     
-    console.log('🎯 Creating scheduled task directly:', { projectId, title, startTime, endTime, scheduledDate });
+    console.log('🎯 Creating calendar event directly:', { title, startTime, endTime, scheduledDate });
     
     try {
-      // Create the task and get the returned task data
-      const newTask = await onCreateTask(projectId, title, description, dueDate);
-      
-      console.log('✅ Task created successfully:', newTask);
-      console.log('🔍 Checking task conditions:', {
-        hasNewTask: !!newTask,
-        hasId: newTask?.id,
-        taskId: newTask?.id
-      });
-      
-      // If we got the task back, schedule it immediately
-      if (newTask && newTask.id) {
-        console.log('🎉 Scheduling task immediately:', newTask.id);
-        await handleTaskScheduled(newTask.id, startTime, endTime);
-        console.log('✅ Task scheduled successfully');
-      } else {
-        console.error('❌ No task returned from creation or missing ID:', { newTask, hasId: !!newTask?.id });
+      // Create calendar event directly in the database
+      const { data: eventData, error: eventError } = await supabase
+        .from('calendar_events')
+        .insert({
+          user_id: session?.user?.id,
+          title: title,
+          description: description || `Created on calendar`,
+          start_time: `${scheduledDate}T${startTime}:00`,
+          end_time: `${scheduledDate}T${endTime}:00`,
+          google_event_id: `quick-created-${Date.now()}`,
+          is_all_day: false
+        })
+        .select()
+        .single();
+
+      if (eventError) {
+        console.error('Error creating calendar event:', eventError);
+        throw eventError;
       }
-      
+
+      console.log('✅ Calendar event created successfully:', eventData);
+
+      // Refresh calendar events to show the new event
+      await fetchCalendarEvents();
+
+      // Create Google Calendar event if connected
+      if (isConnected) {
+        try {
+          await createEventFromTask(eventData.id, title, startTime, endTime, scheduledDate);
+          console.log('✅ Google Calendar event created successfully');
+        } catch (googleError) {
+          console.warn('Google Calendar sync failed, but local event created:', googleError);
+        }
+      }
+
+      toast({
+        title: "Event Created! 📅",
+        description: `"${title}" has been added to your calendar.`,
+      });
+
       setShowQuickTaskDialog(false);
       setQuickTaskTime(null);
+      
     } catch (error) {
-      console.error('❌ Error creating quick task:', error);
+      console.error('❌ Error creating calendar event:', error);
+      toast({
+        title: "Creation Failed",
+        description: "Failed to create event. Please try again.",
+        variant: "destructive",
+      });
       setShowQuickTaskDialog(false);
       setQuickTaskTime(null);
     }
