@@ -15,6 +15,8 @@ import { useTaskReminders } from '@/hooks/useTaskReminders';
 import { useNotifications } from '@/hooks/useNotifications';
 import { format } from 'date-fns';
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from '@dnd-kit/core';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Task {
   id: string;
@@ -93,6 +95,9 @@ const DashboardView = ({
     setSelectedDate(today);
   }, []); // Run once on mount
   
+  const { session } = useAuth();
+  const [calendarEvents, setCalendarEvents] = useState([]);
+
   const {
     events,
     isConnected,
@@ -103,6 +108,40 @@ const DashboardView = ({
     createEventFromTask,
     deleteEvent
   } = useGoogleCalendar();
+
+  // Fetch calendar events from database
+  const fetchCalendarEvents = async () => {
+    if (!session?.user?.id) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('calendar_events')
+        .select('*')
+        .eq('user_id', session.user.id);
+      
+      if (error) throw error;
+      
+      // Transform to match the expected format
+      const transformedEvents = data?.map(event => ({
+        id: event.id,
+        title: event.title,
+        start: event.start_time,
+        end: event.end_time,
+        type: 'calendar_event',
+        description: event.description,
+        isAllDay: event.is_all_day
+      })) || [];
+      
+      setCalendarEvents(transformedEvents);
+    } catch (error) {
+      console.error('Error fetching calendar events:', error);
+    }
+  };
+
+  // Load calendar events when component mounts or user changes
+  useEffect(() => {
+    fetchCalendarEvents();
+  }, [session?.user?.id]);
 
   // Get all tasks for the calendar with project information
   const allTasks = projects.flatMap(project => 
@@ -325,7 +364,7 @@ const DashboardView = ({
                       onDateChange={setSelectedDate}
                       tasks={allTasks}
                       projects={projects}
-                      calendarEvents={events}
+                      calendarEvents={[...events, ...calendarEvents]}
                       onTaskScheduled={handleTaskScheduled}
                       onTaskUnscheduled={handleTaskUnscheduled}
                       onTaskEdit={handleTaskEdit}
@@ -347,65 +386,67 @@ const DashboardView = ({
                 {/* Task Sidebar - 25% width */}
                 <div className="flex-1 min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
-                    <TaskSidebar
-                      projects={projects}
-                      selectedDate={selectedDate}
-                      onCreateTask={onCreateTask}
-                      onCreateProject={onCreateProject}
-                      onUpdateProject={async (id: string, updates: any) => {
-                        if (onUpdateProject) {
-                          await onUpdateProject(id, updates);
-                        }
-                      }}
-                      onDeleteProject={async (id: string) => {
-                        if (onDeleteProject) {
-                          await onDeleteProject(id);
-                        }
-                      }}
-                      onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
-                        onUpdateTask(taskId, updates);
-                      }}
-                       onDeleteTask={onDeleteTask}
-                       onRefreshTasks={onRefreshTasks}
-                       onMoveProjectBack={(projectId) => {
-                         // Remove the placeholder task when moving back to projects
-                         const project = projects.find(p => p.id === projectId);
-                         if (project) {
-                           const placeholderTask = project.tasks.find(t => t.title === "Add First Task...");
-                           if (placeholderTask && onDeleteTask) {
-                             onDeleteTask(placeholderTask.id);
-                           }
+                     <TaskSidebar
+                       projects={projects}
+                       selectedDate={selectedDate}
+                       onCreateTask={onCreateTask}
+                       onCreateProject={onCreateProject}
+                       onUpdateProject={async (id: string, updates: any) => {
+                         if (onUpdateProject) {
+                           await onUpdateProject(id, updates);
                          }
                        }}
-                     />
+                       onDeleteProject={async (id: string) => {
+                         if (onDeleteProject) {
+                           await onDeleteProject(id);
+                         }
+                       }}
+                       onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
+                         onUpdateTask(taskId, updates);
+                       }}
+                        onDeleteTask={onDeleteTask}
+                        onRefreshTasks={onRefreshTasks}
+                        onEventCreated={fetchCalendarEvents}
+                        onMoveProjectBack={(projectId) => {
+                          // Remove the placeholder task when moving back to projects
+                          const project = projects.find(p => p.id === projectId);
+                          if (project) {
+                            const placeholderTask = project.tasks.find(t => t.title === "Add First Task...");
+                            if (placeholderTask && onDeleteTask) {
+                              onDeleteTask(placeholderTask.id);
+                            }
+                          }
+                        }}
+                      />
                   </div>
                 </div>
 
                 {/* Projects Column - 25% width */}
                 <div className="flex-1 min-h-0 lg:min-h-[600px]">
                   <div className="h-full bg-card rounded-xl shadow-sm border p-6">
-                    <ProjectsColumn
-                      projects={projects}
-                      onCreateProject={onCreateProject}
-                      onUpdateProject={async (id: string, updates: any) => {
-                        if (onUpdateProject) {
-                          await onUpdateProject(id, updates);
-                        }
-                      }}
-                      onDeleteProject={async (id: string) => {
-                        if (onDeleteProject) {
-                          await onDeleteProject(id);
-                        }
-                      }}
-                      onCreateTask={async (projectId: string, title: string, description?: string) => {
-                        if (onCreateTask) {
-                          await onCreateTask(projectId, title, description);
-                        }
-                      }}
-                      onMoveProjectToTasks={(projectId) => {
-                        onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
-                      }}
-                    />
+                     <ProjectsColumn
+                       projects={projects}
+                       onCreateProject={onCreateProject}
+                       onUpdateProject={async (id: string, updates: any) => {
+                         if (onUpdateProject) {
+                           await onUpdateProject(id, updates);
+                         }
+                       }}
+                       onDeleteProject={async (id: string) => {
+                         if (onDeleteProject) {
+                           await onDeleteProject(id);
+                         }
+                       }}
+                       onCreateTask={async (projectId: string, title: string, description?: string) => {
+                         if (onCreateTask) {
+                           await onCreateTask(projectId, title, description);
+                         }
+                       }}
+                       onMoveProjectToTasks={(projectId) => {
+                         onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
+                       }}
+                       onEventCreated={fetchCalendarEvents}
+                     />
                   </div>
                 </div>
               </div>

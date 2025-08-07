@@ -27,9 +27,10 @@ interface ProjectsColumnProps {
   onDeleteProject: (id: string) => Promise<void>;
   onMoveProjectToTasks?: (projectId: string) => void;
   onCreateTask?: (projectId: string, title: string, description?: string) => Promise<void>;
+  onEventCreated?: () => void;
 }
 
-const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject, onMoveProjectToTasks, onCreateTask }: ProjectsColumnProps) => {
+const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject, onMoveProjectToTasks, onCreateTask, onEventCreated }: ProjectsColumnProps) => {
   const { categories } = useCategories();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [activeInlineAdd, setActiveInlineAdd] = useState<string | null>(null);
@@ -238,7 +239,13 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
               </Button>
             </div>
             <div className="p-4 overflow-y-auto">
-              <SmartTaskParser onTaskCreated={() => setShowSmartParser(false)} />
+              <SmartTaskParser 
+                onTaskCreated={() => setShowSmartParser(false)} 
+                onEventCreated={() => {
+                  setShowSmartParser(false);
+                  if (onEventCreated) onEventCreated();
+                }} 
+              />
             </div>
           </div>
         </div>

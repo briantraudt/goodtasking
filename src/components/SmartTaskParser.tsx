@@ -26,9 +26,10 @@ interface ParsedTask {
 
 interface SmartTaskParserProps {
   onTaskCreated?: (task: any) => void;
+  onEventCreated?: () => void;
 }
 
-export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
+export const SmartTaskParser = ({ onTaskCreated, onEventCreated }: SmartTaskParserProps) => {
   const { session } = useAuth();
   const { toast } = useToast();
   const { createEventFromTask, isConnected } = useGoogleCalendar();
@@ -188,6 +189,11 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
           title: "Event Created! 📅",
           description: `"${parsedTask.title}" has been added to your calendar.`,
         });
+
+        // Refresh events in parent component
+        if (onEventCreated) {
+          onEventCreated();
+        }
       } else {
         console.log('📝 Creating task list item (no specific times)');
         

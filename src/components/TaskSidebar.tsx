@@ -56,10 +56,11 @@ interface TaskSidebarProps {
   onDeleteTask?: (taskId: string) => Promise<void>;
   onMoveProjectBack?: (projectId: string) => void;
   onRefreshTasks?: () => void;
+  onEventCreated?: () => void;
   className?: string;
 }
 
-const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, onMoveProjectBack, onRefreshTasks, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, onMoveProjectBack, onRefreshTasks, onEventCreated, className }: TaskSidebarProps) => {
   const { categories } = useCategories();
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
@@ -777,13 +778,19 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
               </Button>
             </div>
             <div className="p-4 pt-2 overflow-y-auto">
-              <SmartTaskParser onTaskCreated={() => {
-                setShowSmartParser(false);
-                // Refresh projects and tasks data smoothly
-                if (onRefreshTasks) {
-                  onRefreshTasks();
-                }
-              }} />
+              <SmartTaskParser 
+                onTaskCreated={() => {
+                  setShowSmartParser(false);
+                  // Refresh projects and tasks data smoothly
+                  if (onRefreshTasks) {
+                    onRefreshTasks();
+                  }
+                }}
+                onEventCreated={() => {
+                  setShowSmartParser(false);
+                  if (onEventCreated) onEventCreated();
+                }} 
+              />
             </div>
           </div>
         </div>
