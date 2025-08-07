@@ -173,12 +173,6 @@ const DashboardView = ({
     if (onRefreshTasks) {
       await onRefreshTasks();
     }
-
-    // Create Google Calendar event if connected
-    const task = allTasks.find(t => t.id === taskId);
-    if (task && isConnected) {
-      await createEventFromTask(taskId, task.title, startTime, endTime, selectedDate);
-    }
     
     console.log('🎉 Task scheduling complete!');
   };
