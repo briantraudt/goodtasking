@@ -193,14 +193,15 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Wand2 className="h-5 w-5 text-primary" />
+    <div className="w-full space-y-4">
+      <div className="text-center">
+        <h2 className="text-2xl font-semibold flex items-center justify-center gap-2">
+          <Wand2 className="h-6 w-6 text-primary" />
           Smart Tasking
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+        </h2>
+      </div>
+      
+      <div className="space-y-4">
         
         {!showResults ? (
           <>
@@ -298,7 +299,7 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
             </div>
           </>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
