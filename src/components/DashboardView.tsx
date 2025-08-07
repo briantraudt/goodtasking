@@ -171,7 +171,7 @@ const DashboardView = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [session?.user?.id]);
+  }, [session?.user?.id, fetchCalendarEvents]);
 
   // Get all tasks for the calendar with project information
   const allTasks = projects.flatMap(project => 
@@ -283,6 +283,28 @@ const DashboardView = ({
       const startDateTime = new Date(`${scheduledDate}T${startTime}`);
       const endDateTime = new Date(`${scheduledDate}T${endTime}`);
       
+      // Create optimistic UI update - add event immediately to state
+      const optimisticEvent = {
+        id: `temp-${Date.now()}`, // Temporary ID
+        user_id: session?.user?.id || '',
+        title: title,
+        description: description || null,
+        start_time: startDateTime.toISOString(),
+        end_time: endDateTime.toISOString(),
+        source: 'local' as const,
+        is_all_day: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        google_event_id: null,
+        status: 'confirmed',
+        calendar_id: null,
+        location: null
+      };
+      
+      // Add to UI immediately for instant feedback
+      setCalendarEvents(prev => [...prev, optimisticEvent]);
+      console.log('⚡ Added optimistic event to UI:', optimisticEvent);
+      
       // Create local calendar event directly in the database
       const { data: eventData, error: eventError } = await supabase
         .from('calendar_events')
@@ -299,11 +321,18 @@ const DashboardView = ({
         .single();
 
       if (eventError) {
-        console.error('Error creating calendar event:', eventError);
+        console.error('❌ Error creating calendar event:', eventError);
+        // Remove optimistic update on error
+        setCalendarEvents(prev => prev.filter(event => event.id !== optimisticEvent.id));
         throw eventError;
       }
 
       console.log('✅ Calendar event created successfully:', eventData);
+      
+      // Replace optimistic event with real database event
+      setCalendarEvents(prev => 
+        prev.map(event => event.id === optimisticEvent.id ? eventData : event)
+      );
 
       toast({
         title: "Event Created! 📅",
