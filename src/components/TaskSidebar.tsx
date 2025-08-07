@@ -167,9 +167,21 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
 
   // Get unique projects that have tasks (no calendar date filtering)
   const projectsWithTasks = useMemo(() => {
-    return projects.filter(project => 
-      project.tasks.length > 0
-    );
+    return projects
+      .filter(project => project.tasks.length > 0)
+      .sort((a, b) => {
+        // Sort by projects with fewer tasks first (newly active projects)
+        // This puts projects that just got their first task at the top
+        const aUnscheduledTasks = a.tasks.filter(task => !task.scheduled_date).length;
+        const bUnscheduledTasks = b.tasks.filter(task => !task.scheduled_date).length;
+        
+        // If one project has exactly 1 unscheduled task and the other has more, prioritize the one with 1
+        if (aUnscheduledTasks === 1 && bUnscheduledTasks > 1) return -1;
+        if (bUnscheduledTasks === 1 && aUnscheduledTasks > 1) return 1;
+        
+        // Otherwise sort by total task count (fewer tasks first)
+        return aUnscheduledTasks - bUnscheduledTasks;
+      });
   }, [projects]);
 
   // Wrapper to handle type compatibility with SmartAddButton
