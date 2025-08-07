@@ -77,23 +77,16 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-          <h4 className="font-medium text-foreground leading-tight truncate">
+          <h4 
+            className="font-medium text-foreground leading-tight truncate cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            onClick={onEdit ? () => onEdit(id) : undefined}
+          >
             {title}
           </h4>
         </div>
         
         {/* Action Buttons */}
         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-          {onEdit && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 w-6 p-0 hover:bg-blue-200 dark:hover:bg-blue-800"
-              onClick={handleEdit}
-            >
-              <Edit className="w-3 h-3" />
-            </Button>
-          )}
           {onDelete && (
             <Button
               variant="ghost"
