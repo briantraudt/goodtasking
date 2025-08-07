@@ -30,12 +30,25 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
   showTime = false
 }) => {
   const formatTime = (timeString: string) => {
-    const time = new Date(`2000-01-01T${timeString}`);
-    return time.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
-    });
+    try {
+      // Handle both ISO timestamp and time-only formats
+      let time: Date;
+      if (timeString.includes('T')) {
+        // ISO timestamp - parse as UTC and convert to local
+        time = new Date(timeString);
+      } else {
+        // Time only format - treat as local time today
+        time = new Date(`2000-01-01T${timeString}`);
+      }
+      
+      return time.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch {
+      return timeString;
+    }
   };
 
   const handleEdit = (e: React.MouseEvent) => {
@@ -60,12 +73,17 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
       )}
       onClick={onClick}
     >
-      {/* Calendar Icon and Action Buttons */}
+      {/* Calendar Icon with Title and Action Buttons */}
       <div className="flex items-center justify-between mb-2">
-        <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+          <h4 className="font-medium text-foreground leading-tight truncate">
+            {title}
+          </h4>
+        </div>
         
         {/* Action Buttons */}
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
           {onEdit && (
             <Button
               variant="ghost"
@@ -89,13 +107,8 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
         </div>
       </div>
 
-      {/* Event Title */}
-      <h4 className="font-medium text-foreground mb-1 line-clamp-2 leading-tight">
-        {title}
-      </h4>
-
       {/* Event Description */}
-      {description && !description.startsWith('Parsed from') && (
+      {description && !description.startsWith('Parsed from') && !description.includes('Created on calendar') && (
         <p className="text-sm text-muted-foreground mb-2 line-clamp-2 leading-tight">
           {description}
         </p>

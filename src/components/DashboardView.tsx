@@ -259,9 +259,9 @@ const DashboardView = ({
         .insert({
           user_id: session?.user?.id,
           title: title,
-          description: description || `Created on calendar`,
-          start_time: `${scheduledDate}T${startTime}`,
-          end_time: `${scheduledDate}T${endTime}`,
+          description: description || null,
+          start_time: `${scheduledDate}T${startTime}:00`,
+          end_time: `${scheduledDate}T${endTime}:00`,
           source: 'local',
           is_all_day: false
         })
