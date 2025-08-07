@@ -56,7 +56,7 @@ interface DayViewCalendarProps {
   onConnectGoogle?: () => void;
   onDisconnectGoogle?: () => void;
   onViewModeChange?: (mode: 'week') => void;
-  onQuickTaskCreate?: (hour: number, minute: number) => void;
+  onQuickEventCreate?: (hour: number, minute: number) => void;
   onTaskComplete?: (taskId: string, completed: boolean) => void;
   onTaskResize?: (taskId: string, startTime: string, endTime: string) => void;
 }
@@ -88,7 +88,7 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: T
         minute === 0 ? "border-border" : "border-border/20"
       )}
       onClick={() => !hasTask && onClick?.()}
-      title={hasTask ? undefined : "Click to create a task"}
+      title={hasTask ? undefined : "Click to create event"}
     >
       {children}
     </div>
@@ -113,18 +113,20 @@ const EventBlock = ({ event, onClick }: EventBlockProps) => {
     <div
       className="absolute left-2 right-2 bg-blue-50 border border-blue-400 rounded-lg p-2 cursor-pointer z-10 shadow-sm hover:bg-blue-100 transition-colors"
       onClick={handleCalendarEventClick}
-      title={`Google Calendar: ${event.description || event.title}`}
+      title={`Calendar Event: ${event.description || event.title}`}
     >
       <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <div className="text-xs font-medium text-blue-900 truncate">
-            {event.title}
-          </div>
-          <div className="text-xs text-blue-700 mt-1">
-            {format(parseISO(event.start), 'h:mm a')} - {format(parseISO(event.end), 'h:mm a')}
+        <div className="flex items-center gap-2 flex-1">
+          <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-medium text-blue-900 truncate">
+              {event.title}
+            </div>
+            <div className="text-xs text-blue-700 mt-1">
+              {format(parseISO(event.start), 'h:mm a')} - {format(parseISO(event.end), 'h:mm a')}
+            </div>
           </div>
         </div>
-        <Calendar className="w-3 h-3 text-blue-500 ml-2 flex-shrink-0" />
       </div>
     </div>
   );
@@ -144,7 +146,7 @@ const DayViewCalendar = ({
   onConnectGoogle,
   onDisconnectGoogle,
   onViewModeChange,
-  onQuickTaskCreate,
+  onQuickEventCreate,
   onTaskComplete,
   onTaskResize
 }: DayViewCalendarProps) => {
@@ -471,7 +473,7 @@ const DayViewCalendar = ({
                       minute={minute}
                       isCurrentTime={isCurrentSlot}
                       hasTask={hasTask}
-                      onClick={() => onQuickTaskCreate?.(hour, minute)}
+                      onClick={() => onQuickEventCreate?.(hour, minute)}
                     />
                   </div>
                 </div>
