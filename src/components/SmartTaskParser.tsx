@@ -138,11 +138,11 @@ export const SmartTaskParser = ({ onTaskCreated, onEventCreated }: SmartTaskPars
               return `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`;
             })() : 
             (() => {
-              // Default 30 minute duration
+              // Default 60 minute duration for appointments
               const [hours, minutes] = parsedTask.startTime.split(':');
               const startDate = new Date();
               startDate.setHours(parseInt(hours), parseInt(minutes));
-              startDate.setMinutes(startDate.getMinutes() + 30);
+              startDate.setMinutes(startDate.getMinutes() + 60);
               return `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`;
             })()
           );
@@ -153,7 +153,7 @@ export const SmartTaskParser = ({ onTaskCreated, onEventCreated }: SmartTaskPars
           .insert({
             user_id: session?.user?.id,
             title: parsedTask.title,
-            description: `Parsed from: "${parsedTask.originalText}"`,
+            description: null,
             start_time: `${parsedTask.date}T${parsedTask.startTime}:00`,
             end_time: `${parsedTask.date}T${endTime}:00`,
             source: 'local',
@@ -218,7 +218,7 @@ export const SmartTaskParser = ({ onTaskCreated, onEventCreated }: SmartTaskPars
         const newTask = await createTask(
           targetProject.id,
           parsedTask.title,
-          `Parsed from: "${parsedTask.originalText}"`,
+          null,
           new Date(parsedTask.date)
         );
 

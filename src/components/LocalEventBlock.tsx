@@ -14,6 +14,7 @@ interface LocalEventBlockProps {
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   className?: string;
+  showTime?: boolean;
 }
 
 export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
@@ -25,7 +26,8 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
   onClick,
   onEdit,
   onDelete,
-  className
+  className,
+  showTime = false
 }) => {
   const formatTime = (timeString: string) => {
     const time = new Date(`2000-01-01T${timeString}`);
@@ -99,16 +101,18 @@ export const LocalEventBlock: React.FC<LocalEventBlockProps> = ({
       </h4>
 
       {/* Event Description */}
-      {description && (
+      {description && !description.startsWith('Parsed from') && (
         <p className="text-sm text-muted-foreground mb-2 line-clamp-2 leading-tight">
           {description}
         </p>
       )}
 
       {/* Time Range */}
-      <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 font-medium">
-        <span>{formatTime(startTime)} - {formatTime(endTime)}</span>
-      </div>
+      {showTime && (
+        <div className="flex items-center text-xs text-blue-600 dark:text-blue-400 font-medium">
+          <span>{formatTime(startTime)} - {formatTime(endTime)}</span>
+        </div>
+      )}
     </div>
   );
 };

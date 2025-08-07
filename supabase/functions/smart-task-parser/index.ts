@@ -63,19 +63,31 @@ EXISTING PROJECTS:
 ${existingProjects.map(p => `- ${p.name} (${p.category})`).join('\n')}
 
 PARSING RULES:
-1. Extract task title (main action/event)
+1. Extract clean task title (remove action verbs like "add", "schedule", "book", "create")
 2. Determine date (support relative terms like "tomorrow", "Monday", "next week")
 3. Extract time (convert to 24-hour format HH:MM)
-4. Calculate end time if duration is mentioned
+4. Calculate end time based on appointment type or mentioned duration
 5. Determine priority if mentioned (high/medium/low)
 6. Suggest project based on task content and existing projects
 7. Assign confidence score (0.0-1.0) based on clarity of input
+
+DURATION RULES:
+- Medical appointments (doctor, dentist, checkup): 60 minutes default
+- Meetings: 60 minutes default unless specified
+- Gym/workout: 60 minutes default
+- General appointments: 60 minutes default
+- Use mentioned duration if specified
+
+TITLE CLEANING:
+- Remove action verbs: "add dentist appointment" → "Dentist Appointment"
+- Remove scheduling words: "schedule meeting with John" → "Meeting with John"
+- Capitalize properly: "dentist appointment" → "Dentist Appointment"
 
 RESPONSE FORMAT (JSON only):
 {
   "tasks": [
     {
-      "title": "extracted task title",
+      "title": "Clean extracted title",
       "date": "YYYY-MM-DD",
       "startTime": "HH:MM",
       "endTime": "HH:MM",
@@ -89,9 +101,10 @@ RESPONSE FORMAT (JSON only):
 }
 
 EXAMPLES:
-- "Meeting with John tomorrow at 2pm" → date: tomorrow's date, startTime: "14:00", title: "Meeting with John"
-- "Gym workout Monday 7am for 1 hour" → date: next Monday, startTime: "07:00", endTime: "08:00", duration: 60
-- "Doctor appointment Friday at 10:30am" → date: this/next Friday, startTime: "10:30"
+- "add dentist appointment tomorrow at 4pm" → title: "Dentist Appointment", startTime: "16:00", endTime: "17:00", duration: 60
+- "Meeting with John tomorrow at 2pm" → title: "Meeting with John", startTime: "14:00", endTime: "15:00", duration: 60
+- "Gym workout Monday 7am for 1 hour" → title: "Gym Workout", startTime: "07:00", endTime: "08:00", duration: 60
+- "Doctor appointment Friday at 10:30am" → title: "Doctor Appointment", startTime: "10:30", endTime: "11:30", duration: 60
 
 Handle multiple tasks if the input contains them. Always respond with valid JSON.`;
 
