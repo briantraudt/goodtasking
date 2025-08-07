@@ -243,8 +243,10 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
   return (
     <div className="w-full space-y-4 max-w-2xl">
       <div className="text-left">
-        <h2 className="text-xl font-semibold flex items-center gap-2">
-          <Wand2 className="h-5 w-5 text-primary" />
+        <h2 className="text-xl font-semibold flex items-center gap-3">
+          <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center">
+            <Wand2 className="h-4 w-4 text-white" />
+          </div>
           Smart Tasking
         </h2>
       </div>

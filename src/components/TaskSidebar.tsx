@@ -776,7 +776,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
                 ×
               </Button>
             </div>
-            <div className="p-4 overflow-y-auto">
+            <div className="p-4 pt-2 overflow-y-auto">
               <SmartTaskParser onTaskCreated={() => {
                 setShowSmartParser(false);
                 // Refresh projects and tasks data smoothly
