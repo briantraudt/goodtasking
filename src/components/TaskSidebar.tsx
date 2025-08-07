@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import TaskFilters from '@/components/TaskFilters';
 import AddTaskDialog from '@/components/AddTaskDialog';
+import { SmartTaskParser } from '@/components/SmartTaskParser';
 import TaskEditDialog from '@/components/TaskEditDialog';
 import ProjectEditDialog from '@/components/ProjectEditDialog';
 import { useCategories } from '@/hooks/useCategories';
@@ -63,6 +64,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   const [dueDateFilter, setDueDateFilter] = useState<string>('all');
   const [showAddTaskDialog, setShowAddTaskDialog] = useState(false);
+  const [showSmartParser, setShowSmartParser] = useState(false);
   const [activeInlineAdd, setActiveInlineAdd] = useState<string | null>(null);
   const [inlineTaskTitle, setInlineTaskTitle] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
@@ -319,18 +321,14 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
           <CheckSquare className="h-5 w-5 text-primary" />
           <h1 className="text-lg font-medium text-primary">Tasks</h1>
         </div>
-        {/* Only show Add Task button if there are projects with tasks available */}
+        {/* Quick Add Tasks Button using Smart Parser */}
         {projectsWithTasks.length > 0 && (
           <Button
-            onClick={() => {
-              // Select the first project by default
-              setSelectedProjectId(projectsWithTasks[0].id);
-              setShowAddTaskDialog(true);
-            }}
+            onClick={() => setShowSmartParser(true)}
             size="sm"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-1"
           >
-            <Plus className="h-4 w-4 mr-1" />
+            <Plus className="h-4 w-4" />
             Add
           </Button>
         )}
@@ -767,6 +765,23 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Smart Task Parser Dialog */}
+      {showSmartParser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Quick Add Tasks</h2>
+              <Button variant="ghost" size="sm" onClick={() => setShowSmartParser(false)}>
+                ×
+              </Button>
+            </div>
+            <div className="p-4 overflow-y-auto">
+              <SmartTaskParser onTaskCreated={() => setShowSmartParser(false)} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
