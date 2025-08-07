@@ -776,7 +776,11 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
               </Button>
             </div>
             <div className="p-4 overflow-y-auto">
-              <SmartTaskParser onTaskCreated={() => setShowSmartParser(false)} />
+              <SmartTaskParser onTaskCreated={() => {
+                setShowSmartParser(false);
+                // Force a refresh of the page data
+                window.location.reload();
+              }} />
             </div>
           </div>
         </div>

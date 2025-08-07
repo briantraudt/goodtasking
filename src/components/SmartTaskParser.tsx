@@ -120,14 +120,19 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
 
   const createTaskFromParsed = async (parsedTask: ParsedTask) => {
     try {
+      console.log('🎯 Creating task from parsed data:', parsedTask);
+      
       // Find or create project
       let targetProject = projects.find(p => 
         p.name.toLowerCase().includes(parsedTask.projectSuggestion?.toLowerCase() || '') ||
         parsedTask.title.toLowerCase().includes(p.name.toLowerCase())
       );
 
+      console.log('🔍 Found target project:', targetProject);
+
       if (!targetProject && parsedTask.projectSuggestion) {
         // Create new project
+        console.log('📁 Creating new project:', parsedTask.projectSuggestion);
         await createProject(
           parsedTask.projectSuggestion,
           `Auto-created from smart parser`,
@@ -142,10 +147,13 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
         targetProject = projects[0];
         if (!targetProject) {
           // Create a default project if none exist
+          console.log('📁 Creating default project');
           await createProject('General', 'Default project', 'personal');
           targetProject = projects[0];
         }
       }
+
+      console.log('✅ Using project:', targetProject);
 
       // Create the task
       const newTask = await createTask(
@@ -155,8 +163,11 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
         new Date(parsedTask.date)
       );
 
+      console.log('📝 Task created:', newTask);
+
       // If we have time info, schedule it
       if (newTask?.id && parsedTask.startTime) {
+        console.log('⏰ Scheduling task with time:', parsedTask.startTime, '-', parsedTask.endTime);
         await supabase
           .from('vibe_tasks')
           .update({
@@ -169,6 +180,7 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
 
         // Create Google Calendar event if connected
         if (isConnected && parsedTask.startTime && parsedTask.endTime) {
+          console.log('📅 Creating Google Calendar event');
           await createEventFromTask(
             newTask.id,
             parsedTask.title,
@@ -184,12 +196,14 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
         description: `"${parsedTask.title}" has been added to your calendar.`,
       });
 
+      // Call the onTaskCreated callback to refresh the UI
       if (onTaskCreated) {
+        console.log('🔄 Calling onTaskCreated callback');
         onTaskCreated(newTask);
       }
 
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error('❌ Error creating task:', error);
       toast({
         title: "Creation Error",
         description: "Failed to create task. Please try again.",
