@@ -241,10 +241,10 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
   };
 
   return (
-    <div className="w-full space-y-4">
-      <div className="text-center">
-        <h2 className="text-2xl font-semibold flex items-center justify-center gap-2">
-          <Wand2 className="h-6 w-6 text-primary" />
+    <div className="w-full space-y-4 max-w-2xl">
+      <div className="text-left">
+        <h2 className="text-xl font-semibold flex items-center gap-2">
+          <Wand2 className="h-5 w-5 text-primary" />
           Smart Tasking
         </h2>
       </div>
@@ -257,15 +257,15 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder=""
-                className="min-h-[100px] resize-none"
+                placeholder="Type your task naturally... e.g., 'dentist appointment tomorrow at 2pm'"
+                className="min-h-[80px] resize-none border-2 border-primary/20 focus:border-primary"
                 disabled={isProcessing}
               />
               
               <Button 
                 onClick={parseNaturalLanguage}
                 disabled={isProcessing || !input.trim()}
-                className="w-1/4 mx-auto flex items-center gap-2 bg-primary hover:bg-slate-800"
+                className="w-full max-w-xs mx-auto flex items-center gap-2 bg-primary hover:bg-slate-800"
               >
                 {isProcessing ? (
                   <>
@@ -286,10 +286,6 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
                 <Button variant="outline" onClick={clearResults} className="hover:bg-slate-800 hover:text-white">
                   Parse New Tasks
                 </Button>
-              </div>
-
-              <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
-                <strong>Original input:</strong> "{input}"
               </div>
 
               <div className="space-y-3">
