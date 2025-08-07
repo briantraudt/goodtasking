@@ -231,7 +231,7 @@ const DashboardView = ({
     document.documentElement.style.overflowX = 'hidden';
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     
     if (!over) return;
@@ -239,8 +239,39 @@ const DashboardView = ({
     const activeId = active.id.toString();
     const overId = over.id.toString();
 
-    // Handle dropping tasks onto time slots
-    if (overId.includes(':')) {
+    console.log('🎯 Drag end event:', { activeId, overId, activeData: active.data.current });
+
+    // Handle calendar event dragging
+    if (active.data.current?.type === 'calendar_event') {
+      const eventId = active.data.current.eventId;
+      
+      if (overId.includes(':')) {
+        const timeSlot = overId;
+        const [hourStr, minuteStr] = timeSlot.split(':');
+        const hour = parseInt(hourStr);
+        const minute = parseInt(minuteStr);
+        
+        // Calculate duration from original event
+        const originalStartTime = active.data.current.startTime;
+        const originalEndTime = active.data.current.endTime;
+        
+        // Parse original times to calculate duration
+        const [startHour, startMin] = originalStartTime.split(':').map(Number);
+        const [endHour, endMin] = originalEndTime.split(':').map(Number);
+        const duration = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+        
+        // Calculate new times
+        const startTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
+        const newEndHour = Math.floor((hour * 60 + minute + duration) / 60);
+        const newEndMinute = (minute + duration) % 60;
+        const endTime = `${newEndHour.toString().padStart(2, '0')}:${newEndMinute.toString().padStart(2, '0')}:00`;
+        
+        console.log('📅 Moving calendar event:', { eventId, startTime, endTime, selectedDate });
+        await handleEventTimeChange(eventId, selectedDate, startTime, endTime);
+      }
+    }
+    // Handle task dragging (existing functionality)
+    else if (overId.includes(':')) {
       const taskId = activeId.replace('task-', '').replace('scheduled-', '');
       const timeSlot = overId;
       const [hourStr, minuteStr] = timeSlot.split(':');
@@ -411,6 +442,67 @@ const DashboardView = ({
       console.log('✅ Task resize completed successfully');
     } catch (error) {
       console.error('❌ Error resizing task:', error);
+    }
+  };
+
+  // Handle calendar event time changes
+  const handleEventTimeChange = async (eventId: string, date: string, startTime: string, endTime: string) => {
+    try {
+      // Convert local time to UTC for database storage
+      const startDateTime = new Date(`${date}T${startTime}`);
+      const endDateTime = new Date(`${date}T${endTime}`);
+      
+      console.log('🔄 Updating calendar event time:', {
+        eventId,
+        localStart: `${date}T${startTime}`,
+        localEnd: `${date}T${endTime}`,
+        utcStart: startDateTime.toISOString(),
+        utcEnd: endDateTime.toISOString()
+      });
+
+      // Optimistic update - immediately update UI
+      setCalendarEvents(prev => 
+        prev.map(event => 
+          event.id === eventId 
+            ? { 
+                ...event, 
+                start: startDateTime.toISOString(),
+                end: endDateTime.toISOString()
+              }
+            : event
+        )
+      );
+
+      // Update the database
+      const { error } = await supabase
+        .from('calendar_events')
+        .update({
+          start_time: startDateTime.toISOString(),
+          end_time: endDateTime.toISOString(),
+        })
+        .eq('id', eventId);
+
+      if (error) {
+        console.error('❌ Error updating calendar event time:', error);
+        // Revert optimistic update
+        await fetchCalendarEvents();
+        throw error;
+      }
+
+      console.log('✅ Calendar event time updated successfully');
+      
+      toast({
+        title: "Event Updated",
+        description: "Event time has been successfully updated.",
+      });
+
+    } catch (error) {
+      console.error('❌ Error updating event time:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update event time. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
