@@ -42,6 +42,13 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
   useEffect(() => {
     if (isOpen && eventId) {
       fetchEventData();
+    } else if (!isOpen) {
+      // Reset form when dialog closes
+      setTitle('');
+      setDescription('');
+      setStartDate('');
+      setStartTime('');
+      setEndTime('');
     }
   }, [isOpen, eventId]);
 
@@ -63,12 +70,22 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
       
       // Parse start time
       const startDateTime = new Date(data.start_time);
-      setStartDate(startDateTime.toISOString().split('T')[0]);
-      setStartTime(startDateTime.toTimeString().slice(0, 5));
+      const localStartDate = startDateTime.toISOString().split('T')[0];
+      const localStartTime = startDateTime.toTimeString().slice(0, 5);
+      setStartDate(localStartDate);
+      setStartTime(localStartTime);
       
       // Parse end time
       const endDateTime = new Date(data.end_time);
-      setEndTime(endDateTime.toTimeString().slice(0, 5));
+      const localEndTime = endDateTime.toTimeString().slice(0, 5);
+      setEndTime(localEndTime);
+
+      console.log('Event data loaded:', {
+        title: data.title,
+        startDate: localStartDate,
+        startTime: localStartTime,
+        endTime: localEndTime
+      });
 
     } catch (error) {
       console.error('Error fetching event:', error);
@@ -151,12 +168,6 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
   };
 
   const handleClose = () => {
-    setTitle('');
-    setDescription('');
-    setStartDate('');
-    setStartTime('');
-    setEndTime('');
-    setEventData(null);
     onClose();
   };
 
@@ -222,9 +233,6 @@ export const EventEditDialog: React.FC<EventEditDialogProps> = ({
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
-            Cancel
-          </Button>
           <Button 
             variant="destructive"
             onClick={handleDelete}
