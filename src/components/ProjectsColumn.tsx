@@ -7,6 +7,7 @@ import CreateProjectDialog from './CreateProjectDialog';
 import ProjectEditDialog from './ProjectEditDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { AIDailyPlannerAssistant } from './AIDailyPlannerAssistant';
+import { SmartTaskParser } from './SmartTaskParser';
 import { cn } from '@/lib/utils';
 import { useCategories } from '@/hooks/useCategories';
 
@@ -36,6 +37,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [deleteConfirmProject, setDeleteConfirmProject] = useState<Project | null>(null);
   const [showAIPlannerDialog, setShowAIPlannerDialog] = useState(false);
+  const [showSmartParser, setShowSmartParser] = useState(false);
 
   // Filter projects that have no tasks OR all tasks are scheduled/completed
   const projectsWithoutTasks = projects.filter(project => 
@@ -205,8 +207,17 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
         )}
       </div>
 
-      {/* Plan Your Day Button */}
-      <div className="mt-6 pt-4 border-t">
+      {/* Action Buttons */}
+      <div className="mt-6 pt-4 border-t space-y-2">
+        <Button
+          onClick={() => setShowSmartParser(true)}
+          variant="outline"
+          className="w-full flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Quick Add Tasks
+        </Button>
+        
         <Button
           onClick={() => setShowAIPlannerDialog(true)}
           className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90"
@@ -215,6 +226,23 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
           Plan Your Day
         </Button>
       </div>
+
+      {/* Smart Task Parser Dialog */}
+      {showSmartParser && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden">
+            <div className="p-4 border-b flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Quick Add Tasks</h2>
+              <Button variant="ghost" size="sm" onClick={() => setShowSmartParser(false)}>
+                ×
+              </Button>
+            </div>
+            <div className="p-4 overflow-y-auto">
+              <SmartTaskParser onTaskCreated={() => setShowSmartParser(false)} />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* AI Daily Planner Dialog */}
       <AIDailyPlannerAssistant 
