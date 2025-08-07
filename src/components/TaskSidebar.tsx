@@ -117,6 +117,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     return allTasks.filter(task => {
       // Filter out scheduled tasks - they should only appear on the calendar
       if (task.scheduled_date) {
+        console.log('🗂️ Filtering out scheduled task:', task.title, 'scheduled_date:', task.scheduled_date);
         return false;
       }
 
