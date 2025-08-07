@@ -259,6 +259,12 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    parseNaturalLanguage();
+                  }
+                }}
                 placeholder="Type your task naturally... e.g., 'dentist appointment tomorrow at 2pm'"
                 className="min-h-[80px] resize-none border-2 border-primary/20 focus:border-primary"
                 disabled={isProcessing}
