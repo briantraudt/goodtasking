@@ -251,7 +251,7 @@ const DashboardView = ({
     console.log('🎯 Creating calendar event directly:', { title, startTime, endTime, scheduledDate });
     
     try {
-      // Create calendar event directly in the database
+      // Create local calendar event directly in the database
       const { data: eventData, error: eventError } = await supabase
         .from('calendar_events')
         .insert({
@@ -260,7 +260,7 @@ const DashboardView = ({
           description: description || `Created on calendar`,
           start_time: `${scheduledDate}T${startTime}:00`,
           end_time: `${scheduledDate}T${endTime}:00`,
-          google_event_id: `quick-created-${Date.now()}`,
+          source: 'local',
           is_all_day: false
         })
         .select()
@@ -275,16 +275,6 @@ const DashboardView = ({
 
       // Refresh calendar events to show the new event
       await fetchCalendarEvents();
-
-      // Create Google Calendar event if connected
-      if (isConnected) {
-        try {
-          await createEventFromTask(eventData.id, title, startTime, endTime, scheduledDate);
-          console.log('✅ Google Calendar event created successfully');
-        } catch (googleError) {
-          console.warn('Google Calendar sync failed, but local event created:', googleError);
-        }
-      }
 
       toast({
         title: "Event Created! 📅",

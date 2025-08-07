@@ -156,7 +156,7 @@ export const SmartTaskParser = ({ onTaskCreated, onEventCreated }: SmartTaskPars
             description: `Parsed from: "${parsedTask.originalText}"`,
             start_time: `${parsedTask.date}T${parsedTask.startTime}:00`,
             end_time: `${parsedTask.date}T${endTime}:00`,
-            google_event_id: `smart-parsed-${Date.now()}`,
+            source: 'local',
             is_all_day: false
           })
           .select()
@@ -167,23 +167,7 @@ export const SmartTaskParser = ({ onTaskCreated, onEventCreated }: SmartTaskPars
           throw eventError;
         }
 
-        console.log('📅 Calendar event created:', eventData);
-        
-        // Also create Google Calendar event if connected
-        if (isConnected) {
-          console.log('📅 Also creating Google Calendar event');
-          try {
-            await createEventFromTask(
-              eventData.id,
-              parsedTask.title,
-              parsedTask.startTime,
-              endTime,
-              parsedTask.date
-            );
-          } catch (googleError) {
-            console.warn('Google Calendar sync failed, but local event created:', googleError);
-          }
-        }
+        console.log('📅 Local calendar event created:', eventData);
         
         toast({
           title: "Event Created! 📅",

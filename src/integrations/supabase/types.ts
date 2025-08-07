@@ -20,10 +20,11 @@ export type Database = {
           created_at: string
           description: string | null
           end_time: string
-          google_event_id: string
+          google_event_id: string | null
           id: string
           is_all_day: boolean
           location: string | null
+          source: string
           start_time: string
           status: string | null
           title: string
@@ -35,10 +36,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           end_time: string
-          google_event_id: string
+          google_event_id?: string | null
           id?: string
           is_all_day?: boolean
           location?: string | null
+          source?: string
           start_time: string
           status?: string | null
           title: string
@@ -50,10 +52,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           end_time?: string
-          google_event_id?: string
+          google_event_id?: string | null
           id?: string
           is_all_day?: boolean
           location?: string | null
+          source?: string
           start_time?: string
           status?: string | null
           title?: string

@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useCategories } from '@/hooks/useCategories';
 import { Checkbox } from '@/components/ui/checkbox';
 import ResizableTaskBlock from '@/components/ResizableTaskBlock';
+import LocalEventBlock from '@/components/LocalEventBlock';
+import { supabase } from "@/integrations/supabase/client";
 
 interface Task {
   id: string;
@@ -33,6 +35,7 @@ interface CalendarEvent {
   color?: string;
   description?: string;
   isAllDay?: boolean;
+  source?: 'local' | 'google';
 }
 
 interface Project {
@@ -59,6 +62,8 @@ interface DayViewCalendarProps {
   onQuickEventCreate?: (hour: number, minute: number) => void;
   onTaskComplete?: (taskId: string, completed: boolean) => void;
   onTaskResize?: (taskId: string, startTime: string, endTime: string) => void;
+  onEventEdit?: (eventId: string) => void;
+  onEventDelete?: (eventId: string) => void;
 }
 
 interface TimeSlotProps {
@@ -148,13 +153,50 @@ const DayViewCalendar = ({
   onViewModeChange,
   onQuickEventCreate,
   onTaskComplete,
-  onTaskResize
+  onTaskResize,
+  onEventEdit,
+  onEventDelete
 }: DayViewCalendarProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showUnsyncOption, setShowUnsyncOption] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const hasAutoScrolled = useRef(false);
   const { toast } = useToast();
+
+  // Separate local and Google Calendar events
+  const localEvents = calendarEvents.filter(event => event.source === 'local' || !event.source);
+  const googleEvents = calendarEvents.filter(event => event.source === 'google');
+
+  const handleLocalEventDelete = async (eventId: string) => {
+    try {
+      const { error } = await supabase
+        .from('calendar_events')
+        .delete()
+        .eq('id', eventId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Event Deleted",
+        description: "The event has been removed from your calendar.",
+      });
+
+      // Trigger refresh by calling onEventDelete if provided
+      onEventDelete?.(eventId);
+    } catch (error) {
+      console.error('Error deleting local event:', error);
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete event. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleLocalEventEdit = (eventId: string) => {
+    // For now, just call onEventEdit if provided
+    onEventEdit?.(eventId);
+  };
 
   const handleCalendarClick = () => {
     if (isGoogleConnected) {
@@ -509,29 +551,70 @@ const DayViewCalendar = ({
               );
             })}
             
-            {/* Calendar events */}
-            {dayEvents.map(event => {
-              const position = calculateEventPosition(event);
-              
-              return (
-                <div
-                  key={event.id}
-                  style={{
-                    position: 'absolute',
-                    top: position.top,
-                    height: position.height,
-                    left: 116, // Space for time labels + padding (w-28 = 112px + 4px padding)
-                    right: 16,
-                    zIndex: 10
-                  }}
-                >
-                  <EventBlock
-                    event={event}
-                    onClick={onEventClick}
-                  />
-                </div>
-              );
-            })}
+            {/* Google Calendar events */}
+            {googleEvents
+              .filter(event => {
+                const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
+                return eventDate === selectedDate;
+              })
+              .map(event => {
+                const position = calculateEventPosition(event);
+                
+                return (
+                  <div
+                    key={event.id}
+                    style={{
+                      position: 'absolute',
+                      top: position.top,
+                      height: position.height,
+                      left: 116, // Space for time labels + padding (w-28 = 112px + 4px padding)
+                      right: 16,
+                      zIndex: 10
+                    }}
+                  >
+                    <EventBlock
+                      event={event}
+                      onClick={onEventClick}
+                    />
+                  </div>
+                );
+              })}
+
+            {/* Local Events */}
+            {localEvents
+              .filter(event => {
+                const eventDate = format(parseISO(event.start), 'yyyy-MM-dd');
+                return eventDate === selectedDate;
+              })
+              .map(event => {
+                const position = calculateEventPosition(event);
+                const eventStart = parseISO(event.start);
+                const eventEnd = parseISO(event.end);
+                
+                return (
+                  <div
+                    key={event.id}
+                    style={{
+                      position: 'absolute',
+                      top: position.top,
+                      height: position.height,
+                      left: 116, // Space for time labels + padding (w-28 = 112px + 4px padding)
+                      right: 16,
+                      zIndex: 10
+                    }}
+                  >
+                    <LocalEventBlock
+                      id={event.id}
+                      title={event.title}
+                      description={event.description}
+                      startTime={eventStart.toTimeString().slice(0, 5)}
+                      endTime={eventEnd.toTimeString().slice(0, 5)}
+                      onEdit={handleLocalEventEdit}
+                      onDelete={handleLocalEventDelete}
+                    />
+                  </div>
+                );
+              })}
             
             {/* Current time indicator */}
             {(() => {
