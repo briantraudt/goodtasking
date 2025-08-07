@@ -120,34 +120,74 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
 
   const createTaskFromParsed = async (parsedTask: ParsedTask) => {
     try {
-      console.log('🎯 Creating task from parsed data:', parsedTask);
+      console.log('🎯 Creating event from parsed data:', parsedTask);
       
-      // If task has specific start and end times, treat it as a calendar event only
-      if (parsedTask.startTime && parsedTask.endTime) {
-        console.log('📅 Creating calendar event (not task list item)');
+      // If task has specific start time, treat it as a calendar event
+      if (parsedTask.startTime) {
+        console.log('📅 Creating calendar event');
         
-        // Create Google Calendar event if connected
-        if (isConnected) {
-          console.log('📅 Creating Google Calendar event');
-          await createEventFromTask(
-            `temp-${Date.now()}`, // Temporary ID for calendar event
-            parsedTask.title,
-            parsedTask.startTime,
-            parsedTask.endTime,
-            parsedTask.date
+        // Calculate end time if not provided
+        const endTime = parsedTask.endTime || 
+          (parsedTask.duration ? 
+            (() => {
+              const [hours, minutes] = parsedTask.startTime.split(':');
+              const startDate = new Date();
+              startDate.setHours(parseInt(hours), parseInt(minutes));
+              startDate.setMinutes(startDate.getMinutes() + parsedTask.duration);
+              return `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`;
+            })() : 
+            (() => {
+              // Default 30 minute duration
+              const [hours, minutes] = parsedTask.startTime.split(':');
+              const startDate = new Date();
+              startDate.setHours(parseInt(hours), parseInt(minutes));
+              startDate.setMinutes(startDate.getMinutes() + 30);
+              return `${startDate.getHours().toString().padStart(2, '0')}:${startDate.getMinutes().toString().padStart(2, '0')}`;
+            })()
           );
-          
-          toast({
-            title: "Calendar Event Created! 📅",
-            description: `"${parsedTask.title}" has been added to your calendar.`,
-          });
-        } else {
-          toast({
-            title: "Connect Google Calendar",
-            description: "Connect your Google Calendar to automatically add timed events.",
-            variant: "destructive",
-          });
+
+        // Create local calendar event entry
+        const { data: eventData, error: eventError } = await supabase
+          .from('calendar_events')
+          .insert({
+            user_id: session?.user?.id,
+            title: parsedTask.title,
+            description: `Parsed from: "${parsedTask.originalText}"`,
+            start_time: `${parsedTask.date}T${parsedTask.startTime}:00`,
+            end_time: `${parsedTask.date}T${endTime}:00`,
+            google_event_id: `smart-parsed-${Date.now()}`,
+            is_all_day: false
+          })
+          .select()
+          .single();
+
+        if (eventError) {
+          console.error('Error creating calendar event:', eventError);
+          throw eventError;
         }
+
+        console.log('📅 Calendar event created:', eventData);
+        
+        // Also create Google Calendar event if connected
+        if (isConnected) {
+          console.log('📅 Also creating Google Calendar event');
+          try {
+            await createEventFromTask(
+              eventData.id,
+              parsedTask.title,
+              parsedTask.startTime,
+              endTime,
+              parsedTask.date
+            );
+          } catch (googleError) {
+            console.warn('Google Calendar sync failed, but local event created:', googleError);
+          }
+        }
+        
+        toast({
+          title: "Event Created! 📅",
+          description: `"${parsedTask.title}" has been added to your calendar.`,
+        });
       } else {
         console.log('📝 Creating task list item (no specific times)');
         
