@@ -260,8 +260,8 @@ const DashboardView = ({
           user_id: session?.user?.id,
           title: title,
           description: description || null,
-          start_time: `${scheduledDate}T${startTime}:00`,
-          end_time: `${scheduledDate}T${endTime}:00`,
+          start_time: `${scheduledDate}T${startTime}`,
+          end_time: `${scheduledDate}T${endTime}`,
           source: 'local',
           is_all_day: false
         })
