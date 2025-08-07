@@ -180,7 +180,10 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
 
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), 'EEEE, MMM d, yyyy');
+      // Parse the date string correctly to avoid timezone issues
+      const [year, month, day] = dateString.split('-');
+      const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+      return format(date, 'EEEE, MMM d, yyyy');
     } catch {
       return dateString;
     }
