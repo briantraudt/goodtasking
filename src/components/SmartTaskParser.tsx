@@ -122,84 +122,100 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
     try {
       console.log('🎯 Creating task from parsed data:', parsedTask);
       
-      // Find or create project
-      let targetProject = projects.find(p => 
-        p.name.toLowerCase().includes(parsedTask.projectSuggestion?.toLowerCase() || '') ||
-        parsedTask.title.toLowerCase().includes(p.name.toLowerCase())
-      );
-
-      console.log('🔍 Found target project:', targetProject);
-
-      if (!targetProject && parsedTask.projectSuggestion) {
-        // Create new project
-        console.log('📁 Creating new project:', parsedTask.projectSuggestion);
-        await createProject(
-          parsedTask.projectSuggestion,
-          `Auto-created from smart parser`,
-          'personal'
-        );
-        // Use a temporary project reference for now
-        targetProject = projects.find(p => p.name === parsedTask.projectSuggestion) || projects[0];
-      }
-
-      if (!targetProject) {
-        // Use default project or create one
-        targetProject = projects[0];
-        if (!targetProject) {
-          // Create a default project if none exist
-          console.log('📁 Creating default project');
-          await createProject('General', 'Default project', 'personal');
-          targetProject = projects[0];
-        }
-      }
-
-      console.log('✅ Using project:', targetProject);
-
-      // Create the task
-      const newTask = await createTask(
-        targetProject.id,
-        parsedTask.title,
-        `Parsed from: "${parsedTask.originalText}"`,
-        new Date(parsedTask.date)
-      );
-
-      console.log('📝 Task created:', newTask);
-
-      // If we have time info, schedule it
-      if (newTask?.id && parsedTask.startTime) {
-        console.log('⏰ Scheduling task with time:', parsedTask.startTime, '-', parsedTask.endTime);
-        await supabase
-          .from('vibe_tasks')
-          .update({
-            scheduled_date: parsedTask.date,
-            start_time: parsedTask.startTime,
-            end_time: parsedTask.endTime,
-            priority: parsedTask.priority || 'medium'
-          })
-          .eq('id', newTask.id);
-
+      // If task has specific start and end times, treat it as a calendar event only
+      if (parsedTask.startTime && parsedTask.endTime) {
+        console.log('📅 Creating calendar event (not task list item)');
+        
         // Create Google Calendar event if connected
-        if (isConnected && parsedTask.startTime && parsedTask.endTime) {
+        if (isConnected) {
           console.log('📅 Creating Google Calendar event');
           await createEventFromTask(
-            newTask.id,
+            `temp-${Date.now()}`, // Temporary ID for calendar event
             parsedTask.title,
             parsedTask.startTime,
             parsedTask.endTime,
             parsedTask.date
           );
+          
+          toast({
+            title: "Calendar Event Created! 📅",
+            description: `"${parsedTask.title}" has been added to your calendar.`,
+          });
+        } else {
+          toast({
+            title: "Connect Google Calendar",
+            description: "Connect your Google Calendar to automatically add timed events.",
+            variant: "destructive",
+          });
         }
-      }
+      } else {
+        console.log('📝 Creating task list item (no specific times)');
+        
+        // Find or create project for tasks without specific times
+        let targetProject = projects.find(p => 
+          p.name.toLowerCase().includes(parsedTask.projectSuggestion?.toLowerCase() || '') ||
+          parsedTask.title.toLowerCase().includes(p.name.toLowerCase())
+        );
 
-      toast({
-        title: "Task Created! 📅",
-        description: `"${parsedTask.title}" has been added to your calendar.`,
-      });
+        console.log('🔍 Found target project:', targetProject);
+
+        if (!targetProject && parsedTask.projectSuggestion) {
+          // Create new project
+          console.log('📁 Creating new project:', parsedTask.projectSuggestion);
+          await createProject(
+            parsedTask.projectSuggestion,
+            `Auto-created from smart parser`,
+            'personal'
+          );
+          // Use a temporary project reference for now
+          targetProject = projects.find(p => p.name === parsedTask.projectSuggestion) || projects[0];
+        }
+
+        if (!targetProject) {
+          // Use default project or create one
+          targetProject = projects[0];
+          if (!targetProject) {
+            // Create a default project if none exist
+            console.log('📁 Creating default project');
+            await createProject('General', 'Default project', 'personal');
+            targetProject = projects[0];
+          }
+        }
+
+        console.log('✅ Using project:', targetProject);
+
+        // Create the task
+        const newTask = await createTask(
+          targetProject.id,
+          parsedTask.title,
+          `Parsed from: "${parsedTask.originalText}"`,
+          new Date(parsedTask.date)
+        );
+
+        console.log('📝 Task created:', newTask);
+
+        // If we have task info, update it with additional details
+        if (newTask?.id) {
+          console.log('⚙️ Updating task with additional details');
+          await supabase
+            .from('vibe_tasks')
+            .update({
+              scheduled_date: parsedTask.date,
+              priority: parsedTask.priority || 'medium'
+            })
+            .eq('id', newTask.id);
+        }
+
+        toast({
+          title: "Task Created! ✅",
+          description: `"${parsedTask.title}" has been added to your task list.`,
+        });
+      }
 
       // Call the onTaskCreated callback to refresh the UI
       if (onTaskCreated) {
         console.log('🔄 Calling onTaskCreated callback');
-        onTaskCreated(newTask);
+        onTaskCreated(null); // Pass null since we might not have created a task
       }
 
     } catch (error) {
