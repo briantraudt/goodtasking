@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { CalendarIcon, Edit2, Check, Trash2, Home, User, Briefcase, X } from 'lucide-react';
+import { CalendarIcon, Edit2, Check, Trash2, Home, User, Briefcase, X, Sparkles } from 'lucide-react';
 import { format } from 'date-fns';
 import DraggableTaskItem from '@/components/DraggableTaskItem';
 import TaskFilters from '@/components/TaskFilters';
@@ -328,7 +328,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
             size="sm"
             className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-1"
           >
-            <Plus className="h-4 w-4" />
+            <Sparkles className="h-4 w-4" />
             Add
           </Button>
         )}
