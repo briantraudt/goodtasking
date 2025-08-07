@@ -67,13 +67,44 @@ export const SmartTaskParser = ({ onTaskCreated }: SmartTaskParserProps) => {
 
       if (error) throw error;
 
-      setParsedTasks(data.tasks || []);
-      setShowResults(true);
+      const allTasks = data.tasks || [];
+      
+      // Separate tasks by confidence level
+      const highConfidenceTasks = allTasks.filter(task => task.confidence >= 0.75);
+      const lowConfidenceTasks = allTasks.filter(task => task.confidence < 0.75);
 
-      toast({
-        title: "Tasks Parsed! ✨",
-        description: `Found ${data.tasks?.length || 0} task(s) from your input.`,
-      });
+      // Auto-add high confidence tasks
+      if (highConfidenceTasks.length > 0) {
+        for (const task of highConfidenceTasks) {
+          await createTaskFromParsed(task);
+        }
+        
+        toast({
+          title: "Tasks Auto-Added! ✨",
+          description: `Automatically added ${highConfidenceTasks.length} high-confidence task(s).`,
+        });
+      }
+
+      // Only show results screen if there are low confidence tasks
+      if (lowConfidenceTasks.length > 0) {
+        setParsedTasks(lowConfidenceTasks);
+        setShowResults(true);
+        
+        toast({
+          title: "Review Required 🔍",
+          description: `${lowConfidenceTasks.length} task(s) need manual review (confidence < 75%).`,
+        });
+      } else if (highConfidenceTasks.length > 0) {
+        // All tasks were auto-added, clear the input
+        setInput('');
+      } else {
+        // No tasks found
+        toast({
+          title: "No Tasks Found",
+          description: "Could not parse any tasks from your input. Please try rephrasing.",
+          variant: "destructive",
+        });
+      }
 
     } catch (error) {
       console.error('Error parsing tasks:', error);
