@@ -169,12 +169,16 @@ const DashboardView = ({
 
     console.log('✅ Task updated in database, refreshing UI...');
     
-    // Refresh the tasks to update the UI immediately
+    // Force a complete refresh to ensure UI synchronization
     if (onRefreshTasks) {
       await onRefreshTasks();
+      console.log('🔄 Projects data refreshed');
     }
     
-    console.log('🎉 Task scheduling complete!');
+    // Add a small delay to ensure the state propagates properly
+    setTimeout(() => {
+      console.log('🎉 Task scheduling complete!');
+    }, 100);
   };
 
   const handleTaskUnscheduled = (taskId: string) => {

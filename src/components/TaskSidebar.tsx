@@ -103,8 +103,17 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
         }))
     );
     
+    console.log('📋 All tasks before filtering:', tasks.map(t => ({ id: t.id, title: t.title, scheduled_date: t.scheduled_date })));
+    
+    // Remove duplicates by task ID
+    const uniqueTasks = tasks.filter((task, index, self) => 
+      index === self.findIndex(t => t.id === task.id)
+    );
+    
+    console.log('📋 Unique tasks after deduplication:', uniqueTasks.map(t => ({ id: t.id, title: t.title, scheduled_date: t.scheduled_date })));
+    
     // Sort tasks: incomplete tasks first, then completed tasks (both sorted by creation date)
-    return tasks.sort((a, b) => {
+    return uniqueTasks.sort((a, b) => {
       if (a.completed !== b.completed) {
         return a.completed ? 1 : -1; // Completed tasks go to bottom
       }
