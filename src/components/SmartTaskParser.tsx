@@ -147,15 +147,18 @@ export const SmartTaskParser = ({ onTaskCreated, onEventCreated }: SmartTaskPars
             })()
           );
 
-        // Create local calendar event entry
+        // Create local calendar event entry - convert local time to UTC
+        const startDateTime = new Date(`${parsedTask.date}T${parsedTask.startTime}`);
+        const endDateTime = new Date(`${parsedTask.date}T${endTime}`);
+        
         const { data: eventData, error: eventError } = await supabase
           .from('calendar_events')
           .insert({
             user_id: session?.user?.id,
             title: parsedTask.title,
             description: null,
-            start_time: `${parsedTask.date}T${parsedTask.startTime}:00`,
-            end_time: `${parsedTask.date}T${endTime}:00`,
+            start_time: startDateTime.toISOString(),
+            end_time: endDateTime.toISOString(),
             source: 'local',
             is_all_day: false
           })
