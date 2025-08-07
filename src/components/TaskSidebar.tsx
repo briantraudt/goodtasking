@@ -359,36 +359,12 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       <div className="grid grid-cols-1 gap-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
         {projectsWithTasks.map((project, index) => {
           // Get filtered tasks for this project
-          const projectTasks = allTasks.filter(task => {
+          const projectTasks = filteredTasks.filter(task => {
             // Check if task belongs to this project
             const belongsToProject = projects.find(p => 
               p.tasks.some(t => t.id === task.id) && p.id === project.id
             );
-            if (!belongsToProject) return false;
-
-            // Apply other filters
-            if (priorityFilter !== 'all' && task.priority !== priorityFilter) {
-              return false;
-            }
-
-            if (dueDateFilter !== 'all' && task.due_date) {
-              const dueDate = new Date(task.due_date);
-              switch (dueDateFilter) {
-                case 'today':
-                  if (!isToday(dueDate)) return false;
-                  break;
-                case 'overdue':
-                  if (!isPast(dueDate) || isToday(dueDate)) return false;
-                  break;
-                case 'this-week':
-                  if (!isThisWeek(dueDate)) return false;
-                  break;
-              }
-            } else if (dueDateFilter !== 'all' && !task.due_date) {
-              return false;
-            }
-
-            return true;
+            return belongsToProject;
           });
 
           if (projectTasks.length === 0) return null;
