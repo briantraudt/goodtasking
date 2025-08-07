@@ -147,7 +147,22 @@ const Landing = () => {
 
             {/* Right Column - App Mockup */}
             <div className="relative">
-              <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-border/20 transform rotate-1 hover:rotate-0 transition-transform duration-300">
+              <div 
+                className="relative bg-white rounded-2xl shadow-2xl overflow-hidden border border-border/20 transform rotate-1 hover:rotate-0 transition-transform duration-300 cursor-pointer group"
+                onClick={() => {
+                  const modal = document.createElement('div');
+                  modal.className = 'fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4';
+                  modal.onclick = () => modal.remove();
+                  
+                  const img = document.createElement('img');
+                  img.src = '/dashboard-hero-clean.png';
+                  img.className = 'max-w-full max-h-full rounded-lg shadow-2xl';
+                  img.alt = 'Good Tasking dashboard - enlarged view';
+                  
+                  modal.appendChild(img);
+                  document.body.appendChild(modal);
+                }}
+              >
                 <div className="bg-muted/30 px-4 py-3 border-b border-border/20 flex items-center space-x-2">
                   <div className="flex space-x-2">
                     <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -155,14 +170,19 @@ const Landing = () => {
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   </div>
                   <div className="flex-1 text-center text-sm text-muted-foreground">
-                    goodtasking.com
+                    {/* Address bar without URL */}
                   </div>
                 </div>
                 <img 
-                  src="/lovable-uploads/93962149-0d32-4111-bab6-5d7bde67de1a.png" 
-                  alt="Good Tasking dashboard showing calendar, tasks organized by project, and daily planning interface"
-                  className="w-full h-auto"
+                  src="/dashboard-hero-clean.png" 
+                  alt="Good Tasking dashboard showing calendar, tasks organized by project, and daily planning interface - click to enlarge"
+                  className="w-full h-auto group-hover:scale-[1.02] transition-transform duration-300"
                 />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="bg-white/90 px-3 py-1 rounded-full text-sm font-medium">
+                    Click to enlarge
+                  </div>
+                </div>
               </div>
               {/* Floating elements for visual appeal */}
               <div className="absolute -top-4 -right-4 w-8 h-8 bg-primary/20 rounded-full animate-pulse"></div>
