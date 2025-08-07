@@ -55,10 +55,11 @@ interface TaskSidebarProps {
   onUpdateTask?: (taskId: string, updates: Partial<Task>) => Promise<void>;
   onDeleteTask?: (taskId: string) => Promise<void>;
   onMoveProjectBack?: (projectId: string) => void;
+  onRefreshTasks?: () => void;
   className?: string;
 }
 
-const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, onMoveProjectBack, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, onMoveProjectBack, onRefreshTasks, className }: TaskSidebarProps) => {
   const { categories } = useCategories();
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
@@ -778,8 +779,10 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
             <div className="p-4 overflow-y-auto">
               <SmartTaskParser onTaskCreated={() => {
                 setShowSmartParser(false);
-                // Force a refresh of the page data
-                window.location.reload();
+                // Refresh projects and tasks data smoothly
+                if (onRefreshTasks) {
+                  onRefreshTasks();
+                }
               }} />
             </div>
           </div>
