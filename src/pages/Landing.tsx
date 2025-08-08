@@ -50,10 +50,10 @@ const Landing = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Link to="/dashboard">
-              <Button variant="ghost" className="hover:bg-primary hover:text-primary-foreground">Dashboard</Button>
+              <Button variant="ghost" className="hover:bg-success hover:text-success-foreground">Dashboard</Button>
             </Link>
             <Link to="/signup">
-              <Button>Get Started Free</Button>
+              <Button className="hover:bg-success hover:text-success-foreground">Get Started Free</Button>
             </Link>
           </div>
         </div>
@@ -116,7 +116,7 @@ const Landing = () => {
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <Button 
                   size="lg" 
-                  className={`px-8 transition-all duration-300 hover:scale-105 active:scale-95 ${showPulse ? 'animate-pulse' : ''}`}
+                  className={`px-8 transition-all duration-300 hover:scale-105 hover:bg-success hover:text-success-foreground active:scale-95 ${showPulse ? 'animate-pulse' : ''}`}
                   onClick={handleGetStarted}
                   disabled={isGetStartedLoading}
                   aria-label="Try the AI for free"
@@ -136,7 +136,7 @@ const Landing = () => {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="px-8 transition-all duration-300 hover:scale-105 hover:bg-accent hover:text-accent-foreground active:scale-95"
+                  className="px-8 transition-all duration-300 hover:scale-105 hover:bg-success hover:text-success-foreground active:scale-95"
                   onClick={scrollToHowItWorks}
                   aria-label="Plan your day with AI"
                 >
@@ -368,7 +368,7 @@ const Landing = () => {
 
           {/* Leave a Testimonial CTA */}
           <div className="text-center">
-            <Button variant="outline" className="hover:scale-105 transition-transform duration-200">
+            <Button variant="outline" className="hover:scale-105 transition-transform duration-200 hover:bg-success hover:text-success-foreground">
               <Star className="mr-2 h-4 w-4" />
               Leave a Testimonial
             </Button>
