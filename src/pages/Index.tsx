@@ -51,7 +51,7 @@ const Index = () => {
       
       {/* Fixed Height Main Content with Independent Scrolling */}
       <main className="overflow-hidden">
-        <div className="w-full sm:max-w-app mx-auto px-0 sm:px-6 pt-6 pb-24 md:py-6 h-[calc(100vh-140px)] overflow-hidden">
+        <div className="w-full sm:max-w-app mx-auto px-0 sm:px-6 pt-0 md:py-6 pb-24 h-[calc(100vh-140px)] overflow-hidden">
           <DashboardView
             projects={projects}
             onCreateProject={async (data) => {

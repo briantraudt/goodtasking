@@ -62,20 +62,9 @@ const Header = () => {
           <div className="text-base font-semibold text-primary truncate">
             {dateLabel || ''}
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className="h-9 w-9" onClick={goNext} aria-label="Next day">
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goWeek}
-              className="rounded-lg border-border"
-            >
-              <Star className="h-4 w-4 mr-2" />
-              Week
-            </Button>
-          </div>
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={goNext} aria-label="Next day">
+            <ChevronRight className="h-5 w-5" />
+          </Button>
         </div>
       )}
 
