@@ -412,7 +412,7 @@ const isMobile = useIsMobile();
     return (
       <div className="h-screen grid grid-rows-[auto_1fr] overflow-hidden bg-background">
         <header className="border-b bg-card shadow-sm">
-          <div className="max-w-app mx-auto px-6 py-4">
+          <div className="w-full sm:max-w-app mx-auto px-0 sm:px-6 py-4">
             <Header />
           </div>
         </header>
@@ -427,7 +427,7 @@ const isMobile = useIsMobile();
     <div className="h-screen grid grid-rows-[auto_1fr] overflow-hidden bg-background">
       {/* Fixed Header - matches dashboard layout */}
       <header className="border-b bg-card shadow-sm">
-        <div className="max-w-app mx-auto px-6 py-4">
+        <div className="w-full sm:max-w-app mx-auto px-0 sm:px-6 py-4">
           <Header />
         </div>
       </header>
