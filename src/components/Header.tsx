@@ -32,28 +32,67 @@ const Header = () => {
 
       {/* Right side - Action buttons */}
       <div className="flex items-center gap-3">
-        {/* Notification Center */}
-        <NotificationCenter />
-        
-        {/* Permission Request Button */}
-        <NotificationPermissionButton />
-        
-        <Link to="/settings">
-          <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border hover:bg-primary hover:text-white hover:border-primary hover:shadow-soft transition-all">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
+        {/* Desktop actions */}
+        <div className="hidden md:flex items-center gap-3">
+          {/* Notification Center */}
+          <NotificationCenter />
+          
+          {/* Permission Request Button */}
+          <NotificationPermissionButton />
+          
+          <Link to="/settings">
+            <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border transition-all">
+              <Settings className="h-4 w-4 mr-2" />
+              Settings
+            </Button>
+          </Link>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={signOut}
+            className="h-10 px-4 rounded-lg border-border transition-all"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Sign Out
           </Button>
-        </Link>
-        
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={signOut}
-          className="h-10 px-4 rounded-lg border-border hover:bg-primary hover:text-white hover:border-primary hover:shadow-soft transition-all"
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Sign Out
-        </Button>
+        </div>
+
+        {/* Mobile menu */}
+        <div className="md:hidden">
+          <Drawer shouldScaleBackground={false}>
+            <DrawerTrigger asChild>
+              <Button variant="outline" size="icon" className="h-10 w-10 rounded-lg border-border">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle className="text-left">Menu</DrawerTitle>
+              </DrawerHeader>
+              <div className="p-4 space-y-3">
+                <NotificationCenter />
+                <NotificationPermissionButton />
+                <Link to="/settings">
+                  <Button variant="outline" className="w-full">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Settings
+                  </Button>
+                </Link>
+                <Button variant="outline" className="w-full" onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </Button>
+              </div>
+              <div className="p-4">
+                <DrawerClose asChild>
+                  <Button variant="secondary" className="w-full">Close</Button>
+                </DrawerClose>
+              </div>
+            </DrawerContent>
+          </Drawer>
+        </div>
       </div>
     </header>
   );

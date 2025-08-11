@@ -20,6 +20,7 @@ const Index = () => {
     deleteTask,
     refetch
   } = useProjects();
+  const isMobile = useIsMobile();
 
   // Get user's first name from email for personalization
   const getUserName = () => {
@@ -50,7 +51,7 @@ const Index = () => {
       
       {/* Fixed Height Main Content with Independent Scrolling */}
       <main className="overflow-hidden">
-        <div className="max-w-app mx-auto px-6 py-6 h-[calc(100vh-140px)] overflow-hidden">
+        <div className="max-w-app mx-auto px-6 pt-6 pb-24 md:py-6 h-[calc(100vh-140px)] overflow-hidden">
           <DashboardView
             projects={projects}
             onCreateProject={async (data) => {
@@ -66,6 +67,9 @@ const Index = () => {
           />
         </div>
       </main>
+      {isMobile && (
+        <MobileNav projects={projects} onCreateTask={createTask} />
+      )}
     </div>
   );
 };
