@@ -164,7 +164,7 @@ const DayViewCalendar = ({
   const hasAutoScrolled = useRef(false);
 const { toast } = useToast();
 const isMobile = useIsMobile();
-const TIME_COL_WIDTH = isMobile ? 56 : 112; // px
+const TIME_COL_WIDTH = isMobile ? 40 : 112; // px
 const TIME_COL_PADDING = isMobile ? 4 : 8;  // pr-1 vs pr-2
 const CONTENT_LEFT = TIME_COL_WIDTH + TIME_COL_PADDING;
 
@@ -525,10 +525,10 @@ const formatTimeLabelCompact = (hour: number) => {
                   {/* Time column */}
 <div className={cn(
                     "h-full flex items-start justify-end border-r border-border flex-shrink-0",
-                    isMobile ? "w-14 pr-1" : "w-28 pr-2",
+                    isMobile ? "w-10 pr-1" : "w-28 pr-2",
                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
                   )}
-                  style={{ minWidth: isMobile ? '3.5rem' : '7rem', maxWidth: isMobile ? '3.5rem' : '7rem' }}>
+                  style={{ minWidth: isMobile ? '2.5rem' : '7rem', maxWidth: isMobile ? '2.5rem' : '7rem' }}>
 {minute === 0 ? (
                       <span className={cn(
                         "pt-1 font-semibold",
