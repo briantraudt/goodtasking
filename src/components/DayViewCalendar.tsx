@@ -496,7 +496,10 @@ const formatTimeLabelCompact = (hour: number) => {
       <div className="flex-1 overflow-hidden">
         <div 
           ref={scrollContainerRef}
-          className="h-full overflow-y-auto overflow-x-hidden border rounded-lg"
+          className={cn(
+            "h-full overflow-y-auto overflow-x-hidden",
+            isMobile ? "border-y border-x-0 rounded-none" : "border rounded-lg"
+          )}
           style={{ scrollBehavior: 'smooth' }}
         >
           <div className="relative overflow-hidden">

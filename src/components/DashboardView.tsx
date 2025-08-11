@@ -532,12 +532,12 @@ const sensors = useSensors(
         {/* Scrollable Content Section */}
         <div className="flex-1 overflow-hidden">
           {viewMode === 'planner' ? (
-            <div className="h-full p-4 md:p-6">
+            <div className="h-full p-0 md:p-6">
               {isMobile ? (
                 <div className="h-full flex flex-col gap-3">
                   {/* Top: Calendar (1/2 height) */}
                   <section className="flex-1 min-h-0">
-                    <div className="h-full bg-card rounded-xl shadow-sm border p-3 md:p-6">
+                    <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 py-3">
                       <div className="h-full overflow-auto">
                         <DayViewCalendar
                           selectedDate={selectedDate}
@@ -572,7 +572,7 @@ const sensors = useSensors(
 
                   {/* Bottom: Tasks (1/2 height) */}
                   <section className="flex-1 min-h-0">
-                    <div className="h-full bg-card rounded-xl shadow-sm border p-3 md:p-6">
+                    <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 py-3">
                       <div className="h-full overflow-auto">
                         <TaskSidebar
                           projects={projects}
