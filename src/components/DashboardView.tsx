@@ -86,6 +86,7 @@ const DashboardView = ({
     console.log('🔥 INITIAL DashboardView date set to TODAY:', today);
     return today;
   });
+  const [mobilePane, setMobilePane] = useState<'tasks' | 'projects'>('tasks');
 
   // Force today's date whenever the component mounts or user changes
   useEffect(() => {
@@ -136,6 +137,18 @@ useEffect(() => {
     window.removeEventListener('dashboard-view-week', week);
   };
 }, [selectedDate]);
+
+// Mobile pane switch events (from footer buttons)
+useEffect(() => {
+  const showTasks = () => setMobilePane('tasks');
+  const showProjects = () => setMobilePane('projects');
+  window.addEventListener('dashboard-show-tasks', showTasks);
+  window.addEventListener('dashboard-show-projects', showProjects);
+  return () => {
+    window.removeEventListener('dashboard-show-tasks', showTasks);
+    window.removeEventListener('dashboard-show-projects', showProjects);
+  };
+}, []);
 
   const {
     events,
@@ -602,37 +615,63 @@ useEffect(() => {
                   <section className="flex-1 min-h-0">
                     <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 pt-3 pb-0">
                       <div className="h-full overflow-auto">
-                        <TaskSidebar
-                          projects={projects}
-                          selectedDate={selectedDate}
-                          onCreateTask={onCreateTask}
-                          onCreateProject={onCreateProject}
-                          onUpdateProject={async (id: string, updates: any) => {
-                            if (onUpdateProject) {
-                              await onUpdateProject(id, updates);
-                            }
-                          }}
-                          onDeleteProject={async (id: string) => {
-                            if (onDeleteProject) {
-                              await onDeleteProject(id);
-                            }
-                          }}
-                          onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
-                            onUpdateTask(taskId, updates);
-                          }}
-                          onDeleteTask={onDeleteTask}
-                          onRefreshTasks={onRefreshTasks}
-                          onEventCreated={fetchCalendarEvents}
-                          onMoveProjectBack={(projectId) => {
-                            const project = projects.find(p => p.id === projectId);
-                            if (project) {
-                              const placeholderTask = project.tasks.find(t => t.title === "Add First Task...");
-                              if (placeholderTask && onDeleteTask) {
-                                onDeleteTask(placeholderTask.id);
+                        {mobilePane === 'tasks' ? (
+                          <TaskSidebar
+                            projects={projects}
+                            selectedDate={selectedDate}
+                            onCreateTask={onCreateTask}
+                            onCreateProject={onCreateProject}
+                            onUpdateProject={async (id: string, updates: any) => {
+                              if (onUpdateProject) {
+                                await onUpdateProject(id, updates);
                               }
-                            }
-                          }}
-                        />
+                            }}
+                            onDeleteProject={async (id: string) => {
+                              if (onDeleteProject) {
+                                await onDeleteProject(id);
+                              }
+                            }}
+                            onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
+                              onUpdateTask(taskId, updates);
+                            }}
+                            onDeleteTask={onDeleteTask}
+                            onRefreshTasks={onRefreshTasks}
+                            onEventCreated={fetchCalendarEvents}
+                            onMoveProjectBack={(projectId) => {
+                              const project = projects.find(p => p.id === projectId);
+                              if (project) {
+                                const placeholderTask = project.tasks.find(t => t.title === "Add First Task...");
+                                if (placeholderTask && onDeleteTask) {
+                                  onDeleteTask(placeholderTask.id);
+                                }
+                              }
+                            }}
+                          />
+                        ) : (
+                          <ProjectsColumn
+                            projects={projects}
+                            onCreateProject={onCreateProject}
+                            onUpdateProject={async (id: string, updates: any) => {
+                              if (onUpdateProject) {
+                                await onUpdateProject(id, updates);
+                              }
+                            }}
+                            onDeleteProject={async (id: string) => {
+                              if (onDeleteProject) {
+                                await onDeleteProject(id);
+                              }
+                            }}
+                            onCreateTask={async (projectId: string, title: string, description?: string) => {
+                              if (onCreateTask) {
+                                await onCreateTask(projectId, title, description);
+                              }
+                            }}
+                            onMoveProjectToTasks={(projectId) => {
+                              onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
+                            }}
+                            onEventCreated={fetchCalendarEvents}
+                          />
+                        )}
                       </div>
                     </div>
                   </section>

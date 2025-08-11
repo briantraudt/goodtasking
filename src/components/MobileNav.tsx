@@ -1,5 +1,5 @@
-import React from "react";
-import { Home, PlusCircle, Settings } from "lucide-react";
+import React, { useCallback } from "react";
+import { Home, PlusCircle, Settings, CheckSquare, FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import AddTaskDialog from "@/components/AddTaskDialog";
 
@@ -13,20 +13,36 @@ interface MobileNavProps {
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => Promise<any> | void;
 }
 
-// Simple, elegant mobile bottom navigation with primary actions
+// Mobile bottom navigation with Tasks/Projects switches
 const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
+  const showTasks = useCallback(() => {
+    window.dispatchEvent(new CustomEvent('dashboard-show-tasks'));
+  }, []);
+  const showProjects = useCallback(() => {
+    window.dispatchEvent(new CustomEvent('dashboard-show-projects'));
+  }, []);
+
   return (
     <nav className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="max-w-app mx-auto px-4">
-        <div className="grid grid-cols-3 h-16 items-center">
-          <Link
-            to="/dashboard"
+        <div className="grid grid-cols-5 h-16 items-center">
+          <button
+            onClick={showTasks}
             className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Dashboard"
+            aria-label="Tasks"
           >
-            <Home className="h-5 w-5" />
-            <span className="text-[11px] mt-1">Home</span>
-          </Link>
+            <CheckSquare className="h-5 w-5" />
+            <span className="text-[11px] mt-1">Tasks</span>
+          </button>
+
+          <button
+            onClick={showProjects}
+            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Projects"
+          >
+            <FolderOpen className="h-5 w-5" />
+            <span className="text-[11px] mt-1">Projects</span>
+          </button>
 
           <div className="flex items-center justify-center">
             <AddTaskDialog
@@ -42,6 +58,15 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
               }
             />
           </div>
+
+          <Link
+            to="/dashboard"
+            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Home"
+          >
+            <Home className="h-5 w-5" />
+            <span className="text-[11px] mt-1">Home</span>
+          </Link>
 
           <Link
             to="/settings"
