@@ -340,35 +340,27 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
     <div
       ref={setNodeRef}
       className={cn(
-        "h-full",
+        "h-full flex flex-col",
         isOver && "ring-2 ring-primary ring-offset-2 bg-primary/5 transition-all duration-200"
       )}
     >
-      {/* Tasks Section Header */}
-      <div className="flex items-center justify-between mb-4 pb-2 border-b">
-        <div className="flex items-center gap-2">
-          <CheckSquare className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-medium text-primary">Tasks</h1>
+      {/* Tasks Section Header - sticky */}
+      <div className="sticky top-0 z-10 bg-card border-b py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CheckSquare className="h-5 w-5 text-primary" />
+            <h1 className="text-lg font-medium text-primary">Tasks</h1>
+          </div>
+          {/* Removed Add button per request */}
         </div>
-        {/* Quick Add Tasks Button using Smart Parser */}
-        {projectsWithTasks.length > 0 && (
-          <Button
-            onClick={() => setShowSmartParser(true)}
-            size="sm"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-1"
-          >
-            <Sparkles className="h-4 w-4" />
-            Add
-          </Button>
-        )}
       </div>
       
       {/* No header section needed - Add button is now in parent component */}
 
       {/* Removed filter section as requested */}
 
-      {/* Projects Grid - Single Column for Narrower Container */}
-      <div className="grid grid-cols-1 gap-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 350px)' }}>
+      {/* Projects Grid - fills remaining space and scrolls to footer */}
+      <div className="grid grid-cols-1 gap-4 flex-1 overflow-y-auto">
         {projectsWithTasks.map((project, index) => {
           // Get filtered tasks for this project
           const projectTasks = filteredTasks.filter(task => {
