@@ -21,10 +21,16 @@ const Header = () => {
 
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard';
+  const isSettings = location.pathname === '/settings';
+  const showDateHeader = isDashboard || isSettings;
 
   const [dateLabel, setDateLabel] = useState<string>('');
 
   useEffect(() => {
+    // Initialize with today's label so non-dashboard pages show a date by default
+    const today = new Date();
+    setDateLabel(`Today, ${format(today, 'MMMM d')}`);
+
     const onDateUpdate = (e: Event) => {
       const detail = (e as CustomEvent<{ selectedDate: string }>).detail;
       if (!detail?.selectedDate) return;
@@ -54,7 +60,7 @@ const Header = () => {
       </Link>
 
       {/* Mobile date controls on dashboard */}
-      {isDashboard && (
+      {showDateHeader && (
         <div className="md:hidden w-full">
           <div className="flex items-center justify-between bg-primary text-primary-foreground rounded-lg px-3 py-2">
             <Button variant="ghost" size="icon" className="h-9 w-9 text-primary-foreground hover:bg-primary/20" onClick={goPrev} aria-label="Previous day">
