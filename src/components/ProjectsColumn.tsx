@@ -209,8 +209,8 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
         )}
       </div>
 
-      {/* Action Buttons */}
-      <div className="mt-6 pt-4 border-t space-y-2">
+      {/* Action Buttons - hide on mobile */}
+      <div className="mt-6 pt-4 border-t space-y-2 hidden md:block">
         <Button
           onClick={() => setShowAIPlannerDialog(true)}
           className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90"
