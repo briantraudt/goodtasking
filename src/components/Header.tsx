@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, Calendar, CalendarCheck } from 'lucide-react';
+import { LogOut, Settings, CalendarCheck, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
 import NotificationCenter from '@/components/NotificationCenter';
 import NotificationPermissionButton from '@/components/NotificationPermissionButton';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 
 const Header = () => {
   const { user, signOut } = useAuth();

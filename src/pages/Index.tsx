@@ -3,6 +3,8 @@ import { useProjects } from '@/hooks/useProjects';
 import Header from '@/components/Header';
 import DashboardView from '@/components/DashboardView';
 import EnableAIAssistant from '@/components/EnableAIAssistant';
+import { useIsMobile } from '@/hooks/use-mobile';
+import MobileNav from '@/components/MobileNav';
 
 
 const Index = () => {
