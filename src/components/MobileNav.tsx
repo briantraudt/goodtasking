@@ -29,7 +29,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
   <Link
             to="/dashboard"
             onClick={() => window.dispatchEvent(new CustomEvent('dashboard-show-home'))}
-            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            className="flex flex-col items-center justify-center text-navy-blue hover:text-navy-blue transition-colors"
             aria-label="Home"
           >
             <Home className="h-5 w-5" />
@@ -38,7 +38,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
 
           <button
             onClick={showTasks}
-            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            className="flex flex-col items-center justify-center text-navy-blue hover:text-navy-blue transition-colors"
             aria-label="Tasks"
           >
             <CheckSquare className="h-5 w-5" />
@@ -62,7 +62,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
 
           <button
             onClick={showProjects}
-            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            className="flex flex-col items-center justify-center text-navy-blue hover:text-navy-blue transition-colors"
             aria-label="Projects"
           >
             <FolderOpen className="h-5 w-5" />
@@ -71,7 +71,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
 
           <Link
             to="/settings"
-            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            className="flex flex-col items-center justify-center text-navy-blue hover:text-navy-blue transition-colors"
             aria-label="Settings"
           >
             <Settings className="h-5 w-5" />
