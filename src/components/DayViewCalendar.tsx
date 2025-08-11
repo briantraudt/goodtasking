@@ -425,6 +425,7 @@ const formatTimeLabelCompact = (hour: number) => {
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Calendar Header with Icon, Centered Date and Week Button */}
+{!isMobile && (
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
         {/* Calendar Icon and Clickable Text on Left */}
         <div className="flex items-center gap-2 relative">
@@ -440,7 +441,6 @@ const formatTimeLabelCompact = (hour: number) => {
               Calendar
               {isGoogleConnected && <Check className="h-4 w-4" />}
             </h1>
-            
             {/* Unsync option tooltip */}
             {showUnsyncOption && isGoogleConnected && (
               <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-lg shadow-lg p-2 z-50 min-w-[120px]">
@@ -458,28 +458,16 @@ const formatTimeLabelCompact = (hour: number) => {
             )}
           </div>
         </div>
-        
         {/* Centered Date Navigation */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigateDate('prev')}
-            className="text-primary hover:opacity-80 transition-colors"
-          >
+          <button onClick={() => navigateDate('prev')} className="text-primary hover:opacity-80 transition-colors">
             <ChevronLeft className="h-4 w-4" />
           </button>
-          
-          <h2 className="text-base font-semibold text-primary">
-            {formatDateHeader()}
-          </h2>
-          
-          <button
-            onClick={() => navigateDate('next')}
-            className="text-primary hover:opacity-80 transition-colors"
-          >
+          <h2 className="text-base font-semibold text-primary">{formatDateHeader()}</h2>
+          <button onClick={() => navigateDate('next')} className="text-primary hover:opacity-80 transition-colors">
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-        
         {/* Week Button on Right */}
         <Button
           variant="outline"
@@ -491,6 +479,7 @@ const formatTimeLabelCompact = (hour: number) => {
           Week
         </Button>
       </div>
+    )}
 
       {/* Calendar Grid */}
       <div className="flex-1 overflow-hidden">

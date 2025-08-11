@@ -98,6 +98,11 @@ const DashboardView = ({
     console.log('🔥 FORCING selectedDate to TODAY on mount:', today);
     setSelectedDate(today);
   }, []); // Run once on mount
+
+  // Broadcast selected date to header
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('dashboard-date-update', { detail: { selectedDate } }));
+  }, [selectedDate]);
   
 const { session } = useAuth();
 const [calendarEvents, setCalendarEvents] = useState([]);
@@ -108,6 +113,29 @@ const sensors = useSensors(
   useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   useSensor(TouchSensor,   { activationConstraint: { delay: 150, tolerance: 5 } })
 );
+
+// Date navigation via header events
+const changeDateByDays = (days: number) => {
+  const [y, m, d] = selectedDate.split('-').map(Number);
+  const date = new Date(y, m - 1, d);
+  date.setDate(date.getDate() + days);
+  const newDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  setSelectedDate(newDate);
+};
+
+useEffect(() => {
+  const prev = () => changeDateByDays(-1);
+  const next = () => changeDateByDays(1);
+  const week = () => setViewMode('week');
+  window.addEventListener('dashboard-date-prev', prev);
+  window.addEventListener('dashboard-date-next', next);
+  window.addEventListener('dashboard-view-week', week);
+  return () => {
+    window.removeEventListener('dashboard-date-prev', prev);
+    window.removeEventListener('dashboard-date-next', next);
+    window.removeEventListener('dashboard-view-week', week);
+  };
+}, [selectedDate]);
 
   const {
     events,
