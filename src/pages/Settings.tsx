@@ -14,6 +14,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Brain, Settings as SettingsIcon, User, AlertTriangle, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3, Edit2, Trash2, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
+import MobileNav from '@/components/MobileNav';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useProjects as useProjectsHook } from '@/hooks/useProjects';
 
 interface UserPreferences {
   ai_assistant_enabled: boolean;
@@ -72,6 +75,10 @@ const Settings = () => {
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [editingProjectName, setEditingProjectName] = useState('');
   const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState<string | null>(null);
+
+const isMobile = useIsMobile();
+  const { createTask } = useProjectsHook();
+  const navProjects = projects.map(p => ({ id: p.id, name: p.name }));
 
   useEffect(() => {
     if (user) {
@@ -933,6 +940,9 @@ const Settings = () => {
           </div>
         </div>
       </main>
+      {isMobile && (
+        <MobileNav projects={navProjects} onCreateTask={createTask} />
+      )}
     </div>
   );
 };
