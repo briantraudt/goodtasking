@@ -70,7 +70,7 @@ const DraggableTaskItem = ({ task, onTaskClick, onTaskComplete, projectColor }: 
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 min-h-[22px] text-white border-0 cursor-grab active:cursor-grabbing",
+        "flex items-center w-full relative rounded-lg p-1.5 transition-all duration-200 min-h-[44px] md:min-h-[28px] text-white border-0 cursor-grab active:cursor-grabbing",
         isDragging && "shadow-lg z-50"
       )}
       {...listeners}
