@@ -140,13 +140,25 @@ useEffect(() => {
 
 // Mobile pane switch events (from footer buttons)
 useEffect(() => {
-  const showTasks = () => setMobilePane('tasks');
-  const showProjects = () => setMobilePane('projects');
+  const showTasks = () => {
+    setViewMode('planner');
+    setMobilePane('tasks');
+  };
+  const showProjects = () => {
+    setViewMode('planner');
+    setMobilePane('projects');
+  };
+  const showHome = () => {
+    setViewMode('planner');
+    setMobilePane('planner');
+  };
   window.addEventListener('dashboard-show-tasks', showTasks);
   window.addEventListener('dashboard-show-projects', showProjects);
+  window.addEventListener('dashboard-show-home', showHome);
   return () => {
     window.removeEventListener('dashboard-show-tasks', showTasks);
     window.removeEventListener('dashboard-show-projects', showProjects);
+    window.removeEventListener('dashboard-show-home', showHome);
   };
 }, []);
 

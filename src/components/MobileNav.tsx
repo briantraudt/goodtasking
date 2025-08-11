@@ -26,8 +26,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
     <nav className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="max-w-app mx-auto px-4">
         <div className="grid grid-cols-5 h-16 items-center">
-          <Link
+  <Link
             to="/dashboard"
+            onClick={() => window.dispatchEvent(new CustomEvent('dashboard-show-home'))}
             className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Home"
           >
