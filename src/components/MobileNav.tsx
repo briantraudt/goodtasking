@@ -26,6 +26,15 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
     <nav className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="max-w-app mx-auto px-4">
         <div className="grid grid-cols-5 h-16 items-center">
+          <Link
+            to="/dashboard"
+            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Home"
+          >
+            <Home className="h-5 w-5" />
+            <span className="text-[11px] mt-1">Home</span>
+          </Link>
+
           <button
             onClick={showTasks}
             className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
@@ -33,15 +42,6 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
           >
             <CheckSquare className="h-5 w-5" />
             <span className="text-[11px] mt-1">Tasks</span>
-          </button>
-
-          <button
-            onClick={showProjects}
-            className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Projects"
-          >
-            <FolderOpen className="h-5 w-5" />
-            <span className="text-[11px] mt-1">Projects</span>
           </button>
 
           <div className="flex items-center justify-center">
@@ -59,14 +59,14 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
             />
           </div>
 
-          <Link
-            to="/dashboard"
+          <button
+            onClick={showProjects}
             className="flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Home"
+            aria-label="Projects"
           >
-            <Home className="h-5 w-5" />
-            <span className="text-[11px] mt-1">Home</span>
-          </Link>
+            <FolderOpen className="h-5 w-5" />
+            <span className="text-[11px] mt-1">Projects</span>
+          </button>
 
           <Link
             to="/settings"
