@@ -55,16 +55,18 @@ const Header = () => {
 
       {/* Mobile date controls on dashboard */}
       {isDashboard && (
-        <div className="md:hidden flex w-full items-center justify-between">
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={goPrev} aria-label="Previous day">
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <div className="text-base font-semibold text-primary truncate">
-            {dateLabel || ''}
+        <div className="md:hidden w-full">
+          <div className="flex items-center justify-between bg-primary text-primary-foreground rounded-lg px-3 py-2">
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-primary-foreground hover:bg-primary/20" onClick={goPrev} aria-label="Previous day">
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="text-base font-semibold truncate">
+              {dateLabel || ''}
+            </div>
+            <Button variant="ghost" size="icon" className="h-9 w-9 text-primary-foreground hover:bg-primary/20" onClick={goNext} aria-label="Next day">
+              <ChevronRight className="h-5 w-5" />
+            </Button>
           </div>
-          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={goNext} aria-label="Next day">
-            <ChevronRight className="h-5 w-5" />
-          </Button>
         </div>
       )}
 
