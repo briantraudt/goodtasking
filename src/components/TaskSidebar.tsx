@@ -20,7 +20,7 @@ import { SmartTaskParser } from '@/components/SmartTaskParser';
 import TaskEditDialog from '@/components/TaskEditDialog';
 import ProjectEditDialog from '@/components/ProjectEditDialog';
 import { useCategories } from '@/hooks/useCategories';
-import { Plus, CheckSquare } from 'lucide-react';
+import { Plus, CheckSquare, ChevronDown, ChevronRight } from 'lucide-react';
 import { isToday, isPast, isThisWeek } from 'date-fns';
 import { useDroppable } from '@dnd-kit/core';
 import { cn } from '@/lib/utils';
@@ -71,12 +71,14 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
   const [activeInlineAdd, setActiveInlineAdd] = useState<string | null>(null);
   const [inlineTaskTitle, setInlineTaskTitle] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
-  const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
-  const [editingProjectName, setEditingProjectName] = useState('');
-  const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState<string | null>(null);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
+const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+const [editingProjectName, setEditingProjectName] = useState('');
+const [showDeleteProjectDialog, setShowDeleteProjectDialog] = useState<string | null>(null);
+const [editingProject, setEditingProject] = useState<Project | null>(null);
+// Collapsed state per project
+const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   
   // Add Task Form State
   const [taskTitle, setTaskTitle] = useState('');
@@ -184,7 +186,14 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
         return aUnscheduledTasks - bUnscheduledTasks;
       });
   }, [projects]);
-
+  
+  // Formatted date for sticky header context
+  const formattedDate = (() => {
+    const [y, m, d] = selectedDate.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    return isToday(date) ? `Today, ${format(date, 'MMMM d')}` : format(date, 'EEEE, MMMM d');
+  })();
+  
   // Wrapper to handle type compatibility with SmartAddButton
   const handleCreateTask = (projectId: string, title: string, description?: string, dueDate?: Date, duration?: number, priority?: 'low' | 'medium' | 'high') => {
     onCreateTask?.(projectId, title, description, dueDate);
@@ -346,24 +355,26 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       )}
     >
       {/* Tasks Section Header - sticky */}
-      <div className="sticky top-0 z-10 bg-muted/40 border-b py-3">
+      <div className="sticky top-0 z-10 bg-muted/40 border-b py-2 px-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckSquare className="h-5 w-5 text-primary" />
-            <h1 className="text-lg font-medium text-primary">Tasks</h1>
+            <h1 className="text-base font-medium text-primary">Tasks</h1>
           </div>
-          {showAddButton && projects.length > 0 && (
-            <AddTaskDialog 
-              projects={projects} 
-              onCreateTask={onCreateTask as any}
-              triggerButton={
-                <Button size="sm" className="bg-primary text-primary-foreground">
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add
-                </Button>
-              }
-            />
-          )}
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-muted-foreground">{formattedDate}</span>
+            {showAddButton && projects.length > 0 && (
+              <AddTaskDialog 
+                projects={projects} 
+                onCreateTask={onCreateTask as any}
+                triggerButton={
+                  <Button size="sm" variant="outline" className="h-8 px-2">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                }
+              />
+            )}
+          </div>
         </div>
       </div>
       
@@ -372,7 +383,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       {/* Removed filter section as requested */}
 
       {/* Projects Grid - fills remaining space and scrolls to footer */}
-      <div className="grid grid-cols-1 gap-3 md:gap-4 flex-1 overflow-y-auto">
+      <div className="grid grid-cols-1 gap-2 md:gap-3 flex-1 overflow-y-auto pb-24">
         {projectsWithTasks.map((project, index) => {
           // Get filtered tasks for this project
           const projectTasks = filteredTasks.filter(task => {
@@ -391,156 +402,138 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
             <div 
               key={project.id} 
               className={cn(
-                "bg-white rounded-xl p-3 md:p-4 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card"
+                "bg-white rounded-lg p-2.5 md:p-3 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card"
               )}
               style={{ borderColor: project.color || (typeof projectColor === 'string' ? projectColor : projectColor.hex) }}
             >
-              {/* Project Header with Edit/Delete Options */}
-              <div className="flex justify-between items-center mb-2 group">
-                <div className="flex items-center gap-2 flex-1">
-                  {editingProjectId === project.id ? (
-                    <div className="flex items-center gap-2 flex-1">
-                      <Input
-                        value={editingProjectName}
-                        onChange={(e) => setEditingProjectName(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleSaveProjectName();
-                          if (e.key === 'Escape') handleCancelEditProjectName();
-                        }}
-                        className="text-sm font-semibold h-7 px-2"
-                        autoFocus
-                      />
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={handleSaveProjectName}
-                        className="h-7 w-7 p-0"
-                      >
-                        <Check className="h-3 w-3" />
-                      </Button>
-                     </div>
+              {/* Project Header */}
+              <div className="flex items-center justify-between mb-1">
+                <button
+                  className="flex items-center gap-2 flex-1 text-left"
+                  onClick={() => setCollapsed((prev) => ({ ...prev, [project.id]: !prev[project.id] }))}
+                  aria-label={collapsed[project.id] ? 'Expand project' : 'Collapse project'}
+                >
+                  {collapsed[project.id] ? (
+                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
                   ) : (
-                     <div className="flex items-center justify-between w-full group">
-                       <h3 
-                         className="text-base font-semibold text-primary cursor-pointer transition-colors flex items-center gap-2 flex-1"
-                         onClick={() => setEditingProject(project)}
-                       >
-                          {(() => {
-                            const CategoryIcon = getCategoryIcon(project.category);
-                            return <CategoryIcon className="w-4 h-4" style={{ color: project.color || '#6B7280' }} />;
-                          })()}
-                         {project.name}
-                       </h3>
-                        {/* Show X button on hover if project has no real tasks (only placeholder) */}
-                        {(() => {
-                          const realTasks = projectTasks.filter(task => task.title !== "Add First Task...");
-                          return realTasks.length === 0 && onMoveProjectBack && (
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => onMoveProjectBack(project.id)}
-                              className="h-6 w-6 p-0 hover:bg-gray-100 ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                              title="Move back to Projects"
-                            >
-                              <X className="h-3 w-3" style={{ color: project.color || '#6B7280' }} />
-                            </Button>
-                          );
-                        })()}
-                     </div>
+                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
                   )}
+                  {(() => {
+                    const CategoryIcon = getCategoryIcon(project.category);
+                    return <CategoryIcon className="w-4 h-4" style={{ color: project.color || '#6B7280' }} />;
+                  })()}
+                  <span className="text-[13px] md:text-sm font-semibold text-foreground truncate">
+                    {project.name}
+                  </span>
+                </button>
+                <div className="flex items-center gap-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 px-2"
+                    onClick={() => {
+                      setSelectedProjectId(project.id);
+                      setShowAddTaskDialog(true);
+                    }}
+                    title="Add task"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
 
-              {/* Task Pills */}
-              <div className="flex flex-col gap-2">
-                {projectTasks.map(task => {
-                  // Determine if task is overdue for red border styling
-                  const isOverdue = task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date));
-                  
-                  return (
-                    <div
-                      key={task.id}
-                      className={cn(
-                        "rounded-lg transition-all duration-150 cursor-pointer",
-                        "hover:scale-[1.02] hover:shadow-md",
-                        isOverdue && "border-2 border-red-500"
-                      )}
-                      title="Click to edit or delete this task"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 truncate">
-                          <DraggableTaskItem 
-                            task={task} 
-                            onTaskClick={handleTaskClick} 
-                            onTaskComplete={handleTaskComplete}
-                            projectColor={project.color || projectColor.hex}
-                          />
+              {/* Task Pills (collapsible) */}
+              {!collapsed[project.id] && (
+                <div className="flex flex-col gap-2">
+                  {projectTasks.map(task => {
+                    // Determine if task is overdue for red border styling
+                    const isOverdue = task.due_date && isPast(new Date(task.due_date)) && !isToday(new Date(task.due_date));
+                    
+                    return (
+                      <div
+                        key={task.id}
+                        className={cn(
+                          "rounded-lg transition-all duration-150 cursor-pointer",
+                          "hover:scale-[1.02] hover:shadow-md",
+                          isOverdue && "border-2 border-red-500"
+                        )}
+                        title="Click to edit or delete this task"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 truncate">
+                            <DraggableTaskItem 
+                              task={task} 
+                              onTaskClick={handleTaskClick} 
+                              onTaskComplete={handleTaskComplete}
+                              projectColor={project.color || projectColor.hex}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-                
-                {/* Inline Add Task Button/Input - only show if there are real tasks (not just placeholder) */}
-                {(() => {
-                  const realTasks = projectTasks.filter(task => task.title !== "Add First Task...");
-                  return realTasks.length > 0 ? (
-                    activeInlineAdd === project.id ? (
-                      <input
-                        type="text"
-                        value={inlineTaskTitle}
-                        onChange={(e) => setInlineTaskTitle(e.target.value)}
-                        onKeyDown={async (e) => {
-                          if (e.key === 'Enter' && inlineTaskTitle.trim()) {
-                            try {
-                              await onCreateTask?.(project.id, inlineTaskTitle.trim());
+                    );
+                  })}
+                  
+                  {/* Inline Add Task Button/Input - only show if there are real tasks (not just placeholder) */}
+                  {(() => {
+                    const realTasks = projectTasks.filter(task => task.title !== "Add First Task...");
+                    return realTasks.length > 0 ? (
+                      activeInlineAdd === project.id ? (
+                        <input
+                          type="text"
+                          value={inlineTaskTitle}
+                          onChange={(e) => setInlineTaskTitle(e.target.value)}
+                          onKeyDown={async (e) => {
+                            if (e.key === 'Enter' && inlineTaskTitle.trim()) {
+                              try {
+                                await onCreateTask?.(project.id, inlineTaskTitle.trim());
+                                setInlineTaskTitle("");
+                                setActiveInlineAdd(null);
+                              } catch (error) {
+                                console.error('Error creating task:', error);
+                              }
+                            } else if (e.key === 'Escape') {
                               setInlineTaskTitle("");
                               setActiveInlineAdd(null);
-                            } catch (error) {
-                              console.error('Error creating task:', error);
                             }
-                          } else if (e.key === 'Escape') {
+                          }}
+                          onBlur={() => {
                             setInlineTaskTitle("");
                             setActiveInlineAdd(null);
-                          }
-                        }}
-                        onBlur={() => {
-                          setInlineTaskTitle("");
-                          setActiveInlineAdd(null);
-                        }}
-                        placeholder="Type task name and press Enter..."
-                        className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none text-foreground"
-                        style={{ 
-                          borderColor: project.color || projectColor.hex,
-                          backgroundColor: 'transparent'
-                        }}
-                        autoFocus
-                      />
-                    ) : (
-                      <button
-                        onClick={() => {
-                          setActiveInlineAdd(project.id);
-                        }}
-                        onDoubleClick={() => {
-                          setSelectedProjectId(project.id);
-                          setShowAddTaskDialog(true);
-                        }}
-                        className={cn(
-                          "text-sm font-medium px-3 py-1 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
-                          "flex items-center justify-center gap-2"
-                        )}
-                        style={{ 
-                          borderColor: project.color || projectColor.hex,
-                          color: project.color || projectColor.hex
-                        }}
-                        title="Click to quick add, double-click for detailed add"
-                      >
-                        + Add
-                      </button>
-                    )
-                  ) : null;
-                })()}
-              </div>
+                          }}
+                          placeholder="Type task name and press Enter..."
+                          className="text-sm px-3 py-1 rounded-md border-2 border-dashed w-full focus:outline-none text-foreground"
+                          style={{ 
+                            borderColor: project.color || projectColor.hex,
+                            backgroundColor: 'transparent'
+                          }}
+                          autoFocus
+                        />
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setActiveInlineAdd(project.id);
+                          }}
+                          onDoubleClick={() => {
+                            setSelectedProjectId(project.id);
+                            setShowAddTaskDialog(true);
+                          }}
+                          className={cn(
+                            "text-sm font-medium px-3 py-1 rounded-md border-2 border-dashed transition-all duration-150 hover:bg-gray-50",
+                            "flex items-center justify-center gap-2"
+                          )}
+                          style={{ 
+                            borderColor: project.color || projectColor.hex,
+                            color: project.color || projectColor.hex
+                          }}
+                          title="Click to quick add, double-click for detailed add"
+                        >
+                          + Add
+                        </button>
+                      )
+                    ) : null;
+                  })()}
+                </div>
+              )}
             </div>
           );
         })}
