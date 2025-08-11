@@ -11,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import ResizableTaskBlock from '@/components/ResizableTaskBlock';
 import LocalEventBlock from '@/components/LocalEventBlock';
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Task {
   id: string;
@@ -161,7 +162,11 @@ const DayViewCalendar = ({
   const [showUnsyncOption, setShowUnsyncOption] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const hasAutoScrolled = useRef(false);
-  const { toast } = useToast();
+const { toast } = useToast();
+const isMobile = useIsMobile();
+const TIME_COL_WIDTH = isMobile ? 56 : 112; // px
+const TIME_COL_PADDING = isMobile ? 4 : 8;  // pr-1 vs pr-2
+const CONTENT_LEFT = TIME_COL_WIDTH + TIME_COL_PADDING;
 
   // Separate local and Google Calendar events
   const localEvents = calendarEvents.filter(event => event.source === 'local' || !event.source);
@@ -374,12 +379,18 @@ const DayViewCalendar = ({
     };
   };
 
-  const formatTimeLabel = (hour: number, minute: number) => {
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    const period = hour < 12 ? 'AM' : 'PM';
-    const minuteStr = minute.toString().padStart(2, '0');
-    return `${displayHour}:${minuteStr} ${period}`;
-  };
+const formatTimeLabel = (hour: number, minute: number) => {
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  const period = hour < 12 ? 'AM' : 'PM';
+  const minuteStr = minute.toString().padStart(2, '0');
+  return `${displayHour}:${minuteStr} ${period}`;
+};
+
+const formatTimeLabelCompact = (hour: number) => {
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  const period = hour < 12 ? 'a' : 'p';
+  return `${displayHour}${period}`;
+};
 
   // Check if a time slot has a task or event
   const hasTaskAtTime = (hour: number, minute: number) => {
@@ -509,21 +520,23 @@ const DayViewCalendar = ({
                    style={{ maxWidth: '100%', overflow: 'hidden' }}
                 >
                   {/* Time column */}
-                  <div className={cn(
-                    "w-28 h-full pr-2 flex items-start justify-end border-r border-border flex-shrink-0",
+<div className={cn(
+                    "h-full flex items-start justify-end border-r border-border flex-shrink-0",
+                    isMobile ? "w-14 pr-1" : "w-28 pr-2",
                     isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
                   )}
-                  style={{ minWidth: '7rem', maxWidth: '7rem' }}>
-                    {minute === 0 ? (
+                  style={{ minWidth: isMobile ? '3.5rem' : '7rem', maxWidth: isMobile ? '3.5rem' : '7rem' }}>
+{minute === 0 ? (
                       <span className={cn(
-                        "pt-1 text-sm font-semibold text-gray-700",
+                        "pt-1 font-semibold",
+                        isMobile ? "text-xs" : "text-sm",
                         isCurrentSlot && "text-[#4DA8DA] font-bold"
                       )}>
-                        {formatTimeLabel(hour, minute)}
+                        {isMobile ? formatTimeLabelCompact(hour) : formatTimeLabel(hour, minute)}
                       </span>
                     ) : (
-                      <span className="invisible pt-1 text-sm font-semibold">
-                        {formatTimeLabel(hour, minute)}
+                      <span className={cn("invisible pt-1", isMobile ? "text-xs" : "text-sm") }>
+                        {isMobile ? formatTimeLabelCompact(hour) : formatTimeLabel(hour, minute)}
                       </span>
                     )}
                   </div>
@@ -550,11 +563,11 @@ const DayViewCalendar = ({
               return (
                 <div
                   key={task.id}
-                  style={{
+style={{
                     position: 'absolute',
                     top: position.top + 2, // Add 2px top margin for spacing
                     height: Math.max(position.height - 4, 16), // Reduce height by 4px (2px top + 2px bottom), minimum 16px
-                    left: 120, // Space for time labels + padding (w-28 = 112px + 8px padding)
+                    left: CONTENT_LEFT,
                     right: 16,
                     zIndex: 10
                   }}
@@ -590,11 +603,11 @@ const DayViewCalendar = ({
                 return (
                   <div
                     key={event.id}
-                    style={{
+style={{
                       position: 'absolute',
                       top: position.top,
                       height: position.height,
-                      left: 116, // Space for time labels + padding (w-28 = 112px + 4px padding)
+                      left: CONTENT_LEFT,
                       right: 16,
                       zIndex: 10
                     }}
@@ -628,11 +641,11 @@ const DayViewCalendar = ({
                 return (
                   <div
                     key={event.id}
-                    style={{
+style={{
                       position: 'absolute',
                       top: position.top,
                       height: position.height,
-                      left: 116, // Space for time labels + padding (w-28 = 112px + 4px padding)
+                      left: CONTENT_LEFT,
                       right: 16,
                       zIndex: 10
                     }}
@@ -659,9 +672,9 @@ const DayViewCalendar = ({
             })() && (
               <div
                 className="absolute right-0 h-0.5 bg-[#4DA8DA] z-30" // Changed from red to light blue
-                 style={{
+style={{
                    top: ((currentTime.getHours() * 2) + (currentTime.getMinutes() >= 30 ? 1 : 0)) * 48,
-                   left: 120, // Updated to match widened time column (w-28 = 112px + 8px padding)
+                   left: CONTENT_LEFT,
                  }}
               >
                 <div className="absolute -left-2 -top-2 w-4 h-4 bg-red-500 rounded-full"></div>
