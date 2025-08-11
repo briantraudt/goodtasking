@@ -86,7 +86,7 @@ const DashboardView = ({
     console.log('🔥 INITIAL DashboardView date set to TODAY:', today);
     return today;
   });
-  const [mobilePane, setMobilePane] = useState<'tasks' | 'projects'>('tasks');
+  const [mobilePane, setMobilePane] = useState<'planner' | 'tasks' | 'projects'>('planner');
 
   // Force today's date whenever the component mounts or user changes
   useEffect(() => {
@@ -575,47 +575,47 @@ useEffect(() => {
           {viewMode === 'planner' ? (
             <div className="h-full p-0 md:p-6">
               {isMobile ? (
-                <div className="h-full flex flex-col gap-3">
-                  {/* Top: Calendar (1/2 height) */}
-                  <section className="flex-1 min-h-0">
-                    <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 py-3">
-                      <div className="h-full overflow-auto">
-                        <DayViewCalendar
-                          selectedDate={selectedDate}
-                          onDateChange={setSelectedDate}
-                          tasks={allTasks}
-                          projects={projects}
-                          calendarEvents={[...events, ...calendarEvents]}
-                          onTaskScheduled={handleTaskScheduled}
-                          onTaskUnscheduled={handleTaskUnscheduled}
-                          onTaskEdit={handleTaskEdit}
-                          onEventClick={(event) => {
-                            console.log('Event clicked:', event);
-                          }}
-                          isGoogleConnected={isConnected}
-                          onConnectGoogle={connectGoogleCalendar}
-                          onDisconnectGoogle={disconnectGoogleCalendar}
-                          onViewModeChange={(mode) => setViewMode(mode)}
-                          onQuickEventCreate={handleQuickTaskCreate}
-                          onTaskComplete={handleTaskComplete}
-                          onTaskResize={handleTaskResize}
-                          onEventEdit={(eventId) => {
-                            setSelectedEventId(eventId);
-                            setShowEventEditDialog(true);
-                          }}
-                          onEventDelete={async (eventId) => {
-                            await syncCalendar(selectedDate);
-                          }}
-                        />
+                mobilePane === 'planner' ? (
+                  <div className="h-full flex flex-col gap-3">
+                    {/* Top: Calendar (1/2 height) */}
+                    <section className="flex-1 min-h-0">
+                      <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 py-3">
+                        <div className="h-full overflow-auto">
+                          <DayViewCalendar
+                            selectedDate={selectedDate}
+                            onDateChange={setSelectedDate}
+                            tasks={allTasks}
+                            projects={projects}
+                            calendarEvents={[...events, ...calendarEvents]}
+                            onTaskScheduled={handleTaskScheduled}
+                            onTaskUnscheduled={handleTaskUnscheduled}
+                            onTaskEdit={handleTaskEdit}
+                            onEventClick={(event) => {
+                              console.log('Event clicked:', event);
+                            }}
+                            isGoogleConnected={isConnected}
+                            onConnectGoogle={connectGoogleCalendar}
+                            onDisconnectGoogle={disconnectGoogleCalendar}
+                            onViewModeChange={(mode) => setViewMode(mode)}
+                            onQuickEventCreate={handleQuickTaskCreate}
+                            onTaskComplete={handleTaskComplete}
+                            onTaskResize={handleTaskResize}
+                            onEventEdit={(eventId) => {
+                              setSelectedEventId(eventId);
+                              setShowEventEditDialog(true);
+                            }}
+                            onEventDelete={async (eventId) => {
+                              await syncCalendar(selectedDate);
+                            }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </section>
+                    </section>
 
-                  {/* Bottom: Tasks (1/2 height) */}
-                  <section className="flex-1 min-h-0">
-                    <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 pt-3 pb-0">
-                      <div className="h-full overflow-auto">
-                        {mobilePane === 'tasks' ? (
+                    {/* Bottom: Tasks (1/2 height) */}
+                    <section className="flex-1 min-h-0">
+                      <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 pt-3 pb-0">
+                        <div className="h-full overflow-auto">
                           <TaskSidebar
                             projects={projects}
                             selectedDate={selectedDate}
@@ -647,37 +647,184 @@ useEffect(() => {
                               }
                             }}
                           />
-                        ) : (
-                          <ProjectsColumn
-                            projects={projects}
-                            onCreateProject={onCreateProject}
-                            onUpdateProject={async (id: string, updates: any) => {
-                              if (onUpdateProject) {
-                                await onUpdateProject(id, updates);
-                              }
-                            }}
-                            onDeleteProject={async (id: string) => {
-                              if (onDeleteProject) {
-                                await onDeleteProject(id);
-                              }
-                            }}
-                            onCreateTask={async (projectId: string, title: string, description?: string) => {
-                              if (onCreateTask) {
-                                await onCreateTask(projectId, title, description);
-                              }
-                            }}
-                            onMoveProjectToTasks={(projectId) => {
-                              onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
-                            }}
-                            onEventCreated={fetchCalendarEvents}
-                          />
-                        )}
+                        </div>
                       </div>
-                    </div>
-                  </section>
-                </div>
+                    </section>
+                  </div>
+                ) : (
+                  <div className="h-full flex flex-col">
+                    <section className="flex-1 min-h-0">
+                      <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 py-0">
+                        <div className="h-full overflow-auto">
+                          {mobilePane === 'tasks' ? (
+                            <TaskSidebar
+                              projects={projects}
+                              selectedDate={selectedDate}
+                              onCreateTask={onCreateTask}
+                              onCreateProject={onCreateProject}
+                              onUpdateProject={async (id: string, updates: any) => {
+                                if (onUpdateProject) {
+                                  await onUpdateProject(id, updates);
+                                }
+                              }}
+                              onDeleteProject={async (id: string) => {
+                                if (onDeleteProject) {
+                                  await onDeleteProject(id);
+                                }
+                              }}
+                              onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
+                                onUpdateTask(taskId, updates);
+                              }}
+                              onDeleteTask={onDeleteTask}
+                              onRefreshTasks={onRefreshTasks}
+                              onEventCreated={fetchCalendarEvents}
+                              onMoveProjectBack={(projectId) => {
+                                const project = projects.find(p => p.id === projectId);
+                                if (project) {
+                                  const placeholderTask = project.tasks.find(t => t.title === "Add First Task...");
+                                  if (placeholderTask && onDeleteTask) {
+                                    onDeleteTask(placeholderTask.id);
+                                  }
+                                }
+                              }}
+                              showAddButton
+                            />
+                          ) : (
+                            <ProjectsColumn
+                              projects={projects}
+                              onCreateProject={onCreateProject}
+                              onUpdateProject={async (id: string, updates: any) => {
+                                if (onUpdateProject) {
+                                  await onUpdateProject(id, updates);
+                                }
+                              }}
+                              onDeleteProject={async (id: string) => {
+                                if (onDeleteProject) {
+                                  await onDeleteProject(id);
+                                }
+                              }}
+                              onCreateTask={async (projectId: string, title: string, description?: string) => {
+                                if (onCreateTask) {
+                                  await onCreateTask(projectId, title, description);
+                                }
+                              }}
+                              onMoveProjectToTasks={(projectId) => {
+                                onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
+                              }}
+                              onEventCreated={fetchCalendarEvents}
+                              forceShowAddButton
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                )
               ) : (
                 <div className="h-full flex flex-col lg:flex-row gap-6">
+                  {/* Calendar - 50% width */}
+                  <div className="flex-[2] min-h-0 lg:min-h-[600px] overflow-hidden">
+                    <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
+                      <DayViewCalendar
+                        selectedDate={selectedDate}
+                        onDateChange={setSelectedDate}
+                        tasks={allTasks}
+                        projects={projects}
+                        calendarEvents={[...events, ...calendarEvents]}
+                         onTaskScheduled={handleTaskScheduled}
+                         onTaskUnscheduled={handleTaskUnscheduled}
+                         onTaskEdit={handleTaskEdit}
+                         onEventClick={(event) => {
+                           console.log('Event clicked:', event);
+                           // TODO: Implement event edit/delete modal
+                         }}
+                         isGoogleConnected={isConnected}
+                         onConnectGoogle={connectGoogleCalendar}
+                         onDisconnectGoogle={disconnectGoogleCalendar}
+                         onViewModeChange={(mode) => setViewMode(mode)}
+                          onQuickEventCreate={handleQuickTaskCreate}
+                          onTaskComplete={handleTaskComplete}
+                          onTaskResize={handleTaskResize}
+                          onEventEdit={(eventId) => {
+                            setSelectedEventId(eventId);
+                            setShowEventEditDialog(true);
+                          }}
+                          onEventDelete={async (eventId) => {
+                            // Delete handled in DayViewCalendar already
+                            await syncCalendar(selectedDate);
+                          }}
+                       />
+                    </div>
+                  </div>
+                  
+                  {/* Task Sidebar - 25% width */}
+                  <div className="flex-1 min-h-0 lg:min-h-[600px]">
+                    <div className="h-full bg-card rounded-xl shadow-sm border p-6">
+                       <TaskSidebar
+                         projects={projects}
+                         selectedDate={selectedDate}
+                         onCreateTask={onCreateTask}
+                         onCreateProject={onCreateProject}
+                         onUpdateProject={async (id: string, updates: any) => {
+                           if (onUpdateProject) {
+                             await onUpdateProject(id, updates);
+                           }
+                         }}
+                         onDeleteProject={async (id: string) => {
+                           if (onDeleteProject) {
+                             await onDeleteProject(id);
+                           }
+                         }}
+                         onUpdateTask={async (taskId: string, updates: Partial<Task>) => {
+                           onUpdateTask(taskId, updates);
+                         }}
+                          onDeleteTask={onDeleteTask}
+                          onRefreshTasks={onRefreshTasks}
+                          onEventCreated={fetchCalendarEvents}
+                          onMoveProjectBack={(projectId) => {
+                            // Remove the placeholder task when moving back to projects
+                            const project = projects.find(p => p.id === projectId);
+                            if (project) {
+                              const placeholderTask = project.tasks.find(t => t.title === "Add First Task...");
+                              if (placeholderTask && onDeleteTask) {
+                                onDeleteTask(placeholderTask.id);
+                              }
+                            }
+                          }}
+                        />
+                    </div>
+                  </div>
+
+                  {/* Projects Column - 25% width */}
+                  <div className="flex-1 min-h-0 lg:min-h-[600px]">
+                    <div className="h-full bg-card rounded-xl shadow-sm border p-6">
+                       <ProjectsColumn
+                         projects={projects}
+                         onCreateProject={onCreateProject}
+                         onUpdateProject={async (id: string, updates: any) => {
+                           if (onUpdateProject) {
+                             await onUpdateProject(id, updates);
+                           }
+                         }}
+                         onDeleteProject={async (id: string) => {
+                           if (onDeleteProject) {
+                             await onDeleteProject(id);
+                           }
+                         }}
+                         onCreateTask={async (projectId: string, title: string, description?: string) => {
+                           if (onCreateTask) {
+                             await onCreateTask(projectId, title, description);
+                           }
+                         }}
+                         onMoveProjectToTasks={(projectId) => {
+                           onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
+                         }}
+                         onEventCreated={fetchCalendarEvents}
+                       />
+                    </div>
+                  </div>
+                </div>
+              )
                   {/* Calendar - 50% width */}
                   <div className="flex-[2] min-h-0 lg:min-h-[600px] overflow-hidden">
                     <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">

@@ -58,9 +58,10 @@ interface TaskSidebarProps {
   onRefreshTasks?: () => void;
   onEventCreated?: () => void;
   className?: string;
+  showAddButton?: boolean;
 }
 
-const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, onMoveProjectBack, onRefreshTasks, onEventCreated, className }: TaskSidebarProps) => {
+const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, onUpdateProject, onDeleteProject, onUpdateTask, onDeleteTask, onMoveProjectBack, onRefreshTasks, onEventCreated, className, showAddButton }: TaskSidebarProps) => {
   const { categories } = useCategories();
   const [projectFilter, setProjectFilter] = useState<string>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
@@ -351,7 +352,18 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
             <CheckSquare className="h-5 w-5 text-primary" />
             <h1 className="text-lg font-medium text-primary">Tasks</h1>
           </div>
-          {/* Removed Add button per request */}
+          {showAddButton && projects.length > 0 && (
+            <AddTaskDialog 
+              projects={projects} 
+              onCreateTask={onCreateTask as any}
+              triggerButton={
+                <Button size="sm" className="bg-primary text-primary-foreground">
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+              }
+            />
+          )}
         </div>
       </div>
       

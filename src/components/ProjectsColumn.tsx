@@ -28,6 +28,7 @@ interface ProjectsColumnProps {
   onMoveProjectToTasks?: (projectId: string) => void;
   onCreateTask?: (projectId: string, title: string, description?: string) => Promise<void>;
   onEventCreated?: () => void;
+  forceShowAddButton?: boolean;
 }
 
 const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeleteProject, onMoveProjectToTasks, onCreateTask, onEventCreated }: ProjectsColumnProps) => {
