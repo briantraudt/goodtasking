@@ -74,9 +74,10 @@ interface TimeSlotProps {
   isCurrentTime?: boolean;
   hasTask?: boolean;
   onClick?: () => void;
+  height?: number;
 }
 
-const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: TimeSlotProps) => {
+const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick, height }: TimeSlotProps) => {
   const slotId = `${hour}:${minute.toString().padStart(2, '0')}`;
   const { isOver, setNodeRef } = useDroppable({
     id: slotId,
@@ -86,13 +87,14 @@ const TimeSlot = ({ hour, minute, children, isCurrentTime, hasTask, onClick }: T
     <div
       ref={setNodeRef}
       className={cn(
-        "h-12 border-b border-border/30 relative transition-colors",
+        "border-b border-border/30 relative transition-colors",
         hasTask 
           ? "cursor-default" 
-          : "hover:bg-primary/10 cursor-pointer",
-        isOver && "bg-primary/20 border-primary/40",
+          : "hover:bg-primary/5 cursor-pointer",
+        isOver && "bg-primary/10 border-primary/40",
         minute === 0 ? "border-border" : "border-border/20"
       )}
+      style={{ height: height }}
       onClick={() => !hasTask && onClick?.()}
       title={hasTask ? undefined : "Click to create event"}
     >
@@ -167,6 +169,7 @@ const isMobile = useIsMobile();
 const TIME_COL_WIDTH = isMobile ? 40 : 112; // px
 const TIME_COL_PADDING = isMobile ? 4 : 8;  // pr-1 vs pr-2
 const CONTENT_LEFT = TIME_COL_WIDTH + TIME_COL_PADDING;
+const SLOT_HEIGHT = isMobile ? 44 : 48; // 30-min slot height in px (compact on mobile)
 
   // Separate local and Google Calendar events
   const localEvents = calendarEvents.filter(event => event.source === 'local' || !event.source);
@@ -346,13 +349,13 @@ const CONTENT_LEFT = TIME_COL_WIDTH + TIME_COL_PADDING;
     const endHour = endTime.getHours();
     const endMinute = endTime.getMinutes();
     
-    // Each 30-minute slot is 48px (h-12)
+    // Each 30-minute slot height is dynamic
     const startSlot = (startHour * 2) + (startMinute >= 30 ? 1 : 0);
     const endSlot = (endHour * 2) + (endMinute >= 30 ? 1 : 0);
-    const duration = (endSlot - startSlot) * 48;
+    const duration = (endSlot - startSlot) * SLOT_HEIGHT;
     
     return {
-      top: startSlot * 48,
+      top: startSlot * SLOT_HEIGHT,
       height: Math.max(duration, 20) // Minimum height
     };
   };
@@ -368,13 +371,13 @@ const CONTENT_LEFT = TIME_COL_WIDTH + TIME_COL_PADDING;
     const endHour = endTime.getHours();
     const endMinute = endTime.getMinutes();
     
-    // Each 30-minute slot is 48px (h-12)
+    // Each 30-minute slot height is dynamic
     const startSlot = (startHour * 2) + (startMinute >= 30 ? 1 : 0);
     const endSlot = (endHour * 2) + (endMinute >= 30 ? 1 : 0);
-    const duration = (endSlot - startSlot) * 48;
+    const duration = (endSlot - startSlot) * SLOT_HEIGHT;
     
     return {
-      top: startSlot * 48,
+      top: startSlot * SLOT_HEIGHT,
       height: Math.max(duration, 20)
     };
   };
@@ -508,8 +511,8 @@ const formatTimeLabelCompact = (hour: number) => {
                   key={`${hour}-${minute}`} 
                   data-hour={hour}
                   data-minute={minute}
-                   className="flex w-full h-12 border-t border-gray-200 min-w-0"
-                   style={{ maxWidth: '100%', overflow: 'hidden' }}
+                   className="flex w-full border-t border-gray-200 min-w-0"
+                   style={{ maxWidth: '100%', overflow: 'hidden', height: SLOT_HEIGHT }}
                 >
                   {/* Time column */}
 <div className={cn(
@@ -541,6 +544,7 @@ const formatTimeLabelCompact = (hour: number) => {
                       isCurrentTime={isCurrentSlot}
                       hasTask={hasTask}
                       onClick={() => onQuickEventCreate?.(hour, minute)}
+                      height={SLOT_HEIGHT}
                     />
                   </div>
                 </div>
@@ -663,13 +667,13 @@ style={{
               return isToday(selectedDateObj);
             })() && (
               <div
-                className="absolute right-0 h-0.5 bg-[#4DA8DA] z-30" // Changed from red to light blue
-style={{
-                   top: ((currentTime.getHours() * 2) + (currentTime.getMinutes() >= 30 ? 1 : 0)) * 48,
+                className="absolute right-0 h-px bg-primary z-30"
+                style={{
+                   top: ((currentTime.getHours() * 2) + (currentTime.getMinutes() >= 30 ? 1 : 0)) * SLOT_HEIGHT,
                    left: CONTENT_LEFT,
                  }}
               >
-                <div className="absolute -left-2 -top-2 w-4 h-4 bg-red-500 rounded-full"></div>
+                <div className="absolute -left-1.5 -top-1.5 w-3 h-3 bg-red-500/80 rounded-full ring-2 ring-background"></div>
               </div>
             )}
           </div>

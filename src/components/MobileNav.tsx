@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Home, PlusCircle, Settings, CheckSquare, FolderOpen } from "lucide-react";
+import { Home, Settings, CheckSquare, FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import AddTaskDialog from "@/components/AddTaskDialog";
 
@@ -25,7 +25,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
   return (
     <nav className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
       <div className="max-w-app mx-auto px-4">
-        <div className="grid grid-cols-5 h-16 items-center">
+        <div className="grid grid-cols-4 h-16 items-center">
   <Link
             to="/dashboard"
             onClick={() => window.dispatchEvent(new CustomEvent('dashboard-show-home'))}
@@ -45,20 +45,6 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
             <span className="text-[11px] mt-1">Tasks</span>
           </button>
 
-          <div className="flex items-center justify-center">
-            <AddTaskDialog
-              projects={projects}
-              onCreateTask={onCreateTask as any}
-              triggerButton={
-                <button
-                  className="inline-flex items-center justify-center rounded-full h-12 w-12 shadow-lg border border-border bg-primary text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  aria-label="Add task"
-                >
-                  <PlusCircle className="h-5 w-5" />
-                </button>
-              }
-            />
-          </div>
 
           <button
             onClick={showProjects}

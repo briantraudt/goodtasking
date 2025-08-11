@@ -245,6 +245,18 @@ useEffect(() => {
   const { toast } = useToast();
   const { notifyTaskCompleted, notifyProjectUpdate } = useNotifications();
   
+  // Determine if the selected day is sparse to allocate more space to tasks on mobile
+  const combinedCalendarForSelectedDate = [...events, ...calendarEvents].filter(ev => {
+    if (!ev?.start) return false;
+    try {
+      return format(new Date(ev.start), 'yyyy-MM-dd') === selectedDate;
+    } catch {
+      return false;
+    }
+  });
+  const scheduledTasksCountForDate = allTasks.filter(t => t.scheduled_date === selectedDate && t.start_time && t.end_time).length;
+  const isSparseDay = (combinedCalendarForSelectedDate.length + scheduledTasksCountForDate) <= 2;
+  
   // Set up task reminders
   useTaskReminders({ tasks: allTasks });
 
@@ -586,10 +598,10 @@ useEffect(() => {
             <div className="h-full p-0 md:p-6">
               {isMobile ? (
                 mobilePane === 'planner' ? (
-                  <div className="h-full flex flex-col gap-2">
+                  <div className="h-full flex flex-col gap-1">
                     {/* Top: Calendar (1/2 height) */}
-                    <section className="flex-1 min-h-0">
-                      <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 py-2">
+                    <section className={`${isSparseDay ? 'flex-[0.9]' : 'flex-1'} min-h-0`}>
+                      <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 py-1">
                         <div className="h-full overflow-auto">
                           <DayViewCalendar
                             selectedDate={selectedDate}
@@ -623,8 +635,8 @@ useEffect(() => {
                     </section>
 
                     {/* Bottom: Tasks (1/2 height) */}
-                    <section className="flex-1 min-h-0">
-                      <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 pt-2 pb-1">
+                    <section className={`${isSparseDay ? 'flex-[1.1]' : 'flex-1'} min-h-0`}>
+                      <div className="h-full bg-card rounded-none md:rounded-xl shadow-sm border-x-0 md:border px-0 md:p-6 pt-1 pb-1">
                         <div className="h-full overflow-auto">
                           <TaskSidebar
                             projects={projects}

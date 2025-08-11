@@ -346,7 +346,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       )}
     >
       {/* Tasks Section Header - sticky */}
-      <div className="sticky top-0 z-10 bg-card border-b py-3">
+      <div className="sticky top-0 z-10 bg-muted/40 border-b py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckSquare className="h-5 w-5 text-primary" />
@@ -372,7 +372,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
       {/* Removed filter section as requested */}
 
       {/* Projects Grid - fills remaining space and scrolls to footer */}
-      <div className="grid grid-cols-1 gap-4 flex-1 overflow-y-auto">
+      <div className="grid grid-cols-1 gap-3 md:gap-4 flex-1 overflow-y-auto">
         {projectsWithTasks.map((project, index) => {
           // Get filtered tasks for this project
           const projectTasks = filteredTasks.filter(task => {
@@ -391,7 +391,7 @@ const TaskSidebar = ({ projects, selectedDate, onCreateTask, onCreateProject, on
             <div 
               key={project.id} 
               className={cn(
-                "bg-white rounded-xl p-4 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card"
+                "bg-white rounded-xl p-3 md:p-4 shadow-sm w-full transition-all duration-150 border-2 hover:shadow-gb-card"
               )}
               style={{ borderColor: project.color || (typeof projectColor === 'string' ? projectColor : projectColor.hex) }}
             >

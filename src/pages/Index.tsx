@@ -5,6 +5,7 @@ import DashboardView from '@/components/DashboardView';
 import EnableAIAssistant from '@/components/EnableAIAssistant';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileNav from '@/components/MobileNav';
+import SmartAddButton from '@/components/SmartAddButton';
 
 
 const Index = () => {
@@ -67,6 +68,15 @@ const Index = () => {
           />
         </div>
       </main>
+      {isMobile && (
+        <div className="fixed bottom-20 right-4 z-50">
+          <SmartAddButton 
+            projects={projects} 
+            onCreateTask={createTask}
+            onCreateProject={(p) => createProject(p.name, p.description, p.category, p.color)}
+          />
+        </div>
+      )}
       {isMobile && (
         <MobileNav projects={projects} onCreateTask={createTask} />
       )}
