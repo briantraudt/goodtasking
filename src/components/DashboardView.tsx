@@ -19,6 +19,7 @@ import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, useSensor, useSe
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsTabletOrBelow } from '@/hooks/use-breakpoints';
 
 interface Task {
   id: string;
@@ -108,8 +109,9 @@ const DashboardView = ({
 const { session } = useAuth();
 const [calendarEvents, setCalendarEvents] = useState([]);
 
-// Mobile detection and better touch drag sensors
+// Mobile and tablet detection
 const isMobile = useIsMobile();
+const isTabletOrBelow = useIsTabletOrBelow();
 const sensors = useSensors(
   useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   useSensor(TouchSensor,   { activationConstraint: { delay: 150, tolerance: 5 } })

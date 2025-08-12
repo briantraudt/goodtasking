@@ -3,9 +3,9 @@ import { useProjects } from '@/hooks/useProjects';
 import Header from '@/components/Header';
 import DashboardView from '@/components/DashboardView';
 import EnableAIAssistant from '@/components/EnableAIAssistant';
-import { useIsMobile } from '@/hooks/use-mobile';
 import MobileNav from '@/components/MobileNav';
 import SmartAddButton from '@/components/SmartAddButton';
+import { useIsTabletOrBelow } from '@/hooks/use-breakpoints';
 
 
 const Index = () => {
@@ -21,7 +21,7 @@ const Index = () => {
     deleteTask,
     refetch
   } = useProjects();
-  const isMobile = useIsMobile();
+  const isCompact = useIsTabletOrBelow();
 
   // Get user's first name from email for personalization
   const getUserName = () => {
@@ -68,7 +68,7 @@ const Index = () => {
           />
         </div>
       </main>
-      {isMobile && (
+      {isCompact && (
         <div className="fixed bottom-20 right-4 z-50">
           <SmartAddButton 
             projects={projects} 
@@ -77,7 +77,7 @@ const Index = () => {
           />
         </div>
       )}
-      {isMobile && (
+      {isCompact && (
         <MobileNav projects={projects} onCreateTask={createTask} />
       )}
     </div>

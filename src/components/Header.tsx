@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, CalendarCheck, Menu, ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { LogOut, Settings, CalendarCheck, Menu, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 import NotificationCenter from '@/components/NotificationCenter';
 import NotificationPermissionButton from '@/components/NotificationPermissionButton';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger, DrawerClose } from '@/components/ui/drawer';
 import { format, isToday } from 'date-fns';
+import { useIsTabletOrBelow } from '@/hooks/use-breakpoints';
 
 const Header = () => {
   const { user, signOut } = useAuth();
+  const isTablet = useIsTabletOrBelow();
 
   // Get user's first name from email for personalization
   const getUserName = () => {
@@ -81,19 +83,18 @@ const Header = () => {
         <NotificationCenter />
         <NotificationPermissionButton />
         <Link to="/settings">
-          <Button variant="outline" size="sm" className="h-10 px-4 rounded-lg border-border transition-all">
-            <Settings className="h-4 w-4 mr-2" />
-            Settings
+          <Button variant="outline" size="icon" className="h-10 w-10 rounded-lg border-border transition-all" aria-label="Settings">
+            <Settings className="h-5 w-5" />
           </Button>
         </Link>
         <Button 
           variant="outline" 
-          size="sm" 
+          size="icon" 
           onClick={signOut}
-          className="h-10 px-4 rounded-lg border-border transition-all"
+          className="h-10 w-10 rounded-lg border-border transition-all"
+          aria-label="Sign Out"
         >
-          <LogOut className="h-4 w-4 mr-2" />
-          Sign Out
+          <LogOut className="h-5 w-5" />
         </Button>
       </div>
 
