@@ -775,36 +775,7 @@ useEffect(() => {
                   </div>
                 ) : (
                   <div className="h-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {/* Projects - only on desktop (first column) */}
-                    <div className="hidden lg:block min-h-0 h-full">
-                      <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
-                        <ProjectsColumn
-                          projects={projects}
-                          onCreateProject={onCreateProject}
-                          onUpdateProject={async (id: string, updates: any) => {
-                            if (onUpdateProject) {
-                              await onUpdateProject(id, updates);
-                            }
-                          }}
-                          onDeleteProject={async (id: string) => {
-                            if (onDeleteProject) {
-                              await onDeleteProject(id);
-                            }
-                          }}
-                          onCreateTask={async (projectId: string, title: string, description?: string) => {
-                            if (onCreateTask) {
-                              await onCreateTask(projectId, title, description);
-                            }
-                          }}
-                          onMoveProjectToTasks={(projectId) => {
-                            onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
-                          }}
-                          onEventCreated={fetchCalendarEvents}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Calendar - full width on mobile, middle column on tablet/desktop */}
+                    {/* Calendar - left column on tablet/desktop */}
                     <div className="min-h-0 h-full overflow-hidden">
                       <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
                         <DayViewCalendar
@@ -837,8 +808,8 @@ useEffect(() => {
                         />
                       </div>
                     </div>
-                    
-                    {/* Task Sidebar - right column on tablet/desktop */}
+
+                    {/* Task Sidebar - middle column on tablet/desktop */}
                     <div className="min-h-0 h-full">
                       <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                         <TaskSidebar
@@ -872,6 +843,35 @@ useEffect(() => {
                               }
                             }
                           }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Projects - only on desktop (right column) */}
+                    <div className="hidden lg:block min-h-0 h-full">
+                      <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
+                        <ProjectsColumn
+                          projects={projects}
+                          onCreateProject={onCreateProject}
+                          onUpdateProject={async (id: string, updates: any) => {
+                            if (onUpdateProject) {
+                              await onUpdateProject(id, updates);
+                            }
+                          }}
+                          onDeleteProject={async (id: string) => {
+                            if (onDeleteProject) {
+                              await onDeleteProject(id);
+                            }
+                          }}
+                          onCreateTask={async (projectId: string, title: string, description?: string) => {
+                            if (onCreateTask) {
+                              await onCreateTask(projectId, title, description);
+                            }
+                          }}
+                          onMoveProjectToTasks={(projectId) => {
+                            onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
+                          }}
+                          onEventCreated={fetchCalendarEvents}
                         />
                       </div>
                     </div>
