@@ -40,7 +40,7 @@ const Index = () => {
   }
 
   return (
-    <div className="h-screen grid grid-rows-[auto_1fr_auto] overflow-hidden bg-background">
+    <div className="h-screen grid grid-rows-[auto_1fr] overflow-hidden bg-background">
       <EnableAIAssistant />
       
       {/* Fixed Header */}
@@ -52,7 +52,7 @@ const Index = () => {
       
       {/* Fixed Height Main Content with Independent Scrolling */}
       <main className="overflow-hidden">
-        <div className="w-full lg:max-w-app mx-auto px-0 lg:px-6 pt-0 md:py-0 pb-0 h-[calc(100vh-140px)] overflow-hidden">
+        <div className="w-full lg:max-w-app mx-auto px-0 lg:px-6 pt-0 md:py-0 pb-0 h-full overflow-hidden">
           <DashboardView
             projects={projects}
             onCreateProject={async (data) => {
