@@ -597,7 +597,7 @@ useEffect(() => {
         {/* Scrollable Content Section */}
         <div className="flex-1 overflow-hidden">
           {viewMode === 'planner' ? (
-            <div className="h-full p-0 md:p-6">
+            <div className="h-full p-0 md:p-0">
               {isMobile ? (
                 mobilePane === 'planner' ? (
                   <div className="h-full flex flex-col gap-1">
@@ -774,7 +774,7 @@ useEffect(() => {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="h-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-0 md:gap-x-6 md:gap-y-0">
                     {/* Calendar - left column on tablet/desktop */}
                     <div className="min-h-0 h-full overflow-hidden">
                       <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
