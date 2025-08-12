@@ -13,7 +13,7 @@ import DailyAISummary from './DailyAISummary';
 import StreakDisplay from './StreakDisplay';
 
 import { useStreakActions } from '@/hooks/useStreakActions';
-import PlanMyWeekDialog from './PlanMyWeekDialog';
+
 
 interface Task {
   id: string;
@@ -147,10 +147,6 @@ const TodayView = ({
                 projects={projects} 
                 onCreateTask={(projectId, title) => onCreateTask(projectId, title, undefined, today)}
               />
-              <PlanMyWeekDialog 
-                projects={projects}
-                onTasksCreated={onRefreshTasks}
-              />
             </div>
           </div>
           
@@ -220,20 +216,7 @@ const TodayView = ({
                 <Target className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
               </div>
               <h3 className="text-base sm:text-lg font-semibold mb-2">No tasks today</h3>
-              <p className="text-sm text-muted-foreground mb-3 sm:mb-4 px-4">
-                Not sure where to start? Try planning your day with AI.
-              </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-2">
-                <PlanMyWeekDialog 
-                  projects={projects}
-                  onTasksCreated={onRefreshTasks}
-                  triggerButton={
-                    <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                      <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                      Plan My Day
-                    </Button>
-                  }
-                />
                 {projects.length > 0 && (
                   <AddTaskDialog 
                     projects={projects} 

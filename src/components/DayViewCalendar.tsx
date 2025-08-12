@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { format, addDays, subDays, isToday, parseISO, startOfDay } from 'date-fns';
-import { ChevronLeft, ChevronRight, Calendar, Clock, Star, GripVertical, Check, X, Home, User, Briefcase } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, GripVertical, Check, X, Home, User, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useDroppable, useDraggable } from '@dnd-kit/core';
@@ -471,16 +471,6 @@ const formatTimeLabelCompact = (hour: number) => {
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
-        {/* Week Button on Right */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onViewModeChange?.('week')}
-          className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-        >
-          <Star className="h-4 w-4 mr-2" />
-          Week
-        </Button>
       </div>
     )}
 

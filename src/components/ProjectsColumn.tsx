@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Plus, FolderOpen, Edit2, Trash2, Home, User, Briefcase, Sparkles } from 'lucide-react';
+import { Plus, FolderOpen, Edit2, Trash2, Home, User, Briefcase } from 'lucide-react';
 import CreateProjectDialog from './CreateProjectDialog';
 import ProjectEditDialog from './ProjectEditDialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { AIDailyPlannerAssistant } from './AIDailyPlannerAssistant';
+
 import { SmartTaskParser } from './SmartTaskParser';
 import { cn } from '@/lib/utils';
 import { useCategories } from '@/hooks/useCategories';
@@ -38,7 +38,7 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
   const [inlineTaskTitle, setInlineTaskTitle] = useState("");
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [deleteConfirmProject, setDeleteConfirmProject] = useState<Project | null>(null);
-  const [showAIPlannerDialog, setShowAIPlannerDialog] = useState(false);
+  
   const [showSmartParser, setShowSmartParser] = useState(false);
 
   // Filter projects that have no tasks OR all tasks are scheduled/completed
@@ -209,16 +209,6 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
         )}
       </div>
 
-      {/* Action Buttons - hide on mobile */}
-      <div className="mt-6 pt-4 border-t space-y-2 hidden md:block">
-        <Button
-          onClick={() => setShowAIPlannerDialog(true)}
-          className="w-full flex items-center gap-2 bg-primary hover:bg-primary/90"
-        >
-          <Sparkles className="h-4 w-4" />
-          Plan Your Day
-        </Button>
-      </div>
 
       {/* Smart Task Parser Dialog */}
       {showSmartParser && (
@@ -243,11 +233,6 @@ const ProjectsColumn = ({ projects, onCreateProject, onUpdateProject, onDeletePr
         </div>
       )}
 
-      {/* AI Daily Planner Dialog */}
-      <AIDailyPlannerAssistant 
-        isOpen={showAIPlannerDialog}
-        onClose={() => setShowAIPlannerDialog(false)}
-      />
 
 
       {/* Edit Project Dialog */}
