@@ -429,49 +429,50 @@ const formatTimeLabelCompact = (hour: number) => {
     <div className="h-full flex flex-col overflow-hidden">
       {/* Calendar Header with Icon, Centered Date and Week Button */}
 {!isMobile && (
-      <div className="grid grid-cols-3 items-center mb-4 pb-2 border-b">
-        {/* Calendar Icon clickable (no text) */}
-        <div className="flex items-center gap-2 relative">
-          <button
-            onClick={handleCalendarClick}
-            className={cn(
-              "p-1 rounded-md transition-colors",
-              isGoogleConnected
-                ? "text-[hsl(150,45%,45%)] hover:text-[hsl(150,45%,35%)]"
-                : "text-foreground hover:text-primary"
+      <div className="mb-4 border-b lg:pb-2 lg:pt-3">
+        <div className="flex items-center justify-between">
+          {/* Calendar Icon + Label (left-aligned, like Tasks/Projects) */}
+          <div className="flex items-center gap-2 relative">
+            <button
+              onClick={handleCalendarClick}
+              className={cn(
+                "p-1 rounded-md transition-colors",
+                isGoogleConnected
+                  ? "text-[hsl(150,45%,45%)] hover:text-[hsl(150,45%,35%)]"
+                  : "text-foreground hover:text-primary"
+              )}
+              aria-label={isGoogleConnected ? "Google Calendar connected" : "Connect Google Calendar"}
+              title={isGoogleConnected ? "Google Calendar connected" : "Connect Google Calendar"}
+            >
+              <Calendar className="h-5 w-5" />
+            </button>
+            <h1 className="text-base lg:text-lg font-medium text-primary hidden lg:block">Calendar</h1>
+            {showUnsyncOption && isGoogleConnected && (
+              <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-lg shadow-lg p-2 z-50 min-w-[120px]">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleUnsync();
+                  }}
+                  className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 w-full p-2 rounded transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                  Unsync
+                </button>
+              </div>
             )}
-            aria-label={isGoogleConnected ? "Google Calendar connected" : "Connect Google Calendar"}
-            title={isGoogleConnected ? "Google Calendar connected" : "Connect Google Calendar"}
-          >
-            <Calendar className="h-5 w-5" />
-          </button>
-          <span className="text-lg font-medium text-primary">Calendar</span>
-          {showUnsyncOption && isGoogleConnected && (
-            <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-lg shadow-lg p-2 z-50 min-w-[120px]">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleUnsync();
-                }}
-                className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 w-full p-2 rounded transition-colors"
-              >
-                <X className="h-4 w-4" />
-                Unsync
-              </button>
-            </div>
-          )}
+          </div>
+          {/* Date Navigation (right-aligned on desktop) */}
+          <div className="hidden lg:flex items-center justify-end gap-3">
+            <button onClick={() => navigateDate('prev')} className="text-primary hover:opacity-80 transition-colors" aria-label="Previous day">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <h2 className="text-base lg:text-lg font-semibold text-primary whitespace-nowrap">{formatDateHeader()}</h2>
+            <button onClick={() => navigateDate('next')} className="text-primary hover:opacity-80 transition-colors" aria-label="Next day">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-        {/* Centered Date Navigation */}
-        <div className="col-start-2 flex items-center justify-center gap-3">
-          <button onClick={() => navigateDate('prev')} className="text-primary hover:opacity-80 transition-colors">
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <h2 className="text-base font-semibold text-primary text-center whitespace-nowrap">{formatDateHeader()}</h2>
-          <button onClick={() => navigateDate('next')} className="text-primary hover:opacity-80 transition-colors">
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-        <div />
       </div>
     )}
 
