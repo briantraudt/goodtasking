@@ -33,14 +33,14 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Check if Google Calendar is connected
+  // Check if Google Calendar is connected (persist via refresh_token)
   const checkConnection = useCallback(async () => {
     if (!user) return;
 
     try {
       const { data, error } = await supabase
         .from('google_calendar_tokens')
-        .select('*')
+        .select('access_token, refresh_token, expires_at')
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -49,7 +49,20 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
         return;
       }
 
-      setIsConnected(!!data && new Date(data.expires_at) > new Date());
+      if (!data) {
+        setIsConnected(false);
+        return;
+      }
+
+      // If we have a refresh_token, we consider the account connected even if access_token is expired.
+      // The sync function will automatically refresh the token when needed.
+      if (data.refresh_token) {
+        setIsConnected(true);
+        return;
+      }
+
+      // Fallback: no refresh token (rare). Consider connected only if access token is still valid.
+      setIsConnected(new Date(data.expires_at) > new Date());
     } catch (error) {
       console.error('Error checking connection:', error);
     }
