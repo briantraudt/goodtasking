@@ -430,16 +430,6 @@ const formatTimeLabelCompact = (hour: number) => {
 {/* Calendar Header with Icon, Centered Date and Week Button */}
 {!isMobile && (
   <>
-    {/* Desktop-only date above header, right-aligned with arrows */}
-    <div className="hidden lg:flex items-center justify-end gap-3 text-primary mb-2">
-      <button onClick={() => navigateDate('prev')} className="text-primary hover:opacity-80 transition-colors" aria-label="Previous day">
-        <ChevronLeft className="h-4 w-4" />
-      </button>
-      <span className="text-base lg:text-lg font-semibold whitespace-nowrap">{formatDateHeader()}</span>
-      <button onClick={() => navigateDate('next')} className="text-primary hover:opacity-80 transition-colors" aria-label="Next day">
-        <ChevronRight className="h-4 w-4" />
-      </button>
-    </div>
     <div className="mb-4 border-b lg:pb-2 lg:pt-3">
         <div className="flex items-center justify-between">
           {/* Calendar Icon + Label (left-aligned, like Tasks/Projects) */}
@@ -473,12 +463,12 @@ const formatTimeLabelCompact = (hour: number) => {
               </div>
             )}
           </div>
-          {/* Date Navigation (right-aligned on desktop) */}
-          <div className="flex lg:hidden items-center justify-center gap-3">
+          {/* Date Navigation (right-aligned, same line as Calendar on desktop) */}
+          <div className="hidden lg:flex items-center justify-end gap-3">
             <button onClick={() => navigateDate('prev')} className="text-primary hover:opacity-80 transition-colors" aria-label="Previous day">
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <h2 className="text-base lg:text-lg font-semibold text-primary whitespace-nowrap lg:hidden">{formatDateHeader()}</h2>
+            <h2 className="text-base lg:text-lg font-semibold text-primary whitespace-nowrap">{formatDateHeader()}</h2>
             <button onClick={() => navigateDate('next')} className="text-primary hover:opacity-80 transition-colors" aria-label="Next day">
               <ChevronRight className="h-4 w-4" />
             </button>
