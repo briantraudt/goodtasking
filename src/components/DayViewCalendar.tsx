@@ -429,7 +429,7 @@ const formatTimeLabelCompact = (hour: number) => {
     <div className="h-full flex flex-col overflow-hidden">
       {/* Calendar Header with Icon, Centered Date and Week Button */}
 {!isMobile && (
-      <div className="grid grid-cols-3 items-center mb-2 pb-1">
+      <div className="grid grid-cols-3 items-center mb-4 pb-2 border-b">
         {/* Calendar Icon clickable (no text) */}
         <div className="flex items-center gap-2 relative">
           <button
@@ -445,7 +445,7 @@ const formatTimeLabelCompact = (hour: number) => {
           >
             <Calendar className="h-5 w-5" />
           </button>
-          {/* Unsync option tooltip */}
+          <span className="text-lg font-medium text-primary">Calendar</span>
           {showUnsyncOption && isGoogleConnected && (
             <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-lg shadow-lg p-2 z-50 min-w-[120px]">
               <button
