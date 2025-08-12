@@ -407,24 +407,30 @@ const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
             >
               {/* Project Header */}
               <div className="flex items-center justify-between mb-1">
-                <button
-                  className="flex items-center gap-2 flex-1 text-left"
-                  onClick={() => setCollapsed((prev) => ({ ...prev, [project.id]: !prev[project.id] }))}
-                  aria-label={collapsed[project.id] ? 'Expand project' : 'Collapse project'}
-                >
-                  {collapsed[project.id] ? (
-                    <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                  )}
-                  {(() => {
-                    const CategoryIcon = getCategoryIcon(project.category);
-                    return <CategoryIcon className="w-4 h-4" style={{ color: project.color || '#6B7280' }} />;
-                  })()}
-                  <span className="text-[13px] md:text-sm font-semibold text-foreground truncate">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <button
+                    className="flex items-center gap-2 shrink-0"
+                    onClick={() => setCollapsed((prev) => ({ ...prev, [project.id]: !prev[project.id] }))}
+                    aria-label={collapsed[project.id] ? 'Expand project' : 'Collapse project'}
+                  >
+                    {collapsed[project.id] ? (
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                    )}
+                    {(() => {
+                      const CategoryIcon = getCategoryIcon(project.category);
+                      return <CategoryIcon className="w-4 h-4" style={{ color: project.color || '#6B7280' }} />;
+                    })()}
+                  </button>
+                  <button
+                    className="text-[13px] md:text-sm font-semibold text-foreground hover:text-primary hover:underline truncate"
+                    onClick={() => setEditingProject(project)}
+                    title="Edit project"
+                  >
                     {project.name}
-                  </span>
-                </button>
+                  </button>
+                </div>
                 <div className="flex items-center gap-1">
                   <Button
                     size="sm"
