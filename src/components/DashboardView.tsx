@@ -777,7 +777,7 @@ useEffect(() => {
                   <div className="h-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-0 md:gap-x-6 md:gap-y-0">
                     {/* Calendar - left column on tablet/desktop */}
                     <div className="min-h-0 h-full overflow-hidden">
-                      <div className="h-full bg-card md:bg-transparent rounded-xl md:rounded-none shadow-sm md:shadow-none border md:border-0 p-6 md:p-0 overflow-hidden">
+                      <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
                         <DayViewCalendar
                           selectedDate={selectedDate}
                           onDateChange={setSelectedDate}
@@ -811,7 +811,7 @@ useEffect(() => {
 
                     {/* Task Sidebar - middle column on tablet/desktop */}
                     <div className="min-h-0 h-full">
-                      <div className="h-full bg-card md:bg-transparent rounded-xl md:rounded-none shadow-sm md:shadow-none border md:border-0 p-6 md:p-0">
+                      <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                         <TaskSidebar
                           projects={projects}
                           selectedDate={selectedDate}

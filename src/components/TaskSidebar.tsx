@@ -355,7 +355,7 @@ const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
       )}
     >
       {/* Tasks Section Header - sticky */}
-      <div className="sticky top-0 z-10 bg-muted/40 border-b py-2 px-2 lg:py-3 lg:px-3 lg:mb-4">
+      <div className="sticky top-0 z-10 bg-muted/40 border-b py-2 px-2 lg:bg-transparent lg:py-3 lg:px-0 lg:mb-4 lg:pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <CheckSquare className="h-5 w-5 text-primary" />
