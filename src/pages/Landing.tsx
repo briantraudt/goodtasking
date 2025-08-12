@@ -441,7 +441,7 @@ const Landing = () => {
                   </li>
                 </ul>
                 <Link to="/signup" className="w-full">
-                  <Button className="w-full">Start Free Trial</Button>
+                  <Button className="w-full bg-success text-success-foreground hover:bg-primary hover:text-primary-foreground">Start Free Trial</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -459,7 +459,7 @@ const Landing = () => {
             Join thousands of productive people who've found their flow with Good Tasking.
           </p>
           <Link to="/signup">
-            <Button size="lg" className="px-12 py-6 text-lg">
+            <Button size="lg" className="px-12 py-6 text-lg bg-success text-success-foreground hover:bg-primary hover:text-primary-foreground">
               Start Free – No Credit Card Required
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
