@@ -466,7 +466,7 @@ const formatTimeLabelCompact = (hour: number) => {
           <button onClick={() => navigateDate('prev')} className="text-primary hover:opacity-80 transition-colors">
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <h2 className="text-base font-semibold text-primary text-center">{formatDateHeader()}</h2>
+          <h2 className="text-base font-semibold text-primary text-center whitespace-nowrap">{formatDateHeader()}</h2>
           <button onClick={() => navigateDate('next')} className="text-primary hover:opacity-80 transition-colors">
             <ChevronRight className="h-4 w-4" />
           </button>
