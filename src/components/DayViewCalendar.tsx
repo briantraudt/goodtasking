@@ -429,7 +429,7 @@ const formatTimeLabelCompact = (hour: number) => {
     <div className="h-full flex flex-col overflow-hidden">
       {/* Calendar Header with Icon, Centered Date and Week Button */}
 {!isMobile && (
-      <div className="flex items-center justify-between mb-4 pb-2 border-b">
+      <div className="grid grid-cols-3 items-center mb-4 pb-2">
         {/* Calendar Icon clickable (no text) */}
         <div className="flex items-center gap-2 relative">
           <button
@@ -462,15 +462,16 @@ const formatTimeLabelCompact = (hour: number) => {
           )}
         </div>
         {/* Centered Date Navigation */}
-        <div className="flex items-center gap-3">
+        <div className="col-start-2 flex items-center justify-center gap-3">
           <button onClick={() => navigateDate('prev')} className="text-primary hover:opacity-80 transition-colors">
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <h2 className="text-base font-semibold text-primary">{formatDateHeader()}</h2>
+          <h2 className="text-base font-semibold text-primary text-center">{formatDateHeader()}</h2>
           <button onClick={() => navigateDate('next')} className="text-primary hover:opacity-80 transition-colors">
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
+        <div />
       </div>
     )}
 
