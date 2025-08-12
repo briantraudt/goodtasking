@@ -429,7 +429,7 @@ const formatTimeLabelCompact = (hour: number) => {
     <div className="h-full flex flex-col overflow-hidden">
       {/* Calendar Header with Icon, Centered Date and Week Button */}
 {!isMobile && (
-      <div className="grid grid-cols-3 items-center mb-4 pb-2">
+      <div className="grid grid-cols-3 items-center mb-2 pb-1">
         {/* Calendar Icon clickable (no text) */}
         <div className="flex items-center gap-2 relative">
           <button
@@ -481,7 +481,7 @@ const formatTimeLabelCompact = (hour: number) => {
           ref={scrollContainerRef}
           className={cn(
             "h-full overflow-y-auto overflow-x-hidden",
-            isMobile ? "border-y border-x-0 rounded-none" : "border rounded-lg"
+            isMobile ? "border-y-2 border-foreground/30 border-x-0 rounded-none" : "border-2 border-foreground/30 rounded-lg"
           )}
           style={{ scrollBehavior: 'smooth' }}
         >
