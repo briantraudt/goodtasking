@@ -774,7 +774,7 @@ useEffect(() => {
                     </div>
                   </div>
                 ) : (
-                  <div className="h-full grid grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:2fr_1fr_1fr] gap-6 md:gap-0 md:gap-x-6 md:gap-y-0">
+                  <div className="h-full grid grid-cols-1 md:grid-cols-2 lg:[grid-template-columns:5fr_3fr_2fr] gap-6 md:gap-0 md:gap-x-6 md:gap-y-0">
                     {/* Calendar - left column on tablet/desktop */}
                     <div className="min-h-0 h-full overflow-hidden">
                       <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
