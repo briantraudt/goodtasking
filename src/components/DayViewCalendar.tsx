@@ -427,9 +427,14 @@ const formatTimeLabelCompact = (hour: number) => {
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      {/* Calendar Header with Icon, Centered Date and Week Button */}
+{/* Calendar Header with Icon, Centered Date and Week Button */}
 {!isMobile && (
-      <div className="mb-4 border-b lg:pb-2 lg:pt-3">
+  <>
+    {/* Desktop-only date above header, right-aligned */}
+    <div className="hidden lg:block text-right text-sm text-primary/90 mb-2">
+      {formatDateHeader()}
+    </div>
+    <div className="mb-4 border-b lg:pb-2 lg:pt-3">
         <div className="flex items-center justify-between">
           {/* Calendar Icon + Label (left-aligned, like Tasks/Projects) */}
           <div className="flex items-center gap-2 relative">
@@ -467,13 +472,14 @@ const formatTimeLabelCompact = (hour: number) => {
             <button onClick={() => navigateDate('prev')} className="text-primary hover:opacity-80 transition-colors" aria-label="Previous day">
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <h2 className="text-base lg:text-lg font-semibold text-primary whitespace-nowrap">{formatDateHeader()}</h2>
+            <h2 className="text-base lg:text-lg font-semibold text-primary whitespace-nowrap lg:hidden">{formatDateHeader()}</h2>
             <button onClick={() => navigateDate('next')} className="text-primary hover:opacity-80 transition-colors" aria-label="Next day">
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
         </div>
       </div>
+    </>
     )}
 
       {/* Calendar Grid */}
