@@ -818,35 +818,6 @@ useEffect(() => {
                       />
                     </div>
                   </div>
-
-                  {/* Projects Column - 25% width */}
-                  <div className="flex-1 min-h-0 lg:min-h-[600px]">
-                    <div className="h-full bg-card rounded-xl shadow-sm border p-6">
-                      <ProjectsColumn
-                        projects={projects}
-                        onCreateProject={onCreateProject}
-                        onUpdateProject={async (id: string, updates: any) => {
-                          if (onUpdateProject) {
-                            await onUpdateProject(id, updates);
-                          }
-                        }}
-                        onDeleteProject={async (id: string) => {
-                          if (onDeleteProject) {
-                            await onDeleteProject(id);
-                          }
-                        }}
-                        onCreateTask={async (projectId: string, title: string, description?: string) => {
-                          if (onCreateTask) {
-                            await onCreateTask(projectId, title, description);
-                          }
-                        }}
-                        onMoveProjectToTasks={(projectId) => {
-                          onCreateTask(projectId, "Add First Task...", "Add your first task to this project");
-                        }}
-                        onEventCreated={fetchCalendarEvents}
-                      />
-                    </div>
-                  </div>
                 </div>
               )}
             </div>
