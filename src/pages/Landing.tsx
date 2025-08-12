@@ -50,10 +50,10 @@ const Landing = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Link to="/dashboard">
-              <Button variant="ghost" className="hover:bg-success hover:text-success-foreground">Dashboard</Button>
+              <Button variant="ghost" className="hover:bg-primary hover:text-primary-foreground">Dashboard</Button>
             </Link>
             <Link to="/signup">
-              <Button className="hover:bg-success hover:text-success-foreground">Get Started Free</Button>
+              <Button className="bg-success text-success-foreground hover:bg-primary hover:text-primary-foreground">Get Started Free</Button>
             </Link>
           </div>
         </div>
