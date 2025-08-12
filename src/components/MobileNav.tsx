@@ -2,6 +2,7 @@ import React, { useCallback } from "react";
 import { Home, Settings, CheckSquare, FolderOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import AddTaskDialog from "@/components/AddTaskDialog";
+import SmartAddButton from "@/components/SmartAddButton";
 
 interface Project {
   id: string;
@@ -11,10 +12,11 @@ interface Project {
 interface MobileNavProps {
   projects: Project[];
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => Promise<any> | void;
+  onCreateProject?: (project: { name: string; description?: string; category: string; color?: string; tasks: any[] }) => void;
 }
 
-// Mobile bottom navigation with Tasks/Projects switches
-const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
+// Mobile bottom navigation with Tasks/Projects switches and center + button
+const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask, onCreateProject }) => {
   const showTasks = useCallback(() => {
     window.dispatchEvent(new CustomEvent('dashboard-show-tasks'));
   }, []);
@@ -24,9 +26,9 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
 
   return (
     <nav className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
-      <div className="max-w-app mx-auto px-4">
-        <div className="grid grid-cols-4 h-16 items-center">
-  <Link
+      <div className="mx-auto px-4">
+        <div className="grid grid-cols-5 h-16 items-center">
+          <Link
             to="/dashboard"
             onClick={() => window.dispatchEvent(new CustomEvent('dashboard-show-home'))}
             className="flex flex-col items-center justify-center text-navy-blue hover:text-navy-blue transition-colors"
@@ -45,6 +47,14 @@ const MobileNav: React.FC<MobileNavProps> = ({ projects, onCreateTask }) => {
             <span className="text-[11px] mt-1">Tasks</span>
           </button>
 
+          {/* Center + button */}
+          <div className="flex items-center justify-center">
+            <SmartAddButton
+              projects={projects as any}
+              onCreateTask={onCreateTask as any}
+              onCreateProject={onCreateProject as any}
+            />
+          </div>
 
           <button
             onClick={showProjects}

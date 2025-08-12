@@ -362,7 +362,6 @@ const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
             <h1 className="text-base font-medium text-primary">Tasks</h1>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-muted-foreground">{formattedDate}</span>
             {showAddButton && projects.length > 0 && (
               <AddTaskDialog 
                 projects={projects} 

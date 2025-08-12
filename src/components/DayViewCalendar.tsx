@@ -166,8 +166,8 @@ const DayViewCalendar = ({
   const hasAutoScrolled = useRef(false);
 const { toast } = useToast();
 const isMobile = useIsMobile();
-const TIME_COL_WIDTH = isMobile ? 40 : 112; // px
-const TIME_COL_PADDING = isMobile ? 4 : 8;  // pr-1 vs pr-2
+const TIME_COL_WIDTH = isMobile ? 28 : 36; // px (narrow to fit "11a")
+const TIME_COL_PADDING = isMobile ? 4 : 6;  // px
 const CONTENT_LEFT = TIME_COL_WIDTH + TIME_COL_PADDING;
 const SLOT_HEIGHT = isMobile ? 44 : 48; // 30-min slot height in px (compact on mobile)
 
@@ -430,36 +430,36 @@ const formatTimeLabelCompact = (hour: number) => {
       {/* Calendar Header with Icon, Centered Date and Week Button */}
 {!isMobile && (
       <div className="flex items-center justify-between mb-4 pb-2 border-b">
-        {/* Calendar Icon and Clickable Text on Left */}
+        {/* Calendar Icon clickable (no text) */}
         <div className="flex items-center gap-2 relative">
-          <Calendar className="h-5 w-5 text-primary" />
-          <div 
-            className={cn(
-              "cursor-pointer select-none relative transition-colors duration-200",
-              isGoogleConnected ? "text-[hsl(150,45%,45%)] hover:text-[hsl(150,45%,35%)]" : "text-foreground hover:text-primary"
-            )}
+          <button
             onClick={handleCalendarClick}
-          >
-            <h1 className="text-lg font-semibold flex items-center gap-2">
-              Calendar
-              {isGoogleConnected && <Check className="h-4 w-4" />}
-            </h1>
-            {/* Unsync option tooltip */}
-            {showUnsyncOption && isGoogleConnected && (
-              <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-lg shadow-lg p-2 z-50 min-w-[120px]">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleUnsync();
-                  }}
-                  className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 w-full p-2 rounded transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                  Unsync
-                </button>
-              </div>
+            className={cn(
+              "p-1 rounded-md transition-colors",
+              isGoogleConnected
+                ? "text-[hsl(150,45%,45%)] hover:text-[hsl(150,45%,35%)]"
+                : "text-foreground hover:text-primary"
             )}
-          </div>
+            aria-label={isGoogleConnected ? "Google Calendar connected" : "Connect Google Calendar"}
+            title={isGoogleConnected ? "Google Calendar connected" : "Connect Google Calendar"}
+          >
+            <Calendar className="h-5 w-5" />
+          </button>
+          {/* Unsync option tooltip */}
+          {showUnsyncOption && isGoogleConnected && (
+            <div className="absolute top-full left-0 mt-2 bg-white border border-border rounded-lg shadow-lg p-2 z-50 min-w-[120px]">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleUnsync();
+                }}
+                className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 w-full p-2 rounded transition-colors"
+              >
+                <X className="h-4 w-4" />
+                Unsync
+              </button>
+            </div>
+          )}
         </div>
         {/* Centered Date Navigation */}
         <div className="flex items-center gap-3">
@@ -505,23 +505,26 @@ const formatTimeLabelCompact = (hour: number) => {
                    style={{ maxWidth: '100%', overflow: 'hidden', height: SLOT_HEIGHT }}
                 >
                   {/* Time column */}
-<div className={cn(
-                    "h-full flex items-start justify-end border-r border-border flex-shrink-0",
-                    isMobile ? "w-10 pr-1" : "w-28 pr-2",
-                    isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
-                  )}
-                  style={{ minWidth: isMobile ? '2.5rem' : '7rem', maxWidth: isMobile ? '2.5rem' : '7rem' }}>
-{minute === 0 ? (
-                      <span className={cn(
-                        "pt-1 font-semibold",
-                        isMobile ? "text-xs" : "text-sm",
-                        isCurrentSlot && "text-[#4DA8DA] font-bold"
-                      )}>
-                        {isMobile ? formatTimeLabelCompact(hour) : formatTimeLabel(hour, minute)}
+<div
+                    className={cn(
+                      "h-full flex items-start justify-end border-r border-border flex-shrink-0",
+                      isToday(selectedDateObj) ? "bg-primary/5" : "bg-muted/30"
+                    )}
+                    style={{ minWidth: `${TIME_COL_WIDTH}px`, maxWidth: `${TIME_COL_WIDTH}px`, paddingRight: `${TIME_COL_PADDING}px` }}
+                  >
+                    {minute === 0 ? (
+                      <span
+                        className={cn(
+                          "pt-1 font-semibold",
+                          isMobile ? "text-xs" : "text-sm",
+                          isCurrentSlot && "text-[#4DA8DA] font-bold"
+                        )}
+                      >
+                        {formatTimeLabelCompact(hour)}
                       </span>
                     ) : (
                       <span className={cn("invisible pt-1", isMobile ? "text-xs" : "text-sm") }>
-                        {isMobile ? formatTimeLabelCompact(hour) : formatTimeLabel(hour, minute)}
+                        {formatTimeLabelCompact(hour)}
                       </span>
                     )}
                   </div>

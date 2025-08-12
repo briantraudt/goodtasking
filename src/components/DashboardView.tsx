@@ -776,7 +776,7 @@ useEffect(() => {
                 ) : (
                   <div className="h-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {/* Projects - only on desktop (first column) */}
-                    <div className="hidden lg:block min-h-0 lg:min-h-[600px]">
+                    <div className="hidden lg:block min-h-0 h-full">
                       <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
                         <ProjectsColumn
                           projects={projects}
@@ -804,8 +804,8 @@ useEffect(() => {
                       </div>
                     </div>
 
-                    {/* Calendar - full width on mobile, left column on tablet/desktop */}
-                    <div className="min-h-0 md:min-h-[600px] overflow-hidden">
+                    {/* Calendar - full width on mobile, middle column on tablet/desktop */}
+                    <div className="min-h-0 h-full overflow-hidden">
                       <div className="h-full bg-card rounded-xl shadow-sm border p-6 overflow-hidden">
                         <DayViewCalendar
                           selectedDate={selectedDate}
@@ -839,7 +839,7 @@ useEffect(() => {
                     </div>
                     
                     {/* Task Sidebar - right column on tablet/desktop */}
-                    <div className="min-h-0 md:min-h-[600px]">
+                    <div className="min-h-0 h-full">
                       <div className="h-full bg-card rounded-xl shadow-sm border p-6">
                         <TaskSidebar
                           projects={projects}

@@ -45,14 +45,14 @@ const Index = () => {
       
       {/* Fixed Header */}
       <header className="border-b bg-card shadow-sm">
-        <div className="w-full sm:max-w-app mx-auto px-0 sm:px-6 py-4">
+        <div className="w-full lg:max-w-app mx-auto px-0 lg:px-6 py-4">
           <Header />
         </div>
       </header>
       
       {/* Fixed Height Main Content with Independent Scrolling */}
       <main className="overflow-hidden">
-        <div className="w-full sm:max-w-app mx-auto px-0 sm:px-6 pt-0 md:py-6 pb-0 h-[calc(100vh-140px)] overflow-hidden">
+        <div className="w-full lg:max-w-app mx-auto px-0 lg:px-6 pt-0 md:py-6 pb-0 h-[calc(100vh-140px)] overflow-hidden">
           <DashboardView
             projects={projects}
             onCreateProject={async (data) => {
@@ -69,16 +69,7 @@ const Index = () => {
         </div>
       </main>
       {isCompact && (
-        <div className="fixed bottom-20 right-4 z-50">
-          <SmartAddButton 
-            projects={projects} 
-            onCreateTask={createTask}
-            onCreateProject={(p) => createProject(p.name, p.description, p.category, p.color)}
-          />
-        </div>
-      )}
-      {isCompact && (
-        <MobileNav projects={projects} onCreateTask={createTask} />
+        <MobileNav projects={projects} onCreateTask={createTask} onCreateProject={(p) => createProject(p.name, p.description, p.category, p.color)} />
       )}
     </div>
   );
