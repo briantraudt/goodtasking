@@ -30,6 +30,7 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentSyncDate, setCurrentSyncDate] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -169,7 +170,14 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
   const syncCalendar = useCallback(async (date: string) => {
     if (!user || !isConnected) return;
 
+    // Prevent duplicate syncs for the same date
+    if (currentSyncDate === date && isLoading) {
+      console.log('🔄 Already syncing calendar for date:', date, '- skipping duplicate request');
+      return;
+    }
+
     try {
+      setCurrentSyncDate(date);
       setIsLoading(true);
 
       // Expand date range to handle timezone differences
@@ -238,7 +246,7 @@ export const useGoogleCalendar = (): UseGoogleCalendarReturn => {
     } finally {
       setIsLoading(false);
     }
-  }, [user, isConnected, toast]);
+  }, [user, isConnected, toast, currentSyncDate, isLoading]);
 
   // Create Google Calendar event from task - DISABLED FOR ONE-WAY SYNC
   const createEventFromTask = useCallback(async (
