@@ -142,11 +142,18 @@ useEffect(() => {
   const prev = () => changeDateByDays(-1);
   const next = () => changeDateByDays(1);
   const week = () => setViewMode('week');
-  const showAI = () => setShowAIFeatureDiscovery(true);
+  const showAI = () => {
+    console.log('🤖 AI Features button clicked - opening discovery dialog');
+    setShowAIFeatureDiscovery(true);
+  };
+  
   window.addEventListener('dashboard-date-prev', prev);
   window.addEventListener('dashboard-date-next', next);
   window.addEventListener('dashboard-view-week', week);
   window.addEventListener('show-ai-features', showAI);
+  
+  console.log('🎯 Event listeners set up in DashboardView');
+  
   return () => {
     window.removeEventListener('dashboard-date-prev', prev);
     window.removeEventListener('dashboard-date-next', next);
