@@ -217,53 +217,69 @@ export const AIDailyPlannerAssistant = ({ isOpen, onClose }: AIDailyPlannerAssis
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            AI Daily Planner Assistant
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-4 flex-1 overflow-hidden">
-          <ScrollArea className="h-80 w-full rounded border p-4">
-            <div className="space-y-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0">
+        <div className="flex flex-col h-full">
+          <DialogHeader className="px-6 py-4 border-b bg-gradient-to-r from-primary/5 to-primary/10">
+            <DialogTitle className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">AI Daily Planner Assistant</h2>
+                <p className="text-sm text-muted-foreground font-normal">
+                  Smart scheduling powered by AI
+                </p>
+              </div>
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <ScrollArea className="flex-1 px-6 py-4">
+              <div className="space-y-6">
+                {messages.map((message) => (
                   <div
-                    className={`max-w-[80%] rounded-lg p-3 ${
-                      message.role === 'user'
-                        ? 'bg-primary text-primary-foreground ml-4'
-                        : 'bg-muted mr-4'
-                    }`}
+                    key={message.id}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className="flex items-start gap-2">
-                      {message.role === 'assistant' && (
-                        <MessageCircle className="h-4 w-4 mt-1 flex-shrink-0" />
-                      )}
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    <div
+                      className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+                        message.role === 'user'
+                          ? 'bg-primary text-primary-foreground ml-8 rounded-br-md'
+                          : 'bg-muted/60 mr-8 rounded-bl-md border'
+                      }`}
+                    >
+                      <div className="flex items-start gap-2">
+                        {message.role === 'assistant' && (
+                          <div className="p-1 rounded-full bg-primary/10 mt-1">
+                            <Sparkles className="h-3 w-3 text-primary" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                          <p className="text-xs opacity-60 mt-2">
+                            {format(message.timestamp, 'HH:mm')}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs opacity-70 mt-1">
-                      {format(message.timestamp, 'HH:mm')}
-                    </p>
                   </div>
-                </div>
-              ))}
-              {isProcessing && (
-                <div className="flex justify-start">
-                  <div className="bg-muted rounded-lg p-3 mr-4">
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
-                      <span className="text-sm">AI is thinking...</span>
+                ))}
+                {isProcessing && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted/60 rounded-2xl rounded-bl-md px-4 py-3 mr-8 border">
+                      <div className="flex items-center gap-3">
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" />
+                          <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                          <div className="w-2 h-2 bg-primary/60 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        </div>
+                        <span className="text-sm text-muted-foreground">AI is thinking...</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
+                )}
+              </div>
+            </ScrollArea>
 
           {currentPlan.length > 0 && conversationState === 'approval' && (
             <Card className="border-primary/20">
@@ -312,29 +328,48 @@ export const AIDailyPlannerAssistant = ({ isOpen, onClose }: AIDailyPlannerAssis
             </Card>
           )}
 
-          {conversationState !== 'complete' && (
-            <div className="flex gap-2">
-              <Input
-                value={currentInput}
-                onChange={(e) => setCurrentInput(e.target.value)}
-                placeholder="Type your message..."
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                disabled={isProcessing}
-              />
-              <Button onClick={sendMessage} disabled={isProcessing || !currentInput.trim()}>
-                <Send className="h-4 w-4" />
-              </Button>
-            </div>
-          )}
+            {conversationState !== 'complete' && (
+              <div className="px-6 py-4 border-t bg-background/80 backdrop-blur-sm">
+                <div className="flex gap-3 items-end">
+                  <div className="flex-1 relative">
+                    <Input
+                      value={currentInput}
+                      onChange={(e) => setCurrentInput(e.target.value)}
+                      placeholder="Tell me what you'd like to accomplish today..."
+                      onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                      disabled={isProcessing}
+                      className="resize-none border-2 border-muted-foreground/20 focus:border-primary/50 rounded-xl px-4 py-3 pr-12 text-sm placeholder:text-muted-foreground/60 transition-all duration-200 focus:shadow-lg focus:shadow-primary/5"
+                    />
+                  </div>
+                  <Button 
+                    onClick={sendMessage} 
+                    disabled={isProcessing || !currentInput.trim()}
+                    size="icon"
+                    className="h-11 w-11 rounded-xl bg-primary hover:bg-primary/90 disabled:opacity-50 transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground/60 mt-2 px-1">
+                  Press Enter to send • Shift + Enter for new line
+                </p>
+              </div>
+            )}
 
-          {conversationState === 'complete' && (
-            <div className="text-center py-4">
-              <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">
-                Your day is planned! Check your calendar and task list for the scheduled items.
-              </p>
-            </div>
-          )}
+            {conversationState === 'complete' && (
+              <div className="text-center py-8 px-6">
+                <div className="max-w-sm mx-auto">
+                  <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-full w-fit mx-auto mb-4">
+                    <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">Perfect! Your day is planned</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Check your calendar and task list for the scheduled items. Your AI-optimized schedule is ready to help you have a productive day!
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
