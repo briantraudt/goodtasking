@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, CalendarCheck, Menu, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LogOut, Settings, CalendarCheck, Menu, ChevronLeft, ChevronRight, Brain } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 import NotificationCenter from '@/components/NotificationCenter';
@@ -80,6 +80,15 @@ const Header = () => {
 
       {/* Desktop actions */}
       <div className="hidden md:flex items-center gap-3">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => window.dispatchEvent(new CustomEvent('show-ai-features'))}
+          className="gap-2 bg-primary/10 border-primary/20 text-primary hover:bg-primary/20"
+        >
+          <Brain className="h-4 w-4" />
+          AI Features
+        </Button>
         <NotificationCenter />
         <NotificationPermissionButton />
         <Link to="/settings">

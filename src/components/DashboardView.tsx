@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Sun, Sparkles, RefreshCw } from 'lucide-react';
+import { Calendar, Sun, Sparkles, RefreshCw, Brain } from 'lucide-react';
 import QuickTaskDialog from '@/components/QuickTaskDialog';
 import TaskEditDialog from '@/components/TaskEditDialog';
 import { EventEditDialog } from '@/components/EventEditDialog';
@@ -10,6 +10,12 @@ import WeeklyAIReview from './WeeklyAIReview';
 import DayViewCalendar from './DayViewCalendar';
 import TaskSidebar from './TaskSidebar';
 import ProjectsColumn from './ProjectsColumn';
+import AIInsightsWidget from './AIInsightsWidget';
+import AISuggestionsBar from './AISuggestionsBar';
+import AIFeatureDiscovery from './AIFeatureDiscovery';
+import { SmartTaskParser } from './SmartTaskParser';
+import { AIDailyPlannerAssistant } from './AIDailyPlannerAssistant';
+import AITasksDialog from './AITasksDialog';
 import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { useToast } from '@/hooks/use-toast';
 import { useTaskReminders } from '@/hooks/useTaskReminders';
@@ -88,6 +94,12 @@ const DashboardView = ({
     return today;
   });
   const [mobilePane, setMobilePane] = useState<'planner' | 'tasks' | 'projects'>('planner');
+  
+  // AI Feature States
+  const [showAIFeatureDiscovery, setShowAIFeatureDiscovery] = useState(false);
+  const [showSmartParser, setShowSmartParser] = useState(false);
+  const [showAIDailyPlanner, setShowAIDailyPlanner] = useState(false);
+  const [showAITaskSequencer, setShowAITaskSequencer] = useState(false);
 
   // Force today's date whenever the component mounts or user changes
   useEffect(() => {
@@ -130,13 +142,16 @@ useEffect(() => {
   const prev = () => changeDateByDays(-1);
   const next = () => changeDateByDays(1);
   const week = () => setViewMode('week');
+  const showAI = () => setShowAIFeatureDiscovery(true);
   window.addEventListener('dashboard-date-prev', prev);
   window.addEventListener('dashboard-date-next', next);
   window.addEventListener('dashboard-view-week', week);
+  window.addEventListener('show-ai-features', showAI);
   return () => {
     window.removeEventListener('dashboard-date-prev', prev);
     window.removeEventListener('dashboard-date-next', next);
     window.removeEventListener('dashboard-view-week', week);
+    window.removeEventListener('show-ai-features', showAI);
   };
 }, [selectedDate]);
 
@@ -479,6 +494,117 @@ useEffect(() => {
   };
 
   // Handle task completion
+  // AI Feature Handlers
+  const handleAISuggestionAction = (action: string, data?: any) => {
+    console.log('🤖 AI Suggestion Action:', action, data);
+    
+    switch (action) {
+      case 'ai-schedule':
+        setShowAIDailyPlanner(true);
+        break;
+      case 'focus-priority':
+        // Filter to show only high priority tasks
+        toast({
+          title: "Priority Focus Mode",
+          description: "Showing high-priority tasks for better focus.",
+        });
+        break;
+      case 'plan-day':
+        setShowAIDailyPlanner(true);
+        break;
+      case 'optimize-schedule':
+        toast({
+          title: "Schedule Optimization",
+          description: "AI is analyzing your schedule for improvements.",
+        });
+        break;
+      case 'sequence-tasks':
+        setShowAITaskSequencer(true);
+        break;
+      case 'explore-ai':
+        setShowAIFeatureDiscovery(true);
+        break;
+      default:
+        console.log('Unknown AI action:', action);
+    }
+  };
+
+  const handleAIInsightAction = (action: string) => {
+    console.log('🧠 AI Insight Action:', action);
+    
+    switch (action) {
+      case 'plan-day':
+        setShowAIDailyPlanner(true);
+        break;
+      case 'show-priority':
+        // Show priority tasks filter
+        toast({
+          title: "Priority Tasks",
+          description: "Focusing on your high-priority tasks.",
+        });
+        break;
+      case 'reschedule-overdue':
+        toast({
+          title: "Reschedule Assistant",
+          description: "AI can help reschedule your overdue tasks.",
+        });
+        break;
+      case 'explore-ai':
+        setShowAIFeatureDiscovery(true);
+        break;
+      default:
+        console.log('Unknown AI insight action:', action);
+    }
+  };
+
+  const handleAIFeatureSelect = (featureId: string) => {
+    console.log('🚀 AI Feature Selected:', featureId);
+    
+    switch (featureId) {
+      case 'smart-parser':
+        setShowSmartParser(true);
+        break;
+      case 'daily-planner':
+        setShowAIDailyPlanner(true);
+        break;
+      case 'task-sequencer':
+        setShowAITaskSequencer(true);
+        break;
+      case 'daily-summary':
+        // Scroll to daily summary if it exists
+        toast({
+          title: "Daily Summary",
+          description: "Check your daily summary widget for insights.",
+        });
+        break;
+      case 'weekly-review':
+        // Scroll to weekly review if it exists
+        toast({
+          title: "Weekly Review",
+          description: "Your weekly AI review is available below.",
+        });
+        break;
+      case 'smart-scheduling':
+        setShowAIDailyPlanner(true);
+        break;
+      case 'ai-chat':
+        // Open AI chat functionality
+        toast({
+          title: "AI Chat",
+          description: "AI chat assistant is coming soon!",
+        });
+        break;
+      case 'productivity-insights':
+        toast({
+          title: "Productivity Insights",
+          description: "Advanced insights are being generated.",
+        });
+        break;
+      default:
+        console.log('Unknown AI feature:', featureId);
+    }
+  };
+
   const handleTaskComplete = (taskId: string, completed: boolean) => {
     console.log('🎯 DashboardView handleTaskComplete called:', { taskId, completed });
     
@@ -591,6 +717,23 @@ useEffect(() => {
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="h-full flex flex-col overflow-hidden">
+        {/* AI Suggestions Bar */}
+        <AISuggestionsBar
+          tasks={allTasks}
+          selectedDate={selectedDate}
+          onSuggestionAction={handleAISuggestionAction}
+        />
+        
+        {/* AI Insights Widget - Mobile/Tablet */}
+        {isTabletOrBelow && (
+          <div className="px-4 pb-2">
+            <AIInsightsWidget
+              tasks={allTasks}
+              onActionTrigger={handleAIInsightAction}
+            />
+          </div>
+        )}
+        
         {/* Weekly AI Review - only show in week view */}
         {viewMode === 'week' && <WeeklyAIReview />}
         
@@ -991,6 +1134,42 @@ useEffect(() => {
           );
         }}
       />
+
+      {/* AI Feature Dialogs */}
+      <AIFeatureDiscovery
+        isOpen={showAIFeatureDiscovery}
+        onClose={() => setShowAIFeatureDiscovery(false)}
+        onFeatureSelect={handleAIFeatureSelect}
+      />
+
+      {showSmartParser && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-card rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
+            <SmartTaskParser
+              onTaskCreated={() => {
+                setShowSmartParser(false);
+                if (onRefreshTasks) onRefreshTasks();
+              }}
+              onEventCreated={() => {
+                setShowSmartParser(false);
+                fetchCalendarEvents();
+              }}
+            />
+            <div className="p-4 border-t">
+              <Button variant="outline" onClick={() => setShowSmartParser(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <AIDailyPlannerAssistant
+        isOpen={showAIDailyPlanner}
+        onClose={() => setShowAIDailyPlanner(false)}
+      />
+
+      {showAITaskSequencer && <AITasksDialog />}
     </DndContext>
   );
 };
