@@ -6,6 +6,7 @@ import EnableAIAssistant from '@/components/EnableAIAssistant';
 import MobileNav from '@/components/MobileNav';
 import SmartAddButton from '@/components/SmartAddButton';
 import WelcomeTutorial, { useWelcomeTutorial } from '@/components/WelcomeTutorial';
+import { FeatureSpotlight, useFeatureSpotlight } from '@/components/FeatureSpotlight';
 import { useIsTabletOrBelow } from '@/hooks/use-breakpoints';
 import { CalendarCheck } from 'lucide-react';
 
@@ -25,6 +26,7 @@ const Index = () => {
   } = useProjects();
   const isCompact = useIsTabletOrBelow();
   const { showTutorial, completeTutorial } = useWelcomeTutorial();
+  const { unseenFeatures, isOpen: spotlightOpen, setIsOpen: setSpotlightOpen, dismissFeature, dismissAll } = useFeatureSpotlight();
 
   // Get user's first name from email for personalization
   const getUserName = () => {
@@ -63,6 +65,16 @@ const Index = () => {
         <WelcomeTutorial onComplete={completeTutorial} />
       )}
       
+      {/* Feature Spotlight for returning users */}
+      <FeatureSpotlight
+        features={unseenFeatures}
+        isOpen={spotlightOpen && !showTutorial}
+        onClose={() => setSpotlightOpen(false)}
+        onDismissFeature={dismissFeature}
+        onDismissAll={dismissAll}
+      />
+      
+
       {/* Fixed Header */}
       <header className="border-b bg-card shadow-sm">
         <div className="w-full lg:max-w-app mx-auto px-0 lg:px-6 py-4">
