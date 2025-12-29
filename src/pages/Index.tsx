@@ -6,6 +6,7 @@ import EnableAIAssistant from '@/components/EnableAIAssistant';
 import MobileNav from '@/components/MobileNav';
 import SmartAddButton from '@/components/SmartAddButton';
 import { useIsTabletOrBelow } from '@/hooks/use-breakpoints';
+import { CalendarCheck } from 'lucide-react';
 
 
 const Index = () => {
@@ -34,7 +35,19 @@ const Index = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="flex flex-col items-center gap-4">
+          {/* Branded loading spinner */}
+          <div className="relative">
+            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center animate-pulse">
+              <CalendarCheck className="h-8 w-8 text-primary" />
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-medium text-foreground">Loading your workspace</p>
+            <p className="text-xs text-muted-foreground mt-1">Just a moment...</p>
+          </div>
+        </div>
       </div>
     );
   }
