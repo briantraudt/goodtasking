@@ -11,12 +11,13 @@ import { Progress } from '@/components/ui/progress';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Brain, Settings as SettingsIcon, User, AlertTriangle, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3, Edit2, Trash2, Check, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Brain, Settings as SettingsIcon, User, AlertTriangle, Target, Save, ArrowLeft, CheckCircle, FolderOpen, TrendingUp, BarChart3, Edit2, Trash2, Check, X, BookOpen, Sparkles } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import MobileNav from '@/components/MobileNav';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useProjects as useProjectsHook } from '@/hooks/useProjects';
+import { useToast } from '@/hooks/use-toast';
 
 interface UserPreferences {
   ai_assistant_enabled: boolean;
@@ -49,6 +50,8 @@ interface DashboardStats {
 
 const Settings = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [preferences, setPreferences] = useState<UserPreferences>({
@@ -844,6 +847,44 @@ const isMobile = useIsMobile();
                   Save Profile
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Help & Support */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                Help & Support
+              </CardTitle>
+              <CardDescription>
+                Get help and learn how to use Good Tasking
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    // Reset tutorial flag and navigate to dashboard
+                    if (user?.id) {
+                      localStorage.removeItem(`tutorial_completed_${user.id}`);
+                      toast({
+                        title: "Tutorial Reset",
+                        description: "The welcome tutorial will show when you return to the dashboard.",
+                      });
+                      navigate('/dashboard');
+                    }
+                  }}
+                  className="gap-2"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Replay Welcome Tutorial
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Re-watch the introduction to learn about key features like projects, tasks, drag-to-schedule, and AI assistance.
+              </p>
             </CardContent>
           </Card>
 

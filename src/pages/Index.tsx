@@ -5,6 +5,7 @@ import DashboardView from '@/components/DashboardView';
 import EnableAIAssistant from '@/components/EnableAIAssistant';
 import MobileNav from '@/components/MobileNav';
 import SmartAddButton from '@/components/SmartAddButton';
+import WelcomeTutorial, { useWelcomeTutorial } from '@/components/WelcomeTutorial';
 import { useIsTabletOrBelow } from '@/hooks/use-breakpoints';
 import { CalendarCheck } from 'lucide-react';
 
@@ -23,6 +24,7 @@ const Index = () => {
     refetch
   } = useProjects();
   const isCompact = useIsTabletOrBelow();
+  const { showTutorial, completeTutorial } = useWelcomeTutorial();
 
   // Get user's first name from email for personalization
   const getUserName = () => {
@@ -55,6 +57,11 @@ const Index = () => {
   return (
     <div className="h-screen grid grid-rows-[auto_1fr] overflow-hidden bg-background">
       <EnableAIAssistant />
+      
+      {/* Welcome Tutorial for first-time users */}
+      {showTutorial && (
+        <WelcomeTutorial onComplete={completeTutorial} />
+      )}
       
       {/* Fixed Header */}
       <header className="border-b bg-card shadow-sm">
