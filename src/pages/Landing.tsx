@@ -145,7 +145,16 @@ const Landing = () => {
       </nav>
 
       <section className="relative overflow-hidden px-4 pb-20 pt-20">
-        <div className="absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.12),_transparent_35%),radial-gradient(circle_at_75%_20%,_rgba(31,157,85,0.18),_transparent_30%)]" />
+        <div className="absolute inset-0 -z-10">
+          <img
+            src={appMockup}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-35 blur-[2px]"
+          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_32%),radial-gradient(circle_at_75%_20%,_rgba(31,157,85,0.2),_transparent_28%),linear-gradient(180deg,rgba(7,17,31,0.58)_0%,rgba(7,17,31,0.72)_38%,rgba(7,17,31,0.9)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-[#07111f]" />
+        </div>
         <div className="mx-auto max-w-5xl py-12 text-center md:py-20">
           <h1 className="mx-auto max-w-4xl text-5xl font-semibold tracking-tight text-white md:text-7xl md:leading-[0.98]">
             One place for vibe coders to manage every project and task.
