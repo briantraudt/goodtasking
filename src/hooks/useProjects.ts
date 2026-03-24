@@ -20,6 +20,10 @@ export interface Project {
   description?: string;
   category: string;
   color?: string;
+  logo_url?: string | null;
+  website_url?: string | null;
+  repo_url?: string | null;
+  tech_stack?: string[] | null;
   created_at: string;
   updated_at: string;
   scheduledDay?: string;
@@ -67,7 +71,16 @@ export const useProjects = () => {
     }
   };
 
-  const createProject = async (name: string, description?: string, category: string = 'work', color?: string) => {
+  const createProject = async (
+    name: string,
+    description?: string,
+    category: string = 'work',
+    color?: string,
+    logoUrl?: string,
+    websiteUrl?: string,
+    repoUrl?: string,
+    techStack?: string[]
+  ) => {
     if (!user) return;
 
     try {
@@ -80,6 +93,18 @@ export const useProjects = () => {
       
       if (color) {
         projectData.color = color;
+      }
+      if (logoUrl) {
+        projectData.logo_url = logoUrl;
+      }
+      if (websiteUrl) {
+        projectData.website_url = websiteUrl;
+      }
+      if (repoUrl) {
+        projectData.repo_url = repoUrl;
+      }
+      if (techStack && techStack.length > 0) {
+        projectData.tech_stack = techStack;
       }
 
       const { data, error } = await supabase

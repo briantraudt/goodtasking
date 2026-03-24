@@ -1,18 +1,10 @@
-import { useAuth } from '@/contexts/AuthContext';
 import { useProjects } from '@/hooks/useProjects';
 import Header from '@/components/Header';
-import DashboardView from '@/components/DashboardView';
-import EnableAIAssistant from '@/components/EnableAIAssistant';
-import MobileNav from '@/components/MobileNav';
-import SmartAddButton from '@/components/SmartAddButton';
-import WelcomeTutorial, { useWelcomeTutorial } from '@/components/WelcomeTutorial';
-import { FeatureSpotlight, useFeatureSpotlight } from '@/components/FeatureSpotlight';
-import { useIsTabletOrBelow } from '@/hooks/use-breakpoints';
+import SimpleWorkspace from '@/components/SimpleWorkspace';
 import { CalendarCheck } from 'lucide-react';
 
 
 const Index = () => {
-  const { user } = useAuth();
   const { 
     projects, 
     loading, 
@@ -21,20 +13,8 @@ const Index = () => {
     deleteProject,
     createTask,
     updateTask,
-    deleteTask,
-    refetch
+    deleteTask
   } = useProjects();
-  const isCompact = useIsTabletOrBelow();
-  const { showTutorial, completeTutorial } = useWelcomeTutorial();
-  const { unseenFeatures, isOpen: spotlightOpen, setIsOpen: setSpotlightOpen, dismissFeature, dismissAll } = useFeatureSpotlight();
-
-  // Get user's first name from email for personalization
-  const getUserName = () => {
-    if (!user?.email) return "there";
-    const emailPrefix = user.email.split('@')[0];
-    // Capitalize first letter and handle common patterns
-    return emailPrefix.charAt(0).toUpperCase() + emailPrefix.slice(1).toLowerCase();
-  };
 
   if (loading) {
     return (
@@ -58,51 +38,35 @@ const Index = () => {
 
   return (
     <div className="h-screen grid grid-rows-[auto_1fr] overflow-hidden bg-background">
-      <EnableAIAssistant />
-      
-      {/* Welcome Tutorial for first-time users */}
-      {showTutorial && (
-        <WelcomeTutorial onComplete={completeTutorial} />
-      )}
-      
-      {/* Feature Spotlight for returning users */}
-      <FeatureSpotlight
-        features={unseenFeatures}
-        isOpen={spotlightOpen && !showTutorial}
-        onClose={() => setSpotlightOpen(false)}
-        onDismissFeature={dismissFeature}
-        onDismissAll={dismissAll}
-      />
-      
-
-      {/* Fixed Header */}
       <header className="border-b bg-card shadow-sm">
         <div className="w-full lg:max-w-app mx-auto px-0 lg:px-6 py-4">
           <Header />
         </div>
       </header>
-      
-      {/* Fixed Height Main Content with Independent Scrolling */}
-      <main className="overflow-hidden">
-        <div className="w-full lg:max-w-app mx-auto px-0 lg:px-6 pt-0 md:py-0 pb-0 h-full overflow-hidden">
-          <DashboardView
+      <main className="overflow-auto">
+        <div className="w-full lg:max-w-app mx-auto px-4 lg:px-6 py-6">
+          <SimpleWorkspace
             projects={projects}
             onCreateProject={async (data) => {
-              await createProject(data.name, data.description, data.category, data.color);
+              await createProject(
+                data.name,
+                data.description,
+                data.category,
+                data.color,
+                data.logoUrl,
+                data.websiteUrl,
+                data.repoUrl,
+                data.techStack
+              );
             }}
             onUpdateProject={updateProject}
             onDeleteProject={deleteProject}
             onCreateTask={createTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
-            onRefreshTasks={refetch}
-            userName={getUserName()}
           />
         </div>
       </main>
-      {isCompact && (
-        <MobileNav projects={projects} onCreateTask={createTask} onCreateProject={(p) => createProject(p.name, p.description, p.category, p.color)} />
-      )}
     </div>
   );
 };

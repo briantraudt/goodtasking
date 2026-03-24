@@ -1,0 +1,5 @@
+ALTER TABLE public.vibe_projects
+ADD COLUMN IF NOT EXISTS logo_url TEXT,
+ADD COLUMN IF NOT EXISTS website_url TEXT,
+ADD COLUMN IF NOT EXISTS repo_url TEXT,
+ADD COLUMN IF NOT EXISTS tech_stack TEXT[] DEFAULT '{}'::text[];

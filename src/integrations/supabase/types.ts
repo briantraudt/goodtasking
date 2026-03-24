@@ -356,10 +356,14 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          logo_url: string | null
           name: string
+          repo_url: string | null
           scheduled_day: string | null
+          tech_stack: string[] | null
           updated_at: string
           user_id: string
+          website_url: string | null
         }
         Insert: {
           category?: string | null
@@ -367,10 +371,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          logo_url?: string | null
           name: string
+          repo_url?: string | null
           scheduled_day?: string | null
+          tech_stack?: string[] | null
           updated_at?: string
           user_id: string
+          website_url?: string | null
         }
         Update: {
           category?: string | null
@@ -378,10 +386,14 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          logo_url?: string | null
           name?: string
+          repo_url?: string | null
           scheduled_day?: string | null
+          tech_stack?: string[] | null
           updated_at?: string
           user_id?: string
+          website_url?: string | null
         }
         Relationships: []
       }
