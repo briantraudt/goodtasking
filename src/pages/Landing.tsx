@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {
   ArrowRight,
   Blocks,
+  Bot,
   CheckCircle2,
   FolderKanban,
   GitBranch,
