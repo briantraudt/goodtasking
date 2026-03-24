@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { LogOut, Settings, CalendarCheck } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import BrandMark from '@/components/BrandMark';
 
 const Header = () => {
   const { signOut } = useAuth();
@@ -10,9 +11,7 @@ const Header = () => {
   return (
     <header className="flex items-center justify-between">
       <Link to="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-          <CalendarCheck className="h-5 w-5 text-white" />
-        </div>
+        <BrandMark className="h-8 w-8" iconClassName="h-4 w-4" />
         <span className="text-2xl font-bold text-foreground">
           Go<span className="text-primary">o</span>d Tasking
         </span>

@@ -101,7 +101,7 @@ const SimpleWorkspace = ({
 
   return (
     <>
-      <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
+      <div className="grid gap-5 lg:grid-cols-[320px_1fr]">
         <Card className="h-fit border-slate-200 shadow-sm">
           <CardHeader className="space-y-3 pb-4">
             <div className="flex items-center gap-2">
@@ -137,14 +137,14 @@ const SimpleWorkspace = ({
                 key={project.id}
                 type="button"
                 onClick={() => setSelectedProjectId(project.id)}
-                className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
+                className={`group w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
                   selectedProjectId === project.id
                     ? 'border-primary/30 bg-primary/5'
                     : 'border-transparent hover:bg-muted/50'
                 }`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex min-w-0 items-start gap-3">
+                <div className="flex items-start gap-3">
+                  <div className="flex min-w-0 flex-1 items-start gap-3">
                     {project.logo_url ? (
                       <img
                         src={project.logo_url}
@@ -170,7 +170,7 @@ const SimpleWorkspace = ({
                     type="button"
                     size="icon"
                     variant="ghost"
-                    className="h-8 w-8"
+                    className="h-8 w-8 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
                     onClick={(event) => {
                       event.stopPropagation();
                       setEditingProject(project);

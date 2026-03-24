@@ -1,5 +1,4 @@
 import { Link, Navigate } from "react-router-dom";
-import { Target } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import BrandMark from "@/components/BrandMark";
 
 const Landing = () => {
   const { user, signIn } = useAuth();
@@ -40,11 +40,9 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-white px-4 py-10 text-slate-950">
-      <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-5xl flex-col items-center justify-center gap-8">
+        <div className="mx-auto flex min-h-[calc(100vh-5rem)] max-w-5xl flex-col items-center justify-center gap-8">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-950 text-white shadow-sm">
-            <Target className="h-7 w-7" />
-          </div>
+          <BrandMark className="h-16 w-16 rounded-3xl shadow-sm" iconClassName="h-7 w-7" />
           <div>
             <h1 className="text-3xl font-semibold tracking-tight">Good Tasking</h1>
           </div>
