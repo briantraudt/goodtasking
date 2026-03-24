@@ -1,73 +1,70 @@
-# Welcome to your Lovable project
+# Good Tasking
 
-## Project info
+Good Tasking is a daily command center for running software projects with more clarity. The goal is simple: open the app in the morning and immediately know what matters today, which projects need attention, and how your time should be spent.
 
-**URL**: https://lovable.dev/projects/048cfaa5-9008-48fd-99ed-15a562610efb
+## Product Direction
 
-## How can I edit this code?
+Good Tasking works best when it stays focused on three jobs:
 
-There are several ways of editing your application.
+1. Help you manage multiple software projects in one place.
+2. Help you decide what deserves attention today.
+3. Help you turn that decision into a workable schedule.
 
-**Use Lovable**
+The strongest version of the product is not a generic productivity app. It is a trusted place to start the day.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/048cfaa5-9008-48fd-99ed-15a562610efb) and start prompting.
+## Current Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- shadcn/ui
+- Supabase
 
-**Use your preferred IDE**
+## Local Development
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+1. Install dependencies:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+2. Create a local env file from the example:
 
-# Step 3: Install the necessary dependencies.
-npm i
+```sh
+cp .env.example .env
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the app:
+
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+4. Build for production:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+npm run build
+```
 
-**Use GitHub Codespaces**
+## Environment Variables
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+The app expects the following values:
 
-## What technologies are used for this project?
+- `VITE_SUPABASE_PROJECT_ID`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
+- `VITE_SUPABASE_URL`
 
-This project is built with:
+Use the values from your Supabase project in `.env`.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Near-Term Refinement Priorities
 
-## How can I deploy this project?
+1. Make the dashboard feel like a true morning briefing.
+2. Reduce feature sprawl by tying every AI feature back to daily planning.
+3. Strengthen project-level visibility so stalled projects are obvious.
+4. Add clearer onboarding for software-specific workflows.
 
-Simply open [Lovable](https://lovable.dev/projects/048cfaa5-9008-48fd-99ed-15a562610efb) and click on Share -> Publish.
+## Repo Notes
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- `.env.example` is safe to commit.
+- `.env` should stay local and should not be committed.

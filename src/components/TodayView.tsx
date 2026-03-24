@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { format, isSameDay, addDays } from 'date-fns';
-import { Sun, Plus, CheckCircle2, Circle, Target, ArrowRight } from 'lucide-react';
+import { Sun, Plus, CheckCircle2, Circle, Target, ArrowRight, AlertCircle, FolderKanban, ListTodo, Clock3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -54,6 +54,7 @@ const TodayView = ({
   
   const today = new Date();
   const tomorrow = addDays(today, 1);
+  const todayKey = format(today, 'yyyy-MM-dd');
 
   const getTasksForDay = (date: Date) => {
     const allTasks: (Task & { projectName: string; projectColor: string })[] = [];
@@ -111,6 +112,37 @@ const TodayView = ({
 
   const todayTasks = getTasksForDay(today);
   const tomorrowTasks = getTasksForDay(tomorrow);
+  const allTasks = projects.flatMap((project) =>
+    project.tasks.map((task) => ({
+      ...task,
+      projectName: project.name,
+      projectColor: getProjectColor(project.id),
+    }))
+  );
+  const unscheduledTasks = allTasks.filter((task) => !task.completed && !task.scheduled_date);
+  const overdueTasks = allTasks.filter(
+    (task) => !task.completed && task.scheduled_date && task.scheduled_date < todayKey
+  );
+  const activeProjects = projects
+    .map((project) => {
+      const remaining = project.tasks.filter((task) => !task.completed);
+      const scheduledToday = remaining.filter((task) => task.scheduled_date === todayKey).length;
+      const unscheduled = remaining.filter((task) => !task.scheduled_date).length;
+
+      return {
+        id: project.id,
+        name: project.name,
+        remainingCount: remaining.length,
+        scheduledToday,
+        unscheduled,
+      };
+    })
+    .filter((project) => project.remainingCount > 0)
+    .sort((a, b) => {
+      if (b.scheduledToday !== a.scheduledToday) return b.scheduledToday - a.scheduledToday;
+      if (b.unscheduled !== a.unscheduled) return b.unscheduled - a.unscheduled;
+      return b.remainingCount - a.remainingCount;
+    });
   const completedToday = todayTasks.filter(task => task.completed).length;
   const totalToday = todayTasks.length;
   const completionRate = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0;
@@ -193,7 +225,51 @@ const TodayView = ({
         </Card>
       )}
 
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <Target className="h-4 w-4 text-primary" />
+              Today
+            </div>
+            <p className="mt-2 text-2xl font-semibold">{todayTasks.filter((task) => !task.completed).length}</p>
+            <p className="text-xs text-muted-foreground">Tasks still expected today</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <ListTodo className="h-4 w-4 text-primary" />
+              Unscheduled
+            </div>
+            <p className="mt-2 text-2xl font-semibold">{unscheduledTasks.length}</p>
+            <p className="text-xs text-muted-foreground">Open tasks that still need a place</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <AlertCircle className="h-4 w-4 text-orange-500" />
+              Slipped
+            </div>
+            <p className="mt-2 text-2xl font-semibold">{overdueTasks.length}</p>
+            <p className="text-xs text-muted-foreground">Tasks scheduled before today and still open</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <FolderKanban className="h-4 w-4 text-primary" />
+              Active Projects
+            </div>
+            <p className="mt-2 text-2xl font-semibold">{activeProjects.length}</p>
+            <p className="text-xs text-muted-foreground">Projects with unfinished work in motion</p>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Today's Tasks */}
+      <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
       <Card>
         <CardHeader className="pb-3 sm:pb-4">
           <div className="flex items-center justify-between">
@@ -216,6 +292,9 @@ const TodayView = ({
                 <Target className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
               </div>
               <h3 className="text-base sm:text-lg font-semibold mb-2">No tasks today</h3>
+              <p className="mb-4 text-sm text-muted-foreground">
+                Pull in the next few important tasks so the day has a shape before it fills up on its own.
+              </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-2">
                 {projects.length > 0 && (
                   <AddTaskDialog 
@@ -273,6 +352,68 @@ const TodayView = ({
           )}
         </CardContent>
       </Card>
+
+      <div className="space-y-4">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Clock3 className="h-4 w-4 text-primary" />
+              Ready To Pull Into Today
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {unscheduledTasks.length > 0 ? (
+              unscheduledTasks.slice(0, 5).map((task) => (
+                <div key={task.id} className="rounded-lg border p-3">
+                  <p className="text-sm font-medium">{task.title}</p>
+                  <Badge variant="outline" className={cn('mt-2 text-xs', task.projectColor)}>
+                    {task.projectName}
+                  </Badge>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Your unscheduled backlog is under control. That makes it easier to protect focus for the tasks already on today.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <FolderKanban className="h-4 w-4 text-primary" />
+              Project Momentum
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {activeProjects.length > 0 ? (
+              activeProjects.slice(0, 4).map((project) => (
+                <div key={project.id} className="rounded-lg border p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-medium">{project.name}</p>
+                    <Badge variant="secondary" className="text-xs">
+                      {project.remainingCount} open
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {project.scheduledToday > 0
+                      ? `${project.scheduledToday} task${project.scheduledToday === 1 ? '' : 's'} already on today`
+                      : project.unscheduled > 0
+                        ? `${project.unscheduled} task${project.unscheduled === 1 ? '' : 's'} waiting to be placed`
+                        : 'No immediate pressure today'}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No active projects yet. Create one and Good Tasking can start acting like your daily command center.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+      </div>
 
       {/* Tomorrow Preview */}
       {tomorrowTasks.length > 0 && (

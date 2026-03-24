@@ -12,6 +12,7 @@ import TaskSidebar from './TaskSidebar';
 import ProjectsColumn from './ProjectsColumn';
 import AIInsightsWidget from './AIInsightsWidget';
 import AISuggestionsBar from './AISuggestionsBar';
+import DashboardMorningBrief from './DashboardMorningBrief';
 import AIFeatureDiscovery from './AIFeatureDiscovery';
 import { SmartTaskParser } from './SmartTaskParser';
 import { AIDailyPlannerAssistant } from './AIDailyPlannerAssistant';
@@ -76,7 +77,7 @@ const DashboardView = ({
   userName = "there"
 }: DashboardViewProps) => {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('planner');
+  const [viewMode, setViewMode] = useState<ViewMode>('today');
   const [showQuickTaskDialog, setShowQuickTaskDialog] = useState(false);
   const [quickTaskTime, setQuickTaskTime] = useState<{ hour: number; minute: number } | null>(null);
   const [showEditTaskDialog, setShowEditTaskDialog] = useState(false);
@@ -724,6 +725,16 @@ useEffect(() => {
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="h-full flex flex-col overflow-hidden">
+        <DashboardMorningBrief
+          projects={projects}
+          tasks={allTasks}
+          selectedDate={selectedDate}
+          userName={userName}
+          viewMode={viewMode}
+          onChangeView={setViewMode}
+          onPlanDay={() => setShowAIDailyPlanner(true)}
+        />
+
         {/* AI Suggestions Bar */}
         <AISuggestionsBar
           tasks={allTasks}
