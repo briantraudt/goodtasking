@@ -112,11 +112,7 @@ const Landing = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#08121f] text-white">
-      <div
-        className="absolute inset-0 -z-20 bg-cover bg-center bg-no-repeat opacity-20"
-        style={{ backgroundImage: `url(${appMockup})` }}
-      />
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(7,17,31,0.88)_0%,rgba(7,17,31,0.94)_35%,rgba(7,17,31,0.98)_100%)]" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.12),_transparent_28%),radial-gradient(circle_at_75%_18%,_rgba(31,157,85,0.16),_transparent_24%),linear-gradient(180deg,_#08121f_0%,_#091523_100%)]" />
 
       <nav className="sticky top-0 z-20 border-b border-white/10 bg-[#07111f]/70 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
@@ -145,26 +141,29 @@ const Landing = () => {
       </nav>
 
       <section className="relative overflow-hidden px-4 pb-20 pt-20">
-        <div className="absolute inset-0 -z-10">
-          <img
-            src={appMockup}
-            alt=""
-            aria-hidden="true"
-            className="absolute left-1/2 top-0 h-[110%] w-[125%] max-w-none -translate-x-1/2 object-cover object-top opacity-60 blur-[1px] brightness-110 saturate-110"
-          />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.16),_transparent_30%),radial-gradient(circle_at_78%_18%,_rgba(31,157,85,0.16),_transparent_24%),linear-gradient(180deg,rgba(8,18,31,0.28)_0%,rgba(8,18,31,0.44)_28%,rgba(8,18,31,0.72)_62%,rgba(8,18,31,0.92)_100%)]" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,18,31,0.78)_0%,rgba(8,18,31,0.52)_35%,rgba(8,18,31,0.38)_60%,rgba(8,18,31,0.68)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-b from-transparent to-[#08121f]" />
+        <div className="absolute inset-y-0 right-0 -z-10 hidden w-[56%] lg:block">
+          <div className="absolute inset-y-10 right-[-6%] w-full rounded-[36px] border border-white/10 bg-white/5 shadow-[0_40px_120px_rgba(0,0,0,0.45)] backdrop-blur-sm">
+            <img
+              src={appMockup}
+              alt=""
+              aria-hidden="true"
+              className="h-full w-full rounded-[36px] object-cover object-top"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#08121f] via-[#08121f]/72 to-transparent" />
         </div>
-        <div className="mx-auto max-w-6xl py-12 text-center md:py-24">
-          <h1 className="mx-auto max-w-4xl text-5xl font-semibold tracking-tight text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] md:text-7xl md:leading-[0.98]">
+
+        <div className="mx-auto max-w-6xl py-12 md:py-24">
+          <div className="max-w-3xl text-center lg:text-left">
+          <h1 className="text-5xl font-semibold tracking-tight text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] md:text-7xl md:leading-[0.98]">
             One place for vibe coders to manage every project and task.
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/80 drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] md:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/80 drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] md:mx-0 md:text-xl">
             Good Tasking gives you a calm home base for active software projects, open tasks,
             and the details that help you pick work back up fast.
           </p>
+          </div>
         </div>
       </section>
 
