@@ -101,37 +101,32 @@ const SimpleWorkspace = ({
 
   return (
     <>
-      <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-        <Card className="h-fit">
-          <CardHeader className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <FolderKanban className="h-5 w-5 text-primary" />
-                  Projects
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Keep your active projects and metadata in one place.
-                </p>
-              </div>
+      <div className="grid gap-5 lg:grid-cols-[280px_1fr]">
+        <Card className="h-fit border-slate-200 shadow-sm">
+          <CardHeader className="space-y-3 pb-4">
+            <div className="flex items-center gap-2">
+              <FolderKanban className="h-5 w-5 text-primary" />
+              <CardTitle className="text-2xl">Projects</CardTitle>
             </div>
-            <Button onClick={() => setIsCreateProjectOpen(true)}>
+            <Button onClick={() => setIsCreateProjectOpen(true)} className="justify-start rounded-xl">
               <Plus className="mr-2 h-4 w-4" />
               Add Project
             </Button>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-2 pt-0">
             <button
               type="button"
               onClick={() => setSelectedProjectId('all')}
-              className={`w-full rounded-lg border p-3 text-left transition-colors ${
-                selectedProjectId === 'all' ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
+              className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
+                selectedProjectId === 'all'
+                  ? 'border-primary/30 bg-primary/5'
+                  : 'border-transparent hover:bg-muted/50'
               }`}
             >
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="font-medium">All Projects</p>
-                  <p className="text-sm text-muted-foreground">See one running task list across everything</p>
+                  <p className="text-sm text-muted-foreground">Everything in one list</p>
                 </div>
                 <Badge variant="secondary">{allTasks.filter((task) => !task.completed).length}</Badge>
               </div>
@@ -142,8 +137,10 @@ const SimpleWorkspace = ({
                 key={project.id}
                 type="button"
                 onClick={() => setSelectedProjectId(project.id)}
-                className={`w-full rounded-lg border p-3 text-left transition-colors ${
-                  selectedProjectId === project.id ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
+                className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
+                  selectedProjectId === project.id
+                    ? 'border-primary/30 bg-primary/5'
+                    : 'border-transparent hover:bg-muted/50'
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -165,7 +162,7 @@ const SimpleWorkspace = ({
                     <div className="min-w-0">
                       <p className="truncate font-medium">{project.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        {project.openCount} open · {project.completedCount} done
+                        {project.openCount} open
                       </p>
                     </div>
                   </div>
@@ -183,8 +180,8 @@ const SimpleWorkspace = ({
                   </Button>
                 </div>
                 {(project.tech_stack || []).length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1">
-                    {project.tech_stack?.slice(0, 4).map((item) => (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {project.tech_stack?.slice(0, 2).map((item) => (
                       <Badge key={item} variant="outline" className="text-xs">
                         {item}
                       </Badge>
@@ -197,17 +194,17 @@ const SimpleWorkspace = ({
         </Card>
 
         <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+          <Card className="border-slate-200 shadow-sm">
+            <CardHeader className="pb-4">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <CardTitle>
                     {selectedProject ? selectedProject.name : 'Running Task List'}
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {selectedProject
-                      ? selectedProject.description || 'Add tasks and keep the project moving.'
-                      : 'One simple list of the work that is in motion.'}
+                      ? selectedProject.description || 'Tasks and context for this project.'
+                      : 'A simple list of active work.'}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -235,9 +232,9 @@ const SimpleWorkspace = ({
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 pt-0">
               {selectedProject && (
-                <div className="grid gap-3 rounded-lg border bg-muted/30 p-4 md:grid-cols-2">
+                <div className="grid gap-3 rounded-2xl bg-muted/30 p-4 md:grid-cols-2">
                   <div className="space-y-2">
                     {selectedProject.website_url && (
                       <a
@@ -274,9 +271,11 @@ const SimpleWorkspace = ({
                 </div>
               )}
 
-              <div className="grid gap-3 rounded-lg border p-4 md:grid-cols-[1fr_220px_auto]">
+              <div className="grid gap-3 rounded-2xl bg-muted/20 p-4 md:grid-cols-[1fr_220px_auto]">
                 <div className="space-y-2">
-                  <Label htmlFor="quick-task-title">Add Task</Label>
+                  <Label htmlFor="quick-task-title" className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Add Task
+                  </Label>
                   <Input
                     id="quick-task-title"
                     placeholder="What needs to get done?"
@@ -291,7 +290,7 @@ const SimpleWorkspace = ({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Project</Label>
+                  <Label className="text-xs uppercase tracking-wide text-muted-foreground">Project</Label>
                   <Select
                     value={selectedProjectId !== 'all' ? selectedProjectId : quickTaskProjectId}
                     onValueChange={(value) => setQuickTaskProjectId(value)}
@@ -322,7 +321,7 @@ const SimpleWorkspace = ({
                   filteredTasks.map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-start justify-between gap-3 rounded-lg border p-4"
+                      className="flex items-start justify-between gap-3 rounded-2xl border border-slate-200 px-4 py-3"
                     >
                       <div className="flex min-w-0 items-start gap-3">
                         <Checkbox
@@ -333,18 +332,20 @@ const SimpleWorkspace = ({
                           className="mt-1"
                         />
                         <div className="min-w-0">
-                          <p className={`${task.completed ? 'text-muted-foreground line-through' : 'font-medium'}`}>
+                          <p className={`${task.completed ? 'text-muted-foreground line-through' : 'font-medium text-slate-950'}`}>
                             {task.title}
                           </p>
-                          <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <Badge variant="outline">{task.projectName}</Badge>
+                          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                            <Badge variant="outline" className="rounded-full">
+                              {task.projectName}
+                            </Badge>
                             {task.due_date && (
-                              <Badge variant="secondary">
+                              <Badge variant="secondary" className="rounded-full">
                                 Due {format(new Date(`${task.due_date}T12:00:00`), 'MMM d')}
                               </Badge>
                             )}
                             {task.completed && (
-                              <Badge variant="secondary">
+                              <Badge variant="secondary" className="rounded-full">
                                 <CheckCircle2 className="mr-1 h-3 w-3" />
                                 Done
                               </Badge>
@@ -363,7 +364,7 @@ const SimpleWorkspace = ({
                     </div>
                   ))
                 ) : (
-                  <div className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+                  <div className="rounded-2xl border border-dashed border-slate-200 p-10 text-center text-sm text-muted-foreground">
                     No tasks match this view yet.
                   </div>
                 )}

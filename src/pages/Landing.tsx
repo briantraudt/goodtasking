@@ -2,67 +2,88 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
-  Brain,
-  Calendar,
-  CheckCircle,
-  CheckSquare,
-  Clock3,
+  Blocks,
+  Bot,
+  CheckCircle2,
   FolderKanban,
+  GitBranch,
+  Laptop2,
+  Layers3,
   Loader2,
+  Sparkles,
   Target,
-  Zap,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import appMockup from "@/assets/app-mockup.png";
 
-const pillars = [
+const coreMessages = [
   {
     icon: FolderKanban,
-    title: "See every software project in one place",
+    title: "All your projects in one workspace",
     description:
-      "Track client work, product ideas, bugs, launches, and admin tasks without bouncing between tools.",
+      "Track client work, product ideas, side projects, launches, fixes, and experiments without scattering notes across tabs.",
   },
   {
-    icon: Clock3,
-    title: "Know what your time should go toward today",
+    icon: Layers3,
+    title: "Tasks tied to real project context",
     description:
-      "Turn an overwhelming backlog into a realistic plan for this morning, this afternoon, and this week.",
+      "Keep each task attached to the project it belongs to, with stack details, links, and metadata that help you re-enter flow fast.",
   },
   {
-    icon: Brain,
-    title: "Start each day with a clear next move",
+    icon: Blocks,
+    title: "Built for vibe coders",
     description:
-      "Use AI when you want help organizing priorities, protecting focus time, and keeping important work from slipping.",
+      "Good Tasking is for people shipping quickly, juggling lots of moving pieces, and needing one place to stay oriented.",
   },
 ];
 
 const workflow = [
-  {
-    title: "Capture your projects",
-    description:
-      "Set up active software projects, side work, maintenance tasks, and life admin in one workspace.",
-  },
-  {
-    title: "Choose what matters now",
-    description:
-      "Pull the next important tasks into today so your backlog becomes a focused plan instead of a stress pile.",
-  },
-  {
-    title: "Work from one morning dashboard",
-    description:
-      "Open Good Tasking, see your priorities, and move straight into execution with less deciding and less context switching.",
-  },
+  "Create a project for every active app, client, tool, or experiment.",
+  "Store the key details: description, logo, repo, website, and tech stack.",
+  "Add tasks as they come up and work from one simple running list.",
+  "Stay in motion without forgetting what each project is, where it lives, or what comes next.",
 ];
 
-const features = [
-  "Project-based task management built for people juggling multiple software efforts",
-  "A morning planning flow that helps you decide what to tackle first",
-  "Weekly scheduling so important work has a home on the calendar",
-  "AI summaries and suggestions when you want help sorting priorities",
-  "Google Calendar sync to keep meetings and focused work in the same view",
-  "Natural-language task capture for getting ideas out of your head quickly",
+const stackExamples = [
+  "React",
+  "Next.js",
+  "TypeScript",
+  "Supabase",
+  "Stripe",
+  "Twilio",
+  "Resend",
+  "PostHog",
+  "Sentry",
+  "Vercel",
+];
+
+const featureCards = [
+  {
+    icon: GitBranch,
+    title: "Project memory",
+    description:
+      "Keep repo links, URLs, stack choices, and notes with the project so context is always one click away.",
+  },
+  {
+    icon: Target,
+    title: "Simple running list",
+    description:
+      "Focus on open work across all projects or drill into one project when it is time to ship.",
+  },
+  {
+    icon: Laptop2,
+    title: "Clean operator view",
+    description:
+      "Less planner clutter, less ceremony, more clarity on what is active and what needs attention.",
+  },
+  {
+    icon: Bot,
+    title: "AI as support, not noise",
+    description:
+      "Use AI when it helps, but keep the product centered on project management and forward motion.",
+  },
 ];
 
 const Landing = () => {
@@ -72,18 +93,15 @@ const Landing = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowPulse(false);
-    }, 3000);
+    }, 2800);
 
     return () => clearTimeout(timer);
   }, []);
 
   const scrollToHowItWorks = () => {
-    const howItWorksSection = document.getElementById("how-it-works");
-    if (howItWorksSection) {
-      howItWorksSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+    const target = document.getElementById("how-it-works");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -92,292 +110,331 @@ const Landing = () => {
 
     setTimeout(() => {
       window.location.href = "/signup";
-    }, 800);
+    }, 700);
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center space-x-2">
-            <Target className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">Good Tasking</span>
+    <div className="min-h-screen bg-[#f5f3ec] text-slate-950">
+      <nav className="sticky top-0 z-20 border-b border-slate-200/80 bg-[#f5f3ec]/90 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#16324f] text-white shadow-sm">
+              <Target className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold tracking-tight">Good Tasking</p>
+              <p className="text-xs text-slate-500">Project OS for vibe coders</p>
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Link to="/dashboard">
-              <Button variant="ghost" className="hover:bg-primary hover:text-primary-foreground">
-                Dashboard
-              </Button>
+
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="hidden text-sm font-medium text-slate-600 hover:text-slate-950 md:inline">
+              Login
             </Link>
-            <Link to="/signup">
-              <Button className="bg-success text-success-foreground hover:bg-primary hover:text-primary-foreground">
-                Get Started Free
-              </Button>
-            </Link>
+            <Button
+              onClick={handleGetStarted}
+              className="rounded-full bg-[#1f9d55] px-5 text-white hover:bg-[#18874a]"
+            >
+              Get Started
+            </Button>
           </div>
         </div>
       </nav>
 
-      <section className="relative overflow-hidden px-4 py-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-        <div className="absolute right-0 top-0 h-1/3 w-1/3 rounded-full bg-gradient-to-bl from-primary/10 to-transparent blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-1/4 w-1/4 rounded-full bg-gradient-to-tr from-accent/10 to-transparent blur-3xl" />
+      <section className="relative overflow-hidden px-4 pb-20 pt-14">
+        <div className="absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(circle_at_top_left,_rgba(22,50,79,0.16),_transparent_40%),radial-gradient(circle_at_75%_20%,_rgba(31,157,85,0.14),_transparent_30%),linear-gradient(180deg,_#fbfaf7_0%,_#f5f3ec_100%)]" />
+        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="max-w-3xl">
+            <Badge className="mb-6 rounded-full bg-[#16324f] px-4 py-1.5 text-sm font-medium text-white hover:bg-[#16324f]">
+              <Sparkles className="mr-2 h-4 w-4" />
+              Built for builders juggling too many tabs
+            </Badge>
 
-        <div className="container relative mx-auto max-w-6xl">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className="space-y-6">
-              <Badge variant="secondary" className="mb-4">
-                <Zap className="mr-1 h-3 w-3" />
-                Daily planning for builders and busy operators
-              </Badge>
-              <h1 className="text-4xl font-bold tracking-tight md:text-6xl">
-                Run your projects and
-                <span className="text-primary"> know exactly what to work on every morning</span>
-              </h1>
-              <p className="text-xl text-muted-foreground">
-                Good Tasking is your daily command center for software projects, priorities, and time. Open it in the morning and get a clear plan for what matters today.
-              </p>
+            <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-slate-950 md:text-7xl md:leading-[0.98]">
+              The place for vibe coders to manage
+              <span className="text-[#16324f]"> every project and task </span>
+              in one calm workspace.
+            </h1>
 
-              <div className="my-8 grid grid-cols-1 gap-4 rounded-lg border border-border/20 bg-muted/20 p-6 sm:grid-cols-3">
-                <div className="flex items-center space-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Zap className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold">Plan Faster</h3>
-                    <p className="text-xs text-muted-foreground">Turn a messy backlog into a clear daily plan</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Target className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold">Stay Oriented</h3>
-                    <p className="text-xs text-muted-foreground">See projects, tasks, and time in one place</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                    <Calendar className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold">Sync Your Calendar</h3>
-                    <p className="text-xs text-muted-foreground">Keep meetings and focused work in the same view</p>
-                  </div>
-                </div>
-              </div>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 md:text-xl">
+              Good Tasking helps you manage client work, product ideas, bug lists, launches,
+              and side projects in one place. Add a project, store the stack, capture the tasks,
+              and keep moving.
+            </p>
 
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                <Button
-                  size="lg"
-                  className={`px-8 transition-all duration-300 hover:scale-105 hover:bg-success hover:text-success-foreground active:scale-95 ${showPulse ? "animate-pulse" : ""}`}
-                  onClick={handleGetStarted}
-                  disabled={isGetStartedLoading}
-                  aria-label="Create your workspace"
-                >
-                  {isGetStartedLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating your workspace...
-                    </>
-                  ) : (
-                    <>
-                      Start Planning My Day
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="px-8 transition-all duration-300 hover:scale-105 hover:bg-success hover:text-success-foreground active:scale-95"
-                  onClick={scrollToHowItWorks}
-                  aria-label="See how Good Tasking works"
-                >
-                  See How It Works
-                </Button>
-              </div>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button
+                size="lg"
+                className={`rounded-full bg-[#16324f] px-8 text-base text-white hover:bg-[#12273d] ${showPulse ? "animate-pulse" : ""}`}
+                onClick={handleGetStarted}
+                disabled={isGetStartedLoading}
+              >
+                {isGetStartedLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating workspace...
+                  </>
+                ) : (
+                  <>
+                    Build My Workspace
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-full border-slate-300 bg-white/80 px-8 text-base text-slate-900 hover:bg-white"
+                onClick={scrollToHowItWorks}
+              >
+                See How It Works
+              </Button>
             </div>
 
-            <div className="relative">
-              <div className="relative overflow-hidden rounded-2xl border border-border/20 bg-white shadow-2xl transition-transform duration-300 hover:rotate-0 lg:rotate-1">
-                <div className="flex items-center space-x-2 border-b border-border/20 bg-muted/30 px-4 py-3">
-                  <div className="flex space-x-2">
-                    <div className="h-3 w-3 rounded-full bg-red-500" />
-                    <div className="h-3 w-3 rounded-full bg-yellow-500" />
-                    <div className="h-3 w-3 rounded-full bg-green-500" />
-                  </div>
-                  <div className="flex-1 text-center text-sm text-muted-foreground">goodtasking.com</div>
+            <div className="mt-8 flex flex-wrap gap-2">
+              {stackExamples.map((item) => (
+                <div
+                  key={item}
+                  className="rounded-full border border-slate-300/80 bg-white/75 px-3 py-1.5 text-sm text-slate-700 shadow-sm"
+                >
+                  {item}
                 </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute -left-6 top-10 hidden h-24 w-24 rounded-full bg-[#1f9d55]/15 blur-2xl md:block" />
+            <div className="absolute -right-4 bottom-10 hidden h-32 w-32 rounded-full bg-[#16324f]/15 blur-2xl md:block" />
+
+            <div className="overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.12)]">
+              <div className="flex items-center justify-between border-b border-slate-200 bg-[#f8f6f0] px-5 py-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-3 w-3 rounded-full bg-[#ff6b57]" />
+                  <div className="h-3 w-3 rounded-full bg-[#ffbd2f]" />
+                  <div className="h-3 w-3 rounded-full bg-[#28c840]" />
+                </div>
+                <div className="rounded-full bg-white px-3 py-1 text-sm text-slate-500 shadow-sm">
+                  goodtasking.com
+                </div>
+                <div className="text-sm text-slate-400">Workspace</div>
+              </div>
+
+              <div className="grid gap-4 bg-[linear-gradient(180deg,_#f9fafb_0%,_#ffffff_100%)] p-5">
+                <div className="grid gap-4 md:grid-cols-[240px_1fr]">
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <p className="text-sm font-semibold text-slate-900">Projects</p>
+                    <div className="mt-4 space-y-3">
+                      {["Good Tasking", "Client Portal", "Launch Site"].map((project, index) => (
+                        <div
+                          key={project}
+                          className={`rounded-xl border px-3 py-2 text-sm ${
+                            index === 0
+                              ? "border-[#16324f] bg-[#16324f]/5 text-slate-900"
+                              : "border-slate-200 text-slate-600"
+                          }`}
+                        >
+                          <div className="font-medium">{project}</div>
+                          <div className="mt-1 text-xs text-slate-500">
+                            {index === 0 ? "4 open tasks · React · Supabase" : "In progress"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-semibold text-slate-900">Running Task List</p>
+                        <p className="text-xs text-slate-500">
+                          Tasks stay tied to the project they belong to.
+                        </p>
+                      </div>
+                      <div className="rounded-full bg-[#1f9d55]/10 px-3 py-1 text-xs font-medium text-[#167846]">
+                        Open work
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-3">
+                      {[
+                        ["Rewrite landing page for vibe coders", "Good Tasking"],
+                        ["Add Stripe billing state to settings", "Client Portal"],
+                        ["Choose stack for SMS reminder worker", "Launch Site"],
+                      ].map(([task, project]) => (
+                        <div key={task} className="rounded-xl border border-slate-200 px-3 py-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="font-medium text-slate-900">{task}</p>
+                              <p className="mt-1 text-xs text-slate-500">{project}</p>
+                            </div>
+                            <div className="rounded-full border border-slate-200 px-2 py-1 text-xs text-slate-500">
+                              Active
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-500">
+                      Project details live here too: logo, repo, website, and chosen tech stack.
+                    </div>
+                  </div>
+                </div>
+
                 <img
                   src={appMockup}
-                  alt="Good Tasking dashboard showing calendar, tasks organized by project, and daily planning interface"
-                  className="h-auto w-full"
+                  alt="Good Tasking app interface"
+                  className="rounded-2xl border border-slate-200"
                 />
               </div>
-              <div className="absolute -right-4 -top-4 h-8 w-8 animate-pulse rounded-full bg-primary/20" />
-              <div className="absolute -bottom-6 -left-6 h-12 w-12 animate-pulse rounded-full bg-accent/20 delay-1000" />
             </div>
           </div>
         </div>
       </section>
 
-      <section id="how-it-works" className="bg-muted/30 px-4 py-20">
-        <div className="container mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">How It Works</h2>
-            <p className="text-xl text-muted-foreground">
-              A simple rhythm for staying on top of your work
+      <section className="px-4 pb-20">
+        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+          {coreMessages.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Card key={item.title} className="rounded-[28px] border-slate-200 bg-white shadow-sm">
+                <CardContent className="p-6">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#16324f]/8 text-[#16324f]">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </section>
+
+      <section
+        id="how-it-works"
+        className="border-y border-slate-200 bg-[linear-gradient(180deg,_#fffdf8_0%,_#f7f4ec_100%)] px-4 py-20"
+      >
+        <div className="mx-auto max-w-7xl">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
+              How It Works
+            </p>
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
+              Less planning theater. More shipping.
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-slate-600">
+              Good Tasking is strongest when it acts like your home base for projects in motion:
+              not just a to-do list, and not just a planner.
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-3">
-            {workflow.map((step, index) => (
-              <Card key={step.title} className="p-6 text-center transition-shadow hover:shadow-lg">
-                <CardContent className="space-y-4">
-                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-xl font-semibold text-primary">
-                    {index + 1}
-                  </div>
-                  <h3 className="text-xl font-semibold">{step.title}</h3>
-                  <p className="text-muted-foreground">{step.description}</p>
-                </CardContent>
-              </Card>
+          <div className="mt-10 grid gap-5 md:grid-cols-2">
+            {workflow.map((item, index) => (
+              <div
+                key={item}
+                className="flex gap-4 rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm"
+              >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1f9d55]/12 text-lg font-semibold text-[#167846]">
+                  {index + 1}
+                </div>
+                <p className="pt-1 text-base leading-8 text-slate-700">{item}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
       <section className="px-4 py-20">
-        <div className="container mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Built around the real job to be done</h2>
-            <p className="text-xl text-muted-foreground">
-              Good Tasking works best when it answers three questions fast.
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
+              Why It Feels Different
             </p>
-          </div>
-
-          <div className="grid items-center gap-8 md:grid-cols-2">
-            <div className="space-y-6">
-              {pillars.map((pillar) => {
-                const Icon = pillar.icon;
-
-                return (
-                  <div key={pillar.title} className="flex items-start space-x-3">
-                    <Icon className="mt-1 h-6 w-6 text-primary" />
-                    <div>
-                      <h3 className="text-lg font-semibold">{pillar.title}</h3>
-                      <p className="text-muted-foreground">{pillar.description}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="rounded-lg bg-gradient-to-br from-primary/10 to-accent/10 p-8 text-center">
-              <CheckSquare className="mx-auto mb-4 h-24 w-24 text-primary" />
-              <h3 className="mb-2 text-2xl font-bold">One place to land every morning</h3>
-              <p className="text-muted-foreground">
-                Less hunting, less deciding, less forgetting. More clarity on the work that actually moves your projects forward.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-muted/30 px-4 py-20">
-        <div className="container mx-auto max-w-6xl">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">What Good Tasking helps you do</h2>
-            <p className="mx-auto max-w-3xl text-xl text-muted-foreground">
-              The product gets stronger when every feature supports the same daily workflow.
-            </p>
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
+              The product promise is simple: one place to manage the work around your code.
+            </h2>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {features.map((feature) => (
-              <Card key={feature} className="bg-background/80 p-6 backdrop-blur">
-                <CardContent className="flex items-start gap-3 p-0">
-                  <CheckCircle className="mt-1 h-5 w-5 shrink-0 text-primary" />
-                  <p className="text-base leading-7">{feature}</p>
-                </CardContent>
-              </Card>
-            ))}
+            {featureCards.map((card) => {
+              const Icon = card.icon;
+              return (
+                <Card key={card.title} className="rounded-[28px] border-slate-200 bg-white shadow-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#16324f]/8 text-[#16324f]">
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold text-slate-950">{card.title}</h3>
+                        <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <section className="px-4 py-20">
-        <div className="container mx-auto max-w-4xl">
-          <div className="mb-16 text-center">
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">A sharper product direction</h2>
-            <p className="text-xl text-muted-foreground">
-              The strongest version of Good Tasking is not everything for productivity. It is the place you trust to decide your next best move.
+      <section className="px-4 pb-24">
+        <div className="mx-auto max-w-7xl rounded-[36px] bg-[#16324f] px-8 py-14 text-white shadow-[0_30px_80px_rgba(22,50,79,0.25)] md:px-12">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/65">
+              Final Word
             </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card className="border-2 p-6">
-              <CardContent className="space-y-3 p-0">
-                <h3 className="text-xl font-semibold">Morning clarity</h3>
-                <p className="text-muted-foreground">
-                  Open one screen and immediately understand what deserves your energy today.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-2 p-6">
-              <CardContent className="space-y-3 p-0">
-                <h3 className="text-xl font-semibold">Project momentum</h3>
-                <p className="text-muted-foreground">
-                  Keep every active software project moving without losing the thread between sessions.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-2 p-6">
-              <CardContent className="space-y-3 p-0">
-                <h3 className="text-xl font-semibold">Time awareness</h3>
-                <p className="text-muted-foreground">
-                  Balance deep work, deadlines, and meetings so your plan matches the day you actually have.
-                </p>
-              </CardContent>
-            </Card>
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">
+              If you’re a vibe coder with too many projects open, this should feel like coming home.
+            </h2>
+            <p className="mt-5 text-lg leading-8 text-white/80">
+              Capture the project. Store the context. Add the tasks. Keep shipping without
+              rebuilding your mental model every time you switch gears.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Button
+                size="lg"
+                className="rounded-full bg-[#1f9d55] px-8 text-base text-white hover:bg-[#18874a]"
+                onClick={handleGetStarted}
+              >
+                Create My Workspace
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Link to="/login">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full rounded-full border-white/25 bg-transparent px-8 text-base text-white hover:bg-white/10 sm:w-auto"
+                >
+                  Login
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-primary/5 px-4 py-20">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="mb-6 text-3xl font-bold md:text-5xl">Start every day knowing what matters.</h2>
-          <p className="mx-auto mb-8 max-w-2xl text-xl text-muted-foreground">
-            Good Tasking should feel like opening your workday with a plan, not opening another app that demands one from you.
-          </p>
-          <Link to="/signup">
-            <Button size="lg" className="px-12 py-6 text-lg bg-success text-success-foreground hover:bg-primary hover:text-primary-foreground">
-              Create My Workspace
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
-      </section>
+      <footer className="border-t border-slate-200 px-4 py-10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-sm text-slate-500 md:flex-row">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#16324f] text-white">
+              <Target className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="font-medium text-slate-900">Good Tasking</p>
+              <p>Project OS for vibe coders</p>
+            </div>
+          </div>
 
-      <footer className="border-t border-border/40 px-4 py-12">
-        <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col items-center justify-between md:flex-row">
-            <div className="mb-4 flex items-center space-x-2 md:mb-0">
-              <Target className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">Good Tasking</span>
-            </div>
-            <div className="flex flex-col items-center space-y-2 md:flex-row md:space-x-6 md:space-y-0">
-              <div className="flex items-center space-x-4 text-sm">
-                <Link to="/privacy" className="text-muted-foreground transition-colors hover:text-primary">
-                  Privacy Policy
-                </Link>
-                <Link to="/termsofservice" className="text-muted-foreground transition-colors hover:text-primary">
-                  Terms of Service
-                </Link>
-              </div>
-              <div className="text-sm text-muted-foreground">© 2026 Good Tasking. All rights reserved.</div>
-            </div>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy" className="hover:text-slate-900">
+              Privacy
+            </Link>
+            <Link to="/termsofservice" className="hover:text-slate-900">
+              Terms
+            </Link>
           </div>
         </div>
       </footer>
