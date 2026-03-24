@@ -397,6 +397,62 @@ export type Database = {
         }
         Relationships: []
       }
+      vibe_ideas: {
+        Row: {
+          created_at: string
+          distilled_summary: string | null
+          gtm_strategy: string | null
+          id: string
+          launch_checklist: Json
+          launch_needs: string | null
+          project_id: string | null
+          raw_idea: string
+          status: string
+          suggested_tech_stack: string[]
+          title: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          distilled_summary?: string | null
+          gtm_strategy?: string | null
+          id?: string
+          launch_checklist?: Json
+          launch_needs?: string | null
+          project_id?: string | null
+          raw_idea: string
+          status?: string
+          suggested_tech_stack?: string[]
+          title?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          distilled_summary?: string | null
+          gtm_strategy?: string | null
+          id?: string
+          launch_checklist?: Json
+          launch_needs?: string | null
+          project_id?: string | null
+          raw_idea?: string
+          status?: string
+          suggested_tech_stack?: string[]
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vibe_ideas_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "vibe_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vibe_tasks: {
         Row: {
           completed: boolean

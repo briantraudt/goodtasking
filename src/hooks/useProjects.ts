@@ -30,16 +30,31 @@ export interface Project {
   tasks: Task[];
 }
 
+export interface Idea {
+  id: string;
+  title?: string | null;
+  rawIdea: string;
+  distilledSummary?: string | null;
+  gtmStrategy?: string | null;
+  launchNeeds: string[];
+  launchChecklist: string[];
+  suggestedTechStack: string[];
+  status: string;
+  projectId?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useProjects = () => {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const fetchProjects = async () => {
+  const fetchWorkspace = async () => {
     if (!user) return;
 
     try {
-      // Fetch projects
       const { data: projectsData, error: projectsError } = await supabase
         .from('vibe_projects')
         .select('*')
@@ -47,7 +62,6 @@ export const useProjects = () => {
 
       if (projectsError) throw projectsError;
 
-      // Fetch tasks for all projects
       const { data: tasksData, error: tasksError } = await supabase
         .from('vibe_tasks')
         .select('*')
@@ -55,7 +69,13 @@ export const useProjects = () => {
 
       if (tasksError) throw tasksError;
 
-      // Combine projects with their tasks and convert scheduled_day to scheduledDay
+      const { data: ideasData, error: ideasError } = await supabase
+        .from('vibe_ideas')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (ideasError) throw ideasError;
+
       const projectsWithTasks = projectsData.map(project => ({
         ...project,
         category: project.category || 'work',
@@ -64,8 +84,33 @@ export const useProjects = () => {
       }));
 
       setProjects(projectsWithTasks);
+      setIdeas(
+        (ideasData || []).map((idea) => ({
+          id: idea.id,
+          title: idea.title,
+          rawIdea: idea.raw_idea,
+          distilledSummary: idea.distilled_summary,
+          gtmStrategy: idea.gtm_strategy,
+          launchNeeds: Array.isArray(idea.launch_needs)
+            ? idea.launch_needs
+            : typeof idea.launch_needs === 'string'
+              ? idea.launch_needs
+                  .split('\n')
+                  .map((item) => item.replace(/^-\s*/, '').trim())
+                  .filter(Boolean)
+              : [],
+          launchChecklist: Array.isArray(idea.launch_checklist)
+            ? idea.launch_checklist.map((item) => String(item))
+            : [],
+          suggestedTechStack: idea.suggested_tech_stack || [],
+          status: idea.status,
+          projectId: idea.project_id,
+          created_at: idea.created_at,
+          updated_at: idea.updated_at,
+        }))
+      );
     } catch (error: any) {
-      console.error('Error loading projects:', error);
+      console.error('Error loading workspace:', error);
     } finally {
       setLoading(false);
     }
@@ -213,6 +258,182 @@ export const useProjects = () => {
     }
   };
 
+  const createIdea = async (idea: {
+    title?: string;
+    rawIdea: string;
+    distilledSummary?: string;
+    gtmStrategy?: string;
+    launchNeeds?: string[];
+    launchChecklist?: string[];
+    suggestedTechStack?: string[];
+    status?: string;
+  }) => {
+    if (!user) return null;
+
+    try {
+      const payload = {
+        user_id: user.id,
+        title: idea.title?.trim() || null,
+        raw_idea: idea.rawIdea.trim(),
+        distilled_summary: idea.distilledSummary?.trim() || null,
+        gtm_strategy: idea.gtmStrategy?.trim() || null,
+        launch_needs: (idea.launchNeeds || []).join('\n'),
+        launch_checklist: idea.launchChecklist || [],
+        suggested_tech_stack: idea.suggestedTechStack || [],
+        status: idea.status || 'draft',
+      };
+
+      const { data, error } = await supabase
+        .from('vibe_ideas')
+        .insert([payload])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const newIdea: Idea = {
+        id: data.id,
+        title: data.title,
+        rawIdea: data.raw_idea,
+        distilledSummary: data.distilled_summary,
+        gtmStrategy: data.gtm_strategy,
+        launchNeeds: (idea.launchNeeds || []).filter(Boolean),
+        launchChecklist: Array.isArray(data.launch_checklist)
+          ? data.launch_checklist.map((item) => String(item))
+          : [],
+        suggestedTechStack: data.suggested_tech_stack || [],
+        status: data.status,
+        projectId: data.project_id,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      };
+
+      setIdeas((current) => [newIdea, ...current]);
+      return newIdea;
+    } catch (error: any) {
+      console.error('Error creating idea:', error);
+      return null;
+    }
+  };
+
+  const updateIdea = async (
+    id: string,
+    updates: Partial<{
+      title: string | null;
+      rawIdea: string;
+      distilledSummary: string | null;
+      gtmStrategy: string | null;
+      launchNeeds: string[];
+      launchChecklist: string[];
+      suggestedTechStack: string[];
+      status: string;
+      projectId: string | null;
+    }>
+  ) => {
+    if (!user) return;
+
+    try {
+      const dbUpdates: Record<string, unknown> = {};
+
+      if ('title' in updates) dbUpdates.title = updates.title?.trim() || null;
+      if ('rawIdea' in updates) dbUpdates.raw_idea = updates.rawIdea?.trim() || '';
+      if ('distilledSummary' in updates) dbUpdates.distilled_summary = updates.distilledSummary?.trim() || null;
+      if ('gtmStrategy' in updates) dbUpdates.gtm_strategy = updates.gtmStrategy?.trim() || null;
+      if ('launchNeeds' in updates) dbUpdates.launch_needs = (updates.launchNeeds || []).join('\n');
+      if ('launchChecklist' in updates) dbUpdates.launch_checklist = updates.launchChecklist || [];
+      if ('suggestedTechStack' in updates) dbUpdates.suggested_tech_stack = updates.suggestedTechStack || [];
+      if ('status' in updates) dbUpdates.status = updates.status;
+      if ('projectId' in updates) dbUpdates.project_id = updates.projectId;
+
+      const { error } = await supabase
+        .from('vibe_ideas')
+        .update(dbUpdates)
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setIdeas((current) =>
+        current.map((idea) =>
+          idea.id === id
+            ? {
+                ...idea,
+                ...updates,
+                title: 'title' in updates ? updates.title : idea.title,
+                rawIdea: 'rawIdea' in updates ? updates.rawIdea || '' : idea.rawIdea,
+                distilledSummary: 'distilledSummary' in updates ? updates.distilledSummary : idea.distilledSummary,
+                gtmStrategy: 'gtmStrategy' in updates ? updates.gtmStrategy : idea.gtmStrategy,
+                launchNeeds: 'launchNeeds' in updates ? updates.launchNeeds || [] : idea.launchNeeds,
+                launchChecklist: 'launchChecklist' in updates ? updates.launchChecklist || [] : idea.launchChecklist,
+                suggestedTechStack:
+                  'suggestedTechStack' in updates ? updates.suggestedTechStack || [] : idea.suggestedTechStack,
+                status: 'status' in updates ? updates.status || idea.status : idea.status,
+                projectId: 'projectId' in updates ? updates.projectId : idea.projectId,
+              }
+            : idea
+        )
+      );
+    } catch (error: any) {
+      console.error('Error updating idea:', error);
+    }
+  };
+
+  const deleteIdea = async (id: string) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase.from('vibe_ideas').delete().eq('id', id);
+      if (error) throw error;
+      setIdeas((current) => current.filter((idea) => idea.id !== id));
+    } catch (error: any) {
+      console.error('Error deleting idea:', error);
+    }
+  };
+
+  const convertIdeaToProject = async (ideaId: string) => {
+    if (!user) return null;
+
+    const idea = ideas.find((item) => item.id === ideaId);
+    if (!idea) return null;
+
+    try {
+      const { data: project, error: projectError } = await supabase
+        .from('vibe_projects')
+        .insert([
+          {
+            user_id: user.id,
+            name: idea.title?.trim() || 'New project',
+            description: idea.distilledSummary?.trim() || idea.rawIdea.trim(),
+            category: 'work',
+            tech_stack: idea.suggestedTechStack || [],
+          },
+        ])
+        .select()
+        .single();
+
+      if (projectError) throw projectError;
+
+      const checklist = idea.launchChecklist.filter(Boolean);
+      if (checklist.length > 0) {
+        const { error: tasksError } = await supabase.from('vibe_tasks').insert(
+          checklist.map((title) => ({
+            user_id: user.id,
+            project_id: project.id,
+            title,
+          }))
+        );
+
+        if (tasksError) throw tasksError;
+      }
+
+      await updateIdea(idea.id, { status: 'converted', projectId: project.id });
+      await fetchWorkspace();
+      return project;
+    } catch (error: any) {
+      console.error('Error converting idea to project:', error);
+      return null;
+    }
+  };
+
   const updateTask = async (id: string, updates: Partial<Task>) => {
     if (!user) return;
 
@@ -257,7 +478,7 @@ export const useProjects = () => {
 
   useEffect(() => {
     if (user) {
-      fetchProjects();
+      fetchWorkspace();
       // Update last login date when user logs in
       updateLastLogin();
     }
@@ -280,13 +501,18 @@ export const useProjects = () => {
 
   return {
     projects,
+    ideas,
     loading,
     createProject,
     updateProject,
     deleteProject,
+    createIdea,
+    updateIdea,
+    deleteIdea,
+    convertIdeaToProject,
     createTask,
     updateTask,
     deleteTask,
-    refetch: fetchProjects,
+    refetch: fetchWorkspace,
   };
 };

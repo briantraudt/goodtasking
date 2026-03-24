@@ -7,10 +7,15 @@ import { CalendarCheck } from 'lucide-react';
 const Index = () => {
   const { 
     projects, 
+    ideas,
     loading, 
     createProject, 
     updateProject,
     deleteProject,
+    createIdea,
+    updateIdea,
+    deleteIdea,
+    convertIdeaToProject,
     createTask,
     updateTask,
     deleteTask
@@ -47,6 +52,7 @@ const Index = () => {
         <div className="w-full lg:max-w-app mx-auto px-4 lg:px-6 py-6">
           <SimpleWorkspace
             projects={projects}
+            ideas={ideas}
             onCreateProject={async (data) => {
               await createProject(
                 data.name,
@@ -61,6 +67,12 @@ const Index = () => {
             }}
             onUpdateProject={updateProject}
             onDeleteProject={deleteProject}
+            onCreateIdea={createIdea}
+            onUpdateIdea={updateIdea}
+            onDeleteIdea={deleteIdea}
+            onConvertIdea={async (id) => {
+              await convertIdeaToProject(id);
+            }}
             onCreateTask={createTask}
             onUpdateTask={updateTask}
             onDeleteTask={deleteTask}
