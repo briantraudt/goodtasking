@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import {
   Bot,
+  Calendar,
   CheckCircle2,
   FolderKanban,
   Globe,
@@ -75,6 +76,7 @@ const SimpleWorkspace = ({
   const [taskFilter, setTaskFilter] = useState<'open' | 'all' | 'completed'>('open');
   const [quickTaskTitle, setQuickTaskTitle] = useState('');
   const [quickTaskProjectId, setQuickTaskProjectId] = useState('');
+  const [quickTaskDueDate, setQuickTaskDueDate] = useState('');
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
   const [isIdeaDialogOpen, setIsIdeaDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -129,9 +131,12 @@ const SimpleWorkspace = ({
     const projectId = selectedProjectId !== 'all' ? selectedProjectId : quickTaskProjectId;
     if (!quickTaskTitle.trim() || !projectId) return;
 
-    await onCreateTask(projectId, quickTaskTitle.trim());
+    const dueDate = quickTaskDueDate ? new Date(`${quickTaskDueDate}T12:00:00`) : undefined;
+
+    await onCreateTask(projectId, quickTaskTitle.trim(), undefined, dueDate);
     setQuickTaskTitle('');
     setQuickTaskProjectId('');
+    setQuickTaskDueDate('');
   };
 
   return (
@@ -350,7 +355,7 @@ const SimpleWorkspace = ({
                 </div>
               )}
 
-              <div className="grid gap-3 rounded-2xl bg-muted/20 p-4 md:grid-cols-[1fr_220px_auto]">
+              <div className="grid gap-3 rounded-2xl bg-muted/20 p-4 md:grid-cols-[minmax(0,1fr)_180px_220px_auto]">
                 <div className="space-y-2">
                   <Label htmlFor="quick-task-title" className="text-xs uppercase tracking-wide text-muted-foreground">
                     Add Task
@@ -367,6 +372,21 @@ const SimpleWorkspace = ({
                       }
                     }}
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quick-task-date" className="text-xs uppercase tracking-wide text-muted-foreground">
+                    Date
+                  </Label>
+                  <div className="relative">
+                    <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      id="quick-task-date"
+                      type="date"
+                      value={quickTaskDueDate}
+                      onChange={(event) => setQuickTaskDueDate(event.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs uppercase tracking-wide text-muted-foreground">Project</Label>
@@ -408,18 +428,26 @@ const SimpleWorkspace = ({
                           onCheckedChange={(checked) =>
                             onUpdateTask(task.id, { completed: checked === true })
                           }
-                          className="mt-1"
+                          className="mt-1 h-5 w-5 rounded-md"
                         />
                         <div className="min-w-0">
                           <p className={`${task.completed ? 'text-muted-foreground line-through' : 'font-medium text-slate-950'}`}>
                             {task.title}
                           </p>
                           <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                            <Badge variant="outline" className="rounded-full">
+                            <Badge
+                              variant="outline"
+                              className="rounded-full border-0"
+                              style={{
+                                backgroundColor: `${task.projectColor}1A`,
+                                color: task.projectColor,
+                              }}
+                            >
                               {task.projectName}
                             </Badge>
                             {task.due_date && (
                               <Badge variant="secondary" className="rounded-full">
+                                <Calendar className="mr-1 h-3 w-3" />
                                 Due {format(new Date(`${task.due_date}T12:00:00`), 'MMM d')}
                               </Badge>
                             )}
