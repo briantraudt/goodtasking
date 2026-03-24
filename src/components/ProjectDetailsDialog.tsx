@@ -237,65 +237,61 @@ export default function ProjectDetailsDialog({
 
             <div className="space-y-2">
               <Label>Project Asset / Logo</Label>
-              <div className="rounded-xl border p-3">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border bg-muted">
-                    {formState.logoUrl ? (
-                      <img
-                        src={formState.logoUrl}
-                        alt="Project logo preview"
-                        className="h-full w-full object-cover"
-                      />
+              <div className="flex items-center gap-3 rounded-2xl border bg-muted/10 p-3">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-background">
+                  {formState.logoUrl ? (
+                    <img
+                      src={formState.logoUrl}
+                      alt="Project logo preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <ImagePlus className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </div>
+
+                <div className="flex flex-1 flex-wrap items-center gap-2">
+                  <Label
+                    htmlFor="project-logo-upload"
+                    className="inline-flex cursor-pointer items-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                  >
+                    {isUploadingLogo ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Uploading...
+                      </>
                     ) : (
-                      <ImagePlus className="h-6 w-6 text-muted-foreground" />
+                      <>
+                        <ImagePlus className="mr-2 h-4 w-4" />
+                        Upload Asset
+                      </>
                     )}
-                  </div>
-                  <div className="min-w-0 flex-1 space-y-2">
-                    <p className="text-sm text-muted-foreground">
-                      Upload a logo or visual asset for this project. PNG, JPG, WEBP, or SVG all work well.
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <Label
-                        htmlFor="project-logo-upload"
-                        className="inline-flex cursor-pointer items-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-                      >
-                        {isUploadingLogo ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Uploading...
-                          </>
-                        ) : (
-                          <>
-                            <ImagePlus className="mr-2 h-4 w-4" />
-                            Upload Asset
-                          </>
-                        )}
-                      </Label>
-                      <input
-                        id="project-logo-upload"
-                        type="file"
-                        accept="image/png,image/jpeg,image/webp,image/svg+xml"
-                        className="hidden"
-                        onChange={(event) => {
-                          const file = event.target.files?.[0];
-                          if (file) {
-                            void uploadLogo(file);
-                          }
-                          event.currentTarget.value = '';
-                        }}
-                      />
-                      {formState.logoUrl && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setFormState((prev) => ({ ...prev, logoUrl: '' }))}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Remove
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+                  </Label>
+                  <input
+                    id="project-logo-upload"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                    className="hidden"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) {
+                        void uploadLogo(file);
+                      }
+                      event.currentTarget.value = '';
+                    }}
+                  />
+                  {formState.logoUrl && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-9 px-3 text-muted-foreground hover:text-foreground"
+                      onClick={() => setFormState((prev) => ({ ...prev, logoUrl: '' }))}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Remove
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
