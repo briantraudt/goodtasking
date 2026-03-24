@@ -111,22 +111,22 @@ const Landing = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#08121f] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-white text-slate-950">
 
-      <nav className="sticky top-0 z-20 border-b border-white/10 bg-[#07111f]/70 backdrop-blur">
+      <nav className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/85 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-[#08121f] shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-sm">
               <Target className="h-5 w-5" />
             </div>
             <div>
               <p className="text-lg font-semibold tracking-tight">Good Tasking</p>
-              <p className="text-xs text-white/55">Project OS for vibe coders</p>
+              <p className="text-xs text-slate-500">Project OS for vibe coders</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/login" className="hidden text-sm font-medium text-white/70 hover:text-white md:inline">
+            <Link to="/login" className="hidden text-sm font-medium text-slate-600 hover:text-slate-950 md:inline">
               Login
             </Link>
             <Button
@@ -150,11 +150,11 @@ const Landing = () => {
       >
         <div className="mx-auto flex max-w-7xl items-center py-16 md:min-h-[62vh] md:py-28">
           <div className="max-w-4xl text-center lg:text-left">
-            <h1 className="text-5xl font-semibold tracking-tight text-white drop-shadow-[0_12px_36px_rgba(0,0,0,0.45)] md:text-7xl md:leading-[0.98]">
+            <h1 className="text-5xl font-semibold tracking-tight text-slate-950 md:text-7xl md:leading-[0.98]">
               One place for vibe coders to manage every project and task.
             </h1>
 
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)] md:text-xl lg:mx-0">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-800 md:text-xl lg:mx-0">
               Good Tasking gives you a calm home base for active software projects, open tasks,
               and the details that help you pick work back up fast.
             </p>
@@ -167,13 +167,13 @@ const Landing = () => {
           {coreMessages.map((item) => {
             const Icon = item.icon;
             return (
-              <Card key={item.title} className="rounded-[28px] border-white/10 bg-white/6 shadow-sm backdrop-blur">
+              <Card key={item.title} className="rounded-[28px] border-slate-200 bg-white shadow-sm">
                 <CardContent className="p-6">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-slate-950">
                     <Icon className="h-6 w-6" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-white/68">{item.description}</p>
+                  <h3 className="text-xl font-semibold text-slate-950">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.description}</p>
                 </CardContent>
               </Card>
             );
@@ -183,17 +183,17 @@ const Landing = () => {
 
       <section
         id="how-it-works"
-        className="border-y border-white/10 bg-white/[0.03] px-4 py-20 backdrop-blur"
+        className="border-y border-slate-200 bg-slate-50 px-4 py-20"
       >
         <div className="mx-auto max-w-7xl">
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/50">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
               How It Works
             </p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-white md:text-5xl">
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
               Less planning theater. More shipping.
             </h2>
-            <p className="mt-4 text-lg leading-8 text-white/68">
+            <p className="mt-4 text-lg leading-8 text-slate-600">
               Good Tasking is strongest when it acts like your home base for projects in motion:
               not just a to-do list, and not just a planner.
             </p>
@@ -203,12 +203,12 @@ const Landing = () => {
             {workflow.map((item, index) => (
               <div
                 key={item}
-                className="flex gap-4 rounded-[28px] border border-white/10 bg-white/6 p-6 shadow-sm backdrop-blur"
+                className="flex gap-4 rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm"
               >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#1f9d55]/12 text-lg font-semibold text-[#167846]">
                   {index + 1}
                 </div>
-                <p className="pt-1 text-base leading-8 text-white/76">{item}</p>
+                <p className="pt-1 text-base leading-8 text-slate-700">{item}</p>
               </div>
             ))}
           </div>
@@ -218,10 +218,10 @@ const Landing = () => {
       <section className="px-4 py-20">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/50">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
               Why It Feels Different
             </p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-white md:text-5xl">
+            <h2 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
               The product promise is simple: one place to manage the work around your code.
             </h2>
           </div>
@@ -230,15 +230,15 @@ const Landing = () => {
             {featureCards.map((card) => {
               const Icon = card.icon;
               return (
-                <Card key={card.title} className="rounded-[28px] border-white/10 bg-white/6 shadow-sm backdrop-blur">
+                <Card key={card.title} className="rounded-[28px] border-slate-200 bg-white shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-white">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-950">
                         <Icon className="h-6 w-6" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-white">{card.title}</h3>
-                        <p className="mt-3 text-sm leading-7 text-white/68">{card.description}</p>
+                        <h3 className="text-xl font-semibold text-slate-950">{card.title}</h3>
+                        <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -250,7 +250,7 @@ const Landing = () => {
       </section>
 
       <section className="px-4 pb-24">
-        <div className="mx-auto max-w-7xl rounded-[36px] border border-white/10 bg-white/8 px-8 py-14 text-white shadow-[0_30px_80px_rgba(5,10,20,0.35)] backdrop-blur md:px-12">
+        <div className="mx-auto max-w-7xl rounded-[36px] bg-slate-950 px-8 py-14 text-white shadow-[0_30px_80px_rgba(15,23,42,0.2)] md:px-12">
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/65">
               Final Word
@@ -285,23 +285,23 @@ const Landing = () => {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 px-4 py-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-sm text-white/55 md:flex-row">
+      <footer className="border-t border-slate-200 px-4 py-10">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 text-sm text-slate-500 md:flex-row">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/10 text-white">
+            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-slate-950 text-white">
               <Target className="h-4 w-4" />
             </div>
             <div>
-              <p className="font-medium text-white">Good Tasking</p>
+              <p className="font-medium text-slate-950">Good Tasking</p>
               <p>Project OS for vibe coders</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <Link to="/privacy" className="hover:text-white">
+            <Link to="/privacy" className="hover:text-slate-950">
               Privacy
             </Link>
-            <Link to="/termsofservice" className="hover:text-white">
+            <Link to="/termsofservice" className="hover:text-slate-950">
               Terms
             </Link>
           </div>
