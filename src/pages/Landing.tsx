@@ -111,7 +111,7 @@ const Landing = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#07111f] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-[#08121f] text-white">
       <div
         className="absolute inset-0 -z-20 bg-cover bg-center bg-no-repeat opacity-20"
         style={{ backgroundImage: `url(${appMockup})` }}
@@ -150,17 +150,18 @@ const Landing = () => {
             src={appMockup}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-35 blur-[2px]"
+            className="absolute left-1/2 top-0 h-[110%] w-[125%] max-w-none -translate-x-1/2 object-cover object-top opacity-60 blur-[1px] brightness-110 saturate-110"
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.18),_transparent_32%),radial-gradient(circle_at_75%_20%,_rgba(31,157,85,0.2),_transparent_28%),linear-gradient(180deg,rgba(7,17,31,0.58)_0%,rgba(7,17,31,0.72)_38%,rgba(7,17,31,0.9)_100%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-[#07111f]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.16),_transparent_30%),radial-gradient(circle_at_78%_18%,_rgba(31,157,85,0.16),_transparent_24%),linear-gradient(180deg,rgba(8,18,31,0.28)_0%,rgba(8,18,31,0.44)_28%,rgba(8,18,31,0.72)_62%,rgba(8,18,31,0.92)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,18,31,0.78)_0%,rgba(8,18,31,0.52)_35%,rgba(8,18,31,0.38)_60%,rgba(8,18,31,0.68)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-b from-transparent to-[#08121f]" />
         </div>
-        <div className="mx-auto max-w-5xl py-12 text-center md:py-20">
-          <h1 className="mx-auto max-w-4xl text-5xl font-semibold tracking-tight text-white md:text-7xl md:leading-[0.98]">
+        <div className="mx-auto max-w-6xl py-12 text-center md:py-24">
+          <h1 className="mx-auto max-w-4xl text-5xl font-semibold tracking-tight text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] md:text-7xl md:leading-[0.98]">
             One place for vibe coders to manage every project and task.
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/72 md:text-xl">
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/80 drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] md:text-xl">
             Good Tasking gives you a calm home base for active software projects, open tasks,
             and the details that help you pick work back up fast.
           </p>
