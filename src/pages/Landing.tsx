@@ -112,7 +112,13 @@ const Landing = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#08121f] text-white">
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.12),_transparent_28%),radial-gradient(circle_at_75%_18%,_rgba(31,157,85,0.16),_transparent_24%),linear-gradient(180deg,_#08121f_0%,_#091523_100%)]" />
+      <img
+        src={homepageBackground}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover object-top brightness-[1.95] contrast-[1.28] saturate-[1.35]"
+      />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.06),_transparent_24%),radial-gradient(circle_at_72%_28%,_rgba(255,53,94,0.08),_transparent_20%)]" />
 
       <nav className="sticky top-0 z-20 border-b border-white/10 bg-[#07111f]/70 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
@@ -141,15 +147,6 @@ const Landing = () => {
       </nav>
 
       <section className="relative min-h-[72vh] overflow-hidden px-4 pb-20 pt-20">
-        <div className="absolute inset-0 -z-10">
-          <img
-            src={homepageBackground}
-            alt=""
-            aria-hidden="true"
-            className="h-full w-full object-cover object-center"
-          />
-        </div>
-
         <div className="mx-auto flex max-w-7xl items-center py-16 md:min-h-[62vh] md:py-28">
           <div className="max-w-4xl text-center lg:text-left">
             <h1 className="text-5xl font-semibold tracking-tight text-white drop-shadow-[0_12px_36px_rgba(0,0,0,0.45)] md:text-7xl md:leading-[0.98]">
