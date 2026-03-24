@@ -113,25 +113,24 @@ const Landing = () => {
   return (
     <div className="relative min-h-screen overflow-hidden bg-white text-slate-950">
 
-      <nav className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+      <nav className="sticky top-0 z-20 border-b border-white/10 bg-[#07111f]/55 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-slate-950 shadow-sm">
               <Target className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-lg font-semibold tracking-tight">Good Tasking</p>
-              <p className="text-xs text-slate-500">Project OS for vibe coders</p>
+              <p className="text-lg font-semibold tracking-tight text-white">Good Tasking</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <Link to="/login" className="hidden text-sm font-medium text-slate-600 hover:text-slate-950 md:inline">
+            <Link to="/login" className="hidden text-sm font-medium text-white/80 hover:text-white md:inline">
               Login
             </Link>
             <Button
               onClick={handleGetStarted}
-              className="rounded-full bg-[#1f9d55] px-5 text-white hover:bg-[#18874a]"
+              className="rounded-full bg-white px-5 text-slate-950 hover:bg-slate-100"
             >
               Get Started
             </Button>
@@ -148,13 +147,14 @@ const Landing = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,31,0.46)_0%,rgba(7,17,31,0.38)_26%,rgba(7,17,31,0.48)_62%,rgba(7,17,31,0.72)_100%)]" />
         <div className="mx-auto flex max-w-7xl items-center py-16 md:min-h-[62vh] md:py-28">
-          <div className="max-w-4xl text-center lg:text-left">
-            <h1 className="text-5xl font-semibold tracking-tight text-slate-950 md:text-7xl md:leading-[0.98]">
+          <div className="relative max-w-4xl text-center lg:text-left">
+            <h1 className="text-5xl font-semibold tracking-tight text-white drop-shadow-[0_12px_36px_rgba(0,0,0,0.45)] md:text-7xl md:leading-[0.98]">
               One place for vibe coders to manage every project and task.
             </h1>
 
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-800 md:text-xl lg:mx-0">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/92 drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)] md:text-xl lg:mx-0">
               Good Tasking gives you a calm home base for active software projects, open tasks,
               and the details that help you pick work back up fast.
             </p>
