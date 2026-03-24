@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import appMockup from "@/assets/app-mockup.png";
+import homepageBackground from "@/assets/homepage-background.avif";
 
 const coreMessages = [
   {
@@ -117,7 +117,7 @@ const Landing = () => {
       <nav className="sticky top-0 z-20 border-b border-white/10 bg-[#07111f]/70 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-white shadow-sm ring-1 ring-white/10">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-[#08121f] shadow-sm">
               <Target className="h-5 w-5" />
             </div>
             <div>
@@ -141,28 +141,28 @@ const Landing = () => {
       </nav>
 
       <section className="relative overflow-hidden px-4 pb-20 pt-20">
-        <div className="absolute inset-y-0 right-0 -z-10 hidden w-[56%] lg:block">
-          <div className="absolute inset-y-10 right-[-6%] w-full rounded-[36px] border border-white/10 bg-white/5 shadow-[0_40px_120px_rgba(0,0,0,0.45)] backdrop-blur-sm">
-            <img
-              src={appMockup}
-              alt=""
-              aria-hidden="true"
-              className="h-full w-full rounded-[36px] object-cover object-top"
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#08121f] via-[#08121f]/72 to-transparent" />
+        <div className="absolute inset-0 -z-10">
+          <img
+            src={homepageBackground}
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,18,31,0.44)_0%,rgba(8,18,31,0.5)_24%,rgba(8,18,31,0.68)_58%,rgba(8,18,31,0.88)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_28%),radial-gradient(circle_at_75%_18%,_rgba(31,157,85,0.18),_transparent_24%)]" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-[#08121f]" />
         </div>
 
-        <div className="mx-auto max-w-6xl py-12 md:py-24">
-          <div className="max-w-3xl text-center lg:text-left">
-          <h1 className="text-5xl font-semibold tracking-tight text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] md:text-7xl md:leading-[0.98]">
-            One place for vibe coders to manage every project and task.
-          </h1>
+        <div className="mx-auto max-w-7xl py-16 md:py-28">
+          <div className="max-w-4xl text-center">
+            <h1 className="text-5xl font-semibold tracking-tight text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] md:text-7xl md:leading-[0.98]">
+              One place for vibe coders to manage every project and task.
+            </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/80 drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] md:mx-0 md:text-xl">
-            Good Tasking gives you a calm home base for active software projects, open tasks,
-            and the details that help you pick work back up fast.
-          </p>
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/90 drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] md:text-xl">
+              Good Tasking gives you a calm home base for active software projects, open tasks,
+              and the details that help you pick work back up fast.
+            </p>
           </div>
         </div>
       </section>
