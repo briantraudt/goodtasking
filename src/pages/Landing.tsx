@@ -140,7 +140,7 @@ const Landing = () => {
         </div>
       </nav>
 
-      <section className="relative overflow-hidden px-4 pb-20 pt-20">
+      <section className="relative min-h-[72vh] overflow-hidden px-4 pb-20 pt-20">
         <div className="absolute inset-0 -z-10">
           <img
             src={homepageBackground}
@@ -148,18 +148,15 @@ const Landing = () => {
             aria-hidden="true"
             className="h-full w-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,18,31,0.44)_0%,rgba(8,18,31,0.5)_24%,rgba(8,18,31,0.68)_58%,rgba(8,18,31,0.88)_100%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_28%),radial-gradient(circle_at_75%_18%,_rgba(31,157,85,0.18),_transparent_24%)]" />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-[#08121f]" />
         </div>
 
-        <div className="mx-auto max-w-7xl py-16 md:py-28">
-          <div className="max-w-4xl text-center">
-            <h1 className="text-5xl font-semibold tracking-tight text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] md:text-7xl md:leading-[0.98]">
+        <div className="mx-auto flex max-w-7xl items-center py-16 md:min-h-[62vh] md:py-28">
+          <div className="max-w-4xl text-center lg:text-left">
+            <h1 className="text-5xl font-semibold tracking-tight text-white drop-shadow-[0_12px_36px_rgba(0,0,0,0.45)] md:text-7xl md:leading-[0.98]">
               One place for vibe coders to manage every project and task.
             </h1>
 
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white/90 drop-shadow-[0_8px_24px_rgba(0,0,0,0.25)] md:text-xl">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)] md:text-xl lg:mx-0">
               Good Tasking gives you a calm home base for active software projects, open tasks,
               and the details that help you pick work back up fast.
             </p>
