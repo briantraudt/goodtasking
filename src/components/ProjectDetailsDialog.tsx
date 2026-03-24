@@ -238,17 +238,15 @@ export default function ProjectDetailsDialog({
             <div className="space-y-2">
               <Label>Project Asset / Logo</Label>
               <div className="flex items-center gap-3 rounded-2xl border bg-muted/10 p-3">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-background">
-                  {formState.logoUrl ? (
+                {formState.logoUrl && (
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border bg-background">
                     <img
                       src={formState.logoUrl}
                       alt="Project logo preview"
                       className="h-full w-full object-cover"
                     />
-                  ) : (
-                    <ImagePlus className="h-5 w-5 text-muted-foreground" />
-                  )}
-                </div>
+                  </div>
+                )}
 
                 <div className="flex flex-1 flex-wrap items-center gap-2">
                   <Label
