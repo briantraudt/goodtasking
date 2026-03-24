@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react';
 import { format } from 'date-fns';
 import {
+  Bot,
   CheckCircle2,
   FolderKanban,
   Globe,
   Link as LinkIcon,
   Pencil,
   Plus,
+  Sparkles,
   Trash2,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -16,14 +18,40 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Project, Task } from '@/hooks/useProjects';
+import type { Idea, Project, Task } from '@/hooks/useProjects';
+import AddIdeaDialog from '@/components/AddIdeaDialog';
 import ProjectDetailsDialog, { EditableProjectDetails } from '@/components/ProjectDetailsDialog';
 
 interface SimpleWorkspaceProps {
   projects: Project[];
+  ideas: Idea[];
   onCreateProject: (data: EditableProjectDetails) => Promise<void>;
   onUpdateProject: (id: string, updates: Partial<Project>) => Promise<void>;
   onDeleteProject: (id: string) => Promise<void>;
+  onCreateIdea: (idea: {
+    id?: string;
+    title?: string;
+    rawIdea: string;
+    distilledSummary?: string;
+    gtmStrategy?: string;
+    launchNeeds?: string[];
+    launchChecklist?: string[];
+    suggestedTechStack?: string[];
+    status?: string;
+  }) => Promise<Idea | null | void>;
+  onUpdateIdea: (id: string, updates: {
+    title?: string | null;
+    rawIdea?: string;
+    distilledSummary?: string | null;
+    gtmStrategy?: string | null;
+    launchNeeds?: string[];
+    launchChecklist?: string[];
+    suggestedTechStack?: string[];
+    status?: string;
+    projectId?: string | null;
+  }) => Promise<void>;
+  onDeleteIdea: (id: string) => Promise<void>;
+  onConvertIdea: (id: string) => Promise<void>;
   onCreateTask: (projectId: string, title: string, description?: string, dueDate?: Date) => Promise<void>;
   onUpdateTask: (id: string, updates: Partial<Task>) => void | Promise<void>;
   onDeleteTask: (id: string) => Promise<void>;
@@ -31,9 +59,14 @@ interface SimpleWorkspaceProps {
 
 const SimpleWorkspace = ({
   projects,
+  ideas,
   onCreateProject,
   onUpdateProject,
   onDeleteProject,
+  onCreateIdea,
+  onUpdateIdea,
+  onDeleteIdea,
+  onConvertIdea,
   onCreateTask,
   onUpdateTask,
   onDeleteTask,
@@ -43,7 +76,9 @@ const SimpleWorkspace = ({
   const [quickTaskTitle, setQuickTaskTitle] = useState('');
   const [quickTaskProjectId, setQuickTaskProjectId] = useState('');
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
+  const [isIdeaDialogOpen, setIsIdeaDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editingIdea, setEditingIdea] = useState<Idea | null>(null);
 
   const allTasks = useMemo(
     () =>
@@ -108,10 +143,23 @@ const SimpleWorkspace = ({
               <FolderKanban className="h-5 w-5 text-primary" />
               <CardTitle className="text-2xl">Projects</CardTitle>
             </div>
-            <Button onClick={() => setIsCreateProjectOpen(true)} className="justify-start rounded-xl">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Project
-            </Button>
+            <div className="grid gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingIdea(null);
+                  setIsIdeaDialogOpen(true);
+                }}
+                className="justify-start rounded-xl"
+              >
+                <Bot className="mr-2 h-4 w-4" />
+                Add Idea
+              </Button>
+              <Button onClick={() => setIsCreateProjectOpen(true)} className="justify-start rounded-xl">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Project
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-2 pt-0">
             <button
@@ -123,12 +171,9 @@ const SimpleWorkspace = ({
                   : 'border-transparent hover:bg-muted/50'
               }`}
             >
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="font-medium">All Projects</p>
-                  <p className="text-sm text-muted-foreground">Everything in one list</p>
-                </div>
-                <Badge variant="secondary">{allTasks.filter((task) => !task.completed).length}</Badge>
+              <div>
+                <p className="font-medium">All Projects</p>
+                <p className="text-sm text-muted-foreground">Everything in one list</p>
               </div>
             </button>
 
@@ -190,6 +235,40 @@ const SimpleWorkspace = ({
                 )}
               </button>
             ))}
+
+            {ideas.filter((idea) => idea.status !== 'converted').length > 0 && (
+              <div className="pt-4">
+                <div className="mb-2 flex items-center gap-2 px-1">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <p className="text-sm font-medium">Ideas</p>
+                </div>
+                <div className="space-y-2">
+                  {ideas
+                    .filter((idea) => idea.status !== 'converted')
+                    .map((idea) => (
+                      <button
+                        key={idea.id}
+                        type="button"
+                        onClick={() => {
+                          setEditingIdea(idea);
+                          setIsIdeaDialogOpen(true);
+                        }}
+                        className="w-full rounded-2xl border border-transparent px-4 py-3 text-left transition-colors hover:bg-muted/50"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate font-medium">{idea.title || 'Untitled idea'}</p>
+                            <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                              {idea.distilledSummary || idea.rawIdea}
+                            </p>
+                          </div>
+                          <Badge variant="outline">{idea.launchChecklist.length}</Badge>
+                        </div>
+                      </button>
+                    ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -422,6 +501,43 @@ const SimpleWorkspace = ({
               }
             : undefined
         }
+      />
+
+      <AddIdeaDialog
+        isOpen={isIdeaDialogOpen}
+        initialIdea={editingIdea}
+        onClose={() => {
+          setIsIdeaDialogOpen(false);
+          setEditingIdea(null);
+        }}
+        onSave={async (idea) => {
+          if (idea.id) {
+            await onUpdateIdea(idea.id, {
+              title: idea.title || null,
+              rawIdea: idea.rawIdea,
+              distilledSummary: idea.distilledSummary || null,
+              gtmStrategy: idea.gtmStrategy || null,
+              launchNeeds: idea.launchNeeds || [],
+              launchChecklist: idea.launchChecklist || [],
+              suggestedTechStack: idea.suggestedTechStack || [],
+              status: idea.status || 'draft',
+            });
+            return editingIdea;
+          }
+
+          const created = await onCreateIdea(idea);
+          return created || null;
+        }}
+        onDelete={async (id) => {
+          await onDeleteIdea(id);
+          setIsIdeaDialogOpen(false);
+          setEditingIdea(null);
+        }}
+        onConvert={async (id) => {
+          await onConvertIdea(id);
+          setIsIdeaDialogOpen(false);
+          setEditingIdea(null);
+        }}
       />
     </>
   );
