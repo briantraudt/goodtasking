@@ -144,44 +144,38 @@ const SimpleWorkspace = ({
       <div className="grid gap-5 lg:grid-cols-[320px_1fr]">
         <Card className="h-fit border-slate-200 shadow-sm">
           <CardHeader className="space-y-3 pb-4">
-            <div className="flex items-center gap-2">
-              <FolderKanban className="h-5 w-5 text-primary" />
-              <CardTitle className="text-2xl">Projects</CardTitle>
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedProjectId('all')}
+                className="flex items-center gap-2 text-left"
+              >
+                <FolderKanban className="h-5 w-5 text-primary" />
+                <CardTitle className="text-2xl">Projects</CardTitle>
+              </button>
             </div>
             <div className="grid gap-2">
               <Button
-                variant="outline"
                 onClick={() => {
                   setEditingIdea(null);
                   setIsIdeaDialogOpen(true);
                 }}
-                className="justify-start rounded-xl"
+                className="justify-start rounded-xl border-0 bg-emerald-500 text-white hover:bg-emerald-600"
               >
                 <Bot className="mr-2 h-4 w-4" />
                 Add Idea
               </Button>
-              <Button onClick={() => setIsCreateProjectOpen(true)} className="justify-start rounded-xl">
+              <Button
+                onClick={() => setIsCreateProjectOpen(true)}
+                variant="outline"
+                className="justify-start rounded-xl"
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 Add Project
               </Button>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 pt-0">
-            <button
-              type="button"
-              onClick={() => setSelectedProjectId('all')}
-              className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
-                selectedProjectId === 'all'
-                  ? 'border-primary/30 bg-primary/5'
-                  : 'border-transparent hover:bg-muted/50'
-              }`}
-            >
-              <div>
-                <p className="font-medium">All Projects</p>
-                <p className="text-sm text-muted-foreground">Everything in one list</p>
-              </div>
-            </button>
-
             {projectStats.map((project) => (
               <button
                 key={project.id}
@@ -281,16 +275,7 @@ const SimpleWorkspace = ({
           <Card className="border-slate-200 shadow-sm">
             <CardHeader className="pb-4">
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <CardTitle>
-                    {selectedProject ? selectedProject.name : 'Running Task List'}
-                  </CardTitle>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {selectedProject
-                      ? selectedProject.description || 'Tasks and context for this project.'
-                      : 'A simple list of active work.'}
-                  </p>
-                </div>
+                <CardTitle>Task List</CardTitle>
                 <div className="flex flex-wrap gap-2">
                   <Button
                     variant={taskFilter === 'open' ? 'default' : 'outline'}
@@ -428,13 +413,10 @@ const SimpleWorkspace = ({
                           onCheckedChange={(checked) =>
                             onUpdateTask(task.id, { completed: checked === true })
                           }
-                          className="mt-1 h-5 w-5 rounded-md"
+                          className="mt-1 h-5 w-5 rounded-md border-slate-400 data-[state=checked]:border-primary data-[state=checked]:bg-primary"
                         />
                         <div className="min-w-0">
-                          <p className={`${task.completed ? 'text-muted-foreground line-through' : 'font-medium text-slate-950'}`}>
-                            {task.title}
-                          </p>
-                          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                          <div className="mb-1.5 flex flex-wrap items-center gap-2">
                             <Badge
                               variant="outline"
                               className="rounded-full border-0"
@@ -445,19 +427,26 @@ const SimpleWorkspace = ({
                             >
                               {task.projectName}
                             </Badge>
-                            {task.due_date && (
-                              <Badge variant="secondary" className="rounded-full">
-                                <Calendar className="mr-1 h-3 w-3" />
-                                Due {format(new Date(`${task.due_date}T12:00:00`), 'MMM d')}
-                              </Badge>
-                            )}
-                            {task.completed && (
-                              <Badge variant="secondary" className="rounded-full">
-                                <CheckCircle2 className="mr-1 h-3 w-3" />
-                                Done
-                              </Badge>
-                            )}
                           </div>
+                          <p className={`${task.completed ? 'text-muted-foreground line-through' : 'font-medium text-slate-950'}`}>
+                            {task.title}
+                          </p>
+                          {(task.due_date || task.completed) && (
+                            <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                              {task.due_date && (
+                                <Badge variant="secondary" className="rounded-full">
+                                  <Calendar className="mr-1 h-3 w-3" />
+                                  Due {format(new Date(`${task.due_date}T12:00:00`), 'MMM d')}
+                                </Badge>
+                              )}
+                              {task.completed && (
+                                <Badge variant="secondary" className="rounded-full">
+                                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                                  Done
+                                </Badge>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
                       <Button
