@@ -73,7 +73,7 @@ const SimpleWorkspace = ({
   onDeleteTask,
 }: SimpleWorkspaceProps) => {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('all');
-  const [taskFilter, setTaskFilter] = useState<'open' | 'all' | 'completed'>('open');
+  const [taskFilter, setTaskFilter] = useState<'open' | 'completed'>('open');
   const [quickTaskTitle, setQuickTaskTitle] = useState('');
   const [quickTaskProjectId, setQuickTaskProjectId] = useState('');
   const [quickTaskDueDate, setQuickTaskDueDate] = useState('');
@@ -100,15 +100,20 @@ const SimpleWorkspace = ({
       : projects.find((project) => project.id === selectedProjectId) || null;
 
   const filteredTasks = useMemo(() => {
+    const todayKey = new Date().toISOString().split('T')[0];
+
     return allTasks
       .filter((task) => {
         if (selectedProjectId !== 'all' && task.project_id !== selectedProjectId) {
           return false;
         }
 
-        if (taskFilter === 'open') return !task.completed;
-        if (taskFilter === 'completed') return task.completed;
-        return true;
+        if (taskFilter === 'open') {
+          if (!task.completed) return true;
+          return task.updated_at?.startsWith(todayKey);
+        }
+
+        return task.completed;
       })
       .sort((a, b) => {
         if (a.completed !== b.completed) return a.completed ? 1 : -1;
@@ -167,7 +172,6 @@ const SimpleWorkspace = ({
               </Button>
               <Button
                 onClick={() => setIsCreateProjectOpen(true)}
-                variant="outline"
                 className="justify-start rounded-xl"
               >
                 <Plus className="mr-2 h-4 w-4" />
@@ -283,13 +287,6 @@ const SimpleWorkspace = ({
                     size="sm"
                   >
                     Open
-                  </Button>
-                  <Button
-                    variant={taskFilter === 'all' ? 'default' : 'outline'}
-                    onClick={() => setTaskFilter('all')}
-                    size="sm"
-                  >
-                    All
                   </Button>
                   <Button
                     variant={taskFilter === 'completed' ? 'default' : 'outline'}
@@ -442,7 +439,7 @@ const SimpleWorkspace = ({
                               {task.completed && (
                                 <Badge variant="secondary" className="rounded-full">
                                   <CheckCircle2 className="mr-1 h-3 w-3" />
-                                  Done
+                                  Done today
                                 </Badge>
                               )}
                             </div>
