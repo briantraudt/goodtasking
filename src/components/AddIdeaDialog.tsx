@@ -40,6 +40,8 @@ const emptyState = {
   suggestedTechStack: [] as string[],
 };
 
+type IdeaStage = 'ideation' | 'review' | 'project';
+
 const AddIdeaDialog = ({
   isOpen,
   initialIdea,
@@ -59,6 +61,7 @@ const AddIdeaDialog = ({
   const [launchNeeds, setLaunchNeeds] = useState<string[]>([]);
   const [launchChecklist, setLaunchChecklist] = useState<string[]>([]);
   const [suggestedTechStack, setSuggestedTechStack] = useState<string[]>([]);
+  const [stage, setStage] = useState<IdeaStage>('ideation');
 
   useEffect(() => {
     if (!isOpen) return;
@@ -71,6 +74,14 @@ const AddIdeaDialog = ({
       setLaunchNeeds(initialIdea.launchNeeds || []);
       setLaunchChecklist(initialIdea.launchChecklist || []);
       setSuggestedTechStack(initialIdea.suggestedTechStack || []);
+      setStage(
+        initialIdea.title ||
+          initialIdea.suggestedTechStack?.length ||
+          initialIdea.launchChecklist?.length ||
+          initialIdea.gtmStrategy
+          ? 'review'
+          : 'ideation'
+      );
       return;
     }
 
@@ -81,6 +92,7 @@ const AddIdeaDialog = ({
     setLaunchNeeds(emptyState.launchNeeds);
     setLaunchChecklist(emptyState.launchChecklist);
     setSuggestedTechStack(emptyState.suggestedTechStack);
+    setStage('ideation');
   }, [initialIdea, isOpen]);
 
   const canRunAI = rawIdea.trim().length > 20 && !!user;
@@ -119,6 +131,7 @@ const AddIdeaDialog = ({
       setLaunchNeeds(Array.isArray(data.launchNeeds) ? data.launchNeeds : []);
       setLaunchChecklist(Array.isArray(data.launchChecklist) ? data.launchChecklist : []);
       setSuggestedTechStack(Array.isArray(data.suggestedTechStack) ? data.suggestedTechStack : []);
+      setStage('review');
 
       toast({
         title: 'Idea distilled',
@@ -248,127 +261,156 @@ const AddIdeaDialog = ({
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="idea-title">Idea title</Label>
-              <Input
-                id="idea-title"
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                placeholder="Short working title"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Suggested stack</Label>
-              <div className="flex min-h-11 flex-wrap gap-2 rounded-xl border bg-background px-3 py-2">
-                {suggestedTechStack.length > 0 ? (
-                  suggestedTechStack.map((item) => (
-                    <Badge key={item} variant="secondary">
-                      {item}
-                    </Badge>
-                  ))
-                ) : (
-                  <span className="text-sm text-muted-foreground">Run AI to suggest a stack.</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="idea-summary">Distilled summary</Label>
-            <Textarea
-              id="idea-summary"
-              value={distilledSummary}
-              onChange={(event) => setDistilledSummary(event.target.value)}
-              placeholder="AI will tighten the concept into a crisp summary."
-              className="min-h-28"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="idea-gtm">GTM strategy</Label>
-            <Textarea
-              id="idea-gtm"
-              value={gtmStrategy}
-              onChange={(event) => setGtmStrategy(event.target.value)}
-              placeholder="Target user, positioning, and first traction plan."
-              className="min-h-32"
-            />
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-3 rounded-2xl border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">Launch needs</h3>
-                  <p className="text-sm text-muted-foreground">What must be true before launch.</p>
-                </div>
-                <Button type="button" variant="outline" size="sm" onClick={() => addListItem(setLaunchNeeds)}>
-                  Add
-                </Button>
-              </div>
+          {stage !== 'ideation' && (
+            <div className="space-y-4">
               <div className="space-y-2">
-                {launchNeeds.length > 0 ? (
-                  launchNeeds.map((item, index) => (
-                    <div key={`need-${index}`} className="flex items-start gap-2">
-                      <Input
-                        value={item}
-                        onChange={(event) =>
-                          updateListItem(launchNeeds, setLaunchNeeds, index, event.target.value)
-                        }
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeListItem(launchNeeds, setLaunchNeeds, index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
+                <Label htmlFor="idea-summary">Distilled idea</Label>
+                <Textarea
+                  id="idea-summary"
+                  value={distilledSummary}
+                  onChange={(event) => setDistilledSummary(event.target.value)}
+                  placeholder="AI will tighten the concept into a crisp summary."
+                  className="min-h-28"
+                />
+              </div>
+
+              {stage === 'review' && (
+                <div className="rounded-2xl border bg-muted/20 p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h3 className="font-semibold">Create a project from this idea?</h3>
+                      <p className="text-sm text-muted-foreground">
+                        If yes, we’ll walk through the title, stack, launch plan, and starter checklist next.
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button type="button" variant="outline" onClick={saveIdea}>
+                        Save As Idea
+                      </Button>
+                      <Button type="button" onClick={() => setStage('project')}>
+                        Yes, Continue
                       </Button>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">AI will list the key launch requirements here.</p>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-3 rounded-2xl border p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">Initial checklist</h3>
-                  <p className="text-sm text-muted-foreground">The first sequence of work to get moving.</p>
+                  </div>
                 </div>
-                <Button type="button" variant="outline" size="sm" onClick={() => addListItem(setLaunchChecklist)}>
-                  Add
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {launchChecklist.length > 0 ? (
-                  launchChecklist.map((item, index) => (
-                    <div key={`checklist-${index}`} className="flex items-start gap-2">
+              )}
+
+              {stage === 'project' && (
+                <>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="idea-title">Project title</Label>
                       <Input
-                        value={item}
-                        onChange={(event) =>
-                          updateListItem(launchChecklist, setLaunchChecklist, index, event.target.value)
-                        }
+                        id="idea-title"
+                        value={title}
+                        onChange={(event) => setTitle(event.target.value)}
+                        placeholder="Short working title"
                       />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeListItem(launchChecklist, setLaunchChecklist, index)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground">AI will generate the starting task list here.</p>
-                )}
-              </div>
+                    <div className="space-y-2">
+                      <Label>Suggested stack</Label>
+                      <div className="flex min-h-11 flex-wrap gap-2 rounded-xl border bg-background px-3 py-2">
+                        {suggestedTechStack.length > 0 ? (
+                          suggestedTechStack.map((item) => (
+                            <Badge key={item} variant="secondary">
+                              {item}
+                            </Badge>
+                          ))
+                        ) : (
+                          <span className="text-sm text-muted-foreground">Run AI to suggest a stack.</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="idea-gtm">GTM strategy</Label>
+                    <Textarea
+                      id="idea-gtm"
+                      value={gtmStrategy}
+                      onChange={(event) => setGtmStrategy(event.target.value)}
+                      placeholder="Target user, positioning, and first traction plan."
+                      className="min-h-32"
+                    />
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-3 rounded-2xl border p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold">Launch needs</h3>
+                          <p className="text-sm text-muted-foreground">What must be true before launch.</p>
+                        </div>
+                        <Button type="button" variant="outline" size="sm" onClick={() => addListItem(setLaunchNeeds)}>
+                          Add
+                        </Button>
+                      </div>
+                      <div className="space-y-2">
+                        {launchNeeds.length > 0 ? (
+                          launchNeeds.map((item, index) => (
+                            <div key={`need-${index}`} className="flex items-start gap-2">
+                              <Input
+                                value={item}
+                                onChange={(event) =>
+                                  updateListItem(launchNeeds, setLaunchNeeds, index, event.target.value)
+                                }
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeListItem(launchNeeds, setLaunchNeeds, index)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-muted-foreground">AI will list the key launch requirements here.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 rounded-2xl border p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-semibold">Initial checklist</h3>
+                          <p className="text-sm text-muted-foreground">The first sequence of work to get moving.</p>
+                        </div>
+                        <Button type="button" variant="outline" size="sm" onClick={() => addListItem(setLaunchChecklist)}>
+                          Add
+                        </Button>
+                      </div>
+                      <div className="space-y-2">
+                        {launchChecklist.length > 0 ? (
+                          launchChecklist.map((item, index) => (
+                            <div key={`checklist-${index}`} className="flex items-start gap-2">
+                              <Input
+                                value={item}
+                                onChange={(event) =>
+                                  updateListItem(launchChecklist, setLaunchChecklist, index, event.target.value)
+                                }
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeListItem(launchChecklist, setLaunchChecklist, index)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-muted-foreground">AI will generate the starting task list here.</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-          </div>
+          )}
 
           <div className="flex flex-wrap items-center justify-between gap-3 border-t pt-4">
             <div className="flex gap-2">
@@ -382,24 +424,33 @@ const AddIdeaDialog = ({
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button type="button" variant="outline" onClick={saveIdea} disabled={!rawIdea.trim() || isSaving}>
-                {isSaving ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  'Save Draft'
-                )}
-              </Button>
-              <Button
-                type="button"
-                onClick={saveAndConvert}
-                disabled={!rawIdea.trim() || isSaving || !hasAIOutput}
-              >
-                <Bot className="mr-2 h-4 w-4" />
-                Create Project
-              </Button>
+              {stage === 'ideation' && (
+                <Button type="button" variant="outline" onClick={saveIdea} disabled={!rawIdea.trim() || isSaving}>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Draft'
+                  )}
+                </Button>
+              )}
+              {stage === 'project' && (
+                <>
+                  <Button type="button" variant="outline" onClick={() => setStage('review')}>
+                    Back
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={saveAndConvert}
+                    disabled={!rawIdea.trim() || isSaving || !hasAIOutput}
+                  >
+                    <Bot className="mr-2 h-4 w-4" />
+                    Create Project
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
